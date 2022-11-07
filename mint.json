@@ -1,0 +1,74 @@
+{
+  "name": "Cerebrium",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "favicon": "/favicon.png",
+  "colors": {
+    "primary": "#EB3A6F",
+    "light": "#F393B0",
+    "dark": "#C9134A",
+    "ultraLight": "#FBECF1",
+    "ultraDark": "#A40031"
+  },
+  "topbarCtaButton": {
+    "name": "Sign Up",
+    "url": "https://dashboard.cerebrium.ai/login"
+  },
+  "topbarLinks": [
+    {
+      "name": "Contact Us",
+      "url": "support@cerebrium.ai"
+    }
+  ],
+  "anchors": [
+    {
+      "name": "Dashboard",
+      "icon": "circle-play",
+      "url": "https://dashboard.cerebrium.ai/login"
+    },
+    {
+      "name": "Blog",
+      "icon": "newspaper",
+      "url": "https://blog.cerebrium.ai"
+    },
+    {
+      "name": "Community",
+      "icon": "slack",
+      "url": "https://cerebriumworkspace.slack.com/signup#/domain-signup"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Home",
+      "pages": ["introduction"]
+    },
+    {
+      "group": "Cerebrium",
+      "pages": [
+        "cerebrium/getting-started",
+        "cerebrium/test-and-deploy",
+        "cerebrium/examples"
+      ]
+    },
+    {
+      "group": "Quickstarts",
+      "pages": [
+        "quickstarts/onnx",
+        "quickstarts/pytorch",
+        "quickstarts/scikit",
+        "quickstarts/xgboost"
+      ]
+    },
+    {
+      "group": "Updates",
+      "pages": ["changelog", "roadmap"]
+    }
+  ],
+  "footerSocials": {
+    "twitter": "https://twitter.com/cerebriumai",
+    "slack": "https://cerebriumworkspace.slack.com/signup#/domain-signup"
+  },
+  "backgroundImage": "/images/background.png"
+}

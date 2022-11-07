@@ -1,0 +1,169 @@
+---
+title: "Test and Deploy"
+description: "To deploy your machine learning model to Cerebrium takes just 2 lines of
+code."
+---
+
+Start by importing our Python framework, Cerebrium, that allows us to abstract
+away the complexity of provisioning infrastructure, versioning and much more!
+
+```bash
+from cerebrium import deploy, model_type
+
+Some model training logic...
+
+endpoint = deploy(('<MODEL_TYPE>', '<MODEL_FILE>'), '<MODEL_NAME>', '<API_KEY>', dry_run=False)
+```
+
+In the deploy function there are the following parameters:
+
+- A tuple of the model type and the model file:
+  - **MODEL_TYPE**: This parameter specifies the type of model you are supplying
+    Cerebrium and **must** be a `model_type`. This is to ensure that Cerebrium
+    knows how to handle your model. The current supported model types are:
+    - **model_type.SKLEARN**: Expects a `.pkl` file (there is no requirement of
+      the model to be a regressor or classifier).
+      - **model_type.SKLEARN_CLASSIFIER**: Expects a `.pkl` file (the model must
+        be a classifier. returns a class probability distribution instead of a
+        single class prediction)
+      - **model_type.TORCH**: Expects a `.pkl` file serialized with
+        `cloudpickle` or a JIT script **Torchscript** `.pt` file.
+      - **model_type.XGBOOST_REGRESSOR**: Expects a serialized `.pkl` file or a
+        XGB `.json` file.
+      - **model_type.XGBOOST_CLASSIFIER**: Expects a serialized `.pkl` file or a
+        XGB `.json` file.
+  - **MODEL_FILE**: This is the string path to the model object you have
+    obtained as a result of training locally or in the cloud. This is usually
+    some model object or model file that you have exported.
+- **MODEL_NAME**: The name you would like to give your model (alphanumeric, with
+  hyphens and less than 20 characters). This is a unique identifier for your
+  model and will be used to call your model in the future.
+- **API_KEY**: This is the API key that can be found on your profile. You can
+  get it [here](https://dashboard.cerebrium.ai/).
+- **dry_run**: Boolean value for if you are running the model locally. This is
+  an optional variable. Defaults to **False**.
+
+<Note>
+  Every unique model name will create a _separate deployment_ with a _separate
+  endpoint_. It is important to keep track of the model names you have used so
+  that you can call the correct model in the future. If you deploy a model with
+  the same name as a previous model, the previous model will be archived and the
+  new model will be deployed automatically. This is useful for versioning your
+  models.
+</Note>
+
+Once you've run the `deploy` function, give it a minute, and it should be
+deployed - easy-peasy! If your deployment is successful, you will see the
+following output:
+
+```
+Uploading pipeline...
+Registering with Cerebrium...
+Model YOUR-MODEL-NAME deployed at https://inference.cerebrium.ai/runs/YOUR-PROJECT-ID_YOUR-MODEL-NAME
+```
+
+Our `deploy` function will also return the endpoint of your model directly. This
+is the URL that you will use to call your model in the future.
+
+## Run model locally
+
+In order to run your model locally and ensure it is working as intended before
+deploying you can run the following commands:
+
+```bash
+from cerebrium import deploy
+
+output_pipeline = deploy(('<MODEL_TYPE>', '<MODEL_FILE>'), '<MODEL_NAME>', '<API_KEY>', dry_run=True)
+output_pipeline(data)
+```
+
+Where `data` is the data you would send to your model. This would usually be
+some 2D/3D array for vision models or single lists for XGBoost models. You may
+feed an `ndarray` or `Tensor` directly into this function.
+
+You can test out your model endpoint quickly with our utility function supplied
+in Cerebrium, `model_api_request`.
+
+```bash
+from cerebrium import model_api_request
+model_api_request(endpoint, data, '<API_KEY>')
+```
+
+The function takes in the following parameters:
+
+- **endpoint**: The endpoint of your model that was returned by the `deploy`
+  function.
+- **data**: The data you would like to send to your model. As before, you may
+  feed an `ndarray` or `Tensor` directly into this function.
+- **api_key**: This is the Cerebrium API key used to authenticate your request.
+
+Below is a standing API call for you to test your model in production. In this
+case, if your data is a `ndarray` or `Tensor` you **must** convert it into a
+`list`.
+
+```bash
+import requests
+import json
+
+url = YOUR_ENDPOINT
+
+payload = data.tolist()
+headers = {
+  'Authorization': 'YOUR_CEREBRIUM_API_KEY',
+}
+
+response = requests.request("POST", url, headers=headers, data=json.dumps(payload))
+
+print(response.text)
+```
+
+Both these methods will return a JSON response with the following structure:
+
+```bash
+{
+  "status_code"
+  "data": {
+    {
+      "run_state"
+      "resource_type"
+      "compute_time_ms"
+      "result"
+    }
+  }
+}
+```
+
+<Note>
+  Your result format will change for the `_classifier` model types. Both
+  `sklearn_classifier` and `xgb_classifier` will return a `result` object
+  containing the probability distribution for the predicted output classes,
+  rather than the argmax of the distribution. This is to allow you flexibility
+  in how you want to handle the output of your model for classification. For
+  example, you may want to return the top 3 predictions for your model, or you
+  may want to return the top 3 predictions with a minimum probability threshold.
+  This is up to you.
+</Note>
+
+If you want to see concrete examples of various model deployments head on over
+to the [Examples](/Cerebrium/examples) page.
+
+## Deploying model ensembles
+
+With Cerebrium you are also able to deploy a sequence of models simply by
+specifying a list of tuples of model types and model files. Currently this
+functionality is supported across all model types, with the caveat that we
+assume the models are evaluated in the order they are supplied. For example, if
+you have a PyTorch model that takes in a 2D image and outputs a 1D vector, and
+you have a XGB model that takes in a 1D vector and outputs a single class
+prediction, you can deploy them as a sequence of models by supplying the
+following to the `deploy` function:
+
+```bash
+model_pipeline = [(model_type.TORCH, 'torch.pt'), (model_type.XGBOOST_CLASSIFIER, 'xgb.json')]
+endpoint = deploy(model_pipeline, 'my-pipeline', "<API_KEY>")
+```
+
+We are currently working on a more robust way to specify the input and output
+shapes of your models or supply ways to specify pre/post processing functions,
+so that you can deploy more complex pipelines. If you have any suggestions or
+feedback, please reach out to us.
