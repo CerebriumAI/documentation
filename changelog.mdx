@@ -1,0 +1,86 @@
+---
+title: "Changelog"
+description:
+  "We release features and fixes weekly! See some of the changes we have made."
+---
+
+## 0.2.2
+
+### Date: 28 October 2022
+
+- Fix a bug where the internal pipeline would be malformed if the model was not
+  ONNX
+- Force single model ONNX pipeline until post-processing is supported
+
+## 0.2.1
+
+### Date: 26 October 2022
+
+- Support for ONNX models with Python 3.7-3.9 (can be used as a single model or
+  as the initial model of a pipeline). We are working on supporting Python 3.10
+  and 3.11!
+
+## v0.2.0
+
+### Date: 23 October 2022
+
+- Model ensembles are here! You can now deploy a sequence of models to an
+  endpoint and have them run in order.
+- Change the deploy call signature to accommodate for model ensembles.
+- Added explicit model types to be used in place of the previous plain strings.
+
+## v0.1.9
+
+### Date: 18 October 2022
+
+- Reduce minimum python version to 3.7 (and reduce dependency min versions
+  accordingly). Now compatible with Google Colab!
+
+## v0.1.5
+
+### Date: 17 October 2022
+
+- Update license
+- Handle usage limits on different Cerebrium packages
+
+## v0.1.4
+
+### Date: 16 October 2022
+
+- Release on the public PyPi!
+- Refactor the package name to `cerebrium`
+
+## v0.1.3
+
+### Date: 12 October 2022
+
+- Fixed an issue with data input shapes
+- Updated our documentation
+- Released Model/Pipeline Versioning
+- Improved Error Handling and Messaging on the Neuron client
+- Implemented a utility function for easy API testing
+- Provided a dry-run option for model deployment, which returns a callable
+  function for testing
+- Fixed a deserialization issue with PyTorch models (requires cloudpickle)
+- Support for Torchscipt models
+- Support for XGB JSON models
+
+## v0.1.2
+
+### Date: 7th October 2022
+
+- Moved architecture to serverless CPU/GPU's
+- Support Pytorch, XGBoost and SKLearn models
+- Updated monitoring metrics per model version
+- Bug fixes and performance improvements
+
+## V0.1.1
+
+### Date: 26th September 2022
+
+- Released alpha version of Neuron.
+- Users are able to deploy models from their notebooks or .py files with just 4
+  lines of code.
+- Created dashboard interface for users to see deployed models, API calls and
+  errors.
+- Created this documentation site.
