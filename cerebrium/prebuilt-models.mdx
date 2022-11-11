@@ -70,17 +70,15 @@ Once you've deployed a Whisper model, you can supply the enpoint with a list of 
 curl -X POST 'https://inference.cerebrium.ai/runs/YOUR_ENDPOINT' \
 -H 'Authorization: YOUR_API_KEY' \
 -H 'Content-Type: application/json' \
--d '{
-    [
+-d '[
         [
             {
                 "audio_in": {
-                    "b64_encoded": "'"$( base64 YOUR_AUDIO_PATH )"'",
+                    "b64_encoded": "'"$( base64 -i YOUR_AUDIO_PATH )"'",
                     "filetype": "mp3"
                 }
             }
         ]
-    ]
-}'
+    ]'
 ```
 
