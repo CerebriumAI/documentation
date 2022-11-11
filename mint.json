@@ -49,6 +49,8 @@
       "pages": [
         "cerebrium/getting-started",
         "cerebrium/test-and-deploy",
+        "cerebrium/prebuilt-models",
+        "cerebrium/advanced-functionality",
         "cerebrium/examples"
       ]
     },
