@@ -5,6 +5,21 @@ description: "Deploy prebuilt models to an API."
 
 Cerebrium provides prebuilt models that you can deploy to an API. You can use these models to get started with Cerebrium easily.
 
+## Deployment
+Deploying a prebuilt model is largely similar to deploying a custom model. The only difference is that you do not need to upload a model file.
+Instead, you specify which prebuilt model you want to deploy using the corresponding identifer.
+
+```python
+from cerebrium import deploy, model_type
+# Deploy a prebuilt Stable Diffusion Model
+endpoint = deploy((model_type.PREBUILT, "stable-diffusion-text"), 'my-pipeline', "<API_KEY>")
+```
+<Note>
+    You can not use prebuilt models in ensembles or with post-processing functions. They should be contained within single model pipelines only.
+</Note>
+
+You can check out the available models below!
+
 ## Prebuilt Models
 ### Image Models
 #### Stable Diffusion
@@ -15,6 +30,28 @@ We currently have Stable Diffusion v1.5 available, but are working on supporting
 - Stable Diffusion v1.5 Image2Image: `stable-diffusion-image`
 
 You should supply this endpoint with the following data once deployed:
+
+Once you've deployed a Stable Diffusion model, you can supply the enpoint with your input list of text/images and the standard Stable Diffusion model parameters. Here's an example of how to call the deployed endpoint:
+```bash
+curl -X POST 'https://inference.cerebrium.ai/runs/YOUR_ENDPOINT' \
+-H 'Authorization: YOUR_API_KEY' \
+-d '{
+    "data": [
+        [
+            {
+                "text_in": "Mountain winds, and babbling springs, and moonlight seas"
+            }
+        ],
+        {
+            "num_samples": 1,
+            "num_inference_steps": 50,
+            "width": 512,
+            "height": 512
+        }
+    ]
+}'
+
+```
 
 
 ### Language Models
@@ -27,16 +64,21 @@ We currently have the following whisper models available:
 - Whisper Medium: `whisper-medium`
 - Whisper Large: `whisper-large`
 
-You should supply this endpoint with the following data once deployed:
-
-## Deployment
-Deploying a prebuilt model is largely similar to deploying a custom model. The only difference is that you do not need to upload a model file.
-Instead, you specify which prebuilt model you want to deploy using the corresponding identifer.
-
-```python
-from cerebrium import deploy, model_type
-endpoint = deploy((model_type.PREBUILT, "stable-diffusion-text"), 'my-pipeline', "<API_KEY>")
+Once you've deployed a Whisper model, you can supply the enpoint with a list of base-64 encoded audio files. Here's an example of how to call the deployed endpoint:
+```bash
+curl -X POST 'https://inference.cerebrium.ai/runs/YOUR_ENDPOINT' \
+-H 'Authorization: YOUR_API_KEY' \
+-d '{
+    "data": [
+        [
+            {
+                "audio_in": {
+                    "b64_encoded": "'"$( base64 YOUR_AUDIO_PATH )"'",
+                    "filetype": "mp3"
+                }
+            }
+        ]
+    ]
+}'
 ```
-<Note>
-    You can not use prebuilt models in ensembles or with post-processing functions. They should be contained within single model pipelines only.
-</Note>
+
