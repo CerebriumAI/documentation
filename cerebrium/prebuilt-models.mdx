@@ -35,8 +35,9 @@ Once you've deployed a Stable Diffusion model, you can supply the enpoint with y
 ```bash
 curl -X POST 'https://inference.cerebrium.ai/runs/YOUR_ENDPOINT' \
 -H 'Authorization: YOUR_API_KEY' \
+-H 'Content-Type: application/json' \
 -d '{
-    "data": [
+    [
         [
             {
                 "text_in": "Mountain winds, and babbling springs, and moonlight seas"
@@ -68,8 +69,9 @@ Once you've deployed a Whisper model, you can supply the enpoint with a list of 
 ```bash
 curl -X POST 'https://inference.cerebrium.ai/runs/YOUR_ENDPOINT' \
 -H 'Authorization: YOUR_API_KEY' \
+-H 'Content-Type: application/json' \
 -d '{
-    "data": [
+    [
         [
             {
                 "audio_in": {
