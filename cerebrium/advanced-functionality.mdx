@@ -1,0 +1,29 @@
+---
+title: "Advanced Functionality"
+---
+
+## Deploying model ensembles
+With Cerebrium you are also able to deploy a sequence of models simply by specifying a list of tuples of model types and model files. Currently this functionality is supported across all model types bar ONNX, with the caveat that we assume the models are evaluated in the order they are supplied. For example, if you have a PyTorch model that takes in a 2D image and outputs a 1D vector, and you have a XGB model that takes in a 1D vector and outputs a single class prediction, you can deploy them as a sequence of models by supplying the following to the `deploy` function:
+
+```python
+model_pipeline = [(model_type.TORCH, 'torch.pt'), (model_type.XGBOOST_CLASSIFIER, 'xgb.json')]
+endpoint = deploy(model_pipeline, 'my-pipeline', "<API_KEY>")
+```
+
+
+## Post-Processing Functions
+In many cases, you may want to post-process the data in your single or multi-model pipeline before returning it to the next pipeline stage or to the user. To do this, you can supply a post-processing function to your pipeline. This function will be applied to the output of your model before it is returned to the next pipeline stage. The function must take in a single argument, which is the output of your model, and return a single value, which is the post-processed output of your model. 
+
+For example, if you have a model that outputs a 1D vector of probabilities, you may want to return the argmax. You can do this by supplying the following function to the `deploy` function with the last pipeline stage:
+
+```python
+def post_process(result):
+    import numpy as np
+    return np.argmax(result, axis=1)
+model_pipeline = [(model_type.TORCH, 'torch.pt'), (model_type.XGBOOST_CLASSIFIER, 'xgb.json', post_process)]
+endpoint = deploy(model_pipeline, 'my-pipeline', "<API_KEY>")
+```
+
+<Note>
+  Note that any imports you need to do in your post-processing function must be done inside the function. This is because the function is serialized and sent to the Cerebrium servers, and the imports will not be available on the server.
+</Note>
