@@ -68,6 +68,11 @@
       "pages": ["changelog", "roadmap"]
     }
   ],
+  "analytics": {
+    "ga4": {
+        "measurementId": "G-7SBXER6DHL"
+    }
+  },
   "footerSocials": {
     "twitter": "https://twitter.com/cerebriumai",
     "slack": "https://cerebriumworkspace.slack.com/signup#/domain-signup"
