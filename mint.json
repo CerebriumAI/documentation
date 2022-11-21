@@ -10,7 +10,10 @@
     "light": "#F393B0",
     "dark": "#C9134A",
     "ultraLight": "#FBECF1",
-    "ultraDark": "#A40031"
+    "ultraDark": "#A40031",
+    "background": {
+      "dark": "#121212"
+    }
   },
   "topbarCtaButton": {
     "name": "Sign Up",
@@ -70,7 +73,7 @@
   ],
   "analytics": {
     "ga4": {
-        "measurementId": "G-7SBXER6DHL"
+      "measurementId": "G-7SBXER6DHL"
     }
   },
   "footerSocials": {
