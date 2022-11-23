@@ -11,8 +11,8 @@ Instead, you specify which prebuilt model you want to deploy using the correspon
 
 ```python
 from cerebrium import deploy, model_type
-# Deploy a prebuilt Stable Diffusion Model
-endpoint = deploy((model_type.PREBUILT, "stable-diffusion-text"), 'my-pipeline', "<API_KEY>")
+# Deploy a prebuilt Whisper Model
+endpoint = deploy((model_type.PREBUILT, "whisper-medium"), 'my-pipeline', "<API_KEY>")
 ```
 <Note>
     You can not use prebuilt models in ensembles or with post-processing functions. They should be contained within single model pipelines only.
@@ -21,64 +21,67 @@ endpoint = deploy((model_type.PREBUILT, "stable-diffusion-text"), 'my-pipeline',
 You can check out the available models below!
 
 ## Prebuilt Models
-### Image Models
-#### Stable Diffusion
-Stable Diffusion is a image generation model that can receive either text or image input and output network-generated images! 
-We currently have Stable Diffusion v1.5 available, but are working on supporting other checkpoints:
 
-- Stable Diffusion v1.5 Text2Image: `stable-diffusion-text`
-- Stable Diffusion v1.5 Image2Image: `stable-diffusion-image`
+### Language Models
+#### Whisper
+Whisper is a language generation model that receives audio data and performs transcription and or translation, then outputs a text response. It can process audio of any length and takes about 1 minute to process an hour of audio. We also return the timestamps of the transcription if you would like to create subtitles for the audio etc.
+We currently have the following whisper models available below however if you would like any others contact support and we can quickly add it for you.
 
-You should supply this endpoint with the following data once deployed:
+- Whisper Medium: `whisper-medium`
 
-Once you've deployed a Stable Diffusion model, you can supply the enpoint with your input list of text/images and the standard Stable Diffusion model parameters. Here's an example of how to call the deployed endpoint:
+Once you've deployed a Whisper model, you can supply the enpoint with a base-64 encoded audio file.  Here's an example of how to call the deployed endpoint:
 ```bash
 curl -X POST 'https://inference.cerebrium.ai/runs/YOUR_ENDPOINT' \
 -H 'Authorization: YOUR_API_KEY' \
 -H 'Content-Type: application/json' \
 -d '{
-    [
-        [
-            {
-                "text_in": "Mountain winds, and babbling springs, and moonlight seas"
-            }
-        ],
-        {
-            "num_samples": 1,
-            "num_inference_steps": 50,
-            "width": 512,
-            "height": 512
-        }
-    ]
-}'
-
+        "audio": "base_64_str"
+    }'
 ```
 
+#### MT0
+MT0 is a model capable of following human instructions in dozens of languages. It is pretrained on a crosslingual task mixture (xP3) and the resulting model is capable of crosslingual generalization to unseen tasks & languages.You can read more [here](https://huggingface.co/bigscience/mt0-xl). We currently have the following MT0 models available below however if you would like any others contact support and we can quickly add it for you.
 
-### Language Models
-#### Whisper
-Whisper is a language generation model that receives audio data and performs transcription and or translation, then outputs a text response.
-We currently have the following whisper models available:
+- mt0-xl: `mt0-xl`
 
-- Whisper Tiny: `whisper-tiny`
-- Whisper Base: `whisper-base`
-- Whisper Medium: `whisper-medium`
-- Whisper Large: `whisper-large`
-
-Once you've deployed a Whisper model, you can supply the enpoint with a list of base-64 encoded audio files. Here's an example of how to call the deployed endpoint:
+Once you've deployed a MT0 model, you can supply the enpoint with a prompt.  Here's an example of how to call the deployed endpoint:
 ```bash
 curl -X POST 'https://inference.cerebrium.ai/runs/YOUR_ENDPOINT' \
 -H 'Authorization: YOUR_API_KEY' \
 -H 'Content-Type: application/json' \
--d '[
-        [
-            {
-                "audio_in": {
-                    "b64_encoded": "'"$( base64 -i YOUR_AUDIO_PATH )"'",
-                    "filetype": "mp3"
-                }
-            }
-        ]
-    ]'
+-d '{
+        "prompt": "Translate from french to English: Je t'aime."
+    }'
+```
+
+#### FLAN
+FLAN, which stands for Fine-tuned LAnguage Net (FLAN), is a technique for instruction tuning to learn how to solve natural language processing tasks in general.
+It can be used to answer questions or tasks across many languages - you can read more [here](https://ai.googleblog.com/2021/10/introducing-flan-more-generalizable.html). We currently have the following whisper models available below however if you would like any others contact support and we can quickly add it for you.
+
+- Flan XL: `flan-xl`
+
+Once you've deployed a FLAN model, you can supply the enpoint with a prompt.  Here's an example of how to call the deployed endpoint:
+```bash
+curl -X POST 'https://inference.cerebrium.ai/runs/YOUR_ENDPOINT' \
+-H 'Authorization: YOUR_API_KEY' \
+-H 'Content-Type: application/json' \
+-d '{
+        "prompt": "translate English to German: How old are you?"
+    }'
+```
+
+#### Galactica
+Galactica is a general-purpose scientific language model. It is trained on a large corpus of scientific text and data. It can perform scientific NLP tasks at a high level, as well as tasks such as citation prediction, mathematical reasoning, molecular property prediction and protein annotation.
+
+- galactica: `galactica`
+
+Once you've deployed a Galactica model, you can supply the enpoint with a prompt.  Here's an example of how to call the deployed endpoint:
+```bash
+curl -X POST 'https://inference.cerebrium.ai/runs/YOUR_ENDPOINT' \
+-H 'Authorization: YOUR_API_KEY' \
+-H 'Content-Type: application/json' \
+-d '{
+        "prompt": "translate English to German: How old are you?"
+    }'
 ```
 
