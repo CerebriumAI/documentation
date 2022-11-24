@@ -115,7 +115,7 @@ headers = {
   'Authorization': 'YOUR_CEREBRIUM_API_KEY',
 }
 
-response = requests.request("POST", url, headers=headers, data=json.dumps(payload))
+response = requests.request("POST", url, headers=headers, data=[json.dumps(payload)])
 
 print(response.text)
 ```
