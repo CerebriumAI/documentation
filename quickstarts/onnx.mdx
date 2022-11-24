@@ -194,7 +194,7 @@ You can run inference using `curl`
 curl --location --request POST '<ENDPOINT>' \
 --header 'Authorization: <API_KEY>' \
 --header 'Content-Type: text/plain' \
---data-raw '{"input": <DATA>}'
+--data-raw '{"input": [<DATA>]}'
 ```
 
 You will see we have to specify our data as a **Dict**. Our Dict has the name
