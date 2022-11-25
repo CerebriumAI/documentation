@@ -180,7 +180,7 @@ format. This is all you need to deploy your model to Cerebrium! You can then imp
 
 ```bash
 from cerebrium import deploy, model_type
-output_pipeline = deploy((model_type.ONNX, "pytorch.onnx"),"onnx-pytorch", "<API_KEY>")
+output_flow = deploy((model_type.ONNX, "pytorch.onnx"),"onnx-pytorch", "<API_KEY>")
 ```
 
 ![Deployed Model](/images/quickstarts/onnx-2.png)

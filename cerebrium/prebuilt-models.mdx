@@ -12,17 +12,17 @@ Instead, you specify which prebuilt model you want to deploy using the correspon
 ```python
 from cerebrium import deploy, model_type
 # Deploy a prebuilt Whisper Model
-endpoint = deploy((model_type.PREBUILT, "whisper-medium"), 'my-pipeline', "<API_KEY>")
+endpoint = deploy((model_type.PREBUILT, "whisper-medium"), 'my-flow', "<API_KEY>")
 ```
 <Note>
-    You can not use prebuilt models in ensembles or with post-processing functions. They should be contained within single model pipelines only.
+    You can not use prebuilt models in ensembles or with post-processing functions. They should be contained within single model flows only.
 </Note>
 
 You can check out the available models below!
 
 ## Prebuilt Models
-###Image Models
-####Stable Diffusion
+### Image Models
+#### Stable Diffusion
 Stable Diffusion is a image generation model that can receive either text or image input and output network-generated images! We currently have Stable Diffusion v2 available
 
 - Stable Diffusion v2: `stable-diffusion-2`
