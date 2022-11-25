@@ -7,7 +7,7 @@ description:
 ## 0.3.0
 
 #### Date: 25 November 2022
-- We've switched out infrastructure provider for something more reliable and faster. This means faster deployment, less downtime and roughly half the inference time!
+- We made large changes to our infrastructure to be more reliable and faster. This means faster deployment, less downtime and roughly half the inference time!
 
 ## 0.2.4
 
@@ -20,7 +20,7 @@ description:
 ## 0.2.3
 
 #### Date: 11 November 2022
--  Added support for post-processing functions in s!
+-  Added support for post-processing functions in flows!
 -  Add Prebuilt models to available deployments
   - whisper-medium
 
@@ -31,14 +31,14 @@ description:
 
 - Fix a bug where the internal  would be malformed if the model was not
   ONNX
-- Force single model ONNX  until post-processing is supported
+- Force single model ONNX flow until post-processing is supported
 
 ## 0.2.1
 
 ### Date: 26 October 2022
 
 - Support for ONNX models with Python 3.7-3.9 (can be used as a single model or
-  as the initial model of a ). We are working on supporting Python 3.10
+  as the initial model of a flow). We are working on supporting Python 3.10
   and 3.11!
 
 ## v0.2.0
@@ -77,7 +77,7 @@ description:
 
 - Fixed an issue with data input shapes
 - Updated our documentation
-- Released Model/ Versioning
+- Released Model/Flow Versioning
 - Improved Error Handling and Messaging on the Neuron client
 - Implemented a utility function for easy API testing
 - Provided a dry-run option for model deployment, which returns a callable
