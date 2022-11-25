@@ -60,9 +60,12 @@ deployed - easy-peasy! If your deployment is successful, you will see the
 following output:
 
 ```
-Uploading pipeline...
-Registering with Cerebrium...
-Model YOUR-MODEL-NAME deployed at https://inference.cerebrium.ai/runs/YOUR-PROJECT-ID_YOUR-MODEL-NAME
+✅ Authenticated with Cerebrium!
+⬆️  Uploading conduit artefacts...
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 179k/179k [00:04<00:00, 42.7kB/s]
+✅ Conduit artefacts uploaded successfully.
+✅ Conduit deployed!
+🌍 Endpoint: https://dev-run.cerebrium.ai/YOUR-PROJECT-ID/YOUR-MODEL-NAME/predict
 ```
 
 Our `deploy` function will also return the endpoint of your model directly. This
@@ -71,13 +74,14 @@ is the URL that you will use to call your model in the future.
 ## Run model locally
 
 In order to run your model locally and ensure it is working as intended before
-deploying you can run the following commands:
+deploying, you can use the `dry_run` parameter in the `deploy` function. This will return a *Conduit* object,
+which encompasses the logic and computational graph you can use to call your model flow locally.
 
 ```bash
-from cerebrium import deploy
+from cerebrium import deploy, model_type
 
-output_pipeline = deploy(('<MODEL_TYPE>', '<MODEL_FILE>'), '<MODEL_NAME>', '<API_KEY>', dry_run=True)
-output_pipeline(data)
+conduit = deploy(('<MODEL_TYPE>', '<MODEL_FILE>'), '<MODEL_NAME>', '<API_KEY>', dry_run=True)
+conduit.run(data)
 ```
 
 Where `data` is the data you would send to your model. This would usually be
@@ -162,11 +166,11 @@ prediction, you can deploy them as a sequence of models by supplying the
 following to the `deploy` function:
 
 ```bash
-model_pipeline = [(model_type.TORCH, 'torch.pt'), (model_type.XGBOOST_CLASSIFIER, 'xgb.json')]
-endpoint = deploy(model_pipeline, 'my-pipeline', "<API_KEY>")
+model_flow = [(model_type.TORCH, 'torch.pt'), (model_type.XGBOOST_CLASSIFIER, 'xgb.json')]
+endpoint = deploy(model_flow, 'my-flow', "<API_KEY>")
 ```
 
 We are currently working on a more robust way to specify the input and output
-shapes of your models or supply ways to specify pre/post processing functions,
-so that you can deploy more complex pipelines. If you have any suggestions or
+shapes of your models or supply ways to specify pre-processing functions,
+so that you can deploy more complex flows. If you have any suggestions or
 feedback, please reach out to us.
