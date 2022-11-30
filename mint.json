@@ -52,7 +52,14 @@
       "pages": [
         "cerebrium/getting-started",
         "cerebrium/test-and-deploy",
-        "cerebrium/prebuilt-models",
+        {
+          "group": "Prebuilt Models",
+          "pages": [
+            "cerebrium/prebuilt-models/deployment",
+            "cerebrium/prebuilt-models/image-models",
+            "cerebrium/prebuilt-models/language-models"
+          ]
+        },
         "cerebrium/advanced-functionality",
         "cerebrium/examples"
       ]

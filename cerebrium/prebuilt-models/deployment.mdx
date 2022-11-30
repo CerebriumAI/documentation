@@ -1,0 +1,30 @@
+---
+title: "Deploying Prebuilt Models"
+description: "Cerebrium provides prebuilt models that you can deploy to an API. You can use these models to get started with Cerebrium easily."
+---
+
+Deploying a prebuilt model is largely similar to deploying a custom model. The only difference is that you do not need to upload a model file.
+Instead, you specify which prebuilt model you want to deploy using the corresponding identifer.
+
+```python Deploy a prebuilt Whisper Model
+from cerebrium import deploy, model_type
+endpoint = deploy((model_type.PREBUILT, "whisper-medium"), 'my-flow', "<API_KEY>")
+```
+
+<Note>
+  You can not use prebuilt models in ensembles or with post-processing
+  functions. They should be contained within single model flows only.
+</Note>
+
+You can check out the available models below!
+
+**Image Models**
+
+- [Stable Diffusion](/cerebrium/prebuilt-models/image-models#stable-diffusion)
+
+**Language Models**
+
+- [Whisper](/cerebrium/prebuilt-models/language-models#whisper)
+- [MT0](/cerebrium/prebuilt-models/language-models#mt-0)
+- [FLAN](/cerebrium/prebuilt-models/language-models#flan)
+- [Galactica](/cerebrium/prebuilt-models/language-models#galactica)

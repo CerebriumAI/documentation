@@ -1,0 +1,21 @@
+---
+title: "Image Models"
+description: "Deploy prebuilt image models to an API."
+---
+
+## Stable Diffusion
+
+Stable Diffusion is a image generation model that can receive either text or image input and output network-generated images! We currently have Stable Diffusion v2 available
+
+- Stable Diffusion v2: `stable-diffusion-2`
+
+Once you've deployed a Stable Diffusion model, you can supply the enpoint with string with what image you would like to generate. Here's an example of how to call the deployed endpoint:
+
+```bash
+curl -X POST 'https://inference.cerebrium.ai/runs/YOUR_ENDPOINT' \
+-H 'Authorization: YOUR_API_KEY' \
+-H 'Content-Type: application/json' \
+-d '{
+        "prompt": "a photo of an astronaut riding a horse on mars"
+    }'
+```
