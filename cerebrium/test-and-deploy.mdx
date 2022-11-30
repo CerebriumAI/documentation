@@ -2,7 +2,6 @@
 title: "Test and Deploy"
 description: "To deploy your machine learning model to Cerebrium takes just 2 lines of
 code."
-api: POST https://api.mintlify.com/user
 ---
 
 Start by importing our Python framework, Cerebrium, that allows us to abstract
@@ -91,6 +90,38 @@ feed an `ndarray` or `Tensor` directly into this function.
 
 ## API Specification and Helper methods
 
+You can see an example of the request and response objects for calls made to your models. It should resemble what it is like calling your model locally in your own python environment
+
+#### Request Parameters
+
+<RequestExample>
+```bash Request
+  curl --location --request POST '<ENDPOINT>' \
+      --header 'Authorization: <API_KEY>' \
+      --header 'Content-Type: application/json' \
+      --data-raw '[<DATA_INPUT>]'
+```
+</RequestExample>
+
+<ParamField header="Authorization" type="string" required>
+  This is the Cerebrium API key used to authenticate your request. You can get it from your Cerebrium dashboard.
+</ParamField>
+<ParamField body="data" type="array" required>
+   The data you would like to send to your model. You may feed an ndarray or Tensor directly but it must be within an array.
+</ParamField>
+
+<ResponseExample>
+
+```json Response
+[<DATA>]
+```
+</ResponseExample>
+
+#### Response Parameters
+<ResponseField name="" type="array" required>
+  The output of your model
+</ResponseField>
+
 You can test out your model endpoint quickly with our utility function supplied
 in Cerebrium, `model_api_request`.
 
@@ -107,52 +138,6 @@ The function takes in the following parameters:
   feed an `ndarray` or `Tensor` directly into this function.
 - **api_key**: This is the Cerebrium API key used to authenticate your request.
 
-Below is a standing API call for you to test your model in production. In this
-case, if your data is a `ndarray` or `Tensor` you **must** convert it into a
-`list`.
-
-```sql My File Name
-<RequestExample>
-
-```bash Request
-  curl --request POST \
-    --url https://dog-api.kinduff.com/api/facts
-```
-
-</RequestExample>
-
-```bash
-import requests
-import json
-
-url = YOUR_ENDPOINT
-
-payload = data.tolist()
-headers = {
-  'Authorization': 'YOUR_CEREBRIUM_API_KEY',
-}
-
-response = requests.request("POST", url, headers=headers, data=[json.dumps(payload)])
-
-print(response.text)
-```
-
-Both these methods will return a JSON response with the following structure:
-
-```bash
-{
-  "status_code"
-  "data": {
-    {
-      "run_state"
-      "resource_type"
-      "compute_time_ms"
-      "result"
-    }
-  }
-}
-```
-
 <Note>
   Your result format will change for the `_classifier` model types. Both
   `sklearn_classifier` and `xgb_classifier` will return a `result` object
@@ -166,24 +151,3 @@ Both these methods will return a JSON response with the following structure:
 
 If you want to see concrete examples of various model deployments head on over
 to the [Examples](/Cerebrium/examples) page.
-
-## Deploying model ensembles
-
-With Cerebrium you are also able to deploy a sequence of models simply by
-specifying a list of tuples of model types and model files. Currently this
-functionality is supported across all model types, with the caveat that we
-assume the models are evaluated in the order they are supplied. For example, if
-you have a PyTorch model that takes in a 2D image and outputs a 1D vector, and
-you have a XGB model that takes in a 1D vector and outputs a single class
-prediction, you can deploy them as a sequence of models by supplying the
-following to the `deploy` function:
-
-```bash
-model_flow = [(model_type.TORCH, 'torch.pt'), (model_type.XGBOOST_CLASSIFIER, 'xgb.json')]
-endpoint = deploy(model_flow, 'my-flow', "<API_KEY>")
-```
-
-We are currently working on a more robust way to specify the input and output
-shapes of your models or supply ways to specify pre-processing functions,
-so that you can deploy more complex flows. If you have any suggestions or
-feedback, please reach out to us.
