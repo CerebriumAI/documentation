@@ -1,0 +1,53 @@
+---
+title: "Stable Diffusion"
+description: "Stable Diffusion is a image generation model that can receive either text or image input and output network-generated images"
+---
+
+In order to deploy the model you can use the identifier below:
+
+- Stable Diffusion v2: `stable-diffusion-2`
+
+Once you've deployed a Stable Diffusion model, you can supply the enpoint with string with what image you would like to generate. Here's an example of how to call the deployed endpoint:
+
+#### Request Parameters
+
+<RequestExample>
+```bash Request
+  curl --location --request POST 'https://inference.cerebrium.ai/runs/<YOUR_ENDPOINT>' \
+      --header 'Authorization: <API_KEY>' \
+      --header 'Content-Type: application/json' \
+      --data-raw '{
+        "prompt": "a photo of an astronaut riding a horse on mars.",
+        "webhook_endpoint": "https://your_url.com"
+        }'
+```
+</RequestExample>
+
+<ParamField header="Authorization" type="string" required>
+  This is the Cerebrium API key used to authenticate your request. You can get it from your Cerebrium dashboard.
+</ParamField>
+<ParamField body="prompt" type="string" required>
+   The prompt you would like Stable Diffusion to generate.
+</ParamField>
+<ParamField body="webhook_endpoint" type="string" optional>
+   The url endpoint you would like us to send the image results to once it has finished generating
+</ParamField>
+
+<ResponseExample>
+
+```json Response
+{
+    "message": "Successfully generated image",
+    "images": <BASE_64_STRING>
+}
+```
+</ResponseExample>
+
+#### Response Parameters
+
+<ResponseField name="message" type="string" required>
+  Whether of not the response was successful
+</ResponseField>
+<ResponseField name="images" type="string" required>
+  A base64 encoded string of the image that you can convert into an image
+</ResponseField>
