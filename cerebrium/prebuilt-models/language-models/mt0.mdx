@@ -1,0 +1,46 @@
+---
+title: "MT0"
+description: "MT0 is a model capable of following human instructions in dozens of languages"
+api: "https://api.cerebrium.ai"
+---
+
+It is pretrained on a crosslingual task mixture (xP3) and the resulting model is capable of crosslingual generalization to unseen tasks & languages.You can read more [here](https://huggingface.co/bigscience/mt0-xl). We currently have the following MT0 models available below however if you would like any others contact support and we can quickly add it for you. In order to deploy it you can use the identifier below:
+
+- mt0-xl: `mt0-xl`
+
+Once you've deployed a MT0 model, you can supply the enpoint with a prompt.  Here's an example of how to call the deployed endpoint:
+
+#### Request Parameters
+
+<RequestExample>
+```bash Request
+  curl --location --request POST 'https://inference.cerebrium.ai/runs/<YOUR_ENDPOINT>' \
+      --header 'Authorization: <API_KEY>' \
+      --header 'Content-Type: application/json' \
+      --data-raw '{
+        "prompt": "Translate from french to English: Je t'aime."
+    }'
+```
+</RequestExample>
+
+<ParamField header="Authorization" type="string" required>
+  This is the Cerebrium API key used to authenticate your request. You can get it from your Cerebrium dashboard.
+</ParamField>
+<ParamField body="prompt" type="string" required>
+   The prompt you would like mt0 to process.
+</ParamField>
+
+<ResponseExample>
+
+```json Response
+{
+    "result": "I love you"
+}
+```
+</ResponseExample>
+
+#### Response Parameters
+
+<ResponseField name="result" type="string" required>
+  The result generated from mt0
+</ResponseField>
