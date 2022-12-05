@@ -3,17 +3,17 @@ title: "MT0"
 description: "MT0 is a model capable of following human instructions in dozens of languages"
 ---
 
-It is pretrained on a crosslingual task mixture (xP3) and the resulting model is capable of crosslingual generalization to unseen tasks & languages.You can read more [here](https://huggingface.co/bigscience/mt0-xl). We currently have the following MT0 models available below however if you would like any others contact support and we can quickly add it for you. In order to deploy it you can use the identifier below:
+It is pretrained on a cross-lingual task mixture (xP3) and the resulting model is capable of cross-lingual generalization to unseen tasks & languages.You can read more [here](https://huggingface.co/bigscience/mt0-xl). We currently have the following MT0 models available below however if you would like any others contact support, and we can quickly add it for you. In order to deploy it you can use the identifier below:
 
 - mt0-xl: `mt0-xl`
 
-Once you've deployed a MT0 model, you can supply the enpoint with a prompt.  Here's an example of how to call the deployed endpoint:
+Once you've deployed a MT0 model, you can supply the endpoint with a prompt.  Here's an example of how to call the deployed endpoint:
 
 #### Request Parameters
 
 <RequestExample>
 ```bash Request
-  curl --location --request POST 'https://inference.cerebrium.ai/runs/<YOUR_ENDPOINT>' \
+  curl --location --request POST 'https://inference.cerebrium.ai/run/<YOUR_ENDPOINT>' \
       --header 'Authorization: <API_KEY>' \
       --header 'Content-Type: application/json' \
       --data-raw '{

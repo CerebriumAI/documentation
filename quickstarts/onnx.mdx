@@ -175,7 +175,7 @@ torch.onnx.export(
 )
 ```
 
-In the last line of code, you will see we exported the Pytorch model to a Onnx
+In the last line of code, you will see we exported the Pytorch model to an Onnx
 format. This is all you need to deploy your model to Cerebrium! You can then import the `deploy()` function from the Cerebrium framework. I used the CloudPickle function to save my model below.
 
 ```bash
@@ -198,7 +198,7 @@ curl --location --request POST '<ENDPOINT>' \
 ```
 
 You will see we have to specify our data as a **Dict**. Our Dict has the name
-"input". This is what we specified when we exported our Onnx model so you have
+"input". This is what we specified when we exported our Onnx model, so you have
 to make sure our input objects correspond. The response will be:
 
 ![Onnx Postman Response](/images/quickstarts/onnx-3.png)

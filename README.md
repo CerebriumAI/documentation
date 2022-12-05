@@ -2,7 +2,7 @@
 
 Welcome to Cerebrium's documentation hub currently available at [docs.cerebrium.ai](https://docs.cerebrium.ai)
 
-Cerebrium is an AWS Sagemaker alternative providing all the features you need to quickly build a ML product.
+Cerebrium is an AWS Sagemaker alternative providing all the features you need to quickly build an ML product.
 
 ### 🚀 Setup
 
