@@ -1,23 +1,29 @@
 ---
 title: "Stable Diffusion"
-description: "Stable Diffusion is a image generation model that can receive either text or image input and output network-generated images"
+description: "Stable Diffusion is an image generation model that can receive either text or image input and output network-generated images"
 ---
 
 In order to deploy the model you can use the identifier below:
 
 - Stable Diffusion v2: `stable-diffusion-2`
 
-Once you've deployed a Stable Diffusion model, you can supply the enpoint with string with what image you would like to generate. Here's an example of how to call the deployed endpoint:
+Once you've deployed a Stable Diffusion model, you can supply the endpoint with string with what image you would like to generate. Here's an example of how to call the deployed endpoint:
 
 #### Request Parameters
 
 <RequestExample>
 ```bash Request
-  curl --location --request POST 'https://inference.cerebrium.ai/runs/<YOUR_ENDPOINT>' \
+  curl --location --request POST 'https://inference.cerebrium.ai/run/<YOUR_ENDPOINT>' \
       --header 'Authorization: <API_KEY>' \
       --header 'Content-Type: application/json' \
       --data-raw '{
         "prompt": "a photo of an astronaut riding a horse on mars.",
+        "height": 768,
+        "width": 512,
+        "num_inference_steps": 60,
+        "guidance_scale": 8,
+        "num_images_per_prompt": 2,
+        "negative_prompt": "no sky",
         "webhook_endpoint": "https://your_url.com"
         }'
 ```
@@ -37,7 +43,8 @@ Once you've deployed a Stable Diffusion model, you can supply the enpoint with s
 
 ```json Response
 {
-    "message": "Successfully generated image",
+    "run_id": "<UUID_STRING>",
+    "message": "Successfully generated images",
     "images": <BASE_64_STRING>
 }
 ```

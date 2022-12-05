@@ -4,17 +4,17 @@ description: "Whisper is a language generation model that receives audio data an
 ---
 
 It can process audio of any length and takes about 1 minute to process an hour of audio. We also return the timestamps of the transcription if you would like to create subtitles for the audio etc.
-We currently have the following whisper models available below however if you would like any others contact support and we can quickly add it for you. In order to deploy it you can use the identifier below:
+We currently have the following whisper models available below however if you would like any others contact support, and we can quickly add it for you. In order to deploy it you can use the identifier below:
 
 - Whisper Medium: `whisper-medium`
 
-Once you've deployed a Whisper model, you can supply the enpoint with a base-64 encoded audio file.  Here's an example of how to call the deployed endpoint:
+Once you've deployed a Whisper model, you can supply the endpoint with a base-64 encoded audio file.  Here's an example of how to call the deployed endpoint:
 
 #### Request Parameters
 
 <RequestExample>
 ```bash Request
-  curl --location --request POST 'https://inference.cerebrium.ai/runs/<YOUR_ENDPOINT>' \
+  curl --location --request POST 'https://inference.cerebrium.ai/run/<YOUR_ENDPOINT>' \
       --header 'Authorization: <API_KEY>' \
       --header 'Content-Type: application/json' \
       --data-raw '{
