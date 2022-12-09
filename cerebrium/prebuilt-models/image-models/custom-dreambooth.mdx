@@ -1,13 +1,14 @@
 ---
-title: "Stable Diffusion"
-description: "Stable Diffusion is an image generation model that can receive either text or image input and output network-generated images"
+title: "Custom Dreambooth"
+description: "Stable Diffusion is a fine-tuned text-to-image diffusion model for subject driven generation"
 ---
 
 In order to deploy the model you can use the identifier below:
 
-- Stable Diffusion v2: `stable-diffusion-2`
+- Custom Dreambooth: `dreambooth-custom`
 
-Once you've deployed a Stable Diffusion model, you can supply the endpoint with string with what image you would like to generate. Here's an example of how to call the deployed endpoint:
+At the moment, we only support custom Dreambooth models that are hosted on Hugging Face. If you would like help on how to train and deploy your model you can read our blog post [here](https://blog.cerebrium.ai/creating-avatarai-me-using-supabase-and-cerebrium-1bf69440c4a7).
+Once you've deployed a custom Dreambooth model, you can follow this example of how to call the deployed endpoint:
 
 #### Request Parameters
 
@@ -18,14 +19,17 @@ Once you've deployed a Stable Diffusion model, you can supply the endpoint with 
       --header 'Content-Type: application/json' \
       --data-raw '{
         "prompt": "a photo of an astronaut riding a horse on mars.",
-        "height": 768,
+        "hf_token": "<your_token>",
+        "model_id": "<your_id>",
+        "height": 512,
         "width": 512,
-        "num_inference_steps": 60,
-        "guidance_scale": 8,
-        "num_images_per_prompt": 2,
-        "negative_prompt": "no sky",
-        "webhook_endpoint": "https://your_url.com"
-        }'
+        "num_inference_steps": 50,
+        "guidance_scale": 7.5,
+        "num_images_per_prompt": 1,
+        "negative_prompt": "",
+        "seed": 120,
+        "webhook_endpoint": "https://your-url.com"
+      }'
 ```
 </RequestExample>
 
@@ -33,7 +37,13 @@ Once you've deployed a Stable Diffusion model, you can supply the endpoint with 
   This is the Cerebrium API key used to authenticate your request. You can get it from your Cerebrium dashboard.
 </ParamField>
 <ParamField body="prompt" type="string" required>
-   The prompt you would like Stable Diffusion to generate.
+   The prompt you would like your Dreambooth model to generate.
+</ParamField>
+<ParamField body="hf_token" type="string" required>
+   This is the token from your HuggingFace profile in order to access your model repo. This is a required parameter.
+</ParamField>
+<ParamField body="model_id" type="string" required>
+   This is the Hugging Face id of your model repo. This is a required parameter
 </ParamField>
 <ParamField body="height" type="integer" optional>
    The height of the generated image which defaults to 512px. This is an optional parameter
@@ -53,19 +63,18 @@ Once you've deployed a Stable Diffusion model, you can supply the endpoint with 
 <ParamField body="negative_prompt" type="string" optional>
   The negative prompt is a parameter that tells Stable Diffusion what you don’t want to see in the generated images. This is an optional parameter that has an empty default value.
 </ParamField>
-<ParamField body="webhook_endpoint" type="string" optional>
-   The url endpoint you would like us to send the image results to once it has finished generating
+<ParamField body="seed" type="integer" optional>
+  Make sure that generations are the exact same for the same prompts
 </ParamField>
 <ParamField body="webhook_endpoint" type="string" optional>
    The url endpoint you would like us to send the image results to once it has finished generating
 </ParamField>
-
 <ResponseExample>
 
 ```json Response
 {
     "run_id": "<UUID_STRING>",
-    "message": "Successfully generated images",
+    "message": "Successfully generated image",
     "images": [<BASE_64_STRING>]
 }
 ```
