@@ -1,14 +1,14 @@
 ---
-title: "Custom Dream booth"
+title: "Custom Dreambooth"
 description: "Stable Diffusion is a fine-tuned text-to-image diffusion model for subject driven generation"
 ---
 
 In order to deploy the model you can use the identifier below:
 
-- Custom Dream Booth: `dreambooth-custom`
+- Custom Dreambooth: `dreambooth-custom`
 
-At the moment, we only support custom Dream booth models that are hosted on Hugging Face. If you would like help on how to train and deploy your model you can read our blog post [here](https://blog.cerebrium.ai/creating-avatarai-me-using-supabase-and-cerebrium-1bf69440c4a7).
-Once you've deployed a custom Dream booth model, you can follow this example of how to call the deployed endpoint:
+At the moment, we only support custom Dreambooth models that are hosted on Hugging Face. If you would like help on how to train and deploy your model you can read our blog post [here](https://blog.cerebrium.ai/creating-avatarai-me-using-supabase-and-cerebrium-1bf69440c4a7).
+Once you've deployed a custom Dreambooth model, you can follow this example of how to call the deployed endpoint:
 
 #### Request Parameters
 
@@ -37,7 +37,7 @@ Once you've deployed a custom Dream booth model, you can follow this example of 
   This is the Cerebrium API key used to authenticate your request. You can get it from your Cerebrium dashboard.
 </ParamField>
 <ParamField body="prompt" type="string" required>
-   The prompt you would like your Dream booth model to generate.
+   The prompt you would like your Dreambooth model to generate.
 </ParamField>
 <ParamField body="hf_token" type="string" required>
    This is the token from your HuggingFace profile in order to access your model repo. This is a required parameter.
