@@ -127,7 +127,7 @@ You can see an example of the request and response objects for calls made to you
    The content type of your request. Must be application/json.
 </ParamField>
 <ParamField body="data" type="array" required>
-   The data you would like to send to your model. You may feed an ndarray or Tensor directly but it must be within an array.
+   A list of data points you would like to send to your model. e.g. for 1 data point of 3 features: [[1,2,3]].
 </ParamField>
 
 <ResponseExample>
