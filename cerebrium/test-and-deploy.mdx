@@ -123,6 +123,9 @@ You can see an example of the request and response objects for calls made to you
 <ParamField header="Authorization" type="string" required>
   This is the Cerebrium API key used to authenticate your request. You can get it from your Cerebrium dashboard.
 </ParamField>
+<ParamField body="Content-Type" type="string" required>
+   The content type of your request. Must be application/json.
+</ParamField>
 <ParamField body="data" type="array" required>
    The data you would like to send to your model. You may feed an ndarray or Tensor directly but it must be within an array.
 </ParamField>
