@@ -88,7 +88,7 @@ Where `data` is the data you would send to your model. This would usually be
 some 2D/3D array for vision models or single lists for XGBoost models. You may
 feed an `ndarray` or `Tensor` directly into this function.
 
-You can also define a Conduit object directly by using the `Conduit` class. Then call the `run` method on the Conduit object to test the model locally, or the `deploy` method to deploy the model to Cerebrium.
+You can also define a Conduit object directly by using the `Conduit` class. Then call the `run` method on the Conduit object to test the model locally, or the `deploy` method to deploy the Conduit's model flow to Cerebrium.
 ```python
 from cerebrium import Conduit, model_type
 conduit = Conduit('<MODEL_NAME>', '<API_KEY>', [('<MODEL_TYPE>', '<MODEL_FILE>')])
