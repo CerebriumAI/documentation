@@ -1,0 +1,74 @@
+---
+title: "Censius"
+description: "Censius is a monitoring tool that allows you to track your model performance in production environments."
+---
+
+# Setup
+Sign up for a free account [here](https://console.censius.ai/signup). 
+Once you have signed up for Censius, you will need to create a new project. 
+You can do this by clicking on the <b>New Project</b> button on the top right corner of the screen.
+You should note the <b>Project ID</b> as you will need it later.
+
+You will need to register a dataset with Censius which is associated with your model.
+Instantiate a Censius Client and register a dataset in the project you previously created:
+
+```python
+from censius import CensiusClient, DatasetType
+
+api_key = "<YOUR_API_KEY>"
+tenant_id = "<YOUR_TENANT_ID>"
+client = CensiusClient(api_key=api_key, tenant_id=tenant_id)
+
+df = pd.read_csv("SOME_CSV_FILE.csv")
+client.register_dataset(
+    name="<DATASET_NAME>",
+    file=df,
+    project_id=<PROJECT_ID>,
+    features= [
+        {"name": "feature_1", "type": DatasetType.DECIMAL},
+        {"name": "feature_2", "type": DatasetType.DECIMAL},
+        {"name": "target", "type": DatasetType.INT}
+    ],
+    timestamp={"name": "Timestamp", "type": DatasetType.UNIX_S}
+)
+```
+
+This should return a dataset ID which you use to add a Censius logger to your Conduit object.
+
+# Adding a Censius Logger
+Once you have instantiated your conduit object in code, you can add a Censius logger to it by calling the `add_logger` method.
+The <b>Censius</b> logger requires the following platform specific arguments:
+- `project_id`: The ID of the project you created in Censius.
+- `model_type`: The type of <i>Censius</i> model you are using. This can be either `censius.ModelType.BINARY_CLASSIFICATION` or `censius.ModelType.REGRESSION`.
+- `training_info`: A dictionary containing the Censius Dataset information. This should contain the following keys:
+    - `id`: The ID of the dataset you registered with Censius.
+    - `method`: Always `censius.Dataset.ID`
+
+```python
+from cerebrium import Conduit, model_type, logging_platform
+from censius import Dataset, ModelType
+conduit = Conduit(...)
+
+platform_args = {
+    "project_id": <PROJECT_ID>,
+    "model_type": ModelType.BINARY_CLASSIFICATION,
+    "training_info": {
+        "id": <DATASET_ID>,
+        "method": Dataset.ID
+    }
+}
+
+conduit.add_logger(
+    lplatform=logging_platform.CENSIUS, 
+    platform_authentication={"api_key": "<CENSIUS_API_KEY>", "tenant_id": "<CENSIUS_TENANT_ID>"},
+    features=["feature_1", "feature_2", "feature_3"],
+    targets=["target"],
+    platform_args=platform_args,
+    log_ms=True
+)
+```
+
+You can now deploy your Conduit as normal! Your model will log predictions to Censius every time you call the endpoint.
+```
+conduit.deploy()
+``
