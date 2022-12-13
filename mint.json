@@ -59,7 +59,8 @@
             {
               "group": "Image Models",
               "pages": [
-                "cerebrium/prebuilt-models/image-models/stable-diffusion-2"
+                "cerebrium/prebuilt-models/image-models/stable-diffusion-2",
+                "cerebrium/prebuilt-models/image-models/custom-dreambooth"
               ]
             },
             {
