@@ -5,11 +5,18 @@ description: "Logging your predictions to external monitoring tools."
 
 # External Monitoring Tools
 Cerebrium allows you to log your custom model predictions to external ML monitoring tools. Currently, we support [Censius](https://censius.ai/),
-with are planning to add support for [Arize](https://arize.com/) in Q1 2023. If there is a tool you would like to see be integrated into the platform, please contact us!
+but we are planning to add support for [Arize](https://arize.com/) in Q1 2023. If there is a tool you would like integrated into the platform, please contact us!
 
 
-Adding a monitoring logger to a Conduit object is as simple as calling the `add_logger` method on the object:
+Adding a monitoring logger to a Conduit object is as simple as calling the `add_logger` method on the object. The method has the fllowing parameters:
+- `platform`: The platform you would like to log to, specified using `cerebrium.logging_platform`.
+- `platform_authentication`: A dictionary of authentication parameters for the platform.
+- `features`: A list of strings corresponding to the names of each feature.
+- `targets`: A list of targets corresponding to the names of each target.
+- `platform_args`: A dictionary of parameters that the specific platform requires. You can find these in the documentation for each specific platform.
+- `log_ms`: A boolean indicating whether to log the timestamp in seconds or milliseconds. If `True`, the timestamp will be logged in milliseconds.
 
+Below is an example of how to add a Censius logger to a Conduit object.
 ```python Deploy a prebuilt Whisper Model
 from cerebrium import Conduit, model_type, logging_platform
 conduit = Conduit('my-flow', "<API_KEY>", [(model_type.SKLEARN, "my-rf")])
@@ -22,7 +29,6 @@ conduit.add_logger(
     log_ms=True
 )
 ```
-`platform_args` will be a dictionary of parameters that the specific platform requires.
 
 You can link back to individual predictions made by your deployed conduit using the 
 `prediction_ids` field returned by your deployed endpoint after a request. 
