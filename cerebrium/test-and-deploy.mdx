@@ -88,6 +88,21 @@ Where `data` is the data you would send to your model. This would usually be
 some 2D/3D array for vision models or single lists for XGBoost models. You may
 feed an `ndarray` or `Tensor` directly into this function.
 
+You can also define a Conduit object directly by using the `Conduit` class. Then call the `run` method on the Conduit object to test the model locally, or the `deploy` method to deploy the Conduit's model flow to Cerebrium.
+```python
+from cerebrium import Conduit, model_type
+conduit = Conduit('<MODEL_NAME>', '<API_KEY>', [('<MODEL_TYPE>', '<MODEL_FILE>')])
+conduit.run(data)
+conduit.deploy()
+```
+
+Defining a conduit object directly allows you to be add more models to your flow dynamically using `add_model` method, as well as
+additionally functionality such as adding an external monitoring logger using `add_logger`.
+
+```python
+conduit.add_model('<MODEL_TYPE>', '<MODEL_FILE>', '<POSTPROCESSING_FUNCTION>')
+```
+
 ## API Specification and Helper methods
 
 You can see an example of the request and response objects for calls made to your models. It should resemble what it is like calling your model locally in your own python environment
@@ -106,20 +121,33 @@ You can see an example of the request and response objects for calls made to you
 <ParamField header="Authorization" type="string" required>
   This is the Cerebrium API key used to authenticate your request. You can get it from your Cerebrium dashboard.
 </ParamField>
+<ParamField body="Content-Type" type="string" required>
+   The content type of your request. Must be application/json.
+</ParamField>
 <ParamField body="data" type="array" required>
-   The data you would like to send to your model. You may feed an ndarray or Tensor directly but it must be within an array.
+   A list of data points you would like to send to your model. e.g. for 1 data point of 3 features: [[1,2,3]].
 </ParamField>
 
 <ResponseExample>
 
 ```json Response
-[<DATA>]
+{
+  "result": [<MODEL_PREDICTION>],
+  "run_id": "<RUN_ID>",
+  "prediction_ids": ["<PREDICTION_ID>"]
+}
 ```
 </ResponseExample>
 
 #### Response Parameters
-<ResponseField name="" type="array" required>
-  The output of your model
+<ResponseField name="result" type="array" required>
+  The result of your model prediction.
+</ResponseField>
+<ResponseField name="run_id" type="string" required>
+  The run ID associated with your model predictions.
+</ResponseField>
+<ResponseField name="prediction_ids" type="array" required>
+  The prediction IDs associated with each of your model predictions. Used to track your model predictions with monitoring tools.
 </ResponseField>
 
 You can test out your model endpoint quickly with our utility function supplied
@@ -134,7 +162,7 @@ The function takes in the following parameters:
 
 - **endpoint**: The endpoint of your model that was returned by the `deploy`
   function.
-- **data**: The data you would like to send to your model. As before, you may
+- **data**: The data you would like to send to your model. You may
   feed an `ndarray` or `Tensor` directly into this function.
 - **api_key**: This is the Cerebrium API key used to authenticate your request.
 

@@ -4,6 +4,25 @@ description:
   "We release features and fixes weekly! See some of the changes we have made."
 ---
 
+## 0.4.1
+#### Date: 13 December 2022
+- New updates to the client post 0.4.1 are now backwards compatible and now will not potentially break existing deployments. We will now support every version from 0.4.1 going forward for the foreseeable future and will not be supporting older versions of the client.
+Please upgrade to the latest version of the client to ensure you are using the latest features and fixes. If you want to use a new version of the client in your deployment, simply upgrade and redeploy!
+- Added the ability to define a Conduit object directly.
+- We have added external monitoring tool support! You can now monitor your deployments with Censius by adding a logger to the Conduit object.
+While it is available to use for all users, this functionality is currently in active development and may change in the coming weeks based
+on feedback. We are also working on adding support for other monitoring tools, with Arize being on track to be released in Q1 2023.
+- Fixed a bug where the client was unable to deploy SKLearn models, XGB Regressor models and ONNX models.
+- Reworked the response signature for a model. Now returns a JSON object with 3 fields:
+  - `result`: The data returned by the deployed Conduit.
+  - `run_id`: The ID of the run.
+  - `prediction_ids`: The prediction IDs of each of the predictions made. Used to track/update the predictions logged to monitoring tools.
+- Added pre-built deployment for the following LLMs:
+  - whisper-medium
+  - dreambooth
+- Added webhook support for the following LLMs:
+  - dreambooth
+
 ## 0.3.1
 
 #### Date: 25 November 2022

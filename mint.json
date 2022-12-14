@@ -74,6 +74,7 @@
           ]
         },
         "cerebrium/advanced-functionality",
+        "cerebrium/logging",
         "cerebrium/examples"
       ]
     },
