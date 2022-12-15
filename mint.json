@@ -75,7 +75,7 @@
         },
         "cerebrium/advanced-functionality",
         {
-          "group": "Logging with External Monitoring Tools",
+          "group": "Model Monitoring",
           "pages": [
             "cerebrium/logging/logging_intro",
             "cerebrium/logging/censius"
