@@ -74,7 +74,13 @@
           ]
         },
         "cerebrium/advanced-functionality",
-        "cerebrium/logging",
+        {
+          "group": "Model Monitoring",
+          "pages": [
+            "cerebrium/logging/logging_intro",
+            "cerebrium/logging/censius"
+          ]
+        },
         "cerebrium/examples"
       ]
     },
