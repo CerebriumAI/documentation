@@ -22,7 +22,7 @@
   "topbarLinks": [
     {
       "name": "Contact Us",
-      "url": "support@cerebrium.ai"
+      "url": "mailto:support@cerebrium.ai"
     }
   ],
   "anchors": [
