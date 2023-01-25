@@ -101,6 +101,9 @@
   "analytics": {
     "ga4": {
       "measurementId": "G-7SBXER6DHL"
+    },
+    "gtm": {
+      "tagId": "GTM-M3Z656N"
     }
   },
   "footerSocials": {
