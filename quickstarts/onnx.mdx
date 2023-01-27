@@ -194,12 +194,10 @@ You can run inference using `curl`
 curl --location --request POST '<ENDPOINT>' \
 --header 'Authorization: <API_KEY>' \
 --header 'Content-Type: text/plain' \
---data-raw '{"input": [<DATA>]}'
+--data-raw '[<INPUT_DATA>]'
 ```
 
-You will see we have to specify our data as a **Dict**. Our Dict has the name
-"input". This is what we specified when we exported our Onnx model, so you have
-to make sure our input objects correspond. The response will be:
+Your input data should be a **Dict** of the input variables you defined when you exported the model to Onnx. So make sure your input objects correspond otherwise you will get an error. The response will be:
 
 ![Onnx Postman Response](/images/quickstarts/onnx-3.png)
 
