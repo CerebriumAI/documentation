@@ -1,0 +1,67 @@
+---
+title: "Arize"
+description: "Arize is a monitoring tool that allows you to track your model performance in production environments."
+---
+
+# Setup
+Sign up for a free account [here](https://app.arize.com/auth/join). 
+If you wish, consult the [Arize documentation](https://arize.com/docs/) for more information on how to setup Arize to your liking.
+Once you have signed up for Arize, you will need to create a 'space' - you can think of this a a way to organise various models but usually one space per company/client is sufficient. 
+
+Arize handles the following type of models for you to do logging. You can read more about the functionality they provide for each to get a sense of their features and functionality:
+- [Binary Classification](https://docs.arize.com/arize/model-types/binary-classification)
+- [Multi-class Classification](https://docs.arize.com/arize/model-types/multiclass-classification)
+- [Regression](https://docs.arize.com/arize/model-types/regression)
+- [Timeseries Forecasting](https://docs.arize.com/arize/model-types/timeseries-forecasting)
+- [Ranking](https://docs.arize.com/arize/model-types/ranking)
+- [NLP](https://docs.arize.com/arize/model-types/natural-language-processing-nlp)
+- [CV](https://docs.arize.com/arize/model-types/computer-vision-cv)
+
+Logging with Arize is particulary easy with Cerebrium since you just have to define about 8 lines of code and it follows an almost identical pattern to if you are familiar on how to log with Arize.
+
+# Adding a Arize Logger
+Once you have instantiated your Conduit object in code (see [here](/cerebrium/test-and-deploy)), you can add a Censius logger to it by calling the `add_logger` method.
+The <b>Arize</b> logger requires the following platform specific arguments:
+- `api_key`: The unique key of our account which can be found in your Space Settings
+- `space_key`: The unique key related to the space you would like to deploy your model. This can be found in your Space Settings.
+- `model_type`: The type of <i>Arize</i> model you are using. You can find the different options [here](https://docs.arize.com/arize/model-types)
+- `features`: A list of the column names of your different features. Do not include outcome variable names - purely features.
+- `metrics_validation`: Optional. The validation metrics you would like to use to determine the performance of your model
+- `schema`: This is the schema that Arize requires in order to determine what your predictions, features and embeddings are.  
+
+```python
+from cerebrium import Conduit, model_type, logging_platform
+from arize.utils.types import ModelTypes, Environments, Schema, Metrics
+conduit = Conduit(...)
+
+features=["pregnancies", "glucose", "bloodPressure", "skinThickness","insulin", "bmi", "diabetesPedigree", "age"]
+schema = Schema(
+    prediction_id_column_name="prediction_id",
+    prediction_label_column_name="prediction",
+    feature_column_names=features,
+    tag_column_names=["pregnancies"]
+)
+
+platform_args = {
+    "model_type": ModelTypes.BINARY_CLASSIFICATION,
+    "schema": schema,
+    "space_key": "<YOUR_SPACE_KEY>",
+    "api_key": "<YOUR_API_KEY>",
+    "features": ["pregnancies", "glucose", "bloodPressure", "skinThickness","insulin", "bmi", "diabetesPedigree", "age"],
+    "metrics_validation": [Metrics.CLASSIFICATION]
+}
+
+conduit.add_logger(
+    platform=logging_platform.ARIZE, 
+    platform_authentication={"space_key": platform_args['space_key'], "api_key": platform_args['api_key']},
+    features=platform_args["features"],
+    targets=["outcome"],
+    platform_args=platform_args,
+    log_ms=True
+)
+```
+
+You can now deploy your Conduit as normal! Your model will log predictions to Arize every time you call the endpoint.
+```
+conduit.deploy()
+```
