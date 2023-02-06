@@ -1,0 +1,57 @@
+---
+title: "GPT-Neo"
+description: "GPT-Neo is a transformer model designed using EleutherAI's replication of the GPT-3 architecture"
+---
+
+GPT-Neo is a transformer model designed using EleutherAI's replication of the GPT-3 architecture. GPT-Neo refers to the class of models, while 1.3B, 2.7b etc represents the number of parameters of the particular pre-trained model.
+GPT-Neo learns an inner representation of the English language that can be used to extract features useful for downstream tasks- you can read more [here](https://www.eleuther.ai/research/projects/gpt-neo/). 
+We currently have the following GPT Neo models available below however if you would like any others contact support, and we can quickly add it for you. In order to deploy it you can use the identifier below:
+- GPT-Neo-1.3b: `gpt-neo-1.3b`
+- GPT-Neox-20b: `gpt-neox-20b`
+
+Once you've deployed a GPT model, you can supply the endpoint with a prompt and a few other parameters.  Here's an example of how to call the deployed endpoint:
+
+#### Request Parameters
+
+<RequestExample>
+```bash Request
+  curl --location --request POST 'https://inference.cerebrium.ai/run/<YOUR_ENDPOINT>' \
+      --header 'Authorization: <API_KEY>' \
+      --header 'Content-Type: application/json' \
+      --data-raw '{
+        "prompt": "My name is Lewis and I like to",
+        "max_length": 100,
+        "temperature": 0.9
+    }'
+```
+</RequestExample>
+
+<ParamField header="Authorization" type="string" required>
+  This is the Cerebrium API key used to authenticate your request. You can get it from your Cerebrium dashboard.
+</ParamField>
+<ParamField body="prompt" type="string" required>
+   The prompt you would like GPT to process.
+</ParamField>
+<ParamField body="max_length" type="string" required>
+   The max number of tokens you would like GPT Neo to generate
+</ParamField>
+<ParamField body="temperature" type="string" required>
+   Value between 0 and 1 which controls randomness. Lowering the number results in less random completions.
+</ParamField>
+
+<ResponseExample>
+
+```json Response
+{
+    "result": "My name is Lewis and I like to work in a nice calm environment. I recently moved into my own house but I have an office in the same building which is why I work at my desk rather than driving from place to place. I have always"
+}
+```
+</ResponseExample>
+
+#### Response Parameters
+
+<ResponseField name="result" type="string" required>
+  The result generated from GPT Neo
+</ResponseField>
+
+
