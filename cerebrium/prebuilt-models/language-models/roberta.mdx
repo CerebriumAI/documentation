@@ -1,0 +1,55 @@
+---
+title: "Roberta"
+description: "Raw model for masked language modeling, but it's mostly intended to be fine-tuned on a downstream task"
+---
+
+RoBERTa is a transformers model pretrained on a large corpus of English data in a self-supervised fashion. It was trained on English language using a masked language modeling (MLM) objective.
+It was introduced in this [paper](https://arxiv.org/abs/1907.11692) and first released in [this repository](https://github.com/pytorch/fairseq/tree/master/examples/roberta). This model is case-sensitive: it makes a difference between 'english' and 'English'.
+We currently have the following Roberta models available below however if you would like any others contact support, and we can quickly add it for you. In order to deploy it you can use the identifier below:
+- Roberta Large: `roberta-large`
+
+Once you've deployed a Roberta model, you can supply the endpoint with a prompt. Here's an example of how to call the deployed endpoint:
+
+#### Request Parameters
+
+<RequestExample>
+```bash Request
+  curl --location --request POST 'https://inference.cerebrium.ai/run/<YOUR_ENDPOINT>' \
+      --header 'Authorization: <API_KEY>' \
+      --header 'Content-Type: application/json' \
+      --data-raw '{
+        "prompt": "<mask> is the capital of France"
+    }'
+```
+</RequestExample>
+
+<ParamField header="Authorization" type="string" required>
+  This is the Cerebrium API key used to authenticate your request. You can get it from your Cerebrium dashboard.
+</ParamField>
+<ParamField body="prompt" type="string" required>
+   The prompt you would like Roberta to process.
+</ParamField>
+
+<ResponseExample>
+
+```json Response
+[{'sequence': "<s>Paris</s>",
+  'score': 0.3317350447177887,
+  'token': 2943,
+  'token_str': 'Paris'},
+ {'sequence': "<s>Nice</s>",
+  'score': 0.14171843230724335,
+  'token': 2734,
+  'token_str': 'Nice'},
+  ...
+]`    
+```
+</ResponseExample>
+
+#### Response Parameters
+
+<ResponseField name="result" type="string" required>
+  The result generated from Roberta
+</ResponseField>
+
+
