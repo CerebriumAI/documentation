@@ -14,7 +14,7 @@ Once you've deployed a Roberta model, you can supply the endpoint with a prompt.
 
 <RequestExample>
 ```bash Request
-  curl --location --request POST 'https://inference.cerebrium.ai/run/<YOUR_ENDPOINT>' \
+  curl --location --request POST 'https://run.cerebrium.ai/roberta-large-webhook/predict' \
       --header 'Authorization: <API_KEY>' \
       --header 'Content-Type: application/json' \
       --data-raw '{
@@ -27,7 +27,7 @@ Once you've deployed a Roberta model, you can supply the endpoint with a prompt.
   This is the Cerebrium API key used to authenticate your request. You can get it from your Cerebrium dashboard.
 </ParamField>
 <ParamField body="prompt" type="string" required>
-   The prompt you would like Roberta to process.
+   The prompt you would like Roberta to process. Please make sure that you include the <mask> keyword.
 </ParamField>
 
 <ResponseExample>
