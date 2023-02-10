@@ -78,7 +78,8 @@
           "group": "Model Monitoring",
           "pages": [
             "cerebrium/logging/logging_intro",
-            "cerebrium/logging/censius"
+            "cerebrium/logging/censius",
+            "cerebrium/logging/arize"
           ]
         },
         "cerebrium/examples"
