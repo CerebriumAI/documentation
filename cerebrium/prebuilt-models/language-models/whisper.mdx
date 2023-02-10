@@ -14,7 +14,7 @@ Once you've deployed a Whisper model, you can supply the endpoint with a base-64
 
 <RequestExample>
 ```bash Request
-  curl --location --request POST 'https://inference.cerebrium.ai/run/<YOUR_ENDPOINT>' \
+  curl --location --request POST 'https://run.cerebrium.ai/whisper-webhook/predict' \
       --header 'Authorization: <API_KEY>' \
       --header 'Content-Type: application/json' \
       --data-raw '{
