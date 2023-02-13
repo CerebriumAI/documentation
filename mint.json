@@ -69,7 +69,8 @@
                 "cerebrium/prebuilt-models/language-models/whisper",
                 "cerebrium/prebuilt-models/language-models/mt0",
                 "cerebrium/prebuilt-models/language-models/flanT5",
-                "cerebrium/prebuilt-models/language-models/GPT-Neo"
+                "cerebrium/prebuilt-models/language-models/GPT-Neo",
+                "cerebrium/prebuilt-models/language-models/roberta"
               ]
             }
           ]
