@@ -1,8 +1,25 @@
 ---
 title: "Changelog"
 description:
-  "We release features and fixes weekly! See some of the changes we have made."
+  "We release features and fixes regularly! See some of the changes we have made."
 ---
+## 0.4.5
+#### Date: 13 February 2023
+- Added Pre-Processing Functions! You can now specify a function to be run before the model is called.
+- Add support for the `pandas` library in processing functions (this is a beta feature for now, use with care!).
+
+## 0.4.4
+#### Date: 9 February 2023
+- Update from CUDA runtime from 11.3 to CUDA 11.6
+- Our minimum Python version is now 3.8. We now support Python 3.8, 3.9 and 3.10.
+- Myriad of dependency updates.
+- ONNX Models can now be used in multi-model flows (this is an experimental feature).
+- Bug fixes:
+  - PyTorch Models now detach data from the GPU correctly when running Conduits.
+  - Fixed ONNX models input data being malformed.
+  - Fix CUDA driver not being loaded correctly in the Conduit runtime.
+- LLM updates
+  - FLAN-T5 and Stable Diffusion no longer suffer from timeouts and severe cold starts.
 
 ## 0.4.1
 #### Date: 13 December 2022
