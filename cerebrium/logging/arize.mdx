@@ -1,0 +1,126 @@
+---
+title: "Arize"
+description: "Arize is a monitoring tool that allows you to track your model performance in production environments."
+---
+
+# Setup
+To get started, you need to create an [Arize](https://www.arize.com) account which you can do [here](https://app.arize.com/auth/join). 
+Once you have signed up for Arize, you will need to create a 'space' - you can think of this a a way to organise various models but usually one space per company/client is sufficient. 
+
+Arize handles the following type of models for you to do logging. You can read more about the functionality they provide for each to get a sense of their features and functionality:
+- [Binary Classification](https://docs.arize.com/arize/model-types/binary-classification)
+- [Multi-class Classification](https://docs.arize.com/arize/model-types/multiclass-classification)
+- [Regression](https://docs.arize.com/arize/model-types/regression)
+- [Timeseries Forecasting](https://docs.arize.com/arize/model-types/timeseries-forecasting) (Coming soon)
+- [Ranking](https://docs.arize.com/arize/model-types/ranking) (Coming Soon)
+- [NLP](https://docs.arize.com/arize/model-types/natural-language-processing-nlp)
+- [CV](https://docs.arize.com/arize/model-types/computer-vision-cv)
+
+Logging with Arize is particulary easy with Cerebrium since you just have to define about 8 lines of code and it follows an almost identical pattern to if you are familiar on how to log with Arize.
+If you would like to be be more familar with their platform you can take a look at the [Arize documentation](https://arize.com/docs/).
+
+# Adding a Arize Logger
+Once you have instantiated your Conduit object in code (see [here](/cerebrium/test-and-deploy)), you can add a Censius logger to it by calling the `add_logger` method.
+The <b>Arize</b> logger requires the following platform specific arguments:
+- `api_key`: The unique key of our account which can be found in your Space Settings
+- `space_key`: The unique key related to the space you would like to deploy your model. This can be found in your Space Settings.
+- `model_type`: The type of <i>Arize</i> model you are using. You can find the different options [here](https://docs.arize.com/arize/model-types)
+- `features`: A list of the column names of your different features. Do not include outcome variable names - purely features.
+- `metrics_validation`: Optional. The validation metrics you would like to use to determine the performance of your model
+- `class_labels`: Optional. A list of potential labels for multi-class classification. Please ensure it correlates to the order that the model would return
+- `embedding_features`: Optional. If you include embedding vestors as features for your model. You can read more [here](https://docs.arize.com/arize/embeddings/7.-troubleshoot-embedding-data)
+- `schema`: This is the schema that Arize requires in order to determine what your predictions, features and embeddings are.  
+
+```python
+from cerebrium import Conduit, model_type, logging_platform
+from arize.utils.types import ModelTypes, Environments, Schema, Metrics
+
+features=["pregnancies", "glucose", "bloodPressure", "skinThickness","insulin", "bmi", "diabetesPedigree", "age"]
+schema = Schema(
+    prediction_id_column_name="prediction_id", #Do not change this
+    prediction_label_column_name="prediction", #Do not change this
+    feature_column_names=features,
+    tag_column_names=["pregnancies"]
+)
+
+platform_args = {
+    "model_type": ModelTypes.BINARY_CLASSIFICATION,
+    "schema": schema,
+    "space_key": "<YOUR_SPACE_KEY>",
+    "api_key": "<YOUR_API_KEY>",
+    "features": features,
+    "metrics_validation": [Metrics.CLASSIFICATION]
+}
+
+conduit.add_logger(
+    platform=logging_platform.ARIZE, 
+    platform_authentication={"space_key": platform_args['space_key'], "api_key": platform_args['api_key']},
+    features=platform_args["features"],
+    targets=["outcome"],
+    platform_args=platform_args,
+    log_ms=True
+)
+```
+
+You can now deploy your Conduit as normal! Your model will log predictions to Arize every time you call the endpoint.
+```
+conduit.deploy()
+```
+
+<Note>
+Logs sent to Arize aren't available immediately as it takes Arize a few minutes to process them.
+</Note>
+
+# Important things to Note
+
+#### Logging Actual Values
+
+With every request made to your Cerebrium endpoint, a unique ```run_id``` is returned. We use this ```run_id``` to associate every log of the output of your model. You can use this ```run_id``` to log the actual values to Arize and compare model performance to that of your baseline model.
+
+#### Multi-class classification
+
+When doing multi-class classification, its important that you keep the same order in your class labels that the model will return. Below is an example with the Iris dataset
+
+```python
+platform_args = {
+    "model_type": ModelTypes.SCORE_CATEGORICAL,
+    "schema": schema,
+    "space_key": "sJlAcWf3",
+    "api_key": "IB31mRV6AMeiZkuV14zF",
+    "features": features,
+    "class_labels": ["Setosa", "Versicolour", "Virginica"]
+}
+```
+
+If we pass the following input, ```[5.8, 2.7, 5.1, 1.9]``` , to our XGBoost Classifier we get the following model output: ```[2]```. This would then correlate to the Virginica class label
+
+
+#### Embedding vectors
+
+If you are passing embedding features to your model you must make sure to not include it in the features array and define it seperately. 
+
+```python
+features = ['state', 'city', 'merchant_name', 'pos_approved', 'item_count', 'merchant_type', 'charge_amount': 20.11]
+embedding_features = {
+        "nlp_embedding": Embedding(
+            vector=pd.Series([4.0, 5.0, 6.0, 7.0]),
+            data="I really like the coffee",
+        ),
+}
+
+platform_args = {
+    "model_type": ModelTypes.SCORE_CATEGORICAL,
+    "schema": schema,
+    "space_key": "sJlAcWf3",
+    "api_key": "IB31mRV6AMeiZkuV14zF",
+    "features": features,
+    "embedding_features": embedding_features
+}
+
+```
+
+Subsequently, We assign values to your features in the order they were entered - so its important to make sure that the embedding values are the last in your model input. For example:
+
+**Input**: ```['ca', 'berkeley', 'Peets Coffee', True, 10, 'coffee shop' 20.11, [4.0, 5.0, 6.0, 7.0]]```
+
+In the above example, 'ca' is associated to state, 'berkeley' to city etc.
