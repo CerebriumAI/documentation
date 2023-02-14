@@ -93,7 +93,8 @@
         "quickstarts/onnx",
         "quickstarts/pytorch",
         "quickstarts/scikit",
-        "quickstarts/xgboost"
+        "quickstarts/xgboost",
+        "quickstarts/tensorflow"
       ]
     },
     {
