@@ -3,6 +3,12 @@ title: "Changelog"
 description:
   "We release features and fixes regularly! See some of the changes we have made."
 ---
+## 0.4.6
+#### Date: 16 February 2023
+- Fixed a critical bug causing ONNX models to not run on GPU.
+- `onnxruntime` is now an optional dependency. While you can still deploy ONNX models without the runtime, you will need to install the extra with `pip install cerebrium[onnxruntime]` to test you Conduit locally.
+- Added support for `onnxruntime-gpu` as an optional dependency. You can install the extra with `pip install cerebrium[onnxruntime-gpu]`.
+
 ## 0.4.5
 #### Date: 13 February 2023
 - Added Pre-Processing Functions! You can now specify a function to be run before the model is called.
