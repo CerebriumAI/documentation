@@ -1,12 +1,13 @@
 ---
 title: "HuggingFace Transformers"
-description: "This example provides the steps to deploy a simple Tensorflow model from scratch
+description: "This example provides the steps to deploy a HuggingFace Transformers model
 using Cerebrium."
 ---
 
 ## Intro
 
-Cerebrium supports [HuggingFace Transformers](https://huggingface.co/) through the use of `pipeline`. Currently, we support the following models:
+Cerebrium supports [HuggingFace Transformers](https://huggingface.co/) through the use of [`pipeline`](https://huggingface.co/docs/transformers/main_classes/pipelines).
+By using `pipeline` we are able to load both the tokenizer and model easily within the same object. Currently, we support the following models:
 - sentence-transformers/distilbert-multilingual-nli-stsb-quora-ranking
 - sentence-transformers/all-MiniLM-L6-v2
 - google/flan-t5-small
