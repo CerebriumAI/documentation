@@ -24,24 +24,32 @@ so that you can deploy more complex flows. If you have any suggestions or
 feedback, please reach out to us.
 
 
-## Post-Processing Functions
-In many cases, you may want to post-process the data in your single or multi-model flow before returning it to the next flow stage or to the user. To do this, you can supply a post-processing function to your flow. This function will be applied to the output of your model before it is returned to the next flow stage. The function must take in a single argument, which is the output of your model, and return a single value, which is the post-processed output of your model. 
+## Processing Functions
+In many cases, you may want to process the data in your single or multi-model flow before returning it to the next flow stage or to the user. To do this, you can supply a both a pre-processing and a post-processing function to your flow, `pre` and `post` respectively. 
+The pre-processing will be applied to the input of the model, while the post-processing function will be applied to the output of your model before it is returned to the next flow stage. 
+In particular:
+- The pre-processing function should take a single argument, which is the input to your model, and return a single value, which is the pre-processed input to your model. It is <b>crucial</b> that the output of your pre-processing function is the same shape and type as the input of the model in the flow stage.
+- The post-processing function should take a single argument, which is the output of your model, and return a single value, which is the post-processed output of your model. You should ensure the return shape and type is the same as the input shape and type of the next flow stage. If you are at the end of your flow, you should ensure the return type is one of [list, dict, numpy.array, torch.tensor].
 
 For example, if you have a model that outputs a 1D vector of probabilities, you may want to return the argmax. You can do this by supplying the following function to the `deploy` function with the last flow stage:
 
 ```python
+def pre_process(data):
+    import numpy as np
+    return np.at_least_3d(data)
 def post_process(result):
     import numpy as np
     return np.argmax(result, axis=1)
-model_flow = [(model_type.TORCH, 'torch.pt'), (model_type.XGBOOST_CLASSIFIER, 'xgb.json', post_process)]
+model_flow = [(model_type.TORCH, 'torch.pt'), (model_type.XGBOOST_CLASSIFIER, 'xgb.json', {"pre": pre_process, "post": post_process})]
 endpoint = deploy(model_flow, 'my-flow', "<API_KEY>")
 ```
-You may use functions inside your post-processor from the following libraries:
+You may use functions inside your processor from the following libraries:
 - `numpy`
 - `scikit-learn`
 - `torch`
+- `pandas` (beta)
 We are expanding this list of libraries, so if you have a specific library you would like to use, please let us know!
 
 <Note>
-  Note that any imports you need to do in your post-processing function must be done inside the function. This is because the function is serialized and sent to the Cerebrium servers, and the imports will not be available on the server.
+  Note that any imports you need to do in your processing functions must be done inside the function. This is because the function is serialized and sent to the Cerebrium servers, and the imports will not be available on the server.
 </Note>
