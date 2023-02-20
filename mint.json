@@ -95,6 +95,7 @@
         "quickstarts/scikit",
         "quickstarts/xgboost",
         "quickstarts/tensorflow",
+        "quickstarts/spacy",
         "quickstarts/transformers"
       ]
     },
