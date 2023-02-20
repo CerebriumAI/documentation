@@ -118,7 +118,9 @@ This post-processing function has to return a list or string in order to be acce
 and deploy our spaCy model.
 
 When you train a spaCy model, it will create a folder with a tokenizer, meta.json, config.cfg etc. You will need to specify the path of this folder when deploying your model.
-Please make sure the path ends in a **/**
+
+<Note>At the moment we only support Spacy Models that have been serialised on Python 3.10.</Note>
+
 
 ```bash
 from cerebrium import deploy, model_type
@@ -133,7 +135,7 @@ def postSpacy(doc):
 endpoint = deploy((model_type.SPACY, "path/to/trained/model/", {"post": postSpacy}), "spacy-model" , "<API_KEY>")
 ```
 
-![Deployed Model](/images/quickstarts/xgboost-1.png)
+![Deployed Model](/images/quickstarts/spacy-1.png)
 
 Your model is now deployed and ready for inference all in under **10 seconds**!
 Navigate to the dashboard and on the Models page you will see your model.
@@ -144,19 +146,17 @@ You can run inference using `curl`
 curl --location --request POST '<ENDPOINT>' \
 --header 'Authorization: <API_KEY>' \
 --header 'Content-Type: text/plain' \
---data-raw '[[5.1, 3.5, 1.4, 0.2]]'
+--data-raw '["This is us testing the Spacy model]'
 ```
 
 The response will be:
 
-![XGB Postman Response](/images/quickstarts/xgboost-2.png)
+![XGB Postman Response](/images/quickstarts/spacy-2.png)
 
 Navigate back to the dashboard and click on the name of the model you just
 deployed. You will see an API call was made and the inference time. From your
 dashboard you can monitor your model, roll back to previous versions and see
 traffic.
-
-![XGB Monitoring](/images/quickstarts/xgboost-3.png)
 
 With one line of code, your model was deployed in seconds with automatic
 versioning, monitoring and the ability to scale based on traffic spikes. Try
