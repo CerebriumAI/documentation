@@ -13,7 +13,7 @@ Once you've deployed a Stable Diffusion model, you can supply the endpoint with 
 
 <RequestExample>
 ```bash Request
-  curl --location --request POST 'https://inference.cerebrium.ai/run/<YOUR_ENDPOINT>' \
+  curl --location --request POST 'https://run.cerebrium.ai/dreambooth-webhook/predict' \
       --header 'Authorization: <API_KEY>' \
       --header 'Content-Type: application/json' \
       --data-raw '{
@@ -65,6 +65,7 @@ Once you've deployed a Stable Diffusion model, you can supply the endpoint with 
 ```json Response
 {
     "run_id": "<UUID_STRING>",
+    "run_time_ms": <NUMBER>,
     "message": "Successfully generated images",
     "images": [<BASE_64_STRING>]
 }

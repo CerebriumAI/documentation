@@ -1,0 +1,136 @@
+---
+title: "HuggingFace Transformers"
+description: "This example provides the steps to deploy a HuggingFace Transformers model
+using Cerebrium."
+---
+
+## Intro
+
+Cerebrium supports [HuggingFace Transformers](https://huggingface.co/) through the use of [`pipeline`](https://huggingface.co/docs/transformers/main_classes/pipelines).
+By using `pipeline` we are able to load both the tokenizer and model easily within the same object. Currently, we support the following models:
+- sentence-transformers/distilbert-multilingual-nli-stsb-quora-ranking
+- sentence-transformers/all-MiniLM-L6-v2
+- google/flan-t5-small
+- EleutherAI/gpt-neo-125M
+- prajjwal1/bert-tiny
+- albert-base-v2
+- google/electra-small-discriminator
+- sentence-transformers/multi-qa-mpnet-base-cos-v1
+- sentence-transformers/paraphrase-MiniLM-L3-v2
+- sentence-transformers/paraphrase-xlm-r-multilingual-v1
+- facebook/opt-350m
+- facebook/opt-125m
+- sentence-transformers/distilbert-base-nli-mean-tokens
+- microsoft/SportsBERT
+- bert-base-uncased
+- gpt2
+- microsoft/layoutlmv3-base
+- distilbert-base-uncased-finetuned-sst-2-english
+- cardiffnlp/twitter-roberta-base-sentiment
+- distilbert-base-cased-distilled-squad
+- microsoft/codebert-base
+- microsoft/layoutlm-base-uncased
+- Helsinki-NLP/opus-mt-en-es
+- allenai/scibert_scivocab_uncased
+- google/vit-base-patch16-224-in21k
+- sentence-transformers/all-mpnet-base-v2
+- google/vit-base-patch16-224
+- camembert-base
+- deepset/roberta-base-squad2
+- ProsusAI/finbert
+- sentence-transformers/all-MiniLM-L12-v2
+- textattack/roberta-base-CoLA
+- finiteautomata/bertweet-base-sentiment-analysis
+- distilroberta-base
+- google/electra-base-discriminator
+- klue/bert-base
+- microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext
+- prajjwal1/bert-mini
+- facebook/bart-base
+- facebook/galactica-125m
+- t5-small
+
+Using the Transformers library, you have instant access to pretrained models for NLP tasks. 
+We will open up support for more in the coming months!
+
+By the end of this guide you'll have an API endpoint that can handle any scale
+of traffic by running inference on serverless CPU's/GPU's.
+
+### Project set up
+
+Before building you need to set up a Cerebrium account. This is as simple as
+starting a new Project in Cerebrium and copying the API key. This will be used
+to authenticate all calls for this project.
+
+### Create a project
+
+1. Go to [dashboard.cerebrium.ai](https://dashboard.cerebrium.ai)
+2. Signup or Login
+3. Navigate to Settings page
+4. Navigate to the API Keys tab
+5. You should see an API key with the source "Cerebrium". Click the eye icon to
+   display it. It will be in the format: c_api_key-xxx
+
+![API Key](/images/quickstarts/onnx-1.png)
+
+### Develop model
+
+Now navigate to where your model code is stored. This could be in a notebook or
+in a plain `.py` file.
+
+To start you should install the Cerebrium framework running the following
+command in your notebook or terminal
+
+```bash
+pip install cerebrium
+```
+
+Using a HuggingFace model is as simple importing the `HUGGINGFACE_TRANSFORMER` model type and passing in the *task* and *model id*.
+In this case, we will use the `EleutherAI/gpt-neo-125M` model to generate text.
+
+```python
+from cerebrium import Conduit, model_type, hardware
+
+# Create a conduit
+c = Conduit(
+    'hf-gpt',
+    '<API_KEY>',
+    [
+        (model_type.HUGGINGFACE_TRANSFORMER, {"task": "text-generation", "hf_id": "EleutherAI/gpt-neo-125M"}),
+    ],
+)
+```
+
+Then, simply call the `deploy` method to deploy your model. HuggingFace models will typically take a few minutes to deploy.
+
+```python
+c.deploy()
+```
+
+![Deployed Model](/images/quickstarts/hf-2.png)
+
+Your model is now deployed and ready for inference!
+Navigate to the dashboard and on the Models page you will see your model.
+
+You can run inference using `curl`.
+
+```bash
+curl --location --request POST '<ENDPOINT>' \
+--header 'Authorization: <API_KEY>' \
+--header 'Content-Type: text/plain' \
+--data-raw '[<INPUT_DATA>]'
+```
+
+Your input data should be in the same shape and typing that the HF pipeline would accept for the particular model you have chosen.
+In this case, we should pass in a string. For input data of `["this is a test"]`, the response will be:
+
+![ThunderClient Response](/images/quickstarts/hf-3.png)
+
+Navigate back to the dashboard and click on the name of the model you just
+deployed. You will see an API call was made and the inference time. From your
+dashboard you can monitor your model, roll back to previous versions and see
+traffic.
+
+With one line of code, your model was deployed in seconds with automatic
+versioning, monitoring and the ability to scale based on traffic spikes. Try
+deploying your own model now or check out our other frameworks.
