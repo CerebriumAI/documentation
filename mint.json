@@ -94,7 +94,8 @@
         "quickstarts/pytorch",
         "quickstarts/scikit",
         "quickstarts/xgboost",
-        "quickstarts/tensorflow"
+        "quickstarts/tensorflow",
+        "quickstarts/transformers"
       ]
     },
     {
