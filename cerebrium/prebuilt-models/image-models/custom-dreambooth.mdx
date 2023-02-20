@@ -5,7 +5,7 @@ description: "Stable Diffusion is a fine-tuned text-to-image diffusion model for
 
 In order to deploy the model you can use the identifier below:
 
-- Custom Dreambooth: `dreambooth-custom`
+- Dreambooth: `dreambooth`
 
 At the moment, we only support custom Dreambooth models that are hosted on Hugging Face. If you would like help on how to train and deploy your model you can read our blog post [here](https://blog.cerebrium.ai/creating-avatarai-me-using-supabase-and-cerebrium-1bf69440c4a7).
 Once you've deployed a custom Dreambooth model, you can follow this example of how to call the deployed endpoint:
@@ -14,7 +14,7 @@ Once you've deployed a custom Dreambooth model, you can follow this example of h
 
 <RequestExample>
 ```bash Request
-  curl --location --request POST 'https://inference.cerebrium.ai/run/<YOUR_ENDPOINT>' \
+  curl --location --request POST 'https://run.cerebrium.ai/dreambooth-webhook/predict' \
       --header 'Authorization: <API_KEY>' \
       --header 'Content-Type: application/json' \
       --data-raw '{
