@@ -5,7 +5,8 @@ description: "A model used to answer questions or tasks across many languages"
 
 FLAN, which stands for Fine-tuned LAnguage Net (FLAN), is a technique for instruction tuning to learn how to solve natural language processing tasks in general.
 It can be used to answer questions or tasks across many languages - you can read more [here](https://ai.googleblog.com/2021/10/introducing-flan-more-generalizable.html). We currently have the following Flan-T5 models available below however if you would like any others contact support, and we can quickly add it for you. In order to deploy it you can use the identifier below:
-- Flan XL: `flan-t5-large`
+
+- Flan XL: `flan-t5-xl`
 
 Once you've deployed a FLAN model, you can supply the endpoint with a prompt.  Here's an example of how to call the deployed endpoint:
 
@@ -13,7 +14,7 @@ Once you've deployed a FLAN model, you can supply the endpoint with a prompt.  H
 
 <RequestExample>
 ```bash Request
-  curl --location --request POST 'https://run.cerebrium.ai/flan-t5-large-webhook/predict' \
+  curl --location --request POST 'https://run.cerebrium.ai/flan-t5-xl-webhook/predict' \
       --header 'Authorization: <API_KEY>' \
       --header 'Content-Type: application/json' \
       --data-raw '{
