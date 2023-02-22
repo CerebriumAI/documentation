@@ -1,0 +1,80 @@
+---
+title: "Img2Img"
+description: "Image-to-Image text-guided generation with Stable Diffusion"
+---
+
+In order to deploy the model you can use the identifier below:
+
+- Img2img: `img2img`
+
+Pass a text prompt and an initial image to condition the generation of new images. Once you've deployed a model, you can follow this example of how to call the deployed endpoint:
+
+#### Request Parameters
+
+<RequestExample>
+```bash Request
+  curl --location --request POST 'https://run.cerebrium.ai/dreambooth-webhook/predict' \
+      --header 'Authorization: <API_KEY>' \
+      --header 'Content-Type: application/json' \
+      --data-raw '{
+        "prompt": "a photo of an astronaut riding a horse on mars.",
+        "image": <BASE_64_STRING>
+        "num_inference_steps": 50,
+        "guidance_scale": 7.5,
+        "num_images_per_prompt": 1,
+        "negative_prompt": "",
+        "seed": 120,
+        "webhook_endpoint": "https://your-url.com"
+      }'
+```
+</RequestExample>
+
+<ParamField header="Authorization" type="string" required>
+  This is the Cerebrium API key used to authenticate your request. You can get it from your Cerebrium dashboard.
+</ParamField>
+<ParamField body="prompt" type="string" required>
+   The prompt you would like your Dreambooth model to generate.
+</ParamField>
+<ParamField body="image" type="string" required>
+   This is a base64 encoded string of your initial image. This is a required parameter.
+</ParamField>
+<ParamField body="num_inference_steps" type="integer" optional>
+   The number of steps you would like Dreambooth to take to generate the image. In general, the results are better the more steps you use, however the more steps, the longer the generation takes. It defaults to 50 steps and is an optional parameter.
+</ParamField>
+<ParamField body="guidance_scale" type="float" optional>
+   A way to increase the adherence to the conditional signal that guides the generation (text, in this case) as well as overall sample quality. In simple terms it forces the generation to better match the prompt potentially at the cost of image quality or diversity. This defaults to 7.5 and is an optional parameter.
+</ParamField>
+<ParamField body="num_images_per_prompt" type="integer" optional>
+  The number of image variations you would like the model to generate. This is an optional parameter which defaults to 1.
+</ParamField>
+<ParamField body="negative_prompt" type="string" optional>
+  The negative prompt is a parameter that tells Stable Diffusion what you don’t want to see in the generated images. This is an optional parameter that has an empty default value.
+</ParamField>
+<ParamField body="seed" type="integer" optional>
+  Make sure that generations are the exact same for the same prompts and images.
+</ParamField>
+<ParamField body="webhook_endpoint" type="string" optional>
+   The url endpoint you would like us to send the image results to once it has finished generating.
+</ParamField>
+<ResponseExample>
+
+```json Response
+{
+    "run_id": "<UUID_STRING>",
+    "message": "Successfully generated image",
+    "images": [<BASE_64_STRING>]
+}
+```
+</ResponseExample>
+
+#### Response Parameters
+
+<ResponseField name="run_id" type="string" required>
+  A unique identifier for the run that you can use to associate prompts with webhook endpoints.
+</ResponseField>
+<ResponseField name="message" type="string" required>
+  Whether of not the response was successful
+</ResponseField>
+<ResponseField name="images" type="string" required>
+  An array of base64 encoded strings of the image that you can convert into an image
+</ResponseField>
