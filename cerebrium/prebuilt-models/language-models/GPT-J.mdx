@@ -6,7 +6,7 @@ description: "GPT-J is a transformer model using Ben Wang's Mesh transformer JAX
 GPT-J is a transformer model trained using Ben Wang's Mesh Transformer JAX. "GPT-J" refers to the class of model, while "6B" represents the number of trainable parameters.
 We currently have the following GPT J models available below. However, if you would like any others, contact support and we can quickly add it for you. In order to deploy it you can use the identifier below:
 
-- GPT-J-6b: `gpt-J-6b`
+- GPT-J-6b: `gpt-j-6b`
 
 Once you've deployed a GPT model, you can supply the endpoint with a prompt and a few other parameters.  Here's an example of how to call the deployed endpoint:
 
@@ -14,7 +14,7 @@ Once you've deployed a GPT model, you can supply the endpoint with a prompt and 
 
 <RequestExample>
 ```bash Request
-  curl --location --request POST 'https://run.cerebrium.ai/gpt-J-13b-webhook/predict' \
+  curl --location --request POST 'https://run.cerebrium.ai/gpt-j-6b-webhook/predict' \
       --header 'Authorization: <API_KEY>' \
       --header 'Content-Type: application/json' \
       --data-raw '{
