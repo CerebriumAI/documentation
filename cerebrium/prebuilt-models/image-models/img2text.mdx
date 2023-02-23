@@ -5,7 +5,7 @@ description: "Image-to-text model that specializes in producing prompts to work 
 
 In order to deploy the model you can use the identifier below:
 
-- Img2text: `img2text`
+- Img2text laion/ViT-H-14: `img2text-laion-vit-h-14`
 
 Pass a base64 encoded image to the model and receive specialized prompts that work well with Stable Diffusion 2. Once you've deployed a model, you can follow this example of how to call the deployed endpoint:
 
@@ -13,7 +13,7 @@ Pass a base64 encoded image to the model and receive specialized prompts that wo
 
 <RequestExample>
 ```bash Request
-  curl --location --request POST 'https://run.cerebrium.ai/dreambooth-webhook/predict' \
+  curl --location --request POST 'https://run.cerebrium.ai/img2text-laion-vit-h-14-webhook/predict' \
       --header 'Authorization: <API_KEY>' \
       --header 'Content-Type: application/json' \
       --data-raw '{
