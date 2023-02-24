@@ -1,0 +1,54 @@
+---
+title: "Salesforce Codegen"
+description: "CodeGen is a family of autoregressive language models for program synthesis"
+---
+
+CodeGen is a family of autoregressive language models for program synthesis. Mono models were trained on Python code and multi was trained on multiple programming languages such as C, C++, Go, Java, JS and Python.
+The best way to use CodeGen is to give it a prompt describing the code you would like it to generate - you can read more [here](https://huggingface.co/Salesforce/codegen-350M-multi). 
+
+We currently have the following Codegen models available below however if you would like any others contact support, and we can quickly add it for you. In order to deploy it you can use the identifier below:
+
+- Codegen 350M-multi: `salesforce-codegen-350-multi`
+
+Once you've deployed a Codegen model, you can supply the endpoint with a prompt.  Here's an example of how to call the deployed endpoint:
+
+#### Request Parameters
+
+<RequestExample>
+```bash Request
+  curl --location --request POST 'https://run.cerebrium.ai/salesforce-codegen-350-multi-webhook/predict' \
+      --header 'Authorization: <API_KEY>' \
+      --header 'Content-Type: application/json' \
+      --data-raw '{
+        "prompt": "Generate a python function that prints 'Hello world'",
+        "max_sequence_length": 200
+    }'
+```
+</RequestExample>
+
+<ParamField header="Authorization" type="string" required>
+  This is the Cerebrium API key used to authenticate your request. You can get it from your Cerebrium dashboard.
+</ParamField>
+<ParamField body="prompt" type="string" required>
+   The prompt you would like Codegen to process.
+</ParamField>
+<ParamField body="max_sequence_length" type="integer" required>
+   The max sequence length that codegen can generate
+</ParamField>
+
+<ResponseExample>
+
+```json Response
+{
+    "result": "def hello_world(self):\nprint \"Hello world\""
+}
+```
+</ResponseExample>
+
+#### Response Parameters
+
+<ResponseField name="result" type="string" required>
+  The result generated from Codegen
+</ResponseField>
+
+

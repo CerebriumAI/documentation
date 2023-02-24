@@ -74,6 +74,12 @@
                 "cerebrium/prebuilt-models/language-models/GPT-Neo",
                 "cerebrium/prebuilt-models/language-models/roberta"
               ]
+            },
+            {
+              "group": "Other",
+              "pages": [
+                "cerebrium/prebuilt-models/other-models/salesforce-codegen"
+              ]
             }
           ]
         },
