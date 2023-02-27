@@ -72,12 +72,15 @@ is the URL that you will use to call your model in the future.
 ## Run model locally
 
 In order to run your model locally and ensure it is working as intended before
-deploying, you can use the run command.
+deploying, you can use the `load` and `run` command. The `load` command will
+load your pipeline into memory using the paths you specified in `deploy` from a base path, while `run` 
+will sequentially execute your loaded pipeline.
 
-```bash
+```python
 from cerebrium import deploy, model_type
 
 conduit = deploy(('<MODEL_TYPE>', '<MODEL_FILE>'), '<MODEL_NAME>', '<API_KEY>')
+conduit.load('./')
 conduit.run(data)
 ```
 
@@ -89,6 +92,7 @@ You can also define a Conduit object directly by using the `Conduit` class. Then
 ```python
 from cerebrium import Conduit, model_type
 conduit = Conduit('<MODEL_NAME>', '<API_KEY>', [('<MODEL_TYPE>', '<MODEL_FILE>')])
+conduit.load('./')
 conduit.run(data)
 conduit.deploy()
 ```
