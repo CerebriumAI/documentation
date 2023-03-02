@@ -29,15 +29,18 @@ Apart from chat history, you can also just add example conversations in [DIALOGU
       --header 'Authorization: <API_KEY>' \
       --header 'Content-Type: application/json' \
       --data-raw '{
-        "prompt": "Michaels'\''s Persona: A big strong man with a big heart\n<START>\nYou: How are you doing on this wonderful day?\n Michael:"",
-        "max_length": 100,
-        "temperature": 0.5"
-        "stopping_criteria"=["The end."],
-        "max_new_tokens"=100, 
-        "top_p"=0/5,
-        "typical_p"=0.9,
-        "repetition_penalty"=0.5,
-        "top_k"=0.1
+        {
+            "prompt": "Michael's Persona: A big strong man with a big heart\n<START>\nYou: How are you doing on this wonderful day?\n Michael:",
+            "max_length": 100,
+            "temperature": 0.5,
+            "stopping_criteria": [
+                "The end."
+            ],
+            "top_p": 0.5,
+            "typical_p": 0.9,
+            "repetition_penalty": 0.5,
+            "top_k": 10
+        }
     }'
 ```
 </RequestExample>
