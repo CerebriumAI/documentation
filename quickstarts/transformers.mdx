@@ -7,48 +7,7 @@ using Cerebrium."
 ## Intro
 
 Cerebrium supports [HuggingFace Transformers](https://huggingface.co/) through the use of [`pipeline`](https://huggingface.co/docs/transformers/main_classes/pipelines).
-By using `pipeline` we are able to load both the tokenizer and model easily within the same object. Currently, we support the following models:
-- sentence-transformers/distilbert-multilingual-nli-stsb-quora-ranking
-- sentence-transformers/all-MiniLM-L6-v2
-- google/flan-t5-small
-- EleutherAI/gpt-neo-125M
-- prajjwal1/bert-tiny
-- albert-base-v2
-- google/electra-small-discriminator
-- sentence-transformers/multi-qa-mpnet-base-cos-v1
-- sentence-transformers/paraphrase-MiniLM-L3-v2
-- sentence-transformers/paraphrase-xlm-r-multilingual-v1
-- facebook/opt-350m
-- facebook/opt-125m
-- sentence-transformers/distilbert-base-nli-mean-tokens
-- microsoft/SportsBERT
-- bert-base-uncased
-- gpt2
-- microsoft/layoutlmv3-base
-- distilbert-base-uncased-finetuned-sst-2-english
-- cardiffnlp/twitter-roberta-base-sentiment
-- distilbert-base-cased-distilled-squad
-- microsoft/codebert-base
-- microsoft/layoutlm-base-uncased
-- Helsinki-NLP/opus-mt-en-es
-- allenai/scibert_scivocab_uncased
-- google/vit-base-patch16-224-in21k
-- sentence-transformers/all-mpnet-base-v2
-- google/vit-base-patch16-224
-- camembert-base
-- deepset/roberta-base-squad2
-- ProsusAI/finbert
-- sentence-transformers/all-MiniLM-L12-v2
-- textattack/roberta-base-CoLA
-- finiteautomata/bertweet-base-sentiment-analysis
-- distilroberta-base
-- google/electra-base-discriminator
-- klue/bert-base
-- microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext
-- prajjwal1/bert-mini
-- facebook/bart-base
-- facebook/galactica-125m
-- t5-small
+By using `pipeline` we are able to load both the tokenizer and model easily within the same object. 
 
 Using the Transformers library, you have instant access to pretrained models for NLP tasks. 
 We will open up support for more in the coming months!
@@ -96,7 +55,7 @@ c = Conduit(
     'hf-gpt',
     '<API_KEY>',
     [
-        (model_type.HUGGINGFACE_TRANSFORMER, {"task": "text-generation", "hf_id": "EleutherAI/gpt-neo-125M"}),
+        (model_type.HUGGINGFACE_PIPELINE, {"task": "text-generation", "hf_id": "EleutherAI/gpt-neo-125M"}),
     ],
 )
 ```
