@@ -105,7 +105,13 @@
         "quickstarts/xgboost",
         "quickstarts/tensorflow",
         "quickstarts/spacy",
-        "quickstarts/transformers"
+        {
+          "group": "HuggingFace",
+          "pages": [
+            "quickstarts/huggingface/transformers",
+            "quickstarts/huggingface/onnx-conversion"
+          ]
+        }
       ]
     },
     {

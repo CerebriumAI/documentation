@@ -1,0 +1,114 @@
+---
+title: "Convert to Onnx"
+description: "This example provides the steps to convert a Hugging Face model to Onnx format in order to deploy on Cerebrium."
+---
+
+## Intro
+
+Cerebrium supports the deployment of Onnx models where ONNX is an open format built to represent machine learning models. ONNX defines
+a common set of operators - the building blocks of machine learning and deep learning models - and a common file format to enable AI developers to use models
+with a variety of frameworks, tools, runtimes, and compilers. HuggingFace allows you to export transformer models to a serialised format such as Onnx through their
+transformers.onnx package or their optimum.exporters.onnx package.
+
+Hugging Face has a list of ready-made configurations that you can export with one line - you can see the list [here](https://huggingface.co/docs/transformers/serialization).
+In this quickstart I am going to show you how to export a LayoutLMv3 model which we will use for token classification - you will see a ready-made configuration exists in the list.
+I will be using the notebook [here](https://colab.research.google.com/github/NielsRogge/Transformers-Tutorials/blob/master/LayoutLMv3/Fine_tune_LayoutLMv3_on_FUNSD_(HuggingFace_Trainer).ipynb#scrollTo=wDWVaw74YXgW) to fine-tune the LayoutLMv3 model
+
+By the end of this guide you'll have an API endpoint of a deployed LayoutLMv3 model that can handle any scale
+of traffic by running inference on serverless CPU's/GPU's.
+
+### Project set up
+
+Before building you need to set up a Cerebrium account. This is as simple as
+starting a new Project in Cerebrium and copying the API key. This will be used
+to authenticate all calls for this project.
+
+### Create a project
+
+1. Go to [dashboard.cerebrium.ai](https://dashboard.cerebrium.ai)
+2. Signup or Login
+3. Navigate to Settings page
+4. Navigate to the API Keys tab
+5. You should see an API key with the source "Cerebrium". Click the eye icon to
+   display it. It will be in the format: c_api_key-xxx
+
+![API Key](/images/quickstarts/onnx-1.png)
+
+### Export model to Onnx
+
+```bash
+pip install transformers[onnx]
+```
+
+Once the tranformers Onnx package is installed you want to convert either one of the existing models on Hugging Face or a fine-tuned model of yours. In this example
+I am exporting a model I fine-tuned with the LayoutLMv3 model as a base. The transformers onnx model picks up the model format. We have to export feature token-classification to get the logits
+
+```python
+!python -m transformers.onnx --model "/content/test/checkpoint-1000" --feature token-classification --atol 5 onnx/
+```
+
+![Conversion](/images/quickstarts/convert-hf-onnx-1.png)
+
+In the above line of code I am doing the following:
+- Specifying the location of my fine-tuned model checkpoint. This could also be the model ID on Hugging Face such as microsoft/layoutlmv3-base.
+- I specify the feature I want to export the model with. Since we are doing classification I want to get the logits for the model so need to use the model that has that topology.
+In this case it would be token-classification but could be causal-lm etc.
+- When you convert a model to Onnx there could be a minor change in accuracy and so you need to give a number which is the absolute difference tolerance when validating the model.
+- Lastly, we specify the file parth of where we would like to store this model.
+
+### Test model locally and deploy
+
+Before deploying the model to Cerebrium, I like to test locally so I know I shouldn't have any problems in production. You could also test the model running OnnxInferenceSession.
+
+First we prepare the payload
+```python
+example = dataset["test"][0]
+image = example["image"]
+words = example["tokens"]
+boxes = example["bboxes"]
+word_labels = example["ner_tags"]
+
+##make sure return tensors is np
+encoding = processor(image, words, boxes=boxes, return_tensors="np")
+payload = {x: dict(encoding)[x].tolist() for x in dict(encoding).keys()}
+```
+Then we run it locally
+
+```python
+from cerebrium import model_type, Conduit
+conduit = Conduit('hf-model', "<API_KEY>", [(model_type.ONNX, "onnx/model.onnx")])
+conduit.load('./onnx/')
+result = conduit.run([payload])
+```
+
+![Local run](/images/quickstarts/convert-hf-onnx-2.png)
+
+
+Once we have tested it is giving us the correct output we can deploy the model and start calling from production
+
+```python
+conduit.deploy()
+```
+
+![Deployed](/images/quickstarts/hf-2.png)
+
+Your model is now deployed and ready for inference!
+Navigate to the dashboard and on the Models page you will see your model.
+
+You can run inference using `curl`.
+
+```bash
+curl --location --request POST '<ENDPOINT>' \
+--header 'Authorization: <API_KEY>' \
+--header 'Content-Type: text/plain' \
+--data-raw '[<INPUT_DATA>]'
+```
+
+Navigate back to the dashboard and click on the name of the model you just
+deployed. You will see an API call was made and the inference time. From your
+dashboard you can monitor your model, roll back to previous versions and see
+traffic.
+
+With one line of code, your converted model was deployed in seconds with automatic
+versioning, monitoring and the ability to scale based on traffic spikes. Try
+deploying your own model now or check out our other frameworks.
