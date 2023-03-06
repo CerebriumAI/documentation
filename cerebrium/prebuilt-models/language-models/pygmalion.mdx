@@ -30,7 +30,7 @@ Apart from chat history, you can also just add example conversations in [DIALOGU
       --header 'Content-Type: application/json' \
       --data-raw '{
         {
-            "prompt": "Michael's Persona: A big strong man with a big heart\n<START>\nYou: How are you doing on this wonderful day?\n Michael:",
+            "prompt": "Michael\'s Persona: A big strong man with a big heart\n<START>\nYou: How are you doing on this wonderful day?\n Michael:",
             "max_length": 100,
             "temperature": 0.5,
             "stopping_criteria": [
@@ -51,31 +51,31 @@ Apart from chat history, you can also just add example conversations in [DIALOGU
 <ParamField body="prompt" type="string" required>
    The prompt you would like Pygmalion to process. Make sure to follow the expected format for the best response
 </ParamField>
-<ParamField body="max_length" type="string">
+<ParamField body="max_length" type="string" optional>
    The max number of tokens you would like Pygmalion to generate
 </ParamField>
-<ParamField body="temperature" type="string">
+<ParamField body="temperature" type="string" optional>
    Value between 0 and 1 which controls randomness. Lowering the number results in less random completions.
 </ParamField>
-<ParamField body="stopping_criteria" type="list">
+<ParamField body="stopping_criteria" type="list" optional>
    A list of words/phrases that can be used to change when to stop generation.
 </ParamField>
-<ParamField body="max_new_tokens" type="integer">
+<ParamField body="max_new_tokens" type="integer" optional>
    The max number of new tokens you would like the model to generate. This is different from max length as it excludes the prompt you entered.
 </ParamField>
-<ParamField body="top_p" type="float">
+<ParamField body="top_p" type="float" optional>
   If set to < 1, only the smallest set of most probable tokens with probabilities that add up to top_p or higher are kept for generation.
 </ParamField>
-<ParamField body="typical_p" type="float">
+<ParamField body="typical_p" type="float" optional>
   Value of typical_p between 0 and 1 inclusive, defaults to 0.9.
 </ParamField>
-<ParamField body="repetition_penalty" type="float">
+<ParamField body="repetition_penalty" type="float" optional>
   The parameter for repetition penalty. 1.0 means no penalty
 </ParamField>
-<ParamField body="top_k" type="float">
+<ParamField body="top_k" type="float" optional>
   The number of highest probability vocabulary tokens to keep for top-k-filtering.
 </ParamField>
-<ParamField body="pad_token_id" type="integer">
+<ParamField body="pad_token_id" type="integer" optional>
   The id of the padding token.
 </ParamField>
 
