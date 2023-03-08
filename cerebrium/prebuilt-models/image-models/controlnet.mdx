@@ -1,0 +1,118 @@
+---
+title: "ControlNet"
+description: "A framework that allows for supporting various spatial contexts that can serve as additional conditionings to Diffusion models such as Stable Diffusion."
+---
+
+In order to deploy the model you can use the identifier below:
+
+- ControlNet: `controlnet`
+
+ControlNet provides a minimal interface allowing users to customize the generation process up to a great extent. With ControlNet, users can easily condition the generation with different spatial contexts such as a depth map, a segmentation map, a scribble, keypoints, and so on!
+We also provide support for custom Dreambooth models that are hosted on Hugging Face. If you would like help on how to train and deploy your model you can read our blog post [here](https://blog.cerebrium.ai/creating-avatarai-me-using-supabase-and-cerebrium-1bf69440c4a7).
+You can follow this example of how to call the deployed endpoint:
+
+#### Request Parameters
+
+<RequestExample>
+```bash Request
+  curl --location --request POST 'https://run.cerebrium.ai/controlnet-webhook/predict' \
+      --header 'Authorization: <API_KEY>' \
+      --header 'Content-Type: application/json' \
+      --data-raw '{
+        "prompt": "a photo of an astronaut riding a horse on mars.",
+        "model": "canny",
+        "image": <BASE_64_STRING>,
+        "file_url": "https://your-url.com/image.png"
+        "hf_token": "<your_token>",
+        "model_id": "<your_id>",
+        "height": 512,
+        "width": 512,
+        "num_inference_steps": 50,
+        "guidance_scale": 7.5,
+        "num_images_per_prompt": 1,
+        "negative_prompt": "",
+        "seed": 120,
+        "low_threshold": 100,
+        "high_threshold": 200,
+        "webhook_endpoint": "https://your-url.com"
+      }'
+```
+</RequestExample>
+
+<ParamField header="Authorization" type="string" required>
+  This is the Cerebrium API key used to authenticate your request. You can get it from your Cerebrium dashboard.
+</ParamField>
+<ParamField body="prompt" type="string" required>
+   The prompt you would like the Xontrolnet model to generate.
+</ParamField>
+<ParamField body="model" type="string" required>
+   At the moment we only support two control net models. Canny Edge detection "canny" and Open Pose "openpose". We will add support for the other models shortly.
+</ParamField>
+<ParamField body="image" type="string" optional>
+   A base64 encoded string of your image. We only recommend this if the image is small otherwise use the file_url.
+</ParamField>
+<ParamField body="file_url" type="string" optional>
+   A publicly accessible url to download your image
+</ParamField>
+<ParamField body="hf_token" type="string" optional>
+   This is the token from your HuggingFace profile in order to access your model repo. This is a required parameter if you enter a model id that is private.
+</ParamField>
+<ParamField body="model_id" type="string" optional>
+   This is the Hugging Face id of your model repo. If nothing is provided we use the Stable diffusion base model.
+</ParamField>
+<ParamField body="height" type="integer" optional>
+   The height of the generated image which defaults to 512px. This is an optional parameter
+</ParamField>
+<ParamField body="width" type="integer" optional>
+  The width of the generated image which defaults to 512px. This is an optional parameter
+</ParamField>
+<ParamField body="num_inference_steps" type="integer" optional>
+   The number of steps you would like Dreambooth to take to generate the image. In general, the results are better the more steps you use, however the more steps, the longer the generation takes. It defaults to 50 steps and is an optional parameter.
+</ParamField>
+<ParamField body="guidance_scale" type="float" optional>
+   A way to increase the adherence to the conditional signal that guides the generation (text, in this case) as well as overall sample quality. In simple terms it forces the generation to better match the prompt potentially at the cost of image quality or diversity. This defaults to 7.5 and is an optional parameter.
+</ParamField>
+<ParamField body="num_images_per_prompt" type="integer" optional>
+  The number of image variations you would like the model to generate. This is an optional parameter which defaults to 1.
+</ParamField>
+<ParamField body="negative_prompt" type="string" optional>
+  The negative prompt is a parameter that tells Stable Diffusion what you don’t want to see in the generated images. This is an optional parameter that has an empty default value.
+</ParamField>
+<ParamField body="seed" type="integer" optional>
+  Make sure that generations are the exact same for the same prompts
+</ParamField>
+<ParamField body="low_threshold" type="integer" optional>
+  This is the low threshold for the Canny Edge model. It can have a value between 1 and 255.
+</ParamField>
+<ParamField body="high_threshold" type="integer" optional>
+  This is the high threshold for the Canny Edge model. It can have a value between 1 and 255.
+</ParamField>
+<ParamField body="webhook_endpoint" type="string" optional>
+   The url endpoint you would like us to send the image results to once it has finished generating
+</ParamField>
+<ResponseExample>
+
+```json Response
+{
+    "run_id": "<UUID_STRING>",
+    "message": "Successfully generated images",
+    "run_time_ms": 15404
+    "result": [<BASE_64_STRING>]
+}
+```
+</ResponseExample>
+
+#### Response Parameters
+
+<ResponseField name="run_id" type="string" required>
+  A unique identifier for the run that you can use to associate prompts with webhook endpoints.
+</ResponseField>
+<ResponseField name="message" type="string" required>
+  Whether of not the response was successful
+</ResponseField>
+<ResponseField name="run_time_ms" type="string" required>
+  The amount of time in millisecond it took to run your function. This is what you will be billed for.
+</ResponseField>
+<ResponseField name="images" type="string" required>
+  An array of base64 encoded strings of the image that you can convert into an image
+</ResponseField>
