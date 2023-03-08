@@ -106,10 +106,9 @@ conduit.add_model('<MODEL_TYPE>', '<MODEL_FILE>', '<PROCESSING_FUNCTIONS>')
 
 ## API Specification and Helper methods
 
-You can see an example of the request and response objects for calls made to your models. It should resemble what it is like calling your model locally in your own python environment
+You can see an example of the request and response objects for calls made to your models. It should resemble what it is like calling your model locally in your own python environment.
 
 #### Request Parameters
-
 <RequestExample>
 ```bash Request
   curl --location --request POST '<ENDPOINT>' \
@@ -119,11 +118,12 @@ You can see an example of the request and response objects for calls made to you
 ```
 </RequestExample>
 
+
 <ParamField header="Authorization" type="string" required>
   This is the Cerebrium API key used to authenticate your request. You can get it from your Cerebrium dashboard.
 </ParamField>
 <ParamField body="Content-Type" type="string" required>
-   The content type of your request. Must be application/json.
+   The content type of your request. Must be application/json or multipart/form-data if sending files.
 </ParamField>
 <ParamField body="data" type="array" required>
    A list of data points you would like to send to your model. e.g. for 1 data point of 3 features: [[1,2,3]].
