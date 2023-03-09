@@ -64,7 +64,7 @@ Once you've deployed a Stable Diffusion model, you can supply the endpoint with 
     "run_id": "<UUID_STRING>",
     "run_time_ms": <NUMBER>,
     "message": "Successfully generated images",
-    "images": [<BASE_64_STRING>]
+    "result": [<BASE_64_STRING>]
 }
 ```
 </ResponseExample>
@@ -77,6 +77,6 @@ Once you've deployed a Stable Diffusion model, you can supply the endpoint with 
 <ResponseField name="message" type="string" required>
   Whether of not the response was successful
 </ResponseField>
-<ResponseField name="images" type="string" required>
+<ResponseField name="result" type="string" required>
   An array of base64 encoded strings of the image that you can convert into an image
 </ResponseField>
