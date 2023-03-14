@@ -3,7 +3,7 @@ title: "Whisper"
 description: "Whisper is a language generation model that receives audio data and performs transcription and or translation, then outputs a text response."
 ---
 
-It can process audio of any length and takes about 1 minute to process an hour of audio. We also return the timestamps of the transcription if you would like to create subtitles for the audio etc.
+It can process audio of any length and takes about 7-10 minutes to process 1 hour of audio. We also return the timestamps of the transcription if you would like to create subtitles for the audio etc.
 We currently have the following whisper models available below however if you would like any others contact support, and we can quickly add it for you. In order to deploy it you can use the identifier below:
 
 - Whisper Large: `whisper-large`
@@ -20,7 +20,7 @@ Once you've deployed a Whisper model, you can supply the endpoint with a base-64
       --data-raw '{
         "audio": "<BASE_64_STRING>"
         "webhook_endpoint": "<WEBHOOK_ENDPOINT>",
-        "s3_url": "<FILE_URL>"
+        "file_url": "<FILE_URL>"
         }'
 ```
 </RequestExample>
