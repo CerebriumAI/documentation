@@ -25,9 +25,8 @@ to authenticate all calls for this project.
 
 1. Go to [dashboard.cerebrium.ai](https://dashboard.cerebrium.ai)
 2. Signup or Login
-3. Navigate to Settings page
-4. Navigate to the API Keys tab
-5. You should see an API key with the source "Cerebrium". Click the eye icon to
+3. Navigate to the API Keys page
+4. You should see an API key with the source "Cerebrium". Click the eye icon to
    display it. It will be in the format: c_api_key-xxx
 
 ![API Key](/images/quickstarts/onnx-1.png)
@@ -44,7 +43,7 @@ command in your notebook or terminal
 pip install cerebrium
 ```
 
-Using a HuggingFace model is as simple importing the `HUGGINGFACE_TRANSFORMER` model type and passing in the *task* and *model id*.
+Using a HuggingFace model is as simple importing the `HUGGINGFACE_PIPELINE` model type and passing in the *task* and *model id*.
 In this case, we will use the `EleutherAI/gpt-neo-125M` model to generate text.
 
 ```python
@@ -76,7 +75,7 @@ You can run inference using `curl`.
 ```bash
 curl --location --request POST '<ENDPOINT>' \
 --header 'Authorization: <API_KEY>' \
---header 'Content-Type: text/plain' \
+--header 'Content-Type: application/json' \
 --data-raw '[<INPUT_DATA>]'
 ```
 
