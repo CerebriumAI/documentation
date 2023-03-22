@@ -53,6 +53,15 @@
         "cerebrium/getting-started",
         "cerebrium/test-and-deploy",
         {
+          "group": "Advanced Functionality",
+          "pages": [
+            "cerebrium/advanced-functionality/model-ensembles",
+            "cerebrium/advanced-functionality/processing-functions",
+            "cerebrium/advanced-functionality/using-files",
+            "cerebrium/advanced-functionality/persistent-memory"
+          ]
+        },
+        {
           "group": "Prebuilt Models",
           "pages": [
             "cerebrium/prebuilt-models/deployment",

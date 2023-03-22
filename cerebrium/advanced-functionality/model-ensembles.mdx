@@ -1,0 +1,22 @@
+---
+title: "Deploying Model Ensembles"
+---
+
+With Cerebrium you are also able to deploy a sequence of models simply by
+specifying a list of tuples of model types and model files. Currently, this
+functionality is supported across all model types, with the caveat that we
+assume the models are evaluated in the order they are supplied. For example, if
+you have a PyTorch model that takes in a 2D image and outputs a 1D vector, and
+you have a XGB model that takes in a 1D vector and outputs a single class
+prediction, you can deploy them as a sequence of models by supplying the
+following to the `deploy` function:
+
+```bash
+model_flow = [(model_type.TORCH, 'torch.pt'), (model_type.XGBOOST_CLASSIFIER, 'xgb.json')]
+endpoint = deploy(model_flow, 'my-flow', "<API_KEY>")
+```
+
+We are currently working on a more robust way to specify the input and output
+shapes of your models 
+so that you can deploy more complex flows. If you have any suggestions or
+feedback, please reach out to us.
