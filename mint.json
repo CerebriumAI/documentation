@@ -63,7 +63,8 @@
                 "cerebrium/prebuilt-models/image-models/img2img-stable-diffusion",
                 "cerebrium/prebuilt-models/image-models/img2text",
                 "cerebrium/prebuilt-models/image-models/custom-dreambooth",
-                "cerebrium/prebuilt-models/image-models/controlnet"
+                "cerebrium/prebuilt-models/image-models/controlnet",
+                "cerebrium/prebuilt-models/image-models/stable-diffusion-upscaler"
               ]
             },
             {
