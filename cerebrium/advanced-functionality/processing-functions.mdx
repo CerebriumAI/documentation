@@ -29,7 +29,7 @@ model_flow = [(model_type.TORCH, 'torch.pt'), (model_type.XGBOOST_CLASSIFIER, 'x
 endpoint = deploy(model_flow, 'my-flow', "<API_KEY>")
 ```
 <Note>
-If you'd like to use objects across multiple functions, consider using our (persistent memory store)[/cerebrium/advanced-functionality/persistent-memory] feature.
+If you'd like to use objects across multiple functions, consider using our [persistent memory store](/cerebrium/advanced-functionality/persistent-memory) feature.
 </Note>
 
 You may use functions inside your processor from the following libraries:
