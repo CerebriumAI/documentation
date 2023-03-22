@@ -20,13 +20,13 @@ def pre_process(data, files):
     from PIL import Image
     labelled = {d: Image.open(f) for d, f in zip(data, files)}
     labels = [d["name"] for d in data]
-    save('labels', labels) # Save the labels for later
+    save("labels", labels) # Save the labels for later
     return labelled
 
 def post_process(result, input_data, files):
     import numpy as np
     output = np.argmax(result, axis=1)
-    labels = get('labels') # Get the labels we saved earlier
+    labels = get("labels") # Get the labels we saved earlier
     return {d: l for d, l in zip(labels, output)}
 
 model_flow = [(model_type.TORCH, 'torch.pt'), (model_type.XGBOOST_CLASSIFIER, 'xgb.json', {"pre": pre_process, "post": post_process})]
