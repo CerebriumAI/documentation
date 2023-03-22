@@ -19,7 +19,8 @@ def pre_process(data, files):
     import numpy as np
     from PIL import Image
     labelled = {d: Image.open(f) for d, f in zip(data, files)}
-    save('labels', [d["name"] for d in data]) # Save the labels for later
+    labels = [d["name"] for d in data]
+    save('labels', labels) # Save the labels for later
     return labelled
 
 def post_process(result, input_data, files):
