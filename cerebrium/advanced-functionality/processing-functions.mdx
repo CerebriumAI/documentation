@@ -28,6 +28,10 @@ def post_process(result, input_data, files):
 model_flow = [(model_type.TORCH, 'torch.pt'), (model_type.XGBOOST_CLASSIFIER, 'xgb.json', {"pre": pre_process, "post": post_process})]
 endpoint = deploy(model_flow, 'my-flow', "<API_KEY>")
 ```
+<Note>
+If you'd like to use objects across multiple functions, consider using our (persistent memory store)[/cerebrium/advanced-functionality/persistent-memory] feature.
+</Note>
+
 You may use functions inside your processor from the following libraries:
 - `numpy`
 - `scikit-learn`
@@ -41,5 +45,3 @@ We are expanding this list of libraries, so if you have a specific library you w
 <Note>
   Note that any imports you need to do in your processing functions must be done inside the function. This is because the function is serialized and sent to the Cerebrium servers, and the imports will not be available on the server.
 </Note>
-
-If you'd like to use objects across multiple functions, consider using our (persistent memory store)[/cerebrium/advanced-functionality/persistent-memory] feature.
