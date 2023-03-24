@@ -1,0 +1,24 @@
+---
+title: "Saving File Output"
+---
+
+We provide the ability to temporarily store files on our servers and provide a URL to access them.
+This is useful for pipelines that output files or other binary data that is too big to send in a request as a base64 string.
+Using the `upload` function, you can upload a file to our servers and get a URL to access them.
+
+```python
+from cerebrium import upload
+def post_process(data, input_data, files):
+    # This example does 1 data point, but you can do multiple if you wish in a loop
+    from PIL import Image
+    image = Image.fromarray(data[0])
+    image.save('output.png')
+    url = upload("output.png")
+    return url
+
+from cerebrium import Conduit, model_type
+conduit = Conduit('<MODEL_NAME>', '<API_KEY>', [('<MODEL_TYPE>', '<MODEL_FILE>')], {"post": post_process"})
+conduit.load('./')
+conduit.run(data)
+conduit.deploy()
+```
