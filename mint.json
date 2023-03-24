@@ -84,7 +84,8 @@
                 "cerebrium/prebuilt-models/language-models/flanT5",
                 "cerebrium/prebuilt-models/language-models/GPT-Neo",
                 "cerebrium/prebuilt-models/language-models/roberta",
-                "cerebrium/prebuilt-models/language-models/pygmalion"
+                "cerebrium/prebuilt-models/language-models/pygmalion",
+                "cerebrium/prebuilt-models/language-models/tortoise"
               ]
             },
             {
