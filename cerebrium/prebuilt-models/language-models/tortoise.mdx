@@ -49,17 +49,36 @@ Once you've deployed a Tortoise model, you can simply supply a prompt and a rand
 
 ```json Response
 {
-    "audio":" "<BASE_64_STRING>",
-    "segments": []
+    "run_id": "cfd6d71d-c71d-48fa-b685-2bb",
+    "run_time_ms": 32305.,
+    "message": "Successfully generated media file",
+    "result": {
+        "audio": <BASE_64_STRING>
+    }
 }
 ```
 </ResponseExample>
 
 #### Response Parameters
 
+<ResponseField name="run_id" type="string" required>
+  A unique identifier for the run that you can use to associate prompts with webhook endpoints.
+</ResponseField>
+<ResponseField name="run_time_ms" type="string" required>
+  The amount of time in millisecond it took to run your function. This is what you will be billed for.
+</ResponseField>
+<ResponseField name="message" type="string" required>
+  Whether of not the response was successful
+</ResponseField>
 <ResponseField name="audio" type="string" required>
   A base64 encoded string of your media file
 </ResponseField>
-<ResponseField name="segments" type="string" required>
-  Detailed information about the transcription/translation.
-</ResponseField>
+
+To convert you base64 encoded string to a media file you can run the following code snippet:
+
+```python
+decoded_bytes = base64.decodebytes(audio.split(',')[1].encode("ascii"))
+
+with open("output.mp3", "wb") as mp3file:
+    mp3_file.write(decoded_bytes)
+```
