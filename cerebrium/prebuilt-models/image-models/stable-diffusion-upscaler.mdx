@@ -8,6 +8,9 @@ In order to deploy the model you can use the identifier below:
 - Stable Diffusion Upscaler: `sd-upscaler`
 
 This model was trained for 1.25M steps on a 10M subset of LAION containing images >2048x2048. The model was trained on crops of size 512x512 and is a text-guided latent upscaling diffusion model. 
+
+<Note>Your image must be smaller than 350px x 350px and if not, please add a width and height parameter to resize it.</Note>
+
 You can read more from Once you've deployed a this model, you can follow this example of how to call the deployed endpoint:
 
 #### Request Parameters
@@ -18,10 +21,10 @@ You can read more from Once you've deployed a this model, you can follow this ex
       --header 'Authorization: <API_KEY>' \
       --header 'Content-Type: application/json' \
       --data-raw '{
-        "prompt": "a photo of an astronaut riding a horse on mars.",
+        "prompt": "A photo of a dog",
         "image": <BASE_64_STRING>,
-        "height": 512,
-        "width": 512,
+        "height": 350,
+        "width": 350,
         "file_url": "https://your-url.com",
         "webhook_endpoint": "https://your-url.com"
       }'
@@ -38,10 +41,10 @@ You can read more from Once you've deployed a this model, you can follow this ex
   A base64 encoded string of the image you would like to upscale.
 </ParamField>
 <ParamField body="height" type="integer" optional>
-   The height of the generated image which defaults to 512px. This is an optional parameter
+   The height to which you would like to resize the original image before being upscaled. It defaults to 350px. This is an optional parameter
 </ParamField>
 <ParamField body="width" type="integer" optional>
-  The width of the generated image which defaults to 512px. This is an optional parameter
+  The width to which you would like to resize the original image before being upscaled. It defaults to 350px. This is an optional parameter
 </ParamField>
 <ParamField body="file_url" type="string" optional>
   A publicly accessible url of a image you would like to upscale
