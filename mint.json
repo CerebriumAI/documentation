@@ -138,7 +138,11 @@
     },
     "gtm": {
       "tagId": "GTM-M3Z656N"
-    }
+    },
+    "hotjar": {
+      "hjid": "3423876",
+      "hjsv": "6"
+  }
   },
   "footerSocials": {
     "twitter": "https://twitter.com/cerebriumai",
