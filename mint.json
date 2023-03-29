@@ -112,6 +112,7 @@
     {
       "group": "Quickstarts",
       "pages": [
+        "quickstarts/custom",
         "quickstarts/onnx",
         "quickstarts/pytorch",
         "quickstarts/scikit",
@@ -142,7 +143,7 @@
     "hotjar": {
       "hjid": "3423876",
       "hjsv": "6"
-  }
+    }
   },
   "footerSocials": {
     "twitter": "https://twitter.com/cerebriumai",
