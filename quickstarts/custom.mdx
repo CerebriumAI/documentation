@@ -4,10 +4,10 @@ description: "This example provides the steps to deploy any Python code to serve
 ---
 
 <Note>
-Please not this feature is currently in Alpha and therefore is subject to change. To start we are only making it available to certain users so please contact [support](mailto:support@cerebrium.ai) to get access.
+Please not this feature is currently in **Alpha** and therefore is subject to change. To start we are only making it available to certain users so please contact [support](mailto:support@cerebrium.ai) to get access.
 Current limitations: 
 - Only available for Nvida T4 instances
-- Memory limits
+- RAM limits of 16GB
 </Note>
 
 ## Intro
@@ -150,8 +150,7 @@ For the parameters above:
 - **\<HARDWARE\>***: This is either cpu or gpu
 - **\<API_KEY\>**: This is the API key from your profile
 
-##TODO add image
-![Deployed Model](/images/quickstarts/pytorch-2.png)
+![Deployed Model](/images/quickstarts/custom-2.png)
 
 Your model is now deployed! Congrats! Usually your first deployment will be the longest because it will install the linux and Python packages you defined.
 
@@ -165,14 +164,12 @@ curl --location --request POST '<ENDPOINT>' \
 --data '{"image":""}'
 ```
 
-##TODO add image
-![Pytorch Model Response](/images/quickstarts/pytorch-3.png)
+![Custom Model Response](/images/quickstarts/custom-3.png)
 
 
 Navigate back to the dashboard and click on the name of the model you just
 deployed. Navigate to the tab that says 'Runs and Logs' in order to see the request you just made and the required logs. 
 
-![Pytorch Monitoring](/images/quickstarts/pytorch-4.png)
 
 With just a few lines of code, your custom python code was deployed to serverless CPUs/GPUs without setting up any infrastructure. After the first deployment,
 every subsequent deployment should be less than 10s, keep the development lifecycle as quick as possible. Try deploying your own model now and let us know what you 
