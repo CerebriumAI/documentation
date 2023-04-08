@@ -15,7 +15,7 @@ to authenticate all calls for this project.
 ### Create a project
 
 1. Go to [dashboard.cerebrium.ai](https://dashboard.cerebrium.ai)
-2. Signup or Login
+2. Sign up or Login
 3. Navigate to the API Keys page
 4. You should see an API key with the source "Cerebrium". Click the eye icon to
    display it. It will be in the format: c_api_key-xxx
@@ -34,8 +34,7 @@ command in your notebook or terminal
 pip install cerebrium
 ```
 
-Copy and paste our code below. This creates a simple Convolutional Neural
-Network. This code could be replaced by any Pytorch model. Make sure you have
+Copy and paste our code below. This creates a simple XGBoost classifier on the Iris dataset. This code could be replaced by any XGBoost model. Make sure you have
 the required libraries installed.
 
 ```bash
@@ -64,6 +63,16 @@ endpoint = deploy((model_type.XGBOOST_CLASSIFIER, "iris.json"), "xgb-test-model"
 ```
 
 ![Deployed Model](/images/quickstarts/xgboost-1.png)
+
+<Note>
+  Your result format will change for the `_classifier` model types. The `xgb_classifier` will return a `result` object
+  containing the probability distribution for the predicted output classes,
+  rather than the argmax of the distribution. This is to allow you flexibility
+  in how you want to handle the output of your model for classification. For
+  example, you may want to return the top 3 predictions for your model, or you
+  may want to return the top 3 predictions with a minimum probability threshold.
+  This is up to you.
+</Note>
 
 Your model is now deployed and ready for inference all in under **10 seconds**!
 Navigate to the dashboard and on the Models page you will see your model.

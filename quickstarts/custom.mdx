@@ -12,7 +12,7 @@ Current limitations:
 
 ## Intro
 
-Many of our more hardcore users wanted finer-grain control over their code and package dependancies which is why we opened up our underlying architecture to allow engineers and data scientists to deploy
+Many of our more hardcore users wanted finer-grain control over their code and package dependencies which is why we opened up our underlying architecture to allow engineers and data scientists to deploy
 any custom Python code. 
 
 We have been focusing hard on the developer experience that if your code runs locally, you can deploy it to serverless CPUs\/GPUs using one line.
@@ -28,7 +28,7 @@ to authenticate all calls for this project.
 ### Create a project
 
 1. Go to [dashboard.cerebrium.ai](https://dashboard.cerebrium.ai)
-2. Signup or Login
+2. Sign up or Login
 3. Navigate to the API Keys page
 4. You should see an API key with the source "Cerebrium". Click the eye icon to
    display it. It will be in the format: c_api_key-xxx
@@ -72,7 +72,7 @@ Both the **requirements.txt** and **pkglist.txt** follow standard layouts in tha
 
 Now let us see this in action! Navigate to where your model code is stored - ie: your main.py.
 
-Install the cerebrium-deploy framework script - this is not part of the offical Cerebrium package as this functionality is currently in Alpha. You need to contact our [team](mailto:support@cerebrium.ai) in order to get access to this script.
+Install the cerebrium-deploy framework script - this is not part of the official Cerebrium package as this functionality is currently in Alpha. You need to contact our [team](mailto:support@cerebrium.ai) in order to get access to this script.
 
 Copy and paste our code below. This uses a model from HuggingFace that allows us to classify age based on an image sent in from the user. If no image is used we use a default.
 
@@ -130,7 +130,7 @@ def generate(item: Item):
 You will see that we defined our model and tokenizer outside our predict function. The reason for this is that it will download and cache as soon as your code is deployed.
 If you define it within the predict function then it will only load on the first predict call, thereafter it will be cached.
 
-We don't require any linux packages so we can keep our pkglist.txt empty but lets make sure we instal the required Pyhton packages in our requirements.txt
+We don't require any linux packages so we can keep our pkglist.txt empty but lets make sure we instal the required Python packages in our requirements.txt
 
 ```bash
 pillow==9.4.0

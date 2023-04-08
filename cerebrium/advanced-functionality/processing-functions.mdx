@@ -4,7 +4,7 @@ title: "Pre & Post Processing Functions"
 
 In many cases, you may want to process the data in your single or multi-model flow before returning it to the next flow stage or to the user. To do this, you can supply a both a pre-processing and a post-processing function to your flow, `pre` and `post` respectively. 
 The pre-processing will be applied to the input of the model, while the post-processing function will be applied to the output of your model before it is returned to the next flow stage. 
-You will **need** to implement both of these functions if you wish to use binary files along with your imput data.
+You will **need** to implement both of these functions if you wish to use binary files along with your input data.
 
 In particular:
 - The pre-processing function should take 1-2 arguments **in order**: the input to your model and any input files as binary data. It should return a single value, which is the pre-processed input to your model. It is <b>crucial</b> that the output of your pre-processing function is the same shape and type as the input of the model in the flow stage.
@@ -20,11 +20,13 @@ def pre_process(data, files):
     from PIL import Image
     labelled = {d: Image.open(f) for d, f in zip(data, files)}
     return labelled
+    
 def post_process(result, input_data, files):
     # result is the output of your model, input_data is the original input data from the 1st flow stage, files is the original binary input files
     import numpy as np
     labels = np.argmax(result, axis=1)
     return {d: l for d, l in zip(input_data, labels)}
+
 model_flow = [(model_type.TORCH, 'torch.pt'), (model_type.XGBOOST_CLASSIFIER, 'xgb.json', {"pre": pre_process, "post": post_process})]
 endpoint = deploy(model_flow, 'my-flow', "<API_KEY>")
 ```

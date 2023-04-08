@@ -1,6 +1,6 @@
 ---
 title: "Custom Dreambooth"
-description: "Stable Diffusion is a fine-tuned text-to-image diffusion model for subject driven generation"
+description: "Dreambooth is a fine-tuned text-to-image diffusion model for subject driven generation"
 ---
 
 In order to deploy the model you can use the identifier below:
@@ -40,10 +40,10 @@ Once you've deployed a custom Dreambooth model, you can follow this example of h
    The prompt you would like your Dreambooth model to generate.
 </ParamField>
 <ParamField body="hf_token" type="string" required>
-   This is the token from your HuggingFace profile in order to access your model repo. This is a required parameter.
+   This is the token from your HuggingFace profile in order to access your model repo. This is a required parameter if you model is privately hosted on Hugging face.
 </ParamField>
 <ParamField body="model_id" type="string" required>
-   This is the Hugging Face id of your model repo. This is a required parameter
+   This is the Hugging Face id of your model repo. This is a required parameter.
 </ParamField>
 <ParamField body="height" type="integer" optional>
    The height of the generated image which defaults to 512px. This is an optional parameter

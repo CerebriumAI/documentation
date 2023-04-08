@@ -9,8 +9,8 @@ using Cerebrium."
 Cerebrium supports [HuggingFace Transformers](https://huggingface.co/) through the use of [`pipeline`](https://huggingface.co/docs/transformers/main_classes/pipelines).
 By using `pipeline` we are able to load both the tokenizer and model easily within the same object. 
 
-Using the Transformers library, you have instant access to pretrained models for NLP tasks. 
-We will open up support for more in the coming months!
+Using the Transformers library, you have instant access to pre-trained models for NLP tasks. If you would like to deploy HuggingFace models that aren't supported
+by pipeline, I suggest you look at using our [custom python functionality](/quickstarts/custom)
 
 By the end of this guide you'll have an API endpoint that can handle any scale
 of traffic by running inference on serverless CPU's/GPU's.
@@ -24,7 +24,7 @@ to authenticate all calls for this project.
 ### Create a project
 
 1. Go to [dashboard.cerebrium.ai](https://dashboard.cerebrium.ai)
-2. Signup or Login
+2. Sign up or Login
 3. Navigate to the API Keys page
 4. You should see an API key with the source "Cerebrium". Click the eye icon to
    display it. It will be in the format: c_api_key-xxx

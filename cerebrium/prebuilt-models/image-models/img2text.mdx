@@ -17,7 +17,7 @@ Pass a base64 encoded image to the model and receive specialized prompts that wo
       --header 'Authorization: <API_KEY>' \
       --header 'Content-Type: application/json' \
       --data-raw '{
-        "image": <BASE_64_STRING>
+        "image": "<BASE_64_STRING>"
         "webhook_endpoint": "https://your-url.com"
       }'
 ```
@@ -37,7 +37,8 @@ Pass a base64 encoded image to the model and receive specialized prompts that wo
 ```json Response
 {
     "run_id": "<UUID_STRING>",
-    "message": "Successfully generated image",
+    "run_time_ms": 500
+    "message": "Successfully generated text",
     "result": "a man in a suit holding a camera, light stubble with red shirt, mateo dineen, vp of marketing, miro, speech, slight friendly smile, photo taken in 2018, xiaofan zhang, young male, charlie cox, 2014, more details, amber, very consistent, very detailed picture, front facing, awarded, 3 meters"
 }
 ```
@@ -47,6 +48,9 @@ Pass a base64 encoded image to the model and receive specialized prompts that wo
 
 <ResponseField name="run_id" type="string" required>
   A unique identifier for the run that you can use to associate prompts with webhook endpoints.
+</ResponseField>
+<ResponseField name="run_time_ms" type="string" required>
+  The amount of time in millisecond it took to run your function. This is what you will be billed for.
 </ResponseField>
 <ResponseField name="message" type="string" required>
   Whether of not the response was successful
