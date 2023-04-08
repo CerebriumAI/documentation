@@ -94,7 +94,7 @@ onnx.save(onnx_model, "model.onnx")
 ```
 
 In the last 3 lines of code, you will see we:
-- Define the input signature of our model. This can be a tf.TensorSpec or a numpy array defining the shape/dtype of the input. Our input for the Iris dataset is a (1,4) array and we called the input variable 'x'.
+- Define the input signature of our model. This can be a tf.TensorSpec or a numpy array defining the shape/dtype of the input. Our input for the Iris dataset is a (1,4) array, and we called the input variable 'x'.
 - Use the [tf2onnx](https://github.com/onnx/tensorflow-onnx#python-api-reference) library to convert our model to the ONNX format. We define the model we would like to convert, the input signature and the opset. The opset is usually just the latest.
 - Save our model to a ```.onnx``` file which is what we will use to deploy to Cerebrium.
 

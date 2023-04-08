@@ -6,7 +6,7 @@ description: "This example provides the steps to deploy any Python code to serve
 <Note>
 Please not this feature is currently in **Alpha** and therefore is subject to change. To start we are only making it available to certain users so please contact [support](mailto:support@cerebrium.ai) to get access.
 Current limitations: 
-- Only available for Nvida T4 instances
+- Only available for Nvidia T4 instances
 - RAM limits of 16GB
 </Note>
 
@@ -130,7 +130,7 @@ def generate(item: Item):
 You will see that we defined our model and tokenizer outside our predict function. The reason for this is that it will download and cache as soon as your code is deployed.
 If you define it within the predict function then it will only load on the first predict call, thereafter it will be cached.
 
-We don't require any linux packages so we can keep our pkglist.txt empty but lets make sure we instal the required Python packages in our requirements.txt
+We don't require any linux packages so we can keep our pkglist.txt empty but let's make sure we install the required Python packages in our requirements.txt
 
 ```bash
 pillow==9.4.0
