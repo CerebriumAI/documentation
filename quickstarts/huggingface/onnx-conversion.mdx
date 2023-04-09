@@ -7,7 +7,7 @@ description: "This example provides the steps to convert a Hugging Face model to
 
 Cerebrium supports the deployment of Onnx models where ONNX is an open format built to represent machine learning models. ONNX defines
 a common set of operators - the building blocks of machine learning and deep learning models - and a common file format to enable AI developers to use models
-with a variety of frameworks, tools, runtimes, and compilers. HuggingFace allows you to export transformer models to a serialised format such as Onnx through their
+with a variety of frameworks, tools, runtimes, and compilers. HuggingFace allows you to export transformer models to a serialized format such as Onnx through their
 transformers.onnx package or their optimum.exporters.onnx package.
 
 Hugging Face has a list of ready-made configurations that you can export with one line - you can see the list [here](https://huggingface.co/docs/transformers/serialization).
@@ -26,7 +26,7 @@ to authenticate all calls for this project.
 ### Create a project
 
 1. Go to [dashboard.cerebrium.ai](https://dashboard.cerebrium.ai)
-2. Signup or Login
+2. Sign up or Login
 3. Navigate to the API Keys page
 4. You should see an API key with the source "Cerebrium". Click the eye icon to
    display it. It will be in the format: c_api_key-xxx
@@ -39,8 +39,8 @@ to authenticate all calls for this project.
 pip install transformers[onnx]
 ```
 
-Once the tranformers Onnx package is installed you want to convert either one of the existing models on Hugging Face or a fine-tuned model of yours. In this example
-I am exporting a model I fine-tuned with the LayoutLMv3 model as a base. The transformers onnx model picks up the model format. We have to export feature token-classification to get the logits
+Once the transformers Onnx package is installed you want to convert either one of the existing models on Hugging Face or a fine-tuned model of yours. In this example
+I am exporting a model I fine-tuned with the LayoutLMv3 model as a base. The transformers ONNX model picks up the model format. We have to export feature token-classification to get the logits
 
 ```python
 !python -m transformers.onnx --model "/content/test/checkpoint-1000" --feature token-classification --atol 5 onnx/
@@ -53,7 +53,7 @@ In the above line of code I am doing the following:
 - I specify the feature I want to export the model with. Since we are doing classification I want to get the logits for the model so need to use the model that has that topology.
 In this case it would be token-classification but could be causal-lm etc.
 - When you convert a model to Onnx there could be a minor change in accuracy and so you need to give a number which is the absolute difference tolerance when validating the model.
-- Lastly, we specify the file parth of where we would like to store this model.
+- Lastly, we specify the file path of where we would like to store this model.
 
 ### Test model locally and deploy
 

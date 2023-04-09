@@ -18,7 +18,7 @@ def pre_process(data, files):
 from cerebrium import Conduit, model_type
 conduit = Conduit('<MODEL_NAME>', '<API_KEY>', [('<MODEL_TYPE>', '<MODEL_FILE>', {"pre": pre_process"})])
 conduit.load('./')
-conduit.run(data, files) # files should be a list of binary objects
+conduit.run(data, [files]) # files should be binary objects - for images it would the return of Image.open(f)
 conduit.deploy()
 ```
 

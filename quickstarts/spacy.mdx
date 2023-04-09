@@ -17,7 +17,7 @@ to authenticate all calls for this project.
 ### Create a project
 
 1. Go to [dashboard.cerebrium.ai](https://dashboard.cerebrium.ai)
-2. Signup or Login
+2. Sign up or Login
 3. Navigate to the API Keys page
 4. You should see an API key with the source "Cerebrium". Click the eye icon to
    display it. It will be in the format: c_api_key-xxx
@@ -120,11 +120,9 @@ and deploy our spaCy model.
 
 When you train a spaCy model, it will create a folder with a tokenizer, meta.json, config.cfg etc. You will need to specify the path of this folder when deploying your model.
 
-<Note>At the moment we only support Spacy Models that have been serialised on Python 3.10.</Note>
-
 
 ```bash
-from cerebrium import deploy, model_type
+from cerebrium import Conduit, model_type
 
 ###doc is the model returned from spacy.load()
 def postSpacy(doc):
@@ -133,7 +131,8 @@ def postSpacy(doc):
         test.append(token.text)
     return test
 
-endpoint = deploy((model_type.SPACY, "path/to/trained/model/", {"post": postSpacy}), "spacy-model" , "<API_KEY>")
+conduit = Conduit("spacy-model" , "<API_KEY>", (model_type.SPACY, "path/to/trained/model/", {"post": postSpacy}))
+conduit.deploy()
 ```
 
 ![Deployed Model](/images/quickstarts/spacy-1.png)

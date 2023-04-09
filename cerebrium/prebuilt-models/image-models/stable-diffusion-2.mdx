@@ -7,7 +7,7 @@ In order to deploy the model you can use the identifier below:
 
 - Stable Diffusion v2: `stable-diffusion`
 
-Once you've deployed a Stable Diffusion model, you can supply the endpoint with string with what image you would like to generate. Here's an example of how to call the deployed endpoint:
+We are currently using the "stabilityai/stable-diffusion-2-1" model. Once you've deployed a Stable Diffusion model, you can supply the endpoint with string with what image you would like to generate. Here's an example of how to call the deployed endpoint:
 
 #### Request Parameters
 
@@ -54,7 +54,8 @@ Once you've deployed a Stable Diffusion model, you can supply the endpoint with 
   The negative prompt is a parameter that tells Stable Diffusion what you don’t want to see in the generated images. This is an optional parameter that has an empty default value.
 </ParamField>
 <ParamField body="webhook_endpoint" type="string" optional>
-   The url endpoint you would like us to send the image results to once it has finished generating
+   The url endpoint you would like us to send the image results to once it has finished generating. We recommend this for long running tasks if you are generating
+   multiple images with many steps.
 </ParamField>
 
 <ResponseExample>
