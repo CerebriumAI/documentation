@@ -11,11 +11,11 @@ It is important to think of the way you develop models using Cerebrium should be
 Let us create our requirements.txt file and adding the following packages:
 
 ```
-pytube # For audio downloading
-langchain
---upgrade faiss-gpu==1.7.1
+faiss-gpu==1.7.1
 ffmpeg
+langchain
 openai-whisper
+pytube # For audio downloading
 ```
 
 To use Whisper we also have to install ffmpeg as a linux package and therefore have to create another file to define it, pkglist.txt - this is to install all Linux based packages. 
@@ -61,8 +61,8 @@ def store_segments(segments):
 
   return texts, start_times
 
-def predict(item: Item):
 
+def predict(item: Item):
     video = pytube.YouTube(url)
     video.streams.get_highest_resolution().filesize
     audio = video.streams.get_audio_only()
