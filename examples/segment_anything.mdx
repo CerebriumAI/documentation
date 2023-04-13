@@ -9,7 +9,7 @@ shopping feature on Instagram. It identifies clothes and associates the link to 
 ##Basic Setup
 It is important to think of the way you develop models using Cerebrium should be identical to developing on a virtual machine or Google Colab.
 
-To start we need to create a main.py file which will contain our main Python code. This is a relatively simple implementation so we can do everything in 1 file.
+To start we need to create a main.py file which will contain our main Python code. This is a relatively simple implementation, so we can do everything in 1 file.
 
 I then go straight to the [Meta Repo](https://github.com/facebookresearch/segment-anything) in order to see how I can run this code.
 I need to install a few dependencies. In order to do this, I need to create a requirements.txt file. with the following dependencies: 
@@ -42,7 +42,7 @@ mask_generator = SamAutomaticMaskGenerator(
 We define the model at the top of the file because code loaded in the top of the file is automatically run when deployed, meaning the model can be downloaded and stored within the image. You want this to happen on model
 load. If this was in a function, it would have to do a lookup in cache every time a request is made and would load the model into memory which we don't want.
 
-With the SAM model, you are able to set parameters about the how precise or how detailed you would like the model to perform. Since our use case is around detecting 
+With the SAM model, you are able to set parameters about how precise or how detailed you would like the model to perform. Since our use case is around detecting
 clothes on an image, we don't want the segmentation to be that grandular. You can look from Meta's documentation the different parameters you can set.
 
 In the documentation we need to select a model type and a checkpoint. Meta recommends three - We will just use the default. I then download the ViT-H SAM model
@@ -61,17 +61,17 @@ class Item(BaseModel):
 
 ```
 
-Pydantic is a data validation library and BaseModel is where Cerebrium keeps some default parameters like "webhook_url" that allows a user to send in a webhook url
-and we will call it when the job has finished processing - this is useful for long running tasks. Do not worry about that functionality for this tutorial. The reason
-the user is sending in a image or a file url is giving the user a choice to send in a base64 encoded image or a publicly accessible file_url we can download.
+Pydantic is a data validation library and BaseModel is where Cerebrium keeps some default parameters like "webhook_url" that allows a user to send in a webhook url,
+and we will call it when the job has finished processing - this is useful for long-running tasks. Do not worry about that functionality for this tutorial. The reason
+the user is sending in an image or a file url is giving the user a choice to send in a base64 encoded image or a publicly accessible file_url we can download.
 
 ##Identifying and classifying objects
 
 Next we would like to create three functions with the following functionality:
 1. Based on the image coordinates sent in, we would like to find the annotation (segment) the user is most likely referring to.
-2. Take the annotation of the image we have focused on from Meta's model, create a new image and crop it to only be a image of the the item we are focusing on.
+2. Take the annotation of the image we have focused on from Meta's model, create a new image and crop it to only be an image of the item we are focusing on.
 The reason we crop the image is to make the classification model perform more accurately.
-3. Pass this new image into a Object classification model so we can be told what this image is.
+3. Pass this new image into an Object classification model, so we can be told what this image is.
 
 ```Python
 
@@ -123,7 +123,7 @@ import requests
 from PIL import Image
 from io import BytesIO
 import base64
-from models.common.decorators import worker
+
 
 def download_image(url):
     if url:
@@ -133,9 +133,8 @@ def download_image(url):
 
     return Image.open(BytesIO(r.content))
 
-@worker
-def predict(item: Item):
 
+def predict(item, run_id, logger):
     if (not item.image and not item.file_url): return ""
 
     if item.image:
@@ -156,9 +155,8 @@ def predict(item: Item):
 
 In the above code we do a few things:
 1. We import the various packages we need add the necessary ones to our requirements.txt **
-2. We create a function that will download the image from a url if the user supplied one.
-3. We specify the @worker decorator to tell us this will be the function our endpoint runs. From this function you can always refer to other functions and classes.
-2. We run our "Segment Anything" model with the image the user sent through the request.
+2. We create a function that will download the image from an url if the user supplied one.
+3. We run our "Segment Anything" model with the image the user sent through the request.
 4. Lastly, we responded with the converted images. All returns from your endpoint function must be of type list or JSON.
 
 We can then deploy our model with the following line of code

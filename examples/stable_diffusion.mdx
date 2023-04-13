@@ -41,7 +41,7 @@ We define this at the top of the file for a few reasons:
 it would not be called
 2. 
 
-I then would like the user to send in a few parameters for the model via API and so I need to define what the request object would look like:
+I then would like the user to send in a few parameters for the model via API, and so I need to define what the request object would look like:
 
 ```python
 from pydantic import BaseModel
@@ -55,18 +55,16 @@ class Item(BaseModel):
 
 ```
 
-Pydantic is a data validation library and BaseModel is where Cerebrium keeps some default parameters like "webhook_url" that allows a user to send in a webhook url
-and we will call it when the job has finished processing - this is useful for long running tasks. Do not worry about that functionality for this tutorial.
+Pydantic is a data validation library and BaseModel is where Cerebrium keeps some default parameters like "webhook_url" that allows a user to send in a webhook url,
+and we will call it when the job has finished processing - this is useful for long-running tasks. Do not worry about that functionality for this tutorial.
 
 We would then like to create a function that we would like to be called every time our user submits a request. This request will then enter the user prompt into
 the model and from there return the image(s) to the user in base64 format. Our code looks as follows:
 
 ```python
-from models.common.decorators import worker
 import io
 import base64
 
-@worker
 def predict(item, run_id, logger):
 
     images = []
@@ -86,5 +84,4 @@ def predict(item, run_id, logger):
 ```
 
 In the above code we do a few things:
-1. We specific the @worker decorator to tell use this will be the function our endpoint runs. From this function you can always refer to other functions and classes.
-2. We run our Stable Diffusion model with parameters the user sent through the request. If the user didn't send any then we set default values.
+1. We run our Stable Diffusion model with parameters the user sent through the request. If the user didn't send any then we set default values.

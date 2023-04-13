@@ -1,9 +1,9 @@
 ---
-title: "Langchain Q&A Youtube"
+title: "Langchain Q&A YouTube"
 description: "To deploy Meta's segment anything model"
 ---
 
-In this tutorial we will recreate a question-answering bot that can answer questions based on a Youtube video. We recreated the application built [here](https://colab.research.google.com/drive/1sKSTjt9cPstl_WMZ86JsgEqFG-aSAwkn?usp=sharing) by @m_morzywolek.
+In this tutorial we will recreate a question-answering bot that can answer questions based on a YouTube video. We recreated the application built [here](https://colab.research.google.com/drive/1sKSTjt9cPstl_WMZ86JsgEqFG-aSAwkn?usp=sharing) by @m_morzywolek.
 
 ##Basic Setup
 It is important to think of the way you develop models using Cerebrium should be identical to developing on a virtual machine or Google Colab - so converting this should be very easy!
@@ -20,7 +20,7 @@ openai-whisper
 
 To use Whisper we also have to install ffmpeg as a linux package and therefore have to create another file to define it, pkglist.txt - this is to install all Linux based packages. 
 
-To start we need to create a main.py file which will contain our main Python code. This is a relatively simple implementation so we can do everything in 1 file. We would like a user to send in a link of a youtube video with a question and return to them the answer as well as the time segment of where we got that response.
+To start we need to create a main.py file which will contain our main Python code. This is a relatively simple implementation, so we can do everything in 1 file. We would like a user to send in a link of a YouTube video with a question and return to them the answer as well as the time segment of where we got that response.
 So let us define our request object.
 
 ```python
@@ -35,11 +35,10 @@ Above we use Pydantic as our data validation library and BaseModel is where Cere
 
 ##Convert Video to text
 
-Below we will use the Whisper model from OpenAI in order to convert the video audio to text. We will then split the text into its phrase segments with it's respective timings so we know the exact source of where our model got the answer from.
+Below we will use the Whisper model from OpenAI in order to convert the video audio to text. We will then split the text into its phrase segments with it's respective timings, so we know the exact source of where our model got the answer from.
 
 ```python
 import pytube 
-from models.common.decorators import worker
 from datetime import datetime
 
 
@@ -62,7 +61,6 @@ def store_segments(segments):
 
   return texts, start_times
 
-@worker
 def predict(item: Item):
 
     video = pytube.YouTube(url)
