@@ -1,0 +1,102 @@
+---
+title: "Langchain Q&A Youtube"
+description: "To deploy Meta's segment anything model"
+---
+
+In this tutorial we will recreate a question-answering bot that can answer questions based on a Youtube video. We recreated the application built [here](https://colab.research.google.com/drive/1sKSTjt9cPstl_WMZ86JsgEqFG-aSAwkn?usp=sharing) by @m_morzywolek
+
+##Basic Setup
+It is important to think of the way you develop models using Cerebrium should be identical to developing on a virtual machine or Google Colab - so converting this should be very easy!
+
+Let us create our requirements.txt file and adding the following packages:
+
+```
+pytube # For audio downloading
+langchain
+--upgrade faiss-gpu==1.7.1
+```
+
+To start we need to create a main.py file which will contain our main Python code. This is a relatively simple implementation so we can do everything in 1 file.
+
+```python
+import pytube 
+from pydantic import BaseModel
+from typing import Optional
+from models.common.decorators import worker
+from datetime import datetime
+
+
+class Item(BaseModel):
+    url: str
+    question: str
+
+def store_segments(segments):
+  texts = []
+  start_times = []
+
+  for segment in segments:
+    text = segment['text']
+    start = segment['start']
+
+    # Convert the starting time to a datetime object
+    start_datetime = datetime.fromtimestamp(start)
+
+    # Format the starting time as a string in the format "00:00:00"
+    formatted_start_time = start_datetime.strftime('%H:%M:%S')
+
+    texts.append("".join(text))
+    start_times.append(formatted_start_time)
+
+  return texts, start_times
+
+@worker
+def predict(item: Item):
+
+    video = pytube.YouTube(url)
+    video.streams.get_highest_resolution().filesize
+    audio = video.streams.get_audio_only()
+    fn = audio.download(output_path="/content/clips/")
+
+    model = whisper.load_model("small")
+    transcription = model.transcribe('/content/tmp.mp3')
+    res = transcription['segments']
+
+    texts, start_times = store_segments(res)
+
+```
+
+###Langchain Implementation
+
+Add the following code to your file
+
+```python
+from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.vectorstores.faiss import FAISS
+from langchain.chains import VectorDBQAWithSourcesChain
+from langchain import OpenAI
+import openai
+import faiss
+
+def create_embeddings(texts):
+    text_splitter = CharacterTextSplitter(chunk_size=1500, separator="\n")
+    docs = []
+    metadatas = []
+    for i, d in enumerate(texts):
+        splits = text_splitter.split_text(d)
+        docs.extend(splits)
+        metadatas.extend([{"source": start_times[i]}] * len(splits))
+    return metadatas
+
+#add following to your predict function after texts, start_times = store_segments(res)
+    metadatas = create_embeddings
+    embeddings = OpenAIEmbeddings()
+    store = FAISS.from_texts(docs, embeddings, metadatas=metadatas)
+    faiss.write_index(store.index, "docs.index")
+    chain = VectorDBQAWithSourcesChain.from_llm(llm=OpenAI(temperature=0), vectorstore=store)
+
+    result = chain({"question": item.question})
+
+    return {"result": result}
+
+```

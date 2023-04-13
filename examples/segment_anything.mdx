@@ -1,0 +1,101 @@
+---
+title: "Segment Anything Example"
+description: "To deploy Meta's segment anything model"
+---
+
+In this tutorial we will demonstrate how to get Meta's 'Segment Anything' model up and running.
+
+##Basic Setup
+It is important to think of the way you develop models using Cerebrium should be identical to developing on a virtual machine or Google Colab.
+
+To start we need to create a main.py file which will contain our main Python code. This is a relatively simple implementation so we can do everything in 1 file.
+
+I then go straight to the [Meta Repo](https://github.com/facebookresearch/segment-anything) in order to see how I can run this code.
+I need to install a few dependencies. In order to do this, I need to create a requirements.txt file. with the following dependencies: 
+
+```
+git+https://github.com/facebookresearch/segment-anything.git
+opencv-python
+pycocotools
+```
+
+I then define the following in my main.py file
+
+```python
+from diffusers import StableDiffusionPipeline, DPMSolverMultistepScheduler
+import torch
+
+model_id = "stabilityai/stable-diffusion-2-1"
+
+# Use the DPMSolverMultistepScheduler (DPM-Solver++) scheduler here instead
+pipe = StableDiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float16)
+pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
+pipe = pipe.to("cuda")
+```
+
+We define this at the top of the file for a few reasons:
+1. Code loaded in the top of the file is automatic run when deployed, meaning the model can be downloaded and stored within the image. If this was in a function,
+it would not be called
+2. 
+
+I then would like the user to send in a few parameters for the model via API and so I need to define what the request object would look like:
+
+```python
+from pydantic import BaseModel
+from typing import Optional
+
+class Item(BaseModel):
+    prompt: str
+    height: Optional[int]
+    width: Optional[int]
+    num_inference_steps: Optional[int]
+    num_images_per_prompt: Optional[int]
+
+```
+
+Pydantic is a data validation library and BaseModel is where Cerebrium keeps some default parameters like "webhook_url" that allows a user to send in a webhook url
+and we will call it when the job has finished processing - this is useful for long running tasks. Do not worry about that functionality for this tutorial.
+
+We would then like to create a function that we would like to be called every time our user submits a request. This request will then enter the user prompt into
+the model and from there return the image(s) to the user in base64 format. Our code looks as follows:
+
+```python
+from models.common.decorators import worker
+import io
+import base64
+
+@worker
+def predict(item, run_id, logger):
+
+    images = []
+    images = pipe(
+        prompt=item.prompt,
+        height=getattr(item, "height", 512),
+        width=getattr(item, "width", 512),
+        num_images_per_prompt=getattr(item,"num_images_per_prompt",1),
+        num_inference_steps= getattr(item,"num_inference_steps", 25)
+    ).images:
+
+    finished_images = []
+    for image in images:
+        buffered = io.BytesIO()
+        image.save(buffered, format="PNG")
+        finished_images.append(base64.b64encode(buffered.getvalue()).decode("utf-8"))
+
+    return finished_images
+```
+
+In the above code we do a few things:
+1. We specific the @worker decorator to tell use this will be the function our endpoint runs. From this function you can always refer to other functions and classes.
+2. We run our Stable Diffusion model with parameters the user sent through the request. If the user didn't send any then we set default values.
+3. We then convert each image to base64 so the image can be returned to the user via the API
+4. Lastly, we responded with the converted images. All returns from your endpoint function must be of type list or JSON.
+
+We can then deploy our model with the following line of code
+
+```
+cerebrium-deploy -n stable-diffusion -h A10 -m 16 -k <API_KEY>
+```
+
+After a few minutes, your model should be deployed and an endpoint should be returned. Let us create a CURL request to see the response
+
