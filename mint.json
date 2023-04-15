@@ -109,6 +109,14 @@
       ]
     },
     {
+      "group": "Examples",
+      "pages": [
+        "examples/stable_diffusion",
+        "examples/segment_anything",
+        "examples/langchain",
+      ]
+    },
+      {
       "group": "Quickstarts",
       "pages": [
         "quickstarts/custom",

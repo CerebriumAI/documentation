@@ -1,0 +1,118 @@
+---
+title: "Langchain Q&A YouTube"
+description: "To deploy Meta's segment anything model"
+---
+
+In this tutorial we will recreate a question-answering bot that can answer questions based on a YouTube video. We recreated the application built [here](https://colab.research.google.com/drive/1sKSTjt9cPstl_WMZ86JsgEqFG-aSAwkn?usp=sharing) by @m_morzywolek.
+
+##Basic Setup
+It is important to think of the way you develop models using Cerebrium should be identical to developing on a virtual machine or Google Colab - so converting this should be very easy!
+
+Let us create our requirements.txt file and adding the following packages:
+
+```
+faiss-gpu==1.7.1
+ffmpeg
+langchain
+openai-whisper
+pytube # For audio downloading
+```
+
+To use Whisper we also have to install ffmpeg as a linux package and therefore have to create another file to define it, pkglist.txt - this is to install all Linux based packages. 
+
+To start we need to create a main.py file which will contain our main Python code. This is a relatively simple implementation, so we can do everything in 1 file. We would like a user to send in a link of a YouTube video with a question and return to them the answer as well as the time segment of where we got that response.
+So let us define our request object.
+
+```python
+from pydantic import BaseModel
+
+class Item(BaseModel):
+    url: str
+    question: str
+```
+
+Above we use Pydantic as our data validation library and BaseModel is where Cerebrium keeps some default parameters like "webhook_url" that you can use for long-running tasks but do not worry about that functionality for this tutorial. Due to the way I have defined my Base Model, "url" and "question" are required parameters and so if they are not present in the request, the user will automatically receive an error message. 
+
+##Convert Video to text
+
+Below we will use the Whisper model from OpenAI in order to convert the video audio to text. We will then split the text into its phrase segments with it's respective timings, so we know the exact source of where our model got the answer from.
+
+```python
+import pytube 
+from datetime import datetime
+
+
+def store_segments(segments):
+  texts = []
+  start_times = []
+
+  for segment in segments:
+    text = segment['text']
+    start = segment['start']
+
+    # Convert the starting time to a datetime object
+    start_datetime = datetime.fromtimestamp(start)
+
+    # Format the starting time as a string in the format "00:00:00"
+    formatted_start_time = start_datetime.strftime('%H:%M:%S')
+
+    texts.append("".join(text))
+    start_times.append(formatted_start_time)
+
+  return texts, start_times
+
+
+def predict(item: Item):
+    video = pytube.YouTube(url)
+    video.streams.get_highest_resolution().filesize
+    audio = video.streams.get_audio_only()
+    fn = audio.download(output_path="/content/clips/")
+
+    model = whisper.load_model("small")
+    transcription = model.transcribe('/content/tmp.mp3')
+    res = transcription['segments']
+
+    texts, start_times = store_segments(res)
+
+```
+###Langchain Implementation
+
+Below we will implement Langchain in order to use a vectorstore, where we will store all our video segments above, with a LLM, Flan-T5, hosted on Cerebrium in order to generate answers.
+
+```python
+from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.vectorstores.faiss import FAISS
+from langchain.chains import VectorDBQAWithSourcesChain
+from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.llms import CerebriumAI
+import openai
+import faiss
+
+def create_embeddings(texts, start_times):
+    text_splitter = CharacterTextSplitter(chunk_size=1500, separator="\n")
+    docs = []
+    metadatas = []
+    for i, d in enumerate(texts):
+        splits = text_splitter.split_text(d)
+        docs.extend(splits)
+        metadatas.extend([{"source": start_times[i]}] * len(splits))
+    return metadatas
+
+#add following to your predict function after texts, start_times = store_segments(res)
+    metadatas = create_embeddings
+    embeddings = HuggingFaceEmbeddings()
+    store = FAISS.from_texts(docs, embeddings, metadatas=metadatas)
+    faiss.write_index(store.index, "docs.index")
+    llm = CerebriumAI(endpoint_url="https://run.cerebrium.ai/flan-t5-xl-webhook/predict")
+    chain = VectorDBQAWithSourcesChain.from_llm(llm=llm, vectorstore=store)
+
+    result = chain({"question": item.question})
+
+    return {"result": result}
+
+```
+
+Above we chunk our text segments and store tem in a FAISS vector store. In order to create the embeddings, we use a open-source model from Hugging Face. The reason it is better to run Whisper and a embeddings model on the same machine is you save 2 round trips of network requests which will save you above 600ms+ on average.
+
+We then integrate langchain with a Cerebrium deployed endpoint in order to answer questions. Lastly, we return the results
