@@ -45,7 +45,9 @@
   "navigation": [
     {
       "group": "Home",
-      "pages": ["introduction"]
+      "pages": [
+        "introduction"
+      ]
     },
     {
       "group": "Cerebrium",
@@ -113,10 +115,10 @@
       "pages": [
         "examples/stable_diffusion",
         "examples/segment_anything",
-        "examples/langchain",
+        "examples/langchain"
       ]
     },
-      {
+    {
       "group": "Quickstarts",
       "pages": [
         "quickstarts/custom",
@@ -137,7 +139,10 @@
     },
     {
       "group": "Updates",
-      "pages": ["changelog", "roadmap"]
+      "pages": [
+        "changelog",
+        "roadmap"
+      ]
     }
   ],
   "analytics": {
