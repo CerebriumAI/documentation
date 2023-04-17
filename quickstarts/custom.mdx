@@ -16,7 +16,7 @@ Many of our more hardcore users wanted finer-grain control over their code and p
 any custom Python code. 
 
 We have been focusing hard on the developer experience that if your code runs locally, you can deploy it to serverless CPUs\/GPUs using one line.
-Initial deploys take about a minute (installing packages etc) however, thereafter every change is \< 10 seconds and of course inference requests have a cold start \<1 second! 
+Initial deploys take about a minute (installing packages etc.) however, thereafter every change is \< 10 seconds and of course inference requests have a cold start \<1 second!
 You can get started with our simple tutorial below:
 
 ## Project set up
@@ -37,26 +37,24 @@ to authenticate all calls for this project.
 
 ### Components
 
-Currently our implementation has three components:
+Currently, our implementation has three components:
 - **main.py** - This is where your python code lives
 - **requirements.txt** - This is where you define your Python packages. Deployment will be quicker if you specify specific versions
 - **pkglist.txt** - This is where you can define linux packages you would like to install. We run the apt-install command for items in here
 
-However you can contain images and other Python files in the same directory and they will get packaged and uploaded when you deploy.
+However, you can contain images and other Python files in the same directory, and they will get packaged and uploaded when you deploy.
 
 Every main.py you deploy needs the following mandatory layout:
 
 ```bash
-from fastapi import FastAPI
 from pydantic import BaseModel
 
-app = FastAPI()
 
 class Item(BaseModel):
     parameter: value
 
-@app.post("/predict")
-def some_function_name(item: Item):
+def prdict(item, run_id, logger):
+    item = Item(**item)
 
     ##Do something with parameters from item
 
@@ -64,7 +62,7 @@ def some_function_name(item: Item):
 ```
 
 The Item class is where you define the parameters your model receives as well as their type. Item needs to inherit from BaseModel. 
-You need to define a function with the decorator **@app.post("/predict")** which receives the Item object you defined above. 
+You need to define a function with the name **predict** which receives 3 params, item, run_id, logger.
 
 Both the **requirements.txt** and **pkglist.txt** follow standard layouts in that each package should be on a new line.
 
@@ -81,11 +79,9 @@ from io import BytesIO
 
 import requests
 from PIL import Image
-from fastapi import FastAPI
 from pydantic import BaseModel
 from transformers import ViTFeatureExtractor, ViTForImageClassification
 
-app = FastAPI()
 
 class Item(BaseModel):
     image: str
@@ -104,8 +100,8 @@ def download_image(image):
     return Image.open(BytesIO(r.content))
 
 
-@app.post("/predict")
-def generate(item: Item):
+def predict(item, run_id, logger):
+    item = Item(**item)
     # Get example image from official fairface repo + read it in as an image
     
     image = download_image(item.image)
@@ -130,7 +126,7 @@ def generate(item: Item):
 You will see that we defined our model and tokenizer outside our predict function. The reason for this is that it will download and cache as soon as your code is deployed.
 If you define it within the predict function then it will only load on the first predict call, thereafter it will be cached.
 
-We don't require any linux packages so we can keep our pkglist.txt empty but let's make sure we install the required Python packages in our requirements.txt
+We don't require any linux packages, so we can keep our pkglist.txt empty but let's make sure we install the required Python packages in our requirements.txt
 
 ```bash
 pillow==9.4.0
