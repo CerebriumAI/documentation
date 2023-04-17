@@ -5,7 +5,7 @@ description: "Arize is a monitoring tool that allows you to track your model per
 
 # Setup
 To get started, you need to create an [Arize](https://www.arize.com) account which you can do [here](https://app.arize.com/auth/join). 
-Once you have signed up for Arize, you will need to create a 'space' - you can think of this a a way to organize various models but usually one space per company/client is sufficient. 
+Once you have signed up for Arize, you will need to create a 'space' - you can think of this a way to organize various models but usually one space per company/client is sufficient.
 
 Arize handles the following type of models for you to do logging. You can read more about the functionality they provide for each to get a sense of their features and functionality:
 - [Binary Classification](https://docs.arize.com/arize/model-types/binary-classification)
@@ -16,8 +16,8 @@ Arize handles the following type of models for you to do logging. You can read m
 - [NLP](https://docs.arize.com/arize/model-types/natural-language-processing-nlp)
 - [CV](https://docs.arize.com/arize/model-types/computer-vision-cv)
 
-Logging with Arize is particularly easy with Cerebrium since you just have to define about 8 lines of code and it follows an almost identical pattern to if you are familiar on how to log with Arize.
-If you would like to be be more familiar with their platform you can take a look at the [Arize documentation](https://arize.com/docs/).
+Logging with Arize is particularly easy with Cerebrium since you just have to define about 8 lines of code, and it follows an almost identical pattern to if you are familiar on how to log with Arize.
+If you would like to be more familiar with their platform you can take a look at the [Arize documentation](https://arize.com/docs/).
 
 # Adding a Arize Logger
 Once you have instantiated your Conduit object in code (see [here](/cerebrium/test-and-deploy)), you can add a Censius logger to it by calling the `add_logger` method.
@@ -119,7 +119,7 @@ platform_args = {
 
 ```
 
-Subsequently, We assign values to your features in the order they were entered - so its important to make sure that the embedding values are the last in your model input. For example:
+Subsequently, We assign values to your features in the order they were entered - so it's important to make sure that the embedding values are the last in your model input. For example:
 
 **Input**: ```['ca', 'berkeley', 'Peets Coffee', True, 10, 'coffee shop' 20.11, [4.0, 5.0, 6.0, 7.0]]```
 

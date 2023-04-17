@@ -35,7 +35,7 @@ Above we use Pydantic as our data validation library and BaseModel is where Cere
 
 ##Convert Video to text
 
-Below we will use the Whisper model from OpenAI in order to convert the video audio to text. We will then split the text into its phrase segments with it's respective timings, so we know the exact source of where our model got the answer from.
+Below we will use the Whisper model from OpenAI in order to convert the video audio to text. We will then split the text into its phrase segments with its respective timings, so we know the exact source of where our model got the answer from.
 
 ```python
 import pytube 
@@ -113,6 +113,6 @@ def create_embeddings(texts, start_times):
 
 ```
 
-Above we chunk our text segments and store tem in a FAISS vector store. In order to create the embeddings, we use a open-source model from Hugging Face. The reason it is better to run Whisper and a embeddings model on the same machine is you save 2 round trips of network requests which will save you above 600ms+ on average.
+Above we chunk our text segments and store tem in a FAISS vector store. In order to create the embeddings, we use an open-source model from Hugging Face. The reason it is better to run Whisper and an embeddings model on the same machine is you save 2 round trips of network requests which will save you above 600ms+ on average.
 
 We then integrate langchain with a Cerebrium deployed endpoint in order to answer questions. Lastly, we return the results

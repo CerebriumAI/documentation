@@ -43,12 +43,12 @@ We define the model at the top of the file because code loaded in the top of the
 load. If this was in a function, it would have to do a lookup in cache every time a request is made and would load the model into memory which we don't want.
 
 With the SAM model, you are able to set parameters about how precise or how detailed you would like the model to perform. Since our use case is around detecting
-clothes on an image, we don't want the segmentation to be that grandular. You can look from Meta's documentation the different parameters you can set.
+clothes on an image, we don't want the segmentation to be that granular. You can look from Meta's documentation the different parameters you can set.
 
 In the documentation we need to select a model type and a checkpoint. Meta recommends three - We will just use the default. I then download the ViT-H SAM model
 checkpoint. You can simply add this checkpoint file to the same directory as your main.py and when you deploy your model, Cerebrium will automatically upload it.
 
-I then would like the user to send in a few parameters for the model via API and so I need to define what the request object would look like:
+I then would like the user to send in a few parameters for the model via API, and so I need to define what the request object would look like:
 
 ```python
 from pydantic import BaseModel
