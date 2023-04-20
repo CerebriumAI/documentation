@@ -6,13 +6,17 @@ description: "To deploy your own custom version of Stable Diffusion"
 In this tutorial we will demonstrate how to get Stable Diffusion 2.1 up and running in 5 minutes using custom Python. You could use the pre-built
 version of this model from your Cerebrium dashboard - we just wanted to show a different way of doing this.
 
-##Basic Setup
+To see the final implementation you can view it [here](https://github.com/CerebriumAI/examples/tree/master/1-stable-diffusion)
+
+
+## Basic Setup
+
 It is important to think of the way you develop models using Cerebrium should be identical to developing on a virtual machine or Google Colab.
 
-To start we need to create a main.py file which will contain our main Python code. This is a relatively simple implementation, so we can do everything in 1 file.
+To start we need to create a **main.py** file which will contain our main Python code. This is a relatively simple implementation, so we can do everything in 1 file.
 
 I then go straight to the [Hugging face documentation](https://huggingface.co/stabilityai/stable-diffusion-2-1) and see that in order to run Stable Diffusion 2.1
-I need to install a few dependencies. In order to do this, I need to create a requirements.txt file. with the following dependencies: 
+I need to install a few dependencies. In order to do this, I need to create a **requirements.txt** file. with the following dependencies: 
 
 ```
 diffusers
@@ -20,6 +24,7 @@ transformers
 accelerate
 scipy
 safetensors
+xformers
 ```
 
 I then define the following in my main.py file
@@ -33,13 +38,15 @@ model_id = "stabilityai/stable-diffusion-2-1"
 # Use the DPMSolverMultistepScheduler (DPM-Solver++) scheduler here instead
 pipe = StableDiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float16)
 pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
+pipe.enable_xformers_memory_efficient_attention()
 pipe = pipe.to("cuda")
 ```
 
-We define this at the top of the file for a few reasons:
-1. Code loaded in the top of the file is automatic run when deployed, meaning the model can be downloaded and stored within the image. If this was in a function,
-it would not be called
-2. 
+We define this at the top of the file for two reasons:
+1. Code loaded in the top of the file is automatically run when deployed, meaning the model can be downloaded and loaded into memory on the first deployment.
+The first deployment is the longest but thereafter it should be pretty quick.
+2. If this was in a function, it would not be called on deploy but on the first request. Also it would be loaded from cache on every request. We do not want either
+of these two things.
 
 I then would like the user to send in a few parameters for the model via API, and so I need to define what the request object would look like:
 
@@ -58,8 +65,12 @@ class Item(BaseModel):
 Pydantic is a data validation library and BaseModel is where Cerebrium keeps some default parameters like "webhook_url" that allows a user to send in a webhook url,
 and we will call it when the job has finished processing - this is useful for long-running tasks. Do not worry about that functionality for this tutorial.
 
-We would then like to create a function that we would like to be called every time our user submits a request. This request will then enter the user prompt into
-the model and from there return the image(s) to the user in base64 format. Our code looks as follows:
+We would then like to create a function, **predict** that we would like to be called every time our user submits a request. The predict function received 3 parameters:
+1. The request object you defined
+2. The run_id which is a unique identifier for each inference request
+3. A logger object which you should use to log any contents. You should use logger.info(...) or logger.error(...)
+
+The request will then enter the user prompt into the model and from there return the image(s) to the user in base64 format. Our code looks as follows:
 
 ```python
 import io
@@ -81,7 +92,41 @@ def predict(item, run_id, logger):
         buffered = io.BytesIO()
         image.save(buffered, format="PNG")
         finished_images.append(base64.b64encode(buffered.getvalue()).decode("utf-8"))
+
+    return finished_images 
 ```
 
 In the above code we do a few things:
 1. We run our Stable Diffusion model with parameters the user sent through the request. If the user didn't send any then we set default values.
+2. We convert the generated images to base64 in order to return it back to the user
+
+To deploy this function to a A10 instance we run the following code:
+
+```bash
+cerebrium-deploy -n stable-diffusion -h A10 -k <API_KEY>
+```
+
+We can then make the following request:
+
+```bash
+curl --location --request POST 'https://run.cerebrium.ai/v1/p-xxxxx/project/predict' \
+--header 'Authorization: dev-c_api_key-ad0064b953c8053ff7bc' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "url": "https://www.youtube.com/watch?v=UF8uR6Z6KLc&ab_channel=Stanford",
+    "question": "How old was Steve Jobs when started Apple?"
+}'
+```
+
+This gives us the following results:
+
+```json 
+{
+"run_id": "65da615b-829a-49d8-abf6-64f2c887e546",
+    "message": "success",
+    "result": [
+        "iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAIAAAB7GkOtAAEAAElEQVR4nJT9abBl2XUeiH1r7X3OudObp3w5V2XNIwoECjMBEaJEUqSogeqWFAyp1Y6W3WG3HdF2O+y/Hf7h8C//cNttS91
+    ],
+    "run_time_ms": 2803.5125732421875
+}
+```
