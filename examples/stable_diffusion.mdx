@@ -109,12 +109,11 @@ cerebrium-deploy -n stable-diffusion -h A10 -k <API_KEY>
 We can then make the following request:
 
 ```bash
-curl --location --request POST 'https://run.cerebrium.ai/v1/p-xxxxx/project/predict' \
+curl --location --request POST 'https://run.cerebrium.ai/v1/p-xxxxx/stable-diffusion/predict' \
 --header 'Authorization: dev-c_api_key-ad0064b953c8053ff7bc' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "url": "https://www.youtube.com/watch?v=UF8uR6Z6KLc&ab_channel=Stanford",
-    "question": "How old was Steve Jobs when started Apple?"
+    "prompt": "A knight riding a horse on the moon"
 }'
 ```
 
@@ -125,7 +124,7 @@ This gives us the following results:
 "run_id": "65da615b-829a-49d8-abf6-64f2c887e546",
     "message": "success",
     "result": [
-        "iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAIAAAB7GkOtAAEAAElEQVR4nJT9abBl2XUeiH1r7X3OudObp3w5V2XNIwoECjMBEaJEUqSogeqWFAyp1Y6W3WG3HdF2O+y/Hf7h8C//cNttS91
+        "iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAIAAAB7GkOtAAEAAElEQVR4nJT9abBl2XUeiH1r7X3OudObp3w5V2XNIwoECjMBEaJEUqSogeqWFAyp1Y6W3WG3HdF2O+y/Hf7h8C//cNttS91....
     ],
     "run_time_ms": 2803.5125732421875
 }
