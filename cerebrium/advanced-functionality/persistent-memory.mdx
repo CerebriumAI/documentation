@@ -7,7 +7,7 @@ For example, you may want to store the number of rows in a dataset in a pre proc
 To do this, the Cerebrium framework provides a persistent memory store that can access through the use of the `get`, `save` and `delete` functions.
 
 The persistent memory store is a key-value store that can be used to store data in a processing function and then retrieve that data in a further function in the pipeline.
-The persistent memory store is a global store, meaning that all functions in the pipeline can access the same dat. However, while you can save any Python object, 
+The persistent memory store is a global store, meaning that all functions in the pipeline can access the same dat. However, while you can save any Python object,
 you may only save objects created **within** the scope of the function. This means that you cannot save objects created in a parent function, or created in a global scope
 of your local interpreter.
 

@@ -8,7 +8,6 @@ version of this model from your Cerebrium dashboard - we just wanted to show a d
 
 To see the final implementation you can view it [here](https://github.com/CerebriumAI/examples/tree/master/1-stable-diffusion)
 
-
 ## Basic Setup
 
 It is important to think of the way you develop models using Cerebrium should be identical to developing on a virtual machine or Google Colab.
@@ -16,7 +15,7 @@ It is important to think of the way you develop models using Cerebrium should be
 To start we need to create a **main.py** file which will contain our main Python code. This is a relatively simple implementation, so we can do everything in 1 file.
 
 I then go straight to the [Hugging face documentation](https://huggingface.co/stabilityai/stable-diffusion-2-1) and see that in order to run Stable Diffusion 2.1
-I need to install a few dependencies. In order to do this, I need to create a **requirements.txt** file. with the following dependencies: 
+I need to install a few dependencies. In order to do this, I need to create a **requirements.txt** file. with the following dependencies:
 
 ```
 diffusers
@@ -43,10 +42,11 @@ pipe = pipe.to("cuda")
 ```
 
 We define this at the top of the file for two reasons:
+
 1. Code loaded in the top of the file is automatically run when deployed, meaning the model can be downloaded and loaded into memory on the first deployment.
-The first deployment is the longest but thereafter it should be pretty quick.
+   The first deployment is the longest but thereafter it should be pretty quick.
 2. If this was in a function, it would not be called on deploy but on the first request. Also it would be loaded from cache on every request. We do not want either
-of these two things.
+   of these two things.
 
 I then would like the user to send in a few parameters for the model via API, and so I need to define what the request object would look like:
 
@@ -66,6 +66,7 @@ Pydantic is a data validation library and BaseModel is where Cerebrium keeps som
 and we will call it when the job has finished processing - this is useful for long-running tasks. Do not worry about that functionality for this tutorial.
 
 We would then like to create a function, **predict** that we would like to be called every time our user submits a request. The predict function received 3 parameters:
+
 1. The request object you defined
 2. The run_id which is a unique identifier for each inference request
 3. A logger object which you should use to log any contents. You should use logger.info(...) or logger.error(...)
@@ -93,10 +94,11 @@ def predict(item, run_id, logger):
         image.save(buffered, format="PNG")
         finished_images.append(base64.b64encode(buffered.getvalue()).decode("utf-8"))
 
-    return finished_images 
+    return finished_images
 ```
 
 In the above code we do a few things:
+
 1. We run our Stable Diffusion model with parameters the user sent through the request. If the user didn't send any then we set default values.
 2. We convert the generated images to base64 in order to return it back to the user
 
@@ -119,7 +121,7 @@ curl --location --request POST 'https://run.cerebrium.ai/v1/p-xxxxx/stable-diffu
 
 This gives us the following results:
 
-```json 
+```json
 {
 "run_id": "65da615b-829a-49d8-abf6-64f2c887e546",
     "message": "success",

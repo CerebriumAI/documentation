@@ -26,26 +26,31 @@ Once you've deployed a Whisper model, you can supply the endpoint with a base-64
 </RequestExample>
 
 <ParamField header="Authorization" type="string" required>
-  This is the Cerebrium API key used to authenticate your request. You can get it from your Cerebrium dashboard.
+  This is the Cerebrium API key used to authenticate your request. You can get
+  it from your Cerebrium dashboard.
 </ParamField>
 <ParamField body="audio" type="string" optional>
-   A base64 encoded string of the audio file you would like to transcribe/translate.
+  A base64 encoded string of the audio file you would like to
+  transcribe/translate.
 </ParamField>
 <ParamField body="webhook_endpoint" type="string" optional>
-   A http endpoint that we can notify with the results of the model once it has finished processing.
+  A http endpoint that we can notify with the results of the model once it has
+  finished processing.
 </ParamField>
 <ParamField body="file_url" type="string" required>
-   A publicly accessible url for us to fetch the file for transcription. This does not have to be a S3 url but can be any url.
+  A publicly accessible url for us to fetch the file for transcription. This
+  does not have to be a S3 url but can be any url.
 </ParamField>
 
 <ResponseExample>
 
 ```json Response
 {
-    "text": "<TEXT>",
-    "segments": []
+  "text": "<TEXT>",
+  "segments": []
 }
 ```
+
 </ResponseExample>
 
 #### Response Parameters

@@ -2,9 +2,9 @@
 title: "Sending File Input"
 ---
 
-You may also use files as input data to your model. 
-This is particularly useful if you have a model that takes in images, audio files, or other binary data. 
-To do this, you will need to supply at least an initial pre-processing function. 
+You may also use files as input data to your model.
+This is particularly useful if you have a model that takes in images, audio files, or other binary data.
+To do this, you will need to supply at least an initial pre-processing function.
 You can then use the files in your model as you would any other input data.
 It is important to note that `conduit.run` expects the files to be passed in as **binary data** on the cloud, so you will need to open the files and read them in as binary data before passing them to test with `conduit.run` locally.
 
@@ -23,8 +23,10 @@ conduit.deploy()
 ```
 
 ### Request and Response with Forms
+
 <Note>
-  You currently cannot use `model_api_request` with file input. You will need to use **curl** instead.
+  You currently cannot use `model_api_request` with file input. You will need to
+  use **curl** instead.
 </Note>
 
 <RequestExample>
@@ -39,18 +41,20 @@ conduit.deploy()
 The parameters to a form request are similar to a JSON request, however both the `data` and `files` are passed in as *form data*.
 
 <ParamField header="Authorization" type="string" required>
-  This is the Cerebrium API key used to authenticate your request. You can get it from your Cerebrium dashboard.
+  This is the Cerebrium API key used to authenticate your request. You can get
+  it from your Cerebrium dashboard.
 </ParamField>
 <ParamField body="Content-Type" type="string" required>
-   The content type of your request. Must be multipart/form-data for forms.
+  The content type of your request. Must be multipart/form-data for forms.
 </ParamField>
 <ParamField form="data" type="string" required>
-   A stringified list of data points you would like to send to your model. e.g. for 1 data point of 3 features: '[[1,2,3]]'.
+  A stringified list of data points you would like to send to your model. e.g.
+  for 1 data point of 3 features: '[[1,2,3]]'.
 </ParamField>
 <ParamField form="files" type="file" required>
-   A file or list of files you would like to send to your model. The files should be in the same order as the data points in the `data` field.
+  A file or list of files you would like to send to your model. The files should
+  be in the same order as the data points in the `data` field.
 </ParamField>
-
 
 <ResponseExample>
 
@@ -62,9 +66,11 @@ The parameters to a form request are similar to a JSON request, however both the
   "prediction_ids": ["<PREDICTION_ID>"]
 }
 ```
+
 </ResponseExample>
 
 #### Response Parameters
+
 <ResponseField name="result" type="array" required>
   The result of your model prediction.
 </ResponseField>
@@ -72,8 +78,10 @@ The parameters to a form request are similar to a JSON request, however both the
   The run ID associated with your model predictions.
 </ResponseField>
 <ResponseField name="run_time_ms" type="float" required>
-  The amount of time if took your model to run down to the millisecond. This is what we charge you based on.
+  The amount of time if took your model to run down to the millisecond. This is
+  what we charge you based on.
 </ResponseField>
 <ResponseField name="prediction_ids" type="array" required>
-  The prediction IDs associated with each of your model predictions. Used to track your model predictions with monitoring tools.
+  The prediction IDs associated with each of your model predictions. Used to
+  track your model predictions with monitoring tools.
 </ResponseField>

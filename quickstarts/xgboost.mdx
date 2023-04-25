@@ -65,13 +65,13 @@ endpoint = deploy((model_type.XGBOOST_CLASSIFIER, "iris.json"), "xgb-test-model"
 ![Deployed Model](/images/quickstarts/xgboost-1.png)
 
 <Note>
-  Your result format will change for the `_classifier` model types. The `xgb_classifier` will return a `result` object
-  containing the probability distribution for the predicted output classes,
-  rather than the argmax of the distribution. This is to allow you flexibility
-  in how you want to handle the output of your model for classification. For
-  example, you may want to return the top 3 predictions for your model, or you
-  may want to return the top 3 predictions with a minimum probability threshold.
-  This is up to you.
+  Your result format will change for the `_classifier` model types. The
+  `xgb_classifier` will return a `result` object containing the probability
+  distribution for the predicted output classes, rather than the argmax of the
+  distribution. This is to allow you flexibility in how you want to handle the
+  output of your model for classification. For example, you may want to return
+  the top 3 predictions for your model, or you may want to return the top 3
+  predictions with a minimum probability threshold. This is up to you.
 </Note>
 
 Your model is now deployed and ready for inference all in under **10 seconds**!

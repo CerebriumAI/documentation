@@ -6,6 +6,7 @@ description: "Raw model for masked language modeling, but it's mostly intended t
 RoBERTa is a transformers model pretrained on a large corpus of English data in a self-supervised fashion. It was trained on English language using a masked language modeling (MLM) objective.
 It was introduced in this [paper](https://arxiv.org/abs/1907.11692) and first released in [this repository](https://github.com/pytorch/fairseq/tree/master/examples/roberta). This model is case-sensitive: it makes a difference between english and English.
 We currently have the following Roberta models available below however if you would like any others contact support, and we can quickly add it for you. In order to deploy it you can use the identifier below:
+
 - Roberta Large: `roberta-large`
 
 Once you've deployed a Roberta model, you can supply the endpoint with a prompt. Here's an example of how to call the deployed endpoint:
@@ -35,7 +36,7 @@ Once you've deployed a Roberta model, you can supply the endpoint with a prompt.
 ```json Response
   "run_id": "<UUID_STRING>",
   "run_time_ms": 251,
-  "message": "Successfully generated text", 
+  "message": "Successfully generated text",
   "result": [{'sequence': "<s>Paris</s>",
     'score': 0.3317350447177887,
     'token': 2943,
@@ -45,17 +46,20 @@ Once you've deployed a Roberta model, you can supply the endpoint with a prompt.
     'token': 2734,
     'token_str': 'Nice'},
     ...
-  ]`    
+  ]`
 ```
+
 </ResponseExample>
 
 #### Response Parameters
 
 <ResponseField name="run_id" type="string" required>
-  A unique identifier for the run that you can use to associate prompts with webhook endpoints.
+  A unique identifier for the run that you can use to associate prompts with
+  webhook endpoints.
 </ResponseField>
 <ResponseField name="run_time_ms" type="string" required>
-  The amount of time in millisecond it took to run your function. This is what you will be billed for.
+  The amount of time in millisecond it took to run your function. This is what
+  you will be billed for.
 </ResponseField>
 <ResponseField name="message" type="string" required>
   Whether of not the response was successful
@@ -63,5 +67,3 @@ Once you've deployed a Roberta model, you can supply the endpoint with a prompt.
 <ResponseField name="result" type="string" required>
   The result generated from Roberta
 </ResponseField>
-
-

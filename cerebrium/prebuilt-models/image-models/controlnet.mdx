@@ -108,19 +108,23 @@ You can follow this example of how to call the deployed endpoint:
     "result": [<BASE_64_STRING>]
 }
 ```
+
 </ResponseExample>
 
 #### Response Parameters
 
 <ResponseField name="run_id" type="string" required>
-  A unique identifier for the run that you can use to associate prompts with webhook endpoints.
+  A unique identifier for the run that you can use to associate prompts with
+  webhook endpoints.
 </ResponseField>
 <ResponseField name="message" type="string" required>
   Whether of not the response was successful
 </ResponseField>
 <ResponseField name="run_time_ms" type="string" required>
-  The amount of time in millisecond it took to run your function. This is what you will be billed for.
+  The amount of time in millisecond it took to run your function. This is what
+  you will be billed for.
 </ResponseField>
 <ResponseField name="images" type="string" required>
-  An array of base64 encoded strings of the image that you can convert into an image
+  An array of base64 encoded strings of the image that you can convert into an
+  image
 </ResponseField>

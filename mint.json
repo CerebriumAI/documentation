@@ -45,9 +45,7 @@
   "navigation": [
     {
       "group": "Home",
-      "pages": [
-        "introduction"
-      ]
+      "pages": ["introduction"]
     },
     {
       "group": "Cerebrium",
@@ -139,10 +137,7 @@
     },
     {
       "group": "Updates",
-      "pages": [
-        "changelog",
-        "roadmap"
-      ]
+      "pages": ["changelog", "roadmap"]
     }
   ],
   "analytics": {
