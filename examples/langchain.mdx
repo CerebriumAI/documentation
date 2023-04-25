@@ -11,7 +11,7 @@ To see the final implementation you can view it [here](https://github.com/Cerebr
 
 It is important to think of the way you develop models using Cerebrium should be identical to developing on a virtual machine or Google Colab - so converting this should be very easy!
 
-Let us create our ***requirements.txt*** file and adding the following packages:
+Let us create our **_requirements.txt_** file and adding the following packages:
 
 ```
 pytube # For audio downloading
@@ -24,14 +24,13 @@ sentence_transformers
 cerebrium
 ```
 
-To use Whisper we also have to install ffmpeg and a few other packages as a linux package and therefore have to create another file to define it, **pkglist.txt** - this is to install all Linux based packages. 
+To use Whisper we also have to install ffmpeg and a few other packages as a linux package and therefore have to create another file to define it, **pkglist.txt** - this is to install all Linux based packages.
 
 ```
 ffmpeg
 libopenblas-base
 libomp-dev
 ```
-
 
 To start we need to create a **main.py** file which will contain our main Python code. This is a relatively simple implementation, so we can do everything in 1 file. We would like a user to send in a link of a YouTube video with a question and return to them the answer as well as the time segment of where we got that response.
 So let us define our request object.
@@ -44,14 +43,14 @@ class Item(BaseModel):
     question: str
 ```
 
-Above we use Pydantic as our data validation library and BaseModel is where Cerebrium keeps some default parameters like "webhook_url" that you can use for long-running tasks but do not worry about that functionality for this tutorial. Due to the way I have defined my Base Model, "url" and "question" are required parameters and so if they are not present in the request, the user will automatically receive an error message. 
+Above we use Pydantic as our data validation library and BaseModel is where Cerebrium keeps some default parameters like "webhook_url" that you can use for long-running tasks but do not worry about that functionality for this tutorial. Due to the way I have defined my Base Model, "url" and "question" are required parameters and so if they are not present in the request, the user will automatically receive an error message.
 
 ## Convert Video to text
 
 Below we will use the Whisper model from OpenAI in order to convert the video audio to text. We will then split the text into its phrase segments with its respective timings, so we know the exact source of where our model got the answer from.
 
 ```python
-import pytube 
+import pytube
 from datetime import datetime
 
 model = whisper.load_model("small")
@@ -90,6 +89,7 @@ def predict(item, run_id, logger):
     texts, start_times = store_segments(res)
 
 ```
+
 ### Langchain Implementation
 
 Below we will implement [Langchain](https://python.langchain.com/en/latest/index.html) in order to use a vectorstore, where we will store all our video segments above, with a LLM, Flan-T5, hosted on Cerebrium in order to generate answers.
@@ -159,16 +159,15 @@ We then get the following results:
 
 ```json
 {
-    "run_id": "8959bfaa-f6c1-4445-980c-1ab469a4b878",
-    "message": "success",
+  "run_id": "8959bfaa-f6c1-4445-980c-1ab469a4b878",
+  "message": "success",
+  "result": {
     "result": {
-        "result": {
-            "question": "How old was Steve Jobs when started Apple?",
-            "answer": "20",
-            "sources": ""
-        }
-    },
-    "run_time_ms": 72109.55119132996
+      "question": "How old was Steve Jobs when started Apple?",
+      "answer": "20",
+      "sources": ""
+    }
+  },
+  "run_time_ms": 72109.55119132996
 }
-
 ```

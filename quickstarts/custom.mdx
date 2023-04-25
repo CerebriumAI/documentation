@@ -13,7 +13,7 @@ Current limitations:
 ## Intro
 
 Many of our more hardcore users wanted finer-grain control over their code and package dependencies which is why we opened up our underlying architecture to allow engineers and data scientists to deploy
-any custom Python code. 
+any custom Python code.
 
 We have been focusing hard on the developer experience that if your code runs locally, you can deploy it to serverless CPUs\/GPUs using one line.
 Initial deploys take about a minute (installing packages etc.) however, thereafter every change is \< 10 seconds and of course inference requests have a cold start \<1 second!
@@ -38,6 +38,7 @@ to authenticate all calls for this project.
 ### Components
 
 Currently, our implementation has three components:
+
 - **main.py** - This is where your python code lives
 - **requirements.txt** - This is where you define your Python packages. Deployment will be quicker if you specify specific versions
 - **pkglist.txt** - This is where you can define linux packages you would like to install. We run the apt-install command for items in here
@@ -61,7 +62,7 @@ def predict(item, run_id, logger):
     return {"key": "value}
 ```
 
-The Item class is where you define the parameters your model receives as well as their type. Item needs to inherit from BaseModel. 
+The Item class is where you define the parameters your model receives as well as their type. Item needs to inherit from BaseModel.
 You need to define a function with the name **predict** which receives 3 params, item, run_id, logger.
 
 Both the **requirements.txt** and **pkglist.txt** follow standard layouts in that each package should be on a new line.
@@ -103,7 +104,7 @@ def download_image(image):
 def predict(item, run_id, logger):
     item = Item(**item)
     # Get example image from official fairface repo + read it in as an image
-    
+
     image = download_image(item.image)
 
     # Transform our image and pass it through the model
@@ -116,7 +117,7 @@ def predict(item, run_id, logger):
     # Predicted Classes
     pred = proba.argmax(1).item()
 
-    labels = {0:"0-2", 1: "3-9" , 2: "10-19", 3: "20-29", 4: "30-39", 5: "40-49", 6: "50-59", 7:"60-69",8:"more than 70"} 
+    labels = {0:"0-2", 1: "3-9" , 2: "10-19", 3: "20-29", 4: "30-39", 5: "40-49", 6: "50-59", 7:"60-69",8:"more than 70"}
     predicted_class = labels[pred]
 
     return {"prediction": f"This person is in the {predicted_class} age category"}
@@ -141,9 +142,10 @@ Great! Now let us deploy our model
 cerebrium-deploy -n <MODEL_NAME> -h <HARDWARE> -k <API_KEY>
 ```
 
-For the parameters above: 
-- **\<MODEL_NAME\>***: Give your model a name for you to recognize on your Cerebrium dashboard
-- **\<HARDWARE\>***: This is either cpu or gpu
+For the parameters above:
+
+- **\<MODEL_NAME\>\***: Give your model a name for you to recognize on your Cerebrium dashboard
+- **\<HARDWARE\>\***: This is either cpu or gpu
 - **\<API_KEY\>**: This is the API key from your profile
 
 ![Deployed Model](/images/quickstarts/custom-2.png)
@@ -162,11 +164,9 @@ curl --location --request POST '<ENDPOINT>' \
 
 ![Custom Model Response](/images/quickstarts/custom-3.png)
 
-
 Navigate back to the dashboard and click on the name of the model you just
-deployed. Navigate to the tab that says 'Runs and Logs' in order to see the request you just made and the required logs. 
-
+deployed. Navigate to the tab that says 'Runs and Logs' in order to see the request you just made and the required logs.
 
 With just a few lines of code, your custom python code was deployed to serverless CPUs/GPUs without setting up any infrastructure. After the first deployment,
-every subsequent deployment should be less than 10s, keep the development lifecycle as quick as possible. Try deploying your own model now and let us know what you 
+every subsequent deployment should be less than 10s, keep the development lifecycle as quick as possible. Try deploying your own model now and let us know what you
 are building!

@@ -30,32 +30,46 @@ We are currently using the "stabilityai/stable-diffusion-2-1" model. Once you've
 </RequestExample>
 
 <ParamField header="Authorization" type="string" required>
-  This is the Cerebrium API key used to authenticate your request. You can get it from your Cerebrium dashboard.
+  This is the Cerebrium API key used to authenticate your request. You can get
+  it from your Cerebrium dashboard.
 </ParamField>
 <ParamField body="prompt" type="string" required>
-   The prompt you would like Stable Diffusion to generate.
+  The prompt you would like Stable Diffusion to generate.
 </ParamField>
 <ParamField body="height" type="integer" optional>
-   The height of the generated image which defaults to 512px. This is an optional parameter
+  The height of the generated image which defaults to 512px. This is an optional
+  parameter
 </ParamField>
 <ParamField body="width" type="integer" optional>
-  The width of the generated image which defaults to 512px. This is an optional parameter
+  The width of the generated image which defaults to 512px. This is an optional
+  parameter
 </ParamField>
 <ParamField body="num_inference_steps" type="integer" optional>
-   The number of steps you would like Dreambooth to take to generate the image. In general, the results are better the more steps you use, however the more steps, the longer the generation takes. It defaults to 50 steps and is an optional parameter.
+  The number of steps you would like Dreambooth to take to generate the image.
+  In general, the results are better the more steps you use, however the more
+  steps, the longer the generation takes. It defaults to 50 steps and is an
+  optional parameter.
 </ParamField>
 <ParamField body="guidance_scale" type="float" optional>
-   A way to increase the adherence to the conditional signal that guides the generation (text, in this case) as well as overall sample quality. In simple terms it forces the generation to better match the prompt potentially at the cost of image quality or diversity. This defaults to 7.5 and is an optional parameter.
+  A way to increase the adherence to the conditional signal that guides the
+  generation (text, in this case) as well as overall sample quality. In simple
+  terms it forces the generation to better match the prompt potentially at the
+  cost of image quality or diversity. This defaults to 7.5 and is an optional
+  parameter.
 </ParamField>
 <ParamField body="num_images_per_prompt" type="integer" optional>
-  The number of image variations you would like the model to generate. This is an optional parameter which defaults to 1.
+  The number of image variations you would like the model to generate. This is
+  an optional parameter which defaults to 1.
 </ParamField>
 <ParamField body="negative_prompt" type="string" optional>
-  The negative prompt is a parameter that tells Stable Diffusion what you don’t want to see in the generated images. This is an optional parameter that has an empty default value.
+  The negative prompt is a parameter that tells Stable Diffusion what you don’t
+  want to see in the generated images. This is an optional parameter that has an
+  empty default value.
 </ParamField>
 <ParamField body="webhook_endpoint" type="string" optional>
-   The url endpoint you would like us to send the image results to once it has finished generating. We recommend this for long running tasks if you are generating
-   multiple images with many steps.
+  The url endpoint you would like us to send the image results to once it has
+  finished generating. We recommend this for long running tasks if you are
+  generating multiple images with many steps.
 </ParamField>
 
 <ResponseExample>
@@ -68,16 +82,19 @@ We are currently using the "stabilityai/stable-diffusion-2-1" model. Once you've
     "result": [<BASE_64_STRING>]
 }
 ```
+
 </ResponseExample>
 
 #### Response Parameters
 
 <ResponseField name="run_id" type="string" required>
-  A unique identifier for the run that you can use to associate prompts with webhook endpoints.
+  A unique identifier for the run that you can use to associate prompts with
+  webhook endpoints.
 </ResponseField>
 <ResponseField name="message" type="string" required>
   Whether of not the response was successful
 </ResponseField>
 <ResponseField name="result" type="string" required>
-  An array of base64 encoded strings of the image that you can convert into an image
+  An array of base64 encoded strings of the image that you can convert into an
+  image
 </ResponseField>

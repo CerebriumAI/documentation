@@ -34,7 +34,7 @@
     {
       "name": "Blog",
       "icon": "newspaper",
-      "url": "https://blog.cerebrium.ai"
+      "url": "https://cerebrium.ai/blog"
     },
     {
       "name": "Community",
@@ -45,9 +45,7 @@
   "navigation": [
     {
       "group": "Home",
-      "pages": [
-        "introduction"
-      ]
+      "pages": ["introduction"]
     },
     {
       "group": "Cerebrium",
@@ -139,10 +137,7 @@
     },
     {
       "group": "Updates",
-      "pages": [
-        "changelog",
-        "roadmap"
-      ]
+      "pages": ["changelog", "roadmap"]
     }
   ],
   "analytics": {

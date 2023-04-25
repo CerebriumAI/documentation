@@ -7,7 +7,7 @@ In order to deploy the model you can use the identifier below:
 
 - Dreambooth: `dreambooth`
 
-At the moment, we only support custom Dreambooth models that are hosted on Hugging Face. If you would like help on how to train and deploy your model you can read our blog post [here](https://blog.cerebrium.ai/creating-avatarai-me-using-supabase-and-cerebrium-1bf69440c4a7).
+At the moment, we only support custom Dreambooth models that are hosted on Hugging Face. If you would like help on how to train and deploy your model you can read our blog post [here](https://www.cerebrium.ai/blog/creating-avatarai-me-using-supabase-and-cerebrium).
 Once you've deployed a custom Dreambooth model, you can follow this example of how to call the deployed endpoint:
 
 #### Request Parameters
@@ -78,16 +78,19 @@ Once you've deployed a custom Dreambooth model, you can follow this example of h
     "result": [<BASE_64_STRING>]
 }
 ```
+
 </ResponseExample>
 
 #### Response Parameters
 
 <ResponseField name="run_id" type="string" required>
-  A unique identifier for the run that you can use to associate prompts with webhook endpoints.
+  A unique identifier for the run that you can use to associate prompts with
+  webhook endpoints.
 </ResponseField>
 <ResponseField name="message" type="string" required>
   Whether of not the response was successful
 </ResponseField>
 <ResponseField name="result" type="string" required>
-  An array of base64 encoded strings of the image that you can convert into an image
+  An array of base64 encoded strings of the image that you can convert into an
+  image
 </ResponseField>

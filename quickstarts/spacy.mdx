@@ -26,42 +26,34 @@ to authenticate all calls for this project.
 
 ### Prepare model
 
-We are going to be creating a custom named entity recognition (NER) model. 
+We are going to be creating a custom named entity recognition (NER) model.
 This code could be replaced by any Spacy model. Make sure you have
 the required libraries installed - in this case we are just using **Spacy 3**.
 
 First let us create our training and evaluation data:
+
 ```json
 [
-    "Who is Shaka Khan?",
-    {
-      "entities":[
-        [
-          7,
-          17,
-          "PERSON"
-        ]
-      ]
-    }
-  ]
+  "Who is Shaka Khan?",
+  {
+    "entities": [[7, 17, "PERSON"]]
+  }
+]
 ```
 
 ```json
 [
-    "Who is Michael?",
-    {
-      "entities":[
-        [
-          7,
-          14,
-          "PERSON"
-        ]
-      ]
-    }
-  ]
+  "Who is Michael?",
+  {
+    "entities": [[7, 14, "PERSON"]]
+  }
+]
 ```
 
-<Note>Spacy 3 no longer accepts JSON format so we have to convert it to their Spacy format</Note>
+<Note>
+  Spacy 3 no longer accepts JSON format so we have to convert it to their Spacy
+  format
+</Note>
 
 ```python
 import srsly
@@ -95,15 +87,13 @@ if __name__ == "__main__":
 ```
 
 Now run this script with the location of your training data and again with your evaluation data.
-```!python convert.py en train.json train.spacy```
-
+`!python convert.py en train.json train.spacy`
 
 When creating a Spacy model we can start with the standard template and edit it. You can run the following code to do this:
-```!python -m spacy init config --lang en --pipeline ner config.cfg --force```
-
+`!python -m spacy init config --lang en --pipeline ner config.cfg --force`
 
 Lastly we can train our model:
-```!python -m spacy train config.cfg --output ./training/ --paths.train train.spacy --paths.dev eval.spacy --training.eval_frequency 10 --training.max_steps 100 --gpu-id -1```
+`!python -m spacy train config.cfg --output ./training/ --paths.train train.spacy --paths.dev eval.spacy --training.eval_frequency 10 --training.max_steps 100 --gpu-id -1`
 
 ### Developing model
 
@@ -119,7 +109,6 @@ This post-processing function has to return a list or string in order to be acce
 and deploy our spaCy model.
 
 When you train a spaCy model, it will create a folder with a tokenizer, meta.json, config.cfg etc. You will need to specify the path of this folder when deploying your model.
-
 
 ```bash
 from cerebrium import Conduit, model_type

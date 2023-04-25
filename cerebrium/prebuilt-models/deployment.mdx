@@ -4,12 +4,15 @@ description: "Cerebrium provides prebuilt models that you can deploy to an API."
 ---
 
 You can deploy prebuilt models via Cerebrium using two methods.
+
 <ol>
-<li>Doing simple one-click deploys from your dashboard</li>
-<li> Through our Python framework. </li>
+  <li>Doing simple one-click deploys from your dashboard</li>
+  <li> Through our Python framework. </li>
 </ol>
-Deploying a prebuilt model through our framework is largely similar to deploying a custom model. The only difference is that you do not need to upload a model file.
-Instead, you specify which prebuilt model you want to deploy using the corresponding identifier.
+Deploying a prebuilt model through our framework is largely similar to deploying
+a custom model. The only difference is that you do not need to upload a model file.
+Instead, you specify which prebuilt model you want to deploy using the corresponding
+identifier.
 
 ```python Deploy a prebuilt Whisper Model
 from cerebrium import deploy, model_type
@@ -17,8 +20,8 @@ endpoint = deploy((model_type.PREBUILT, "whisper-medium"), 'my-flow', "<API_KEY>
 ```
 
 <Note>
-  You can not use prebuilt models in ensembles or with processing
-  functions. They should be contained within single model flows only.
+  You can not use prebuilt models in ensembles or with processing functions.
+  They should be contained within single model flows only.
 </Note>
 
 You can check out the available models through your dashboard or through our docs below

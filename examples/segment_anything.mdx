@@ -15,7 +15,7 @@ It is important to think of the way you develop models using Cerebrium should be
 To start we need to create a **main.py** file which will contain our main Python code. This is a relatively simple implementation, so we can do everything in 1 file.
 
 I then go straight to the [Meta Repo](https://github.com/facebookresearch/segment-anything) in order to see how I can run this code.
-I need to install a few dependencies. In order to do this, I need to create a **requirements.txt** file. with the following dependencies: 
+I need to install a few dependencies. In order to do this, I need to create a **requirements.txt** file. with the following dependencies:
 
 ```
 git+https://github.com/facebookresearch/segment-anything.git
@@ -43,10 +43,11 @@ mask_generator = SamAutomaticMaskGenerator(
 ```
 
 We define this at the top of the file for two reasons:
+
 1. Code loaded in the top of the file is automatically run when deployed, meaning the model can be downloaded and loaded into memory on the first deployment.
-The first deployment is the longest but thereafter it should be pretty quick.
-2. If this was in a function, it would not be called on deploy but on the first request. Also it would be loaded from cache on every request. We do not want either
-of these two things.
+   The first deployment is the longest but thereafter it should be pretty quick.
+2. If this was in a function, it would not be called on deploy but on the first request. Also, it would be loaded from cache on every request. We do not want either
+   of these two things.
 
 With the SAM model, you are able to set parameters about how precise or how detailed you would like the model to perform. Since our use case is around detecting
 clothes on an image, we don't want the segmentation to be that granular. You can look from Meta's documentation the different parameters you can set.
@@ -74,9 +75,10 @@ the user is sending in an image or a file url is giving the user a choice to sen
 ## Identifying and classifying objects
 
 Next we would like to create three functions with the following functionality:
+
 1. Based on the image coordinates sent in, we would like to find the annotation (segment) the user is most likely referring to.
 2. Take the annotation of the image we have focused on from Meta's model, create a new image and crop it to only be an image of the item we are focusing on.
-The reason we crop the image is to make the classification model perform more accurately.
+   The reason we crop the image is to make the classification model perform more accurately.
 3. Pass this new image into an Object classification model, so we can be told what this image is.
 
 ```Python
@@ -160,6 +162,7 @@ def predict(item, run_id, logger):
 ```
 
 In the above code we do a few things:
+
 1. We import the various packages we need and add the necessary ones to our **requirements.txt**
 2. We create a function that will download the image from an url if the user supplied one.
 3. We run our "Segment Anything" model with the image the user sent through the request.
@@ -184,13 +187,14 @@ curl --location --request POST 'https://run.cerebrium.ai/v1/p-xxxxxx/segment-any
 ```
 
 And here is the output of our model
+
 ```json
 {
-    "run_id": "526ca24d-c3ef-41ce-a29c-6c03e7e9585c",
-    "message": "success",
-    "result": {
-        "result": "academic gown, academic robe, judge's robe"
-    },
-    "run_time_ms": 13880.023717880249
+  "run_id": "526ca24d-c3ef-41ce-a29c-6c03e7e9585c",
+  "message": "success",
+  "result": {
+    "result": "academic gown, academic robe, judge's robe"
+  },
+  "run_time_ms": 13880.023717880249
 }
 ```

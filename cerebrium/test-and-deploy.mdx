@@ -76,7 +76,7 @@ is the URL that you will use to call your model in the future.
 
 In order to run your model locally and ensure it is working as intended before
 deploying, you can use the `load` and `run` command. The `load` command will
-load your pipeline into memory using the paths you specified in `deploy` from a base path, while `run` 
+load your pipeline into memory using the paths you specified in `deploy` from a base path, while `run`
 will sequentially execute your loaded pipeline.
 
 ```python
@@ -94,6 +94,7 @@ feed an `ndarray` or `Tensor` directly into this function.
 If the data that is sent to your endpoint will not be in this format then please make use of a pre-processing function to transform it into the right format. In terms of your response, the data needs to be TODO
 
 You can also define a Conduit object directly by using the `Conduit` class. Then call the `run` method on the Conduit object to test the model locally, or the `deploy` method to deploy the Conduit's model flow to Cerebrium.
+
 ```python
 from cerebrium import Conduit, model_type
 conduit = Conduit('<MODEL_NAME>', '<API_KEY>', [('<MODEL_TYPE>', '<MODEL_FILE>')])
@@ -114,6 +115,7 @@ conduit.add_model('<MODEL_TYPE>', '<MODEL_FILE>', {<PROCESSING_FUNCTIONS>})
 You can see an example of the request and response objects for calls made to your models. It should resemble what it is like calling your model locally in your own python environment.
 
 #### Request Parameters
+
 <RequestExample>
 ```bash Request
   curl --location --request POST '<ENDPOINT>' \
@@ -123,15 +125,17 @@ You can see an example of the request and response objects for calls made to you
 ```
 </RequestExample>
 
-
 <ParamField header="Authorization" type="string" required>
-  This is the Cerebrium API key used to authenticate your request. You can get it from your Cerebrium dashboard.
+  This is the Cerebrium API key used to authenticate your request. You can get
+  it from your Cerebrium dashboard.
 </ParamField>
 <ParamField body="Content-Type" type="string" required>
-   The content type of your request. Must be application/json or multipart/form-data if sending files.
+  The content type of your request. Must be application/json or
+  multipart/form-data if sending files.
 </ParamField>
 <ParamField body="data" type="array" required>
-   A list of data points you would like to send to your model. e.g. for 1 data point of 3 features: [[1,2,3]].
+  A list of data points you would like to send to your model. e.g. for 1 data
+  point of 3 features: [[1,2,3]].
 </ParamField>
 
 <ResponseExample>
@@ -144,9 +148,11 @@ You can see an example of the request and response objects for calls made to you
   "prediction_ids": ["<PREDICTION_ID>"]
 }
 ```
+
 </ResponseExample>
 
 #### Response Parameters
+
 <ResponseField name="result" type="array" required>
   The result of your model prediction.
 </ResponseField>
@@ -154,10 +160,12 @@ You can see an example of the request and response objects for calls made to you
   The run ID associated with your model predictions.
 </ResponseField>
 <ResponseField name="run_time_ms" type="float" required>
-  The amount of time if took your model to run down to the millisecond. This is what we charge you based on.
+  The amount of time if took your model to run down to the millisecond. This is
+  what we charge you based on.
 </ResponseField>
 <ResponseField name="prediction_ids" type="array" required>
-  The prediction IDs associated with each of your model predictions. Used to track your model predictions with monitoring tools.
+  The prediction IDs associated with each of your model predictions. Used to
+  track your model predictions with monitoring tools.
 </ResponseField>
 
 You can test out your model endpoint quickly with our utility function supplied

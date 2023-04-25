@@ -17,7 +17,7 @@ You: [Your input message here]
 [CHARACTER]:
 ```
 
-Where [CHARACTER] is, as you can probably guess, the name of the character you want the model to portray, \<START\> should be used verbatim as a delimiter token to separate persona and scenario data from the dialogue, and [DIALOGUE HISTORY] is chat history so the model can have some conversational context to draw from. 
+Where [CHARACTER] is, as you can probably guess, the name of the character you want the model to portray, \<START\> should be used verbatim as a delimiter token to separate persona and scenario data from the dialogue, and [DIALOGUE HISTORY] is chat history so the model can have some conversational context to draw from.
 
 Apart from chat history, you can also just add example conversations in [DIALOGUE HISTORY] to show how the character should speak - ideally at the beginning, so it doesn't get confused as to what's conversation history vs. character definition.
 
@@ -76,17 +76,17 @@ Apart from chat history, you can also just add example conversations in [DIALOGU
   The id of the padding token.
 </ParamField>
 
-
 <ResponseExample>
 
 ```json Response
 {
-    "run_id": "<UNIQUE_RUN_ID>",
-    "run_time_ms": 39995.2712059021,
-    "message": "Successfully generated text",
-    "result": "Michaels's Persona: A big strong man with a big heart\n<START>\nYou: How are you doing on this wonderful day?\n Michael: Oh, this is a wonderful day! It's the perfect kind of day to be in love... I'm going to walk around, wearing a sweater and jeans today. I want to show you my strength and my love for you. Oh, I'm just wonderful."
+  "run_id": "<UNIQUE_RUN_ID>",
+  "run_time_ms": 39995.2712059021,
+  "message": "Successfully generated text",
+  "result": "Michaels's Persona: A big strong man with a big heart\n<START>\nYou: How are you doing on this wonderful day?\n Michael: Oh, this is a wonderful day! It's the perfect kind of day to be in love... I'm going to walk around, wearing a sweater and jeans today. I want to show you my strength and my love for you. Oh, I'm just wonderful."
 }
 ```
+
 </ResponseExample>
 
 #### Response Parameters
@@ -95,7 +95,8 @@ Apart from chat history, you can also just add example conversations in [DIALOGU
   The unique id associated to the API request.
 </ResponseField>
 <ResponseField name="run_time_ms" type="string" required>
-  The amount of time it took to run your model. This is what you will be charged for.
+  The amount of time it took to run your model. This is what you will be charged
+  for.
 </ResponseField>
 <ResponseField name="message" type="string" required>
   A message from our server notifying you if you run was successful or not
@@ -103,5 +104,3 @@ Apart from chat history, you can also just add example conversations in [DIALOGU
 <ResponseField name="result" type="string" required>
   The result generated from Pygmalion
 </ResponseField>
-
-

@@ -7,9 +7,13 @@ In order to deploy the model you can use the identifier below:
 
 - Stable Diffusion Upscaler: `sd-upscaler`
 
-This model was trained for 1.25M steps on a 10M subset of LAION containing images >2048x2048. The model was trained on crops of size 512x512 and is a text-guided latent upscaling diffusion model. 
+This model was trained for 1.25M steps on a 10M subset of LAION containing images >2048x2048. The model was trained on crops of size 512x512 and is a text-guided latent upscaling diffusion model.
 
-<Note>Your image must be smaller than 510px x 510px and if not, please add a width and height parameter to resize it. It does a 4x upscale so you will get a 2000x2000px image</Note>
+<Note>
+  Your image must be smaller than 510px x 510px and if not, please add a width
+  and height parameter to resize it. It does a 4x upscale so you will get a
+  2000x2000px image
+</Note>
 
 You can follow this example of how to call the deployed endpoint:
 
@@ -61,16 +65,19 @@ You can follow this example of how to call the deployed endpoint:
     "result": [<BASE_64_STRING>]
 }
 ```
+
 </ResponseExample>
 
 #### Response Parameters
 
 <ResponseField name="run_id" type="string" required>
-  A unique identifier for the run that you can use to associate prompts with webhook endpoints.
+  A unique identifier for the run that you can use to associate prompts with
+  webhook endpoints.
 </ResponseField>
 <ResponseField name="message" type="string" required>
   Whether of not the response was successful
 </ResponseField>
 <ResponseField name="result" type="string" required>
-  An array of base64 encoded strings of the image that you can convert into an image
+  An array of base64 encoded strings of the image that you can convert into an
+  image
 </ResponseField>
