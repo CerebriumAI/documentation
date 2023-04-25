@@ -46,7 +46,7 @@ We define this at the top of the file for two reasons:
 
 1. Code loaded in the top of the file is automatically run when deployed, meaning the model can be downloaded and loaded into memory on the first deployment.
    The first deployment is the longest but thereafter it should be pretty quick.
-2. If this was in a function, it would not be called on deploy but on the first request. Also it would be loaded from cache on every request. We do not want either
+2. If this was in a function, it would not be called on deploy but on the first request. Also, it would be loaded from cache on every request. We do not want either
    of these two things.
 
 With the SAM model, you are able to set parameters about how precise or how detailed you would like the model to perform. Since our use case is around detecting

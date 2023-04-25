@@ -45,7 +45,7 @@ We define this at the top of the file for two reasons:
 
 1. Code loaded in the top of the file is automatically run when deployed, meaning the model can be downloaded and loaded into memory on the first deployment.
    The first deployment is the longest but thereafter it should be pretty quick.
-2. If this was in a function, it would not be called on deploy but on the first request. Also it would be loaded from cache on every request. We do not want either
+2. If this was in a function, it would not be called on deploy but on the first request. Also, it would be loaded from cache on every request. We do not want either
    of these two things.
 
 I then would like the user to send in a few parameters for the model via API, and so I need to define what the request object would look like:
@@ -102,7 +102,7 @@ In the above code we do a few things:
 1. We run our Stable Diffusion model with parameters the user sent through the request. If the user didn't send any then we set default values.
 2. We convert the generated images to base64 in order to return it back to the user
 
-To deploy this function to a A10 instance we run the following code:
+To deploy this function to an A10 instance we run the following code:
 
 ```bash
 cerebrium-deploy -n stable-diffusion -h A10 -k <API_KEY>
@@ -126,7 +126,7 @@ This gives us the following results:
 "run_id": "65da615b-829a-49d8-abf6-64f2c887e546",
     "message": "success",
     "result": [
-        "iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAIAAAB7GkOtAAEAAElEQVR4nJT9abBl2XUeiH1r7X3OudObp3w5V2XNIwoECjMBEaJEUqSogeqWFAyp1Y6W3WG3HdF2O+y/Hf7h8C//cNttS91....
+        "iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAIAAAB7GkOtAAEAAElEQVR4nJT9abBl2XUeiH1r7X3OudObp3w5V2XNIwoECjMBEaJEUqSogeqWFAyp1Y6W3WG3HdF2O+y/Hf7h8C//cNttS91...."
     ],
     "run_time_ms": 2803.5125732421875
 }
