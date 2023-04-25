@@ -3,7 +3,7 @@ title: "Segment Anything Example"
 description: "To deploy Meta's segment anything model to classify clothes"
 ---
 
-In this tutorial we will demonstrate how to get Meta's 'Segment Anything' model up and running in order to recognize items a person is wearing - think about the
+In this tutorial, we will demonstrate how to get Meta's 'Segment Anything' model up and running in order to recognize items a person is wearing - think about the
 shopping feature on Instagram. It identifies clothes and associates the link to these items.
 
 To see the final implementation you can view it [here](https://github.com/CerebriumAI/examples/tree/master/2-segment-anything)
@@ -122,7 +122,7 @@ file under your sam code.
 ### Putting it all together
 
 We would then like to create a function that we would like to be called every time our user submits a request. This request will download/convert the image
-the user submitted, feet it into the model and return the items detected in the image. Our code looks as follows:
+the user submitted, feed it into the model and return the items detected in the image. Our code looks as follows:
 
 ```python
 import requests
@@ -160,7 +160,7 @@ def predict(item, run_id, logger):
 ```
 
 In the above code we do a few things:
-1. We import the various packages we need add the necessary ones to our requirements.txt **
+1. We import the various packages we need and add the necessary ones to our **requirements.txt**
 2. We create a function that will download the image from an url if the user supplied one.
 3. We run our "Segment Anything" model with the image the user sent through the request.
 4. Lastly, we responded with the converted images. All returns from your endpoint function must be of type list or JSON.
