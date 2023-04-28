@@ -1,0 +1,69 @@
+---
+title: "ESRGAN Upscaler"
+description: "A ESRGAN Upscaler built for photo resoration"
+---
+
+In order to deploy the model you can use the identifier below:
+
+- ESRGAN Upscaler: `esrgan-upscaler`
+
+Real-ESRGAN aims at developing Practical Algorithms for General Image/Video Restoration. The model extends the powerful ESRGAN to a practical restoration application (namely, Real-ESRGAN), which is trained with pure synthetic data.
+
+You can follow this example of how to call the deployed endpoint:
+
+#### Request Parameters
+
+<RequestExample>
+```bash Request
+  curl --location --request POST 'https://run.cerebrium.ai/esrgan-upscaler-webhook/predict' \
+      --header 'Authorization: <API_KEY>' \
+      --header 'Content-Type: application/json' \
+      --data-raw '{
+        "image": <BASE_64_STRING>,
+        "file_url": "https://your-url.com",
+        "face_enhance": true
+        "webhook_endpoint": "https://your-url.com"
+      }'
+```
+</RequestExample>
+
+<ParamField header="Authorization" type="string" required>
+  This is the Cerebrium API key used to authenticate your request. You can get it from your Cerebrium dashboard.
+</ParamField>
+<ParamField body="image" type="string" optional>
+  A base64 encoded string of the image you would like to upscale.
+</ParamField>
+<ParamField body="file_url" type="string" optional>
+  A publicly accessible url of a image you would like to upscale
+</ParamField>
+<ParamField body="face_enhance" type="boolean" optional>
+  A boolean value if you are upscaling a face in your image
+</ParamField>
+<ParamField body="webhook_endpoint" type="string" optional>
+   The url endpoint you would like us to send the image results to once it has finished generating
+</ParamField>
+<ResponseExample>
+
+```json Response
+{
+    "run_id": "<UUID_STRING>",
+    "message": "Successfully generated image",
+    "result": [<BASE_64_STRING>]
+}
+```
+
+</ResponseExample>
+
+#### Response Parameters
+
+<ResponseField name="run_id" type="string" required>
+  A unique identifier for the run that you can use to associate prompts with
+  webhook endpoints.
+</ResponseField>
+<ResponseField name="message" type="string" required>
+  Whether of not the response was successful
+</ResponseField>
+<ResponseField name="result" type="string" required>
+  An array of base64 encoded strings of the image that you can convert into an
+  image
+</ResponseField>
