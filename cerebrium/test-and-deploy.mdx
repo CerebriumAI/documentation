@@ -88,10 +88,10 @@ conduit.run(data)
 ```
 
 Where `data` is the data you would send to your model. This would usually be
-some 2D/3D array for vision models or single lists for XGBoost models. You may
-feed an `ndarray` or `Tensor` directly into this function.
-
-If the data that is sent to your endpoint will not be in this format then please make use of a pre-processing function to transform it into the right format. In terms of your response, the data needs to be TODO
+some numerical 2D/3D array for typical models, or a list of strings for a language model. You may
+feed an `ndarray` or `Tensor` directly into this function. However, if you are
+using a custom data pipeline that is expecting another type, you may need to convert your data into the 
+appropriate format for your model.
 
 You can also define a Conduit object directly by using the `Conduit` class. Then call the `run` method on the Conduit object to test the model locally, or the `deploy` method to deploy the Conduit's model flow to Cerebrium.
 When you use the Conduit object directly, you can specify what hardware you wish your model to run on by using the `hardware` parameter in the `Conduit` constructor. 
