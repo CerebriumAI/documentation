@@ -69,30 +69,40 @@ access_token = '<<<Insert your API access token here>>>'
 
 # stage 1
 stage_1 = DiffusionPipeline.from_pretrained("DeepFloyd/IF-I-XL-v1.0", variant="fp16",
-                                             torch_dtype=torch.float16, use_auth_token=access_token)
+                                             torch_dtype=torch.float16, use_auth_token=access_token) # Private model requires API Key.
 stage1 = stage_1.to("cuda")     # So we can leverage our gpu deployment
 
 
 # stage 2
 stage_2 = DiffusionPipeline.from_pretrained("DeepFloyd/IF-II-L-v1.0", text_encoder=None,
                                              variant="fp16", torch_dtype=torch.float16, use_auth_token=access_token)
-
 stage2 = stage_2.to("cuda")
 
 # stage 3
 safety_modules = {"feature_extractor": stage_1.feature_extractor, "safety_checker": stage_1.safety_checker, "watermarker": stage_1.watermarker}
 stage_3 = DiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-x4-upscaler",
                                              **safety_modules, torch_dtype=torch.float16, use_auth_token=access_token)
-
 stage3 = stage_3.to("cuda")
 
 ```
 
-<!-- 
-TODO:
-    Access token
-    comments
- -->
+We define this code to declare the model at the top of the file for two reasons:
+
+1. Code loaded in the top of the file is automatically run when deployed, meaning the model can be downloaded and loaded into memory on the first deployment.
+   The first deployment is the longest but thereafter it should be pretty quick.
+2. If this was the predict function, it would not be called when we first deploy but instead would only be called on the first request. Additionally, it would be loaded from cache on every request. Both cases mean our model will be slow to return a prediction.
+
+Since the DeepFloyd IF model is a private model, we need to include our API key as an authorisation token. This will tell HuggingFace who you are and show that you have permission to access the model.
 
 
 
+Now that we have set up the model, we need to add some code to store the parameters sent to the model via API. We do this as follows:
+
+
+```python
+from pydantic import BaseModel
+
+class Item(BaseModel):
+    prompt: str
+
+```
