@@ -3,24 +3,23 @@ title: "DeepFloyd IF Text-to-Image Example"
 description: "To deploy your own custom version of Deepfloyd's text-to-image diffusion model"
 ---
 
-This tutorial will show you how to get your own instance of Deepfloyd's IF model running on Cerebrium. 
+This tutorial will show you how to get your own instance of Deepfloyd's IF model running on Cerebrium.
 Using the custom python script deployer you'll be able to get your model to do exactly what you need.
 
 To see the final implementation you can view it [here](https://github.com/CerebriumAI/examples/tree/master/11-deepfloyd-text-image-model)
-
 
 ## Basic Setup
 
 It is important to think of the way you develop models using Cerebrium should be identical to developing on a virtual machine or Google Colab.
 
-To start we need to create a **main.py** file which will contain our main Python code. 
+To start we need to create a **main.py** file which will contain our main Python code.
 For our purposes today the code is simple, so we can do everything in 1 file.
 
-Other than the **main.py** file, we will also need to declare what libraries (**requirements.txt**) as well as packages (**pkglist.txt**) that we will need.
+Other than the **main.py** file, we will also need to declare what libraries (**requirements.txt**) as well as packages (**pkglist.txt**) we will need.
 
-We can find the libraries that we need in the [Hugging face documentation](https://huggingface.co/DeepFloyd/IF-I-XL-v1.0) for DeepFloyd's IF model.
-Reading their doccumentation, we see that we need the following libraries:
-```
+We can find the libraries that we need in the [Hugging face documentation](https://huggingface.co/DeepFloyd/IF-I-XL-v1.0) for DeepFloyd's IF model. Reading their documentation, we see that we need the following libraries:
+
+```txt
 diffusers
 accelerate
 transformers
@@ -28,23 +27,24 @@ safetensors
 sentencepiece
 torch
 ```
+
 So let's add these entries to **requirements.txt** as shown above.
 
 <!-- this needs to be surrounded in some form of tangent block -->
 
 If we wanted to install the latest version of the diffusers library, our pip command would normally be:  
-> pip install git+https://github.com/huggingface/diffusers
+> pip install git+<https://github.com/huggingface/diffusers>
 
 So if we wanted to do this in our deployment, our **pkglist.txt** would be:
 
-```
+```txt
 git
 ```
 
 since we need git to be installed. We would also have to change the **requirements.txt** and replace `diffusers` with:
 
-```
-**git+https://github.com/huggingface/diffusers**
+```txt
+git+https://github.com/huggingface/diffusers
 ```
 
 <!-- end tangent block -->
@@ -92,14 +92,12 @@ We define this code to declare the model at the top of the file for two reasons:
    The first deployment is the longest but thereafter it should be pretty quick.
 2. If this was the predict function, it would not be called when we first deploy but instead would only be called on the first request. Additionally, it would be loaded from cache on every request. Both cases mean our model will be slow to return a prediction.
 
-Since the DeepFloyd IF model is a private model, we need to include our API key as an authorisation token. This will tell HuggingFace who you are and show that you have permission to access the model.
+Since the DeepFloyd IF model is a private model, we need to include our API key as an authorization token. This will tell HuggingFace who you are and show that you have permission to access the model.
 
-
-Now that we have set up the model, we need to add some code to store the parameters sent to the model via API. 
-For this example, we're going to keep it simple and have 
+Now that we have set up the model, we need to add some code to store the parameters sent to the model via API.
+For this example, we're going to keep it simple and have
 <!-- TODO: parameters. -->
  We do this as follows:
-
 
 ```python
 from pydantic import BaseModel
@@ -111,13 +109,11 @@ class Item(BaseModel):
 
 ```
 <!-- What other prompts? -->
-<!-- It might be good to show user how to fetch image from url? Necessary or duplicate? -->
-
+<!-- It might be good to show the user how to fetch images from url? Necessary or duplicate? -->
 
 <!-- This needs to be clarified. -->
 Pydantic is a data validation library and BaseModel is where Cerebrium keeps some default parameters like "webhook_url" that allows a user to send in a webhook url,
 and we will call it when the job has finished processing - this is useful for long-running tasks. Do not worry about that functionality for this tutorial.
-
 
 Now we've set everything up and can write our **predict** function which is called whenever the user makes a request. The predict function received 3 parameters:
 
@@ -126,10 +122,9 @@ Now we've set everything up and can write our **predict** function which is call
 3. A logger object which you should use to log any contents. You should use logger.info(...) or logger.error(...)
 
 <!-- Introduce prediction function -->
-
+For this implementation, let's define our predict function as follows:
 
 ```python
-
 ########################################################################
 # Run every time your model is called.
 ########################################################################
@@ -170,40 +165,45 @@ def predict(item, run_id, logger):
     logger.info('Returning image')
     return finished_image
 ```
+
 <!-- Unpack what happened in this code. -->
+In this code block, we've done the following:  
+
+1. We run the DeepFloyd IF model to dream up a new image using the prompt that the user sent through in a request.
+2. We then convert the finished image to  base64 so that we can return it to the user.
 
 <!-- explain anything that's not immediately obvious. add comments to code. -->
 
-
 And we're done!  
-To deploy this function to an A10 instance we run the following code:
+We are now ready to deploy this function to an A10 instance we run the following code:
 
 ```bash
 cerebrium-deploy -n deepfloyd-if -h A10 -k <YOUR_CEREBRIUM_API_KEY>
 ```
 
-<!-- 
-We can then make the following request:
+
+We can then make an inference request by using:
 
 ```bash
-curl --location --request POST 'https://run.cerebrium.ai/v1/p-xxxxx/stable-diffusion/predict' \
---header 'Authorization: dev-c_api_key-ad0064b953c8053ff7bc' \
+curl --location --request POST 'https://run.cerebrium.ai/v1/p-xxxxx/deepfloyd-if/predict' \
+--header 'Authorization: dev-c_api_key-xxxxxxxxxxxxxxxx' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "prompt": "A knight riding a horse on the moon"
+    "prompt": "ultra close-up color photo portrait of rainbow owl with deer horns in the woods"
 }'
 ```
 
 This gives us the following results:
 
+<!-- TOOD -->
+<!-- 
 ```json
 {
 "run_id": "65da615b-829a-49d8-abf6-64f2c887e546",
     "message": "success",
     "result": [
-        "iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAIAAAB7GkOtAAEAAElEQVR4nJT9abBl2XUeiH1r7X3OudObp3w5V2XNIwoECjMBEaJEUqSogeqWFAyp1Y6W3WG3HdF2O+y/Hf7h8C//cNttS91...."
+        "..."
     ],
     "run_time_ms": 2803.5125732421875
 }
 ``` -->
-
