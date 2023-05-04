@@ -96,10 +96,10 @@ def predict(item, run_id, logger):
     return finished_images
 ```
 
-In the above code we do a few things:
+In the above code, we do a few things:
 
 1. We run our Stable Diffusion model with parameters the user sent through the request. If the user didn't send any then we set default values.
-2. We convert the generated images to base64 in order to return it back to the user
+2. We convert the generated images to base64 so that we can return it to the user
 
 To deploy this function to an A10 instance we run the following code:
 
