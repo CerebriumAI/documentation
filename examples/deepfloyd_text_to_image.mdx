@@ -1,0 +1,98 @@
+---
+title: "DeepFloyd IF Text-to-Image Example"
+description: "To deploy your own custom version of Deepfloyd's text-to-image diffusion model"
+---
+
+This tutorial will show you how to get your own instance of Deepfloyd's IF model running on Cerebrium. 
+Using the custom python script deployer you'll be able to get your model to do exactly what you need.
+
+To see the final implementation you can view it [here](https://github.com/CerebriumAI/examples/tree/master/11-deepfloyd-text-image-model)
+
+
+## Basic Setup
+
+It is important to think of the way you develop models using Cerebrium should be identical to developing on a virtual machine or Google Colab.
+
+To start we need to create a **main.py** file which will contain our main Python code. 
+For our purposes today the code is simple, so we can do everything in 1 file.
+
+Other than the **main.py** file, we will also need to declare what libraries (**requirements.txt**) as well as packages (**pkglist.txt**) that we will need.
+
+We can find the libraries that we need in the [Hugging face documentation](https://huggingface.co/DeepFloyd/IF-I-XL-v1.0) for DeepFloyd's IF model.
+Reading their doccumentation, we see that we need the following libraries:
+```
+diffusers
+accelerate
+transformers
+safetensors
+sentencepiece
+torch
+```
+So let's add these entries to **requirements.txt** as shown above.
+
+<!-- this needs to be surrounded in some form of tangent block -->
+
+If we wanted to install the latest version of the diffusers library, our pip command would normally be:  
+> pip install git+https://github.com/huggingface/diffusers
+
+So if we wanted to do this in our deployment, our **pkglist.txt** would be:
+
+```
+git
+```
+
+since we need git to be installed. We would also have to change the **requirements.txt** and replace `diffusers` with:
+
+```
+**git+https://github.com/huggingface/diffusers**
+```
+
+<!-- end tangent block -->
+
+Now that our libraries have been installed, we can start working on our **main.py**.  
+The first step is to get all our imports and define the model as follows:
+
+```python
+import base64
+from io import BytesIO
+from diffusers import DiffusionPipeline
+from diffusers.utils import pt_to_pil
+import torch
+import requests
+from pydantic import BaseModel
+
+
+########################################################################
+# Run once on first deployment to initialise the model
+########################################################################
+access_token = '<<<Insert your API access token here>>>'
+
+# stage 1
+stage_1 = DiffusionPipeline.from_pretrained("DeepFloyd/IF-I-XL-v1.0", variant="fp16",
+                                             torch_dtype=torch.float16, use_auth_token=access_token)
+stage1 = stage_1.to("cuda")     # So we can leverage our gpu deployment
+
+
+# stage 2
+stage_2 = DiffusionPipeline.from_pretrained("DeepFloyd/IF-II-L-v1.0", text_encoder=None,
+                                             variant="fp16", torch_dtype=torch.float16, use_auth_token=access_token)
+
+stage2 = stage_2.to("cuda")
+
+# stage 3
+safety_modules = {"feature_extractor": stage_1.feature_extractor, "safety_checker": stage_1.safety_checker, "watermarker": stage_1.watermarker}
+stage_3 = DiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-x4-upscaler",
+                                             **safety_modules, torch_dtype=torch.float16, use_auth_token=access_token)
+
+stage3 = stage_3.to("cuda")
+
+```
+
+<!-- 
+TODO:
+    Access token
+    comments
+ -->
+
+
+
