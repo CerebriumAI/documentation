@@ -1,15 +1,17 @@
----
 title: "Pygmalion"
-description: "Pymalion 2.7B is a proof-of-concept dialogue model"
+description: "Pygmalion is a proof-of-concept dialogue model from PygmalionAI"
 ---
 
-Pygmalion is a proof-of-concept dialogue model based on EleutherAI's GPT-Neo or GPT-J. We currently have the following Pygmalion models available below however if you would like any others contact support, and we can quickly add it for you. In order to deploy it you can use the identifier below:
+Pygmalion is a proof-of-concept dialogue model based on EleutherAI's GPT-Neo or GPT-J. We currently have the following Pygmalion models available below however if you would like any other model, please contact support and we can quickly add it for you. In order to deploy it you can use the identifier below:
 
 - Pygmalion 2.7b: `pygmalion-2-7b`
+- Pygmalion 6b: `pygmalion-6b`
+
+Where Pymalion 6B is a proof-of-concept dialogue model based on EleutherAI's GPT-J-6B and Pymalion 2.7B is based on EleutherAI's GPT-Neo-2.7B.
 
 Once you've deployed a Pygmalion model, you can supply the endpoint with a prompt. The model can be used as a regular text generation model, but it'll perform best if the input prompt adheres to the following format:
 
-```
+```txt
 [CHARACTER]'s Persona: [A few sentences about the character you want the model to play]
 <START>
 [DIALOGUE HISTORY]
@@ -17,9 +19,9 @@ You: [Your input message here]
 [CHARACTER]:
 ```
 
-Where [CHARACTER] is, as you can probably guess, the name of the character you want the model to portray, \<START\> should be used verbatim as a delimiter token to separate persona and scenario data from the dialogue, and [DIALOGUE HISTORY] is chat history so the model can have some conversational context to draw from.
+Where `[CHARACTER]` is, as you can probably guess, the name of the character you want the model to portray, `\<START\> `should be used verbatim as a delimiter token to separate persona and scenario data from the dialogue, and `[DIALOGUE HISTORY]` is chat history so the model can have some conversational context to draw from.
 
-Apart from chat history, you can also just add example conversations in [DIALOGUE HISTORY] to show how the character should speak - ideally at the beginning, so it doesn't get confused as to what's conversation history vs. character definition.
+Apart from chat history, you can also just add example conversations in `[DIALOGUE HISTORY]` to show how the character should speak - ideally at the beginning, so it doesn't get confused as to what's conversation history vs. character definition.
 
 #### Request Parameters
 
