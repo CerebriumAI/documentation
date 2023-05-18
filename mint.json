@@ -59,7 +59,8 @@
             "cerebrium/advanced-functionality/processing-functions",
             "cerebrium/advanced-functionality/using-files",
             "cerebrium/advanced-functionality/persistent-memory",
-            "cerebrium/advanced-functionality/saving-files"
+            "cerebrium/advanced-functionality/saving-files",
+            "cerebrium/advanced-functionality/persistent-storage"
           ]
         },
         {
