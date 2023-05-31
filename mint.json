@@ -60,7 +60,8 @@
             "cerebrium/advanced-functionality/using-files",
             "cerebrium/advanced-functionality/persistent-memory",
             "cerebrium/advanced-functionality/saving-files",
-            "cerebrium/advanced-functionality/persistent-storage"
+            "cerebrium/advanced-functionality/persistent-storage",
+            "cerebrium/advanced-functionality/using-webhook-endpoints"
           ]
         },
         {
@@ -101,7 +102,6 @@
             }
           ]
         },
-        "cerebrium/advanced-functionality",
         {
           "group": "Model Monitoring",
           "pages": [
