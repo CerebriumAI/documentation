@@ -8,21 +8,28 @@ To use this feature, simply include the `webhook_endpoint` field in your request
 
 <Note>
     This feature is available on all model types: custom & pre-built. If you have any questions on how to use it please
-    reach out to us on Slack or Discord
+    reach out to us on Slack, Discord or <a href="mailto:support@cerebrium.ai">support@cerebrium.ai</a>.
 </Note>
 
-Here is an example on how to add a webhook endpoint to your request body:
+## Example
 
-```json
-{
-"data": [...],
-"webhook_endpoint": "https://your-webhook-url.com"
-}
+Here is an example curl request on how to add a webhook endpoint to your request body:
+
+```bash
+curl --location 'https://run.cerebrium.ai/dreambooth-webhook/predict' \
+--header 'Authorization: <YOUR_PUBLIC_API_KEY>' \
+--header 'Content-Type: application/json' \
+--data '{
+    "prompt": "An astronaut riding a horse in space",
+    "webhook_endpoint": "https://your-webhook-url.com"
+}'
 ```
+
+## What to expect
 
 When your model has finished processing, it will send a POST request to `https://your-webhook-url.com` with the results and the `run_id`.
 
-The response from your initial request will look something like this
+The response from your initial request will look something like this:
 
 ```json
 {

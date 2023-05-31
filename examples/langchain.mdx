@@ -121,7 +121,7 @@ import openai
 import faiss
 
 sentenceTransformer = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-os.environ["CEREBRIUMAI_API_KEY"] = "c_api_key-3f1bc409f7e9e6103cdd554e3737a870c445499f"
+os.environ["CEREBRIUMAI_API_KEY"] = "c_api_key-XXXXXXXXXXXX"
 
 def create_embeddings(texts, start_times):
     text_splitter = CharacterTextSplitter(chunk_size=1500, separator="\n")
