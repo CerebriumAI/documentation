@@ -3,12 +3,13 @@ title: "Whisper"
 description: "Whisper is a language generation model that receives audio data and performs transcription and or translation, then outputs a text response."
 ---
 
-We have two Whisper models to deploy, Whisper large V2 and Whisper Large V2 complied to JAX. The only different between the two is the Whisper compiled to Jax is much faster!
-The normal Whisper model can process audio of any length and takes about 7-10 minutes to process 1 hour of audio. However, Whisper Jax, processes audio  We also return the timestamps of the transcription if you would like to create subtitles for the audio etc.
-We currently have the following whisper models available below however if you would like any others contact support, and we can quickly add it for you. In order to deploy it you can use the identifier below:
+Whisper is a pre-trained model for automatic speech recognition (ASR) and speech translation.
+The Whisper model can process audio of any length and takes about 7-10 minutes to process 1 hour of audio. Therefore, this example also demonstrates how you can supply a webhook endpoint that we will send a POST request to, containing your `run_id` and results, once the model has finished running.
+
+We currently have the following whisper model available below however if you would like any others contact support, and we can quickly add it for you.  
+In order to deploy it you can use the identifier below:
 
 - Whisper Large: `whisper-large`
-- Whisper Large (Jax): `whisper-jax`
 
 Once you've deployed a Whisper model, you can supply the endpoint with a base-64 encoded audio file or a file URL. For large files, we recommend you use the file url and webhook endpoint together we will notify your endpoint with the results when the model has finished processing the audio. Here's an example of how to call the deployed endpoint:
 
