@@ -45,9 +45,7 @@
   "navigation": [
     {
       "group": "Home",
-      "pages": [
-        "introduction"
-      ]
+      "pages": ["introduction"]
     },
     {
       "group": "Cerebrium",
@@ -58,11 +56,11 @@
           "group": "Advanced Functionality",
           "pages": [
             "cerebrium/advanced-functionality/model-ensembles",
-            "cerebrium/advanced-functionality/persistent-memory",
-            "cerebrium/advanced-functionality/persistent-storage",
             "cerebrium/advanced-functionality/processing-functions",
-            "cerebrium/advanced-functionality/saving-files",
             "cerebrium/advanced-functionality/using-files",
+            "cerebrium/advanced-functionality/persistent-memory",
+            "cerebrium/advanced-functionality/saving-files",
+            "cerebrium/advanced-functionality/persistent-storage",
             "cerebrium/advanced-functionality/using-webhook-endpoints"
           ]
         },
@@ -73,27 +71,27 @@
             {
               "group": "Image Models",
               "pages": [
-                "cerebrium/prebuilt-models/image-models/controlnet",
-                "cerebrium/prebuilt-models/image-models/custom-dreambooth",
-                "cerebrium/prebuilt-models/image-models/esrgan-upscaler",
+                "cerebrium/prebuilt-models/image-models/stable-diffusion-2",
                 "cerebrium/prebuilt-models/image-models/img2img-stable-diffusion",
                 "cerebrium/prebuilt-models/image-models/img2text",
-                "cerebrium/prebuilt-models/image-models/segment-anything",
-                "cerebrium/prebuilt-models/image-models/stable-diffusion-2",
-                "cerebrium/prebuilt-models/image-models/stable-diffusion-upscaler"
+                "cerebrium/prebuilt-models/image-models/custom-dreambooth",
+                "cerebrium/prebuilt-models/image-models/controlnet",
+                "cerebrium/prebuilt-models/image-models/stable-diffusion-upscaler",
+                "cerebrium/prebuilt-models/image-models/esrgan-upscaler",
+                "cerebrium/prebuilt-models/image-models/segment-anything"
               ]
             },
             {
               "group": "Language Models",
               "pages": [
-                "cerebrium/prebuilt-models/language-models/GPT-Neo",
-                "cerebrium/prebuilt-models/language-models/flanT5",
-                "cerebrium/prebuilt-models/language-models/gpt4all",
+                "cerebrium/prebuilt-models/language-models/whisper",
                 "cerebrium/prebuilt-models/language-models/mt0",
-                "cerebrium/prebuilt-models/language-models/pygmalion",
+                "cerebrium/prebuilt-models/language-models/flanT5",
+                "cerebrium/prebuilt-models/language-models/GPT-Neo",
                 "cerebrium/prebuilt-models/language-models/roberta",
+                "cerebrium/prebuilt-models/language-models/pygmalion",
                 "cerebrium/prebuilt-models/language-models/tortoise",
-                "cerebrium/prebuilt-models/language-models/whisper"
+                "cerebrium/prebuilt-models/language-models/gpt4all"
               ]
             },
             {
@@ -130,9 +128,9 @@
         "quickstarts/onnx",
         "quickstarts/pytorch",
         "quickstarts/scikit",
-        "quickstarts/spacy",
-        "quickstarts/tensorflow",
         "quickstarts/xgboost",
+        "quickstarts/tensorflow",
+        "quickstarts/spacy",
         {
           "group": "HuggingFace",
           "pages": [
@@ -144,10 +142,7 @@
     },
     {
       "group": "Updates",
-      "pages": [
-        "changelog",
-        "roadmap"
-      ]
+      "pages": ["changelog", "roadmap"]
     }
   ],
   "analytics": {
