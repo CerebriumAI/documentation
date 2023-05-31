@@ -102,7 +102,6 @@
             }
           ]
         },
-        "cerebrium/advanced-functionality",
         {
           "group": "Model Monitoring",
           "pages": [
