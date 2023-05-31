@@ -1,0 +1,51 @@
+---
+title: "Using Webhook Endpoints for Async Results"
+---
+
+Webhook endpoints can be used to obtain asynchronous results from your requests. This is useful when your model takes longer than the max timeout (180 seconds) or when you don't want to wait for the model to finish processing the request and prefer receiving the response once the processing is completed.
+
+To use this feature, simply include the `webhook_endpoint` field in your request body, assigning it to your desired URL. As soon as this is done, your requests will return immediately with the `run_id`. After processing, a POST request containing the results and `run_id` will be made to the provided webhook_endpoint URL.
+
+<Note>
+    This feature is available on all model types: custom & pre-built. If you have any questions on how to use it please
+    reach out to us on Slack or Discord
+</Note>
+
+Here is an example on how to add a webhook endpoint to your request body:
+
+```json
+{
+"data": [...],
+"webhook_endpoint": "https://your-webhook-url.com"
+}
+```
+
+When your model has finished processing, it will send a POST request to `https://your-webhook-url.com` with the results and the `run_id`.
+
+The response from your initial request will look something like this
+
+```json
+{
+    "run_id": "dummy-run-id-9ac612631200",
+    "message": "We will return the images to the endpoint provided when the task is complete."
+}
+```
+
+The result sent to the webhook will look something like this:
+
+```json
+{
+  "run_id": "dummy-run-id-9ac612631200",
+  "run_time_ms": 5980.915546417236,
+  "message": "Successfully generated images",
+  "result": ["..."]
+}
+```
+
+
+To test webhook endpoints, https://webhook.site/ provides a great platform. You can create a free URL to receive your POST requests and inspect the results.
+
+<Note>
+    Make sure that the endpoint provided as the "webhook_endpoint" is able to handle POST requests and has the
+    appropriate settings to receive the response data.
+</Note>
