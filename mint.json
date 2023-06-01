@@ -45,96 +45,109 @@
   "navigation": [
     {
       "group": "Home",
-      "pages": ["introduction"]
+      "pages": [
+        "introduction",
+        "installation"
+      ]
     },
     {
-      "group": "Cerebrium",
+      "group": "Cortex",
       "pages": [
-        "cerebrium/getting-started",
-        "cerebrium/test-and-deploy",
+        "cerebrium/cortex/introduction",
         {
-          "group": "Advanced Functionality",
+          "group": "Advanced functionality",
           "pages": [
-            "cerebrium/advanced-functionality/model-ensembles",
-            "cerebrium/advanced-functionality/processing-functions",
-            "cerebrium/advanced-functionality/using-files",
-            "cerebrium/advanced-functionality/persistent-memory",
-            "cerebrium/advanced-functionality/saving-files",
-            "cerebrium/advanced-functionality/persistent-storage",
-            "cerebrium/advanced-functionality/using-webhook-endpoints"
+            "cerebrium/cortex/advanced-functionality/persistent-storage"
           ]
         },
         {
-          "group": "Prebuilt Models",
+          "group": "Examples",
           "pages": [
-            "cerebrium/prebuilt-models/deployment",
-            {
-              "group": "Image Models",
-              "pages": [
-                "cerebrium/prebuilt-models/image-models/stable-diffusion-2",
-                "cerebrium/prebuilt-models/image-models/img2img-stable-diffusion",
-                "cerebrium/prebuilt-models/image-models/img2text",
-                "cerebrium/prebuilt-models/image-models/custom-dreambooth",
-                "cerebrium/prebuilt-models/image-models/controlnet",
-                "cerebrium/prebuilt-models/image-models/stable-diffusion-upscaler",
-                "cerebrium/prebuilt-models/image-models/esrgan-upscaler",
-                "cerebrium/prebuilt-models/image-models/segment-anything"
-              ]
-            },
-            {
-              "group": "Language Models",
-              "pages": [
-                "cerebrium/prebuilt-models/language-models/whisper",
-                "cerebrium/prebuilt-models/language-models/mt0",
-                "cerebrium/prebuilt-models/language-models/flanT5",
-                "cerebrium/prebuilt-models/language-models/GPT-Neo",
-                "cerebrium/prebuilt-models/language-models/roberta",
-                "cerebrium/prebuilt-models/language-models/pygmalion",
-                "cerebrium/prebuilt-models/language-models/tortoise",
-                "cerebrium/prebuilt-models/language-models/gpt4all"
-              ]
-            },
-            {
-              "group": "Other",
-              "pages": [
-                "cerebrium/prebuilt-models/other-models/salesforce-codegen"
-              ]
-            }
-          ]
-        },
-        {
-          "group": "Model Monitoring",
-          "pages": [
-            "cerebrium/logging/logging_intro",
-            "cerebrium/logging/censius",
-            "cerebrium/logging/arize"
+            "cerebrium/cortex/examples/stable_diffusion",
+            "cerebrium/cortex/examples/segment_anything",
+            "cerebrium/cortex/examples/langchain"
           ]
         }
       ]
     },
     {
-      "group": "Examples",
+    "group": "Conduit",
       "pages": [
-        "examples/stable_diffusion",
-        "examples/segment_anything",
-        "examples/langchain"
+        "cerebrium/conduit/introduction",
+        {
+          "group": "Advanced functionality",
+          "pages": [
+            "cerebrium/conduit/advanced-functionality/model-ensembles",
+            "cerebrium/conduit/advanced-functionality/processing-functions",
+            "cerebrium/conduit/advanced-functionality/using-files",
+            "cerebrium/conduit/advanced-functionality/persistent-memory",
+            "cerebrium/conduit/advanced-functionality/saving-files",
+            "cerebrium/conduit/advanced-functionality/using-webhook-endpoints"
+          ]
+        },
+        {
+          "group": "Model Monitoring",
+          "pages": [
+            "cerebrium/conduit/logging/logging_intro",
+            "cerebrium/conduit/logging/censius",
+            "cerebrium/conduit/logging/arize"
+          ]
+        },
+        {
+          "group": "Examples",
+          "pages": [
+            "cerebrium/conduit/examples/custom",
+            "cerebrium/conduit/examples/onnx",
+            "cerebrium/conduit/examples/pytorch",
+            "cerebrium/conduit/examples/scikit",
+            "cerebrium/conduit/examples/xgboost",
+            "cerebrium/conduit/examples/tensorflow",
+            "cerebrium/conduit/examples/spacy",
+            {
+              "group": "HuggingFace",
+              "pages": [
+                "cerebrium/conduit/examples/huggingface/transformers",
+                "cerebrium/conduit/examples/huggingface/onnx-conversion"
+              ]
+            }
+          ]
+        }
       ]
     },
     {
-      "group": "Quickstarts",
+      "group": "Prebuilt Models",
       "pages": [
-        "quickstarts/custom",
-        "quickstarts/onnx",
-        "quickstarts/pytorch",
-        "quickstarts/scikit",
-        "quickstarts/xgboost",
-        "quickstarts/tensorflow",
-        "quickstarts/spacy",
+        "cerebrium/prebuilt-models/introduction",
         {
-          "group": "HuggingFace",
+          "group": "Image Models",
           "pages": [
-            "quickstarts/huggingface/transformers",
-            "quickstarts/huggingface/onnx-conversion"
+            "cerebrium/prebuilt-models/image-models/stable-diffusion-2",
+            "cerebrium/prebuilt-models/image-models/img2img-stable-diffusion",
+            "cerebrium/prebuilt-models/image-models/img2text",
+            "cerebrium/prebuilt-models/image-models/custom-dreambooth",
+            "cerebrium/prebuilt-models/image-models/controlnet",
+            "cerebrium/prebuilt-models/image-models/stable-diffusion-upscaler",
+            "cerebrium/prebuilt-models/image-models/esrgan-upscaler",
+            "cerebrium/prebuilt-models/image-models/segment-anything"
+          ]
+        },
+        {
+          "group": "Language Models",
+          "pages": [
+            "cerebrium/prebuilt-models/language-models/whisper",
+            "cerebrium/prebuilt-models/language-models/mt0",
+            "cerebrium/prebuilt-models/language-models/flanT5",
+            "cerebrium/prebuilt-models/language-models/GPT-Neo",
+            "cerebrium/prebuilt-models/language-models/roberta",
+            "cerebrium/prebuilt-models/language-models/pygmalion",
+            "cerebrium/prebuilt-models/language-models/tortoise",
+            "cerebrium/prebuilt-models/language-models/gpt4all"
+          ]
+        },
+        {
+          "group": "Other",
+          "pages": [
+            "cerebrium/prebuilt-models/other-models/salesforce-codegen"
           ]
         }
       ]
