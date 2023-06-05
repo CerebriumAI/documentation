@@ -3,7 +3,7 @@ title: "Langchain Q&A YouTube"
 description: "To deploy a Q&A application around a Youtube video"
 ---
 
-In this tutorial we will recreate a question-answering bot that can answer questions based on a YouTube video. We recreated the application built [here](https://colab.research.google.com/drive/1sKSTjt9cPstl_WMZ86JsgEqFG-aSAwkn?usp=sharing) by @m_morzywolek.
+In this tutorial, we will recreate a question-answering bot that can answer questions based on a YouTube video. We recreated the application built [here](https://colab.research.google.com/drive/1sKSTjt9cPstl_WMZ86JsgEqFG-aSAwkn?usp=sharing) by @m_morzywolek.
 
 To see the final implementation you can view it [here](https://github.com/CerebriumAI/examples/tree/master/3-langchain)
 
@@ -27,7 +27,7 @@ to authenticate all calls for this project.
 
 It is important to think of the way you develop models using Cerebrium should be identical to developing on a virtual machine or Google Colab - so converting this should be very easy!
 
-Let us create our **_requirements.txt_** file and adding the following packages:
+Let us create our **_requirements.txt_** file and add the following packages:
 
 ```
 pytube # For audio downloading
@@ -40,7 +40,7 @@ sentence_transformers
 cerebrium
 ```
 
-To use Whisper we also have to install ffmpeg and a few other packages as a linux package and therefore have to create another file to define it, **pkglist.txt** - this is to install all Linux based packages.
+To use Whisper we also have to install ffmpeg and a few other packages as a Linux package and therefore have to create another file to define it, **pkglist.txt** - this is to install all Linux-based packages.
 
 ```
 ffmpeg
@@ -48,7 +48,7 @@ libopenblas-base
 libomp-dev
 ```
 
-To start we need to create a **main.py** file which will contain our main Python code. This is a relatively simple implementation, so we can do everything in 1 file. We would like a user to send in a link of a YouTube video with a question and return to them the answer as well as the time segment of where we got that response.
+To start we need to create a **main.py** file which will contain our main Python code. This is a relatively simple implementation, so we can do everything in 1 file. We would like a user to send in a link to a YouTube video with a question and return to them the answer as well as the time segment of where we got that response.
 So let us define our request object.
 
 ```python
@@ -108,7 +108,7 @@ def predict(item, run_id, logger):
 
 ### Langchain Implementation
 
-Below we will implement [Langchain](https://python.langchain.com/en/latest/index.html) in order to use a vectorstore, where we will store all our video segments above, with a LLM, Flan-T5, hosted on Cerebrium in order to generate answers.
+Below we will implement [Langchain](https://python.langchain.com/en/latest/index.html) in order to use a vectorstore, where we will store all our video segments above, with an LLM, Flan-T5, hosted on Cerebrium in order to generate answers.
 
 ```python
 from langchain.embeddings.openai import OpenAIEmbeddings
@@ -149,7 +149,7 @@ def create_embeddings(texts, start_times):
 
 ```
 
-Above we chunk our text segments and store tem in a FAISS vector store. In order to create the embeddings, we use an open-source model from Hugging Face. The reason it is better to run Whisper and an embeddings model on the same machine is you save 2 round trips of network requests which will save you above 600ms+ on average.
+Above we chunk our text segments and store them in a FAISS vector store. In order to create the embeddings, we use an open-source model from Hugging Face. The reason it is better to run Whisper and an embeddings model on the same machine is you save 2 round trips of network requests which will save you above 600ms+ on average.
 
 We then integrate langchain with a Cerebrium deployed endpoint in order to answer questions. Lastly, we return the results
 
@@ -159,7 +159,7 @@ To deploy the model to an A10 we use the following command:
 cerebrium-deploy -n langchain -h A10 -k c_api_key-XXXXXXXXXXXXX
 ```
 
-Once deployed, we can Mmake the following request:
+Once deployed, we can make the following request:
 
 ```curl
 curl --location --request POST 'https://run.cerebrium.ai/v1/dev-p-xxxxxx/langchain/predict' \
