@@ -3,11 +3,16 @@ title: "Introduction"
 description: "Deploy any Python code to serverless CPUs/GPUs giving you fine-grain control"
 ---
 
-Many of our more hardcore users wanted finer-grain control over their code and package dependencies which is why we opened up our underlying architecture to allow engineers and data scientists to deploy
+Many of our more hardcore users wanted finer-grain control over their code and package dependencies, which is why we opened up our underlying architecture to allow engineers and data scientists to deploy
 any custom Python code.
 
 We have been focusing hard on the developer experience that if your code runs locally, you can deploy it to serverless CPUs\/GPUs using one line.
-Initial deploys take about a minute (installing packages etc.) however, thereafter every change is \< 10 seconds and of course inference requests have a cold start \<1 second!
+Initial deploys take about a minute (installing packages etc.) however, thereafter every change is \< 20 seconds, and of course inference requests have a cold start \<1 second!
+
+<Note>
+Model deployment and startup time is proportional to the model size (including dependencies). For lightning fast deployments, start-ups, and scale-ups keep your model as small as possible!
+</Note>
+
 You can get started with our simple tutorial below:
 
 Below is a brief outline of its setup
@@ -31,14 +36,11 @@ from pydantic import BaseModel
 class Item(BaseModel):
     parameter: value
 
-## TODO
-def __init__(params):
-
 
 def predict(item, run_id, logger):
     item = Item(**item)
 
-    ##Do something with parameters from item
+    # Do something with parameters from item
 
     return {"key": "value}
 ```
@@ -50,25 +52,23 @@ Both the **requirements.txt** and **pkglist.txt** follow standard layouts in tha
 
 ### Deploy model
 
-In order to deploy a model, navigate to where your model code is stored - ie: your main.py.
-
-## TODO: implement package syntax
+To deploy a model, navigate to where your model code (specifically your `main.py`) is located and run the following command:
 
 ```bash
-cerebrium-deploy -n <MODEL_NAME> -h <HARDWARE> -k <API_KEY>
+cerebrium deploy <MODEL_NAME> <PRIVATE_API_KEY> -h=<HARDWARE>
 ```
 
 For the parameters above:
 
 - **\<MODEL_NAME\>\***: Give your model a name for you to recognize on your Cerebrium dashboard
-- **\<HARDWARE\>\***: This is either cpu or gpu
-- **\<API_KEY\>**: This is the API key from your profile
+- **\<HARDWARE\>\***: This is either CPU, GPU or A10
+- **\<PRIVATE_API_KEY\>**: This is the private API key you can find on your Cerebrium dashboard
 
 With just a few lines of code, your custom python code will be deployed to serverless CPUs/GPUs without setting up any infrastructure. After the first deployment,
 every subsequent deployment should be less than 10s, keep the development lifecycle as quick as possible.
 
 Once you deploy a model, navigate back to the dashboard and click on the name of the model you just
-deployed. You wil see the usual overview statistics of your model but most importantly you will see two tabs titled <b>builds</b> and <b>runs</b>.
+deployed. You will see the usual overview statistics of your model, but most importantly, you will see two tabs titled <b>builds</b> and <b>runs</b>.
 
 - <b>Builds</b>: This is where you can see the logs regarding the creation of your environment and the code specified in the <b>Init</b> function. You will see logs only on every deploy.
 - <b>Runs</b>: This is where you will see logs concerning every API call to your model endpoint. You can therefore debug every run based on input parameters and the model output.
