@@ -59,7 +59,7 @@ class Item(BaseModel):
     question: str
 ```
 
-Above we use Pydantic as our data validation library and BaseModel is where Cerebrium keeps some default parameters like "webhook_url" that you can use for long-running tasks but do not worry about that functionality for this tutorial. Due to the way that I have defined my Base Model, "url" and "question" are required parameters and so if they are not present in the request, the user will automatically receive an error message.
+Above we use Pydantic as our data validation library and BaseModel is where Cerebrium keeps some default parameters like "webhook_url" that you can use for long-running tasks but do not worry about that functionality for this tutorial. Due to the way that we have defined the Base Model, "url" and "question" are required parameters and so if they are not present in the request, the user will automatically receive an error message.
 
 ## Convert Video to text
 
