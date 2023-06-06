@@ -6,7 +6,7 @@ description: "Arize is a monitoring tool that allows you to track your model per
 # Setup
 
 To get started, you need to create an [Arize](https://www.arize.com) account which you can do [here](https://app.arize.com/auth/join).
-Once you have signed up for Arize, you will need to create a 'space' - you can think of this a way to organize various models but usually one space per company/client is sufficient.
+Once you have signed up for Arize, you will need to create a 'space' — you can think of this a way to organize various models, but usually one space per company/client is sufficient.
 
 Arize handles the following type of models for you to do logging. You can read more about the functionality they provide for each to get a sense of their features and functionality:
 
@@ -18,18 +18,18 @@ Arize handles the following type of models for you to do logging. You can read m
 - [NLP](https://docs.arize.com/arize/model-types/natural-language-processing-nlp)
 - [CV](https://docs.arize.com/arize/model-types/computer-vision-cv)
 
-Logging with Arize is particularly easy with Cerebrium since you just have to define about 8 lines of code, and it follows an almost identical pattern to if you are familiar on how to log with Arize.
-If you would like to be more familiar with their platform you can take a look at the [Arize documentation](https://arize.com/docs/).
+Logging with Arize is particularly easy with Cerebrium since you just have to define about 8 lines of code, and it follows an almost identical pattern to if you are familiar with how to log with Arize.
+If you would like to be more familiar with their platform, you can take a look at the [Arize documentation](https://arize.com/docs/).
 
 # Adding a Arize Logger
 
 Once you have instantiated your Conduit object in code (see [here](/cerebrium/test-and-deploy)), you can add a Censius logger to it by calling the `add_logger` method.
-The <b>Arize</b> logger requires the following platform specific arguments:
+The <b>Arize</b> logger requires the following platform-specific arguments:
 
 - `api_key`: The unique key of our account which can be found in your Space Settings
 - `space_key`: The unique key related to the space you would like to deploy your model. This can be found in your Space Settings.
 - `model_type`: The type of <i>Arize</i> model you are using. You can find the different options [here](https://docs.arize.com/arize/model-types)
-- `features`: A list of the column names of your different features. Do not include outcome variable names - purely features.
+- `features`: A list of the column names containing your different features. Do not include outcome variable names — only features.
 - `metrics_validation`: Optional. The validation metrics you would like to use to determine the performance of your model
 - `class_labels`: Optional. A list of potential labels for multi-class classification. Please ensure it correlates to the order that the model would return
 - `embedding_features`: Optional. If you include embedding vectors as features for your model. You can read more [here](https://docs.arize.com/arize/embeddings/7.-troubleshoot-embedding-data)
@@ -81,7 +81,7 @@ conduit.deploy()
 
 #### Logging Actual Values
 
-With every request made to your Cerebrium endpoint, a unique `run_id` is returned. We use this `run_id` to associate every log of the output of your model. You can use this `run_id` to log the actual values to Arize and compare model performance to that of your baseline model.
+With every request made to your Cerebrium endpoint, a unique `run_id` is returned. We use this `run_id` to associate every log of the output with your model. You can use this `run_id` to log the actual values to Arize and compare model performance to that of your baseline model.
 
 #### Multi-class classification
 
@@ -102,7 +102,7 @@ If we pass the following input, `[5.8, 2.7, 5.1, 1.9]` , to our XGBoost Classifi
 
 #### Embedding vectors
 
-If you are passing embedding features to your model you must make sure to not include it in the features array and define it separately.
+If you are passing embedding features to your model, you must make sure to not include it in the feature array and define it separately.
 
 ```python
 features = ['state', 'city', 'merchant_name', 'pos_approved', 'item_count', 'merchant_type', 'charge_amount': 20.11]
