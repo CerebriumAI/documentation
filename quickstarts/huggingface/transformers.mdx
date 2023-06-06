@@ -96,7 +96,7 @@ deploying your own model now or check out our other frameworks.
 
 ### Adding additional parameters to your pipeline
 
-In some cases, you may need to parse additional parameters to your pipeline. Say your model is too large and so you need to offload the model, load in 8bit. Additionally, access to the model requires your authorization token. Normally, when using the huggingface libraries, you would do this as follows:  
+In some cases, you may need to parse additional parameters to your pipeline. Say your model is too large and so you need to offload the model as well as quantise it to 8bit. Additionally, access to the model requires your authorization token. Normally, when using the huggingface libraries, you would do this as follows:  
 ```python
 hf_auth_token="<YOUR_HF_AUTH_TOKEN>"
 model_kwargs = {      
