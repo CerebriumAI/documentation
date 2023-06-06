@@ -1,0 +1,78 @@
+---
+title: "Introduction"
+description: "Deploy any Python code to serverless CPUs/GPUs giving you fine-grain control"
+---
+
+Many of our more hardcore users wanted finer-grain control over their code and package dependencies which is why we opened up our underlying architecture to allow engineers and data scientists to deploy
+any custom Python code.
+
+We have been focusing hard on the developer experience that if your code runs locally, you can deploy it to serverless CPUs\/GPUs using one line.
+Initial deploys take about a minute (installing packages etc.) however, thereafter every change is \< 10 seconds and of course inference requests have a cold start \<1 second!
+You can get started with our simple tutorial below:
+
+Below is a brief outline of its setup
+
+### Components
+
+Currently, our implementation has three components:
+
+- **main.py** - This is where your python code lives
+- **requirements.txt** - This is where you define your Python packages. Deployment will be quicker if you specify specific versions
+- **pkglist.txt** - This is where you can define linux packages you would like to install. We run the apt-install command for items in here
+
+However, you can contain images and other Python files in the same directory, and they will get packaged and uploaded when you deploy.
+
+Every main.py you deploy needs the following mandatory layout:
+
+```bash
+from pydantic import BaseModel
+
+
+class Item(BaseModel):
+    parameter: value
+
+## TODO
+def __init__(params):
+
+
+def predict(item, run_id, logger):
+    item = Item(**item)
+
+    ##Do something with parameters from item
+
+    return {"key": "value}
+```
+
+The Item class is where you define the parameters your model receives as well as their type. Item needs to inherit from BaseModel.
+You need to define a function with the name **predict** which receives 3 params, item, run_id, logger.
+
+Both the **requirements.txt** and **pkglist.txt** follow standard layouts in that each package should be on a new line.
+
+### Deploy model
+
+In order to deploy a model, navigate to where your model code is stored - ie: your main.py.
+
+## TODO: implement package syntax
+
+```bash
+cerebrium-deploy -n <MODEL_NAME> -h <HARDWARE> -k <API_KEY>
+```
+
+For the parameters above:
+
+- **\<MODEL_NAME\>\***: Give your model a name for you to recognize on your Cerebrium dashboard
+- **\<HARDWARE\>\***: This is either cpu or gpu
+- **\<API_KEY\>**: This is the API key from your profile
+
+With just a few lines of code, your custom python code will be deployed to serverless CPUs/GPUs without setting up any infrastructure. After the first deployment,
+every subsequent deployment should be less than 10s, keep the development lifecycle as quick as possible.
+
+Once you deploy a model, navigate back to the dashboard and click on the name of the model you just
+deployed. You wil see the usual overview statistics of your model but most importantly you will see two tabs titled <b>builds</b> and <b>runs</b>.
+
+- <b>Builds</b>: This is where you can see the logs regarding the creation of your environment and the code specified in the <b>Init</b> function. You will see logs only on every deploy.
+- <b>Runs</b>: This is where you will see logs concerning every API call to your model endpoint. You can therefore debug every run based on input parameters and the model output.
+
+We recommend you check out the [advanced functionality](/advanced-functionality/persistent-storage) section of Cortex as well as work through the [examples](/examples) in order to see how deployments were done for various different applications.
+
+
