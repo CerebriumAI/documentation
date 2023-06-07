@@ -24,7 +24,7 @@ appropriate format for your model.
 
 You can also define a Conduit object directly by using the `Conduit` class. Then call the `run` method on the Conduit object to test the model locally, or the `deploy` method to deploy the Conduit's model flow to Cerebrium.
 When you use the Conduit object directly, you can specify what hardware you wish your model to run on by using the `hardware` parameter in the `Conduit` constructor. 
-The `hardware` parameter is a enum that can be one of the following:
+The `hardware` parameter is an enum that can be one of the following:
 - **hardware.CPU**: This will run your model on a CPU. This is the default option for SKLearn, XGBoost, and SpaCy models.
 - **hardware.GPU**: This will run your model on a T4 GPU. This is the default option for Torch, ONNX, and HuggingFace models.
 - **hardware.A10**: This will run your model on an A10 GPU, which provides 16GB of VRAM. You should use this option if you are using a model that is too large to fit on the 12GB of VRAM that a T4 GPU provides. This will include most large HuggingFace models.
