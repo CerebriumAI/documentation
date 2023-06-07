@@ -30,8 +30,8 @@ It is important to think of the way you develop models using Cerebrium should be
 
 To start, we need to create a **main.py** file which will contain our main Python code. This is a relatively simple implementation, so we can do everything in 1 file.
 
-I then go straight to the [Hugging face documentation](https://huggingface.co/stabilityai/stable-diffusion-2-1) and see that in order to run Stable Diffusion 2.1
-I need to install a few dependencies. In order to do this, I need to create a **requirements.txt** file. with the following dependencies:
+I then go straight to the [Hugging face documentation](https://huggingface.co/stabilityai/stable-diffusion-2-1) and see that to run Stable Diffusion 2.1
+I need to install a few dependencies. To do this, I need to create a **requirements.txt** file with the following dependencies:
 
 ```
 diffusers
@@ -60,7 +60,7 @@ pipe = pipe.to("cuda")
 We define this at the top of the file for two reasons:
 
 1. Code loaded in the top of the file is automatically run when deployed, meaning the model can be downloaded and loaded into memory on the first deployment.
-   The first deployment is the longest but thereafter it should be pretty quick.
+   The first deployment is the longest, but thereafter it should be pretty quick.
 2. If this was in a function, it would not be called on deploy but on the first request. Also, it would be loaded from cache on every request. We do not want either
    of these two things.
 
@@ -79,7 +79,7 @@ class Item(BaseModel):
 ```
 
 Pydantic is a data validation library and BaseModel is where Cerebrium keeps some default parameters like "webhook_url" that allows a user to send in a webhook url,
-and we will call it when the job has finished processing - this is useful for long-running tasks. Do not worry about that functionality for this tutorial.
+and we will call it when the job has finished processing — this is useful for long-running tasks. Do not worry about that functionality for this tutorial.
 
 We would then like to create a function, **predict** that we would like to be called every time our user submits a request. The predict function received 3 parameters:
 
@@ -116,7 +116,7 @@ def predict(item, run_id, logger):
 In the above code we do a few things:
 
 1. We run our Stable Diffusion model with parameters the user sent through the request. If the user didn't send any then we set default values.
-2. We convert the generated images to base64 in order to return it back to the user
+2. We convert the generated images to base64 to return it back to the user
 
 To deploy this function to an A10 instance we run the following code:
 

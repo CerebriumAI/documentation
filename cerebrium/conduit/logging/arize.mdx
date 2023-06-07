@@ -33,7 +33,7 @@ The <b>Arize</b> logger requires the following platform-specific arguments:
 - `metrics_validation`: Optional. The validation metrics you would like to use to determine the performance of your model
 - `class_labels`: Optional. A list of potential labels for multi-class classification. Please ensure it correlates to the order that the model would return
 - `embedding_features`: Optional. If you include embedding vectors as features for your model. You can read more [here](https://docs.arize.com/arize/embeddings/7.-troubleshoot-embedding-data)
-- `schema`: This is the schema that Arize requires in order to determine what your predictions, features and embeddings are.
+- `schema`: This is the schema that Arize requires to determine what your predictions, features and embeddings are.
 
 ```python
 from cerebrium import Conduit, model_type, logging_platform

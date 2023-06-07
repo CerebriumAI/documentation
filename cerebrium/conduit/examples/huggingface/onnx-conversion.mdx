@@ -6,20 +6,20 @@ description: "This example provides the steps to convert a Hugging Face model to
 ## Intro
 
 Cerebrium supports the deployment of Onnx models where ONNX is an open format built to represent machine learning models. ONNX defines
-a common set of operators - the building blocks of machine learning and deep learning models - and a common file format to enable AI developers to use models
+a common set of operators — the building blocks of machine learning and deep learning models — and a common file format to enable AI developers to use models
 with a variety of frameworks, tools, runtimes, and compilers. HuggingFace allows you to export transformer models to a serialized format such as Onnx through their
 transformers.onnx package or their optimum.exporters.onnx package.
 
-Hugging Face has a list of ready-made configurations that you can export with one line - you can see the list [here](https://huggingface.co/docs/transformers/serialization).
-In this quickstart I am going to show you how to export a LayoutLMv3 model which we will use for token classification - you will see a ready-made configuration exists in the list.
+Hugging Face has a list of ready-made configurations that you can export with one line — you can see the list [here](https://huggingface.co/docs/transformers/serialization).
+In this quickstart I am going to show you how to export a LayoutLMv3 model which we will use for token classification — you will see a ready-made configuration exists in the list.
 I will be using the notebook [here](<https://colab.research.google.com/github/NielsRogge/Transformers-Tutorials/blob/master/LayoutLMv3/Fine_tune_LayoutLMv3_on_FUNSD_(HuggingFace_Trainer).ipynb#scrollTo=wDWVaw74YXgW>) to fine-tune the LayoutLMv3 model
 
-By the end of this guide you'll have an API endpoint of a deployed LayoutLMv3 model that can handle any scale
+By the end of this guide, you'll have an API endpoint of a deployed LayoutLMv3 model that can handle any scale
 of traffic by running inference on serverless CPU's/GPUs.
 
 ### Project set up
 
-Before building you need to set up a Cerebrium account. This is as simple as
+Before building, you need to set up a Cerebrium account. This is as simple as
 starting a new Project in Cerebrium and copying the API key. This will be used
 to authenticate all calls for this project.
 
@@ -39,7 +39,7 @@ to authenticate all calls for this project.
 pip install transformers[onnx]
 ```
 
-Once the transformers Onnx package is installed you want to convert either one of the existing models on Hugging Face or a fine-tuned model of yours. In this example
+Once the transformers Onnx package is installed, you want to convert either one of the existing models on Hugging Face or a fine-tuned model of yours. In this example,
 I am exporting a model I fine-tuned with the LayoutLMv3 model as a base. The transformers ONNX model picks up the model format. We have to export feature token-classification to get the logits
 
 ```python
@@ -51,16 +51,16 @@ I am exporting a model I fine-tuned with the LayoutLMv3 model as a base. The tra
 In the above line of code I am doing the following:
 
 - Specifying the location of my fine-tuned model checkpoint. This could also be the model ID on Hugging Face such as microsoft/layoutlmv3-base.
-- I specify the feature I want to export the model with. Since we are doing classification I want to get the logits for the model so need to use the model that has that topology.
-  In this case it would be token-classification but could be causal-lm etc.
-- When you convert a model to Onnx there could be a minor change in accuracy and so you need to give a number which is the absolute difference tolerance when validating the model.
+- I specify the feature I want to export the model with. Since we are doing classification, I want to get the logits for the model so need to use the model that has that topology.
+  In this case, it would be token-classification but could be causal-lm etc.
+- When you convert a model to Onnx, there could be a minor change in accuracy, and so you need to give a number which is the absolute difference tolerance when validating the model.
 - Lastly, we specify the file path of where we would like to store this model.
 
 ### Test model locally and deploy
 
 Before deploying the model to Cerebrium, I like to test locally, so I know I shouldn't have any problems in production. You could also test the model running OnnxInferenceSession.
 
-First we prepare the payload
+First, we prepare the payload
 
 ```python
 example = dataset["test"][0]
