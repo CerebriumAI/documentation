@@ -52,10 +52,16 @@ Both the **requirements.txt** and **pkglist.txt** follow standard layouts in tha
 
 ### Deploy model
 
-To deploy a model, navigate to where your model code (specifically your `main.py`) is located and run the following command:
+To deploy a model, download our pip package if you haven't already:
 
 ```bash
-cerebrium deploy <MODEL_NAME> <PRIVATE_API_KEY> -h=<HARDWARE>
+pip install --upgrade cerebrium
+```
+
+Then navigate to where your model code (specifically your `main.py`) is located and run the following command:
+
+```bash
+cerebrium deploy <MODEL_NAME> <PRIVATE_API_KEY> --hardware=<HARDWARE>
 ```
 
 For the parameters above:
