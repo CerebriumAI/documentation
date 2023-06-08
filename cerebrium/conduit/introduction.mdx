@@ -52,7 +52,7 @@ In the Conduit object there are the following parameters:
 - **HARDWARE**: The hardware parameter is a enum that can be one of the following:
   - **hardware.CPU**: This will run your model on a CPU. This is the default option for SKLearn, XGBoost, and SpaCy models.
   - **hardware.GPU**: This will run your model on a T4 GPU. This is the default option for Torch, ONNX, and HuggingFace models.
-  - **hardware.A10**: This will run your model on an A10 GPU, which provides 16GB of VRAM. You should use this option if you are using a model that is too large to fit on the 12GB of VRAM that a T4 GPU provides. This will include most large HuggingFace models.
+  - **hardware.A10**: This will run your model on an A10 GPU, which provides 24GB of VRAM. You should use this option if you are using a model that is too large to fit on the 16GB of VRAM that a T4 GPU provides. This will include most large HuggingFace models.
 
 <Note>
   Every unique model name will create a _separate deployment_ with a _separate
