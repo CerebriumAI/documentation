@@ -1,19 +1,13 @@
 ---
-title: "Stable Diffusion Upscaler"
-description: "A Stable Diffusion Upscaler from Stability AI"
+title: "ESRGAN Upscaler"
+description: "A ESRGAN Upscaler built for photo resoration"
 ---
 
 To deploy the model, you can use the identifier below:
 
-- Stable Diffusion Upscaler: `sd-upscaler`
+- ESRGAN Upscaler: `esrgan-upscaler`
 
-This model was trained for 1.25M steps on a 10M subset of LAION containing images >2048x2048. The model was trained on crops of size 512x512 and is a text-guided latent upscaling diffusion model.
-
-<Note>
-  Your image must be smaller than 510px x 510px and if not, please add a width
-  and height parameter to resize it. It does a 4x upscale so you will get a
-  2000x2000px image
-</Note>
+Real-ESRGAN aims at developing Practical Algorithms for General Image/Video Restoration. The model extends the powerful ESRGAN to a practical restoration application (namely, Real-ESRGAN), which is trained with pure synthetic data.
 
 You can follow this example of how to call the deployed endpoint:
 
@@ -21,15 +15,14 @@ You can follow this example of how to call the deployed endpoint:
 
 <RequestExample>
 ```bash Request
-  curl --location --request POST 'https://run.cerebrium.ai/sd-upscaler-webhook/predict' \
+  curl --location --request POST 'https://run.cerebrium.ai/esrgan-upscaler-webhook/predict' \
       --header 'Authorization: <API_KEY>' \
       --header 'Content-Type: application/json' \
       --data-raw '{
-        "prompt": "A photo of a dog",
         "image": <BASE_64_STRING>,
-        "height": 350,
-        "width": 350,
         "file_url": "https://your-url.com",
+        "upscale": 4,
+        "face_enhance": true
         "webhook_endpoint": "https://your-url.com"
       }'
 ```
@@ -38,20 +31,17 @@ You can follow this example of how to call the deployed endpoint:
 <ParamField header="Authorization" type="string" required>
   This is the Cerebrium API key used to authenticate your request. You can get it from your Cerebrium dashboard.
 </ParamField>
-<ParamField body="prompt" type="string" required>
-   The prompt you would like your upscaler model to use.
-</ParamField>
 <ParamField body="image" type="string" optional>
   A base64 encoded string of the image you would like to upscale.
 </ParamField>
-<ParamField body="height" type="integer" optional>
-   The height to which you would like to resize the original image before being upscaled. It defaults to 350px. This is an optional parameter
-</ParamField>
-<ParamField body="width" type="integer" optional>
-  The width to which you would like to resize the original image before being upscaled. It defaults to 350px. This is an optional parameter
-</ParamField>
 <ParamField body="file_url" type="string" optional>
   A publicly accessible url of a image you would like to upscale
+</ParamField>
+<ParamField body="upscale" type="integer" optional>
+  A integer specifying how big you would like to upscale the image. Default is 4x.
+</ParamField>
+<ParamField body="face_enhance" type="boolean" optional>
+  A boolean value if you are upscaling a face in your image
 </ParamField>
 <ParamField body="webhook_endpoint" type="string" optional>
    The url endpoint you would like us to send the image results to once it has finished generating

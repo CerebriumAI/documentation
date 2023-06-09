@@ -1,0 +1,50 @@
+---
+title: "Test locally"
+description: "Test your Conduit model locally."
+---
+
+To run your model locally and ensure it is working as intended before
+deploying, you can use the `load` and `run` command. The `load` command will
+load your pipeline into memory using the paths you specified in `deploy` from a base path, while `run`
+will sequentially execute your loaded pipeline.
+
+```python
+from cerebrium import deploy, model_type
+
+conduit = deploy(('<MODEL_TYPE>', '<MODEL_FILE>'), '<MODEL_NAME>', '<API_KEY>')
+conduit.load('./')
+conduit.run(data)
+```
+
+Where `data` is the data you would send to your model. This would usually be
+some numerical 2D/3D array for typical models, or a list of strings for a language model. You may
+feed an `ndarray` or `Tensor` directly into this function. However, if you are
+using a custom data pipeline that is expecting another type, you may need to convert your data into the 
+appropriate format for your model.
+
+You can also define a Conduit object directly by using the `Conduit` class. Then call the `run` method on the Conduit object to test the model locally, or the `deploy` method to deploy the Conduit's model flow to Cerebrium.
+When you use the Conduit object directly, you can specify what hardware you wish your model to run on by using the `hardware` parameter in the `Conduit` constructor. 
+The `hardware` parameter is an enum that can be one of the following:
+- **hardware.CPU**: This will run your model on a CPU. This is the default option for SKLearn, XGBoost, and SpaCy models.
+- **hardware.GPU**: This will run your model on a T4 GPU. This is the default option for Torch, ONNX, and HuggingFace models.
+- **hardware.A10**: This will run your model on an A10 GPU, which provides 24GB of VRAM. You should use this option if you are using a model that is too large to fit on the 16GB of VRAM that a T4 GPU provides. This will include most large HuggingFace models.
+
+```python
+from cerebrium import Conduit, model_type, hardware
+conduit = Conduit(
+  '<MODEL_NAME>', 
+  '<API_KEY>', 
+  [('<MODEL_TYPE>', '<MODEL_FILE>')],
+  hardware=hardware.<HARDWARE_TYPE>
+)
+conduit.load('./')
+conduit.run(data)
+conduit.deploy()
+```
+
+Additionally, defining a conduit object directly allows you to add more models to your flow dynamically using `add_model` method, as well as
+including monitoring functionality with [Censius](/cerebrium/conduit/logging/censius) or [Arize](/cerebrium/conduit/logging/arize.mdx) using `add_logger`.
+
+```python
+conduit.add_model('<MODEL_TYPE>', '<MODEL_FILE>', {<PROCESSING_FUNCTIONS>})
+```

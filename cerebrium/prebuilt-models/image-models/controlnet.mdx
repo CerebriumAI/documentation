@@ -3,7 +3,7 @@ title: "ControlNet"
 description: "A framework that allows for supporting various spatial contexts that can serve as additional conditionings to Diffusion models such as Stable Diffusion."
 ---
 
-In order to deploy the model you can use the identifier below:
+To deploy the model, you can use the identifier below:
 
 - ControlNet: `controlnet`
 
@@ -63,7 +63,7 @@ You can follow this example of how to call the deployed endpoint:
    A publicly accessible url to download your image
 </ParamField>
 <ParamField body="hf_token" type="string" optional>
-   This is the token from your HuggingFace profile in order to access your model repo. This is a required parameter if you enter a model id that is private.
+   This is the token from your HuggingFace profile to access your model repo. This is a required parameter if you enter a model id that is private.
 </ParamField>
 <ParamField body="model_id" type="string" optional>
    This is the Hugging Face id of your model repo. If nothing is provided we use the Stable diffusion base model.

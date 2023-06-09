@@ -3,19 +3,35 @@ title: "Segment Anything Example"
 description: "To deploy Meta's segment anything model to classify clothes"
 ---
 
-In this tutorial, we will demonstrate how to get Meta's 'Segment Anything' model up and running in order to recognize items a person is wearing - think about the
+In this tutorial, we will demonstrate how to get Meta's 'Segment Anything' model up and running to recognize items a person is wearing - think about the
 shopping feature on Instagram. It identifies clothes and associates the link to these items.
 
-To see the final implementation you can view it [here](https://github.com/CerebriumAI/examples/tree/master/2-segment-anything)
+To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/2-segment-anything)
+
+## Create Cerebrium Account
+
+Before building, you need to set up a Cerebrium account. This is as simple as
+starting a new Project in Cerebrium and copying the API key. This will be used
+to authenticate all calls for this project.
+
+### Create a project
+
+1. Go to [dashboard.cerebrium.ai](https://dashboard.cerebrium.ai)
+2. Sign up or Login
+3. Navigate to the API Keys page
+4. You should see an API key with the source "Cerebrium". Click the eye icon to
+   display it. It will be in the format: c_api_key-xxx
+
+![API Key](/images/quickstarts/onnx-1.png)
 
 ## Basic Setup
 
 It is important to think of the way you develop models using Cerebrium should be identical to developing on a virtual machine or Google Colab.
 
-To start we need to create a **main.py** file which will contain our main Python code. This is a relatively simple implementation, so we can do everything in 1 file.
+To start, we need to create a **main.py** file which will contain our main Python code. This is a relatively simple implementation, so we can do everything in 1 file.
 
-I then go straight to the [Meta Repo](https://github.com/facebookresearch/segment-anything) in order to see how I can run this code.
-I need to install a few dependencies. In order to do this, I need to create a **requirements.txt** file. with the following dependencies:
+I then go straight to the [Meta Repo](https://github.com/facebookresearch/segment-anything) to see how I can run this code.
+I need to install a few dependencies. To do this, I need to create a **requirements.txt** file with the following dependencies:
 
 ```
 git+https://github.com/facebookresearch/segment-anything.git
@@ -45,14 +61,14 @@ mask_generator = SamAutomaticMaskGenerator(
 We define this at the top of the file for two reasons:
 
 1. Code loaded in the top of the file is automatically run when deployed, meaning the model can be downloaded and loaded into memory on the first deployment.
-   The first deployment is the longest but thereafter it should be pretty quick.
+   The first deployment is the longest, but thereafter it should be pretty quick.
 2. If this was in a function, it would not be called on deploy but on the first request. Also, it would be loaded from cache on every request. We do not want either
    of these two things.
 
 With the SAM model, you are able to set parameters about how precise or how detailed you would like the model to perform. Since our use case is around detecting
 clothes on an image, we don't want the segmentation to be that granular. You can look from Meta's documentation the different parameters you can set.
 
-In the documentation we need to select a model type and a checkpoint. Meta recommends three - We will just use the default. I then download the ViT-H SAM model
+In the documentation, we need to select a model type and a checkpoint. Meta recommends three — We will just use the default. I then download the ViT-H SAM model
 checkpoint. You can simply add this checkpoint file to the same directory as your **main.py** and when you deploy your model, Cerebrium will automatically upload it.
 
 I then would like the user to send in a few parameters for the model via API, and so I need to define what the request object would look like:
@@ -69,12 +85,12 @@ class Item(BaseModel):
 ```
 
 Pydantic is a data validation library and BaseModel is where Cerebrium keeps some default parameters like "webhook_url" that allows a user to send in a webhook url,
-and we will call it when the job has finished processing - this is useful for long-running tasks. Do not worry about that functionality for this tutorial. The reason
+and we will call it when the job has finished processing — this is useful for long-running tasks. Do not worry about that functionality for this tutorial. The reason
 the user is sending in an image or a file url is giving the user a choice to send in a base64 encoded image or a publicly accessible file_url we can download.
 
 ## Identifying and classifying objects
 
-Next we would like to create three functions with the following functionality:
+Next, we would like to create three functions with the following functionality:
 
 1. Based on the image coordinates sent in, we would like to find the annotation (segment) the user is most likely referring to.
 2. Take the annotation of the image we have focused on from Meta's model, create a new image and crop it to only be an image of the item we are focusing on.

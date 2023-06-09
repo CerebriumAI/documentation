@@ -24,8 +24,8 @@ description: "We release features and fixes regularly! See some of the changes w
 #### Date: 16 February 2023
 
 - Fixed a critical bug causing ONNX models to not run on GPU. You should upgrade to this version if you are using ONNX models that require GPU computation.
-- `onnxruntime` is now an optional dependency. While you can still deploy ONNX models without the runtime, you will need to install the extra with `pip install cerebrium[onnxruntime]` to test you Conduit locally.
-- Added support for `onnxruntime-gpu` as an optional dependency. You can install the extra with `pip install cerebrium[onnxruntime-gpu]`.
+- `onnxruntime` is now an optional dependency. While you can still deploy ONNX models without the runtime, you will need to install the extra with `pip install --upgrade cerebrium[onnxruntime]` to test you Conduit locally.
+- Added support for `onnxruntime-gpu` as an optional dependency. You can install the extra with `pip install --upgrade cerebrium[onnxruntime-gpu]`.
 
 ## 0.4.5
 
@@ -60,11 +60,11 @@ description: "We release features and fixes regularly! See some of the changes w
 - We have added external monitoring tool support! You can now monitor your deployments with Censius by adding a logger to the Conduit object.
   While it is available to use for all users, this functionality is currently in active development and may change in the coming weeks based
   on feedback. We are also working on adding support for other monitoring tools, with Arize being on track to be released in Q1 2023.
-- Fixed a bug where the client was unable to deploy SKLearn models, XGB Regressor models and ONNX models.
+- Fixed a bug where the client was unable to deploy SKLearn models, XGB Regressor models, and ONNX models.
 - Reworked the response signature for a model. Now returns a JSON object with 3 fields:
   - `result`: The data returned by the deployed Conduit.
   - `run_id`: The ID of the run.
-  - `prediction_ids`: The prediction IDs of each of the predictions made. Used to track/update the predictions logged to monitoring tools.
+  - `prediction_ids`: The prediction IDs of each prediction made. Used to track/update the predictions logged to monitoring tools.
 - Added pre-built deployment for the following LLMs:
   - whisper-medium
   - dreambooth
@@ -123,7 +123,7 @@ description: "We release features and fixes regularly! See some of the changes w
 
 ### Date: 18 October 2022
 
-- Reduce minimum python version to 3.7 (and reduce dependency min versions
+- Reduce the minimum python version to 3.7 (and reduce dependency min versions
   accordingly). Now compatible with Google Colab!
 
 ## v0.1.5
@@ -159,7 +159,7 @@ description: "We release features and fixes regularly! See some of the changes w
 
 ### Date: 7th October 2022
 
-- Moved architecture to serverless CPU/GPU's
+- Moved architecture to serverless CPU/GPUs
 - Support Pytorch, XGBoost and SKLearn models
 - Updated monitoring metrics per model version
 - Bug fixes and performance improvements
@@ -168,9 +168,9 @@ description: "We release features and fixes regularly! See some of the changes w
 
 ### Date: 26th September 2022
 
-- Released alpha version of Neuron.
+- Released an alpha version of Neuron.
 - Users are able to deploy models from their notebooks or .py files with just 4
   lines of code.
-- Created dashboard interface for users to see deployed models, API calls and
+- Created dashboard interface for users to see deployed models, API calls, and
   errors.
 - Created this documentation site.

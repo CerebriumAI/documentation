@@ -3,11 +3,11 @@ title: "Custom Dreambooth"
 description: "Dreambooth is a fine-tuned text-to-image diffusion model for subject driven generation"
 ---
 
-In order to deploy the model you can use the identifier below:
+To deploy the model, you can use the identifier below:
 
 - Dreambooth: `dreambooth`
 
-At the moment, we only support custom Dreambooth models that are hosted on Hugging Face. If you would like help on how to train and deploy your model you can read our blog post [here](https://www.cerebrium.ai/blog/creating-avatarai-me-using-supabase-and-cerebrium).
+At the moment, we only support custom Dreambooth models that are hosted on Hugging Face. If you need help on how to train and deploy your model, you can read our blog post [here](https://www.cerebrium.ai/blog/creating-avatarai-me-using-supabase-and-cerebrium).
 Once you've deployed a custom Dreambooth model, you can follow this example of how to call the deployed endpoint:
 
 #### Request Parameters
@@ -40,7 +40,7 @@ Once you've deployed a custom Dreambooth model, you can follow this example of h
    The prompt you would like your Dreambooth model to generate.
 </ParamField>
 <ParamField body="hf_token" type="string" required>
-   This is the token from your HuggingFace profile in order to access your model repo. This is a required parameter if you model is privately hosted on Hugging face.
+   This is the token from your HuggingFace profile to access your model repo. This is a required parameter if you model is privately hosted on Hugging face.
 </ParamField>
 <ParamField body="model_id" type="string" required>
    This is the Hugging Face id of your model repo. This is a required parameter.

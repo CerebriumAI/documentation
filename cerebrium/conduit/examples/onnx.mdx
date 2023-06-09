@@ -1,15 +1,20 @@
 ---
-title: "Pytorch"
-description: "This example provides the steps to deploy a simple Pytorch model (CNN) from
-scratch using Cerebrium."
+title: "Onnx"
+description: "This example provides the steps to deploy a simple Onnx model from scratch
+using Cerebrium."
 ---
 
 ## Intro
 
-By the end of this guide you'll have an API endpoint that can handle any scale
-of traffic by running inference on serverless CPU's/GPU's.
+ONNX is an open format built to represent machine learning models. ONNX defines
+a common set of operators - the building blocks of machine learning and deep
+learning models - and a common file format to enable AI developers to use models
+with a variety of frameworks, tools, runtimes, and compilers.
 
-## Project set up
+By the end of this guide you'll have an API endpoint that can handle any scale
+of traffic by running inference on serverless CPU's/GPUs.
+
+### Project set up
 
 Before building you need to set up a Cerebrium account. This is as simple as
 starting a new Project in Cerebrium and copying the API key. This will be used
@@ -28,13 +33,21 @@ to authenticate all calls for this project.
 ### Develop model
 
 Now navigate to where your model code is stored. This could be in a notebook or
-in a plain .py file.
+in a plain `.py` file.
 
-Install the Cerebrium framework running the following command in your notebook
-or terminal
+To start, you should install the Cerebrium framework running the following
+command in your notebook or terminal. You will need the optional dependency
+`onnxruntime` to run the model locally.
 
 ```bash
-pip install cerebrium
+pip install --upgrade cerebrium[onnxruntime]
+```
+
+If you are on a GPU machine you can also install the GPU version of the
+runtime instead.
+
+```bash
+pip install --upgrade cerebrium[onnxruntime-gpu]
 ```
 
 Copy and paste our code below. This creates a simple Convolutional Neural
@@ -151,57 +164,51 @@ with torch.no_grad():
 
     print('Accuracy of the network on the {} train images: {} %'.format(50000, 100 * correct / total))
 
-## Save with Cloudpickle
-import cloudpickle
-with open("torch_model.pkl", "wb") as f:
-    cloudpickle.dump(model, f)
-
-## Save with TorchScript
-scripted_model = torch.jit.script(model)
-scripted_model.save("torch_model.pt")
+# convert to onnx
+input_names = ["input"]
+output_names = ["output"]
+torch.onnx.export(
+    model,
+    images,
+    "pytorch.onnx",
+    verbose=True,
+    input_names=input_names,
+    output_names=output_names,
+)
 ```
 
-In the last line of code, there are two ways you can save the model. This is all
-you need to deploy your model to Cerebrium! You can then import the `deploy()`
-function from the Cerebrium framework. I used the CloudPickle function to save
-my model below.
+In the last line of code, you will see we exported the Pytorch model to an Onnx
+format. This is all you need to deploy your model to Cerebrium! You can then import the `deploy()` function from the Cerebrium framework. I used the CloudPickle function to save my model below.
 
 ```bash
 from cerebrium import deploy, model_type
-
-endpoint = deploy((model_type.TORCH, "torch_model.pkl"), "torch-model-cp", "<API_KEY>")
+output_flow = deploy((model_type.ONNX, "pytorch.onnx"),"onnx-pytorch", "<API_KEY>")
 ```
 
-![Deployed Model](/images/quickstarts/pytorch-2.png)
+![Deployed Model](/images/quickstarts/onnx-2.png)
 
 Your model is now deployed and ready for inference all in under **10 seconds**!
 Navigate to the dashboard and on the Models page you will see your model.
 
-You can run inference using `curl` or the `model_api_request()` python helper
-function. The helper function is useful for large data.
+You can run inference using `curl`
 
 ```bash
 curl --location --request POST '<ENDPOINT>' \
 --header 'Authorization: <API_KEY>' \
 --header 'Content-Type: application/json' \
---data-raw '[<DATA>]'
+--data-raw '[<INPUT_DATA>]'
 ```
 
-```bash
-from cerebrium import model_api_request
+Your input data should be a **Dict** of the input variables you defined when you exported the model to Onnx. So make sure your input objects correspond otherwise you will get an error. The response will be:
 
-response = model_api_request("<ENDPOINT_URL", images, "<API_KEY>")
-print(response["data"])
-```
-
-![Pytorch Model Response](/images/quickstarts/pytorch-3.png)
+![Onnx Postman Response](/images/quickstarts/onnx-3_1.png)
 
 Navigate back to the dashboard and click on the name of the model you just
 deployed. You will see an API call was made and the inference time. From your
 dashboard you can monitor your model, roll back to previous versions and see
 traffic.
 
-![Pytorch Monitoring](/images/quickstarts/pytorch-4.png)
+![XGB Monitoring](/images/quickstarts/onnx-4.png)
 
 With one line of code, your model was deployed in seconds with automatic
 versioning, monitoring and the ability to scale based on traffic spikes. Try

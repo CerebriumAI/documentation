@@ -6,7 +6,7 @@ description: "This example provides the steps to deploy a simple Spacy model (fr
 ## Intro
 
 spaCy is an open-source software library for advanced natural language processing and excels at large-scale information extraction tasks
-By the end of this guide you'll have a spaCy API endpoint that can handle any scale of traffic by running inference on serverless CPU's/GPU's.
+By the end of this guide you'll have a spaCy API endpoint that can handle any scale of traffic by running inference on serverless CPU's/GPUs.
 
 ## Project set up
 
@@ -97,15 +97,15 @@ Lastly we can train our model:
 
 ### Developing model
 
-To start you should install the Cerebrium framework running the following
+To start, you should install the Cerebrium framework running the following
 command in your notebook or terminal
 
 ```bash
-pip install cerebrium
+pip install --upgrade cerebrium
 ```
 
 One of the main differences with a spaCy model deployed on Cerebrium, is it is **mandatory** to include a post-processing function which uses your trained model to manipulate text.
-This post-processing function has to return a list or string in order to be accepted. This is what will be returned to you via the API. Below we show a very basic post-processing function
+This post-processing function has to return a list or string to be accepted. This is what will be returned to you via the API. Below, we show a very basic post-processing function
 and deploy our spaCy model.
 
 When you train a spaCy model, it will create a folder with a tokenizer, meta.json, config.cfg etc. You will need to specify the path of this folder when deploying your model.
