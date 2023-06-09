@@ -57,7 +57,8 @@
         {
           "group": "Advanced functionality",
           "pages": [
-            "cerebrium/cortex/advanced-functionality/persistent-storage"
+            "cerebrium/cortex/advanced-functionality/persistent-storage",
+            "cerebrium/cortex/advanced-functionality/using-secrets"
           ]
         },
         {
@@ -77,12 +78,13 @@
         {
           "group": "Advanced functionality",
           "pages": [
-            "cerebrium/conduit/advanced-functionality/test-locally",
             "cerebrium/conduit/advanced-functionality/model-ensembles",
-            "cerebrium/conduit/advanced-functionality/processing-functions",
-            "cerebrium/conduit/advanced-functionality/using-files",
             "cerebrium/conduit/advanced-functionality/persistent-memory",
+            "cerebrium/conduit/advanced-functionality/processing-functions",
             "cerebrium/conduit/advanced-functionality/saving-files",
+            "cerebrium/conduit/advanced-functionality/test-locally",
+            "cerebrium/conduit/advanced-functionality/using-files",
+            "cerebrium/conduit/advanced-functionality/using-secrets",
             "cerebrium/conduit/advanced-functionality/using-webhook-endpoints"
           ]
         },
@@ -97,13 +99,12 @@
         {
           "group": "Examples",
           "pages": [
-            "cerebrium/conduit/examples/custom",
             "cerebrium/conduit/examples/onnx",
             "cerebrium/conduit/examples/pytorch",
             "cerebrium/conduit/examples/scikit",
-            "cerebrium/conduit/examples/xgboost",
-            "cerebrium/conduit/examples/tensorflow",
             "cerebrium/conduit/examples/spacy",
+            "cerebrium/conduit/examples/tensorflow",
+            "cerebrium/conduit/examples/xgboost",
             {
               "group": "HuggingFace",
               "pages": [
