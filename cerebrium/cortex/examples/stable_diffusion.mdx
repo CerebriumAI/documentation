@@ -3,14 +3,14 @@ title: "Stable Diffusion Example"
 description: "To deploy your own custom version of Stable Diffusion"
 ---
 
-In this tutorial we will demonstrate how to get Stable Diffusion 2.1 up and running in 5 minutes using custom Python. You could use the pre-built
+In this tutorial, we will demonstrate how to get Stable Diffusion 2.1 up and running in 5 minutes using custom Python. You could use the pre-built
 version of this model from your Cerebrium dashboard - we just wanted to show a different way of doing this.
 
-To see the final implementation you can view it [here](https://github.com/CerebriumAI/examples/tree/master/1-stable-diffusion)
+To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/1-stable-diffusion)
 
 ## Create Cerebrium Account
 
-Before building you need to set up a Cerebrium account. This is as simple as
+Before building, you need to set up a Cerebrium account. This is as simple as
 starting a new Project in Cerebrium and copying the API key. This will be used
 to authenticate all calls for this project.
 
@@ -118,7 +118,7 @@ In the above code we do a few things:
 1. We run our Stable Diffusion model with parameters the user sent through the request. If the user didn't send any then we set default values.
 2. We convert the generated images to base64 to return it back to the user
 
-To deploy this function to an A10 instance we run the following code:
+To deploy this function to an A10 instance, we run the following code:
 
 ```bash
 cerebrium-deploy -n stable-diffusion -h A10 -k <API_KEY>

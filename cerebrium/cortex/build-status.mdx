@@ -1,0 +1,34 @@
+---
+title: "Build Status"
+description: "Track the process of your model's build for a smooth deployment experience"
+---
+
+After deploying your model, it goes through a build process before it reaches a state where it can serve predictions. During this build process, your model can be in one of several build statuses that indicate its current state:
+
+- **Building**: This status indicates that your model's build process is ongoing. It implies that your model's code is being prepared and set up.
+
+- **Build Failure**: This status signifies that an error occurred during the build process of your model. The details of this error can be viewed in the logs.
+
+- **Initializing**: Your model is currently in the initialization phase. It is being set up to start serving predictions.
+
+- **Init Failure**: This status means that an error occurred during the initialization phase of your model. Initialization refers to the setup process before your model starts serving predictions.
+
+- **Success**: This status indicates that your model's build process completed successfully. Your model is now ready to serve predictions.
+
+<Note>
+    Build Statues are related to but not the same as Model Statues. Build Statuses indicate the state of your model's
+    deployment during the deployment process. Model Statuses indicate the state of your model's deployment after the
+    deployment process is complete.
+    For more information on Model Statuses, refer to the <a href="/cerebrium/cortex/model-status">Model Status</a> page.
+</Note>
+
+Understanding these build statuses can help you troubleshoot issues and manage your model more effectively.
+
+To view these build statuses, navigate to the 'Builds' tab after clicking on the model in the Cerebrium dashboard.
+
+<Note>
+    If you encounter 'Build Failure' or 'Init Failure' statuses, inspect the corresponding logs for detailed error
+    messages to troubleshoot.
+    However, if you're unable to resolve the issue or need further assistance, feel free to reach out to us on Slack,
+    Discord, or at <a href="mailto:support@cerebrium.ai">support@cerebrium.ai</a>.
+</Note>
