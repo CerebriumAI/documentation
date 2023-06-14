@@ -54,6 +54,7 @@
       "group": "Cortex",
       "pages": [
         "cerebrium/cortex/introduction",
+        "cerebrium/cortex/model_status",
         {
           "group": "Advanced functionality",
           "pages": [
