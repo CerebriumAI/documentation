@@ -13,8 +13,8 @@ a common set of operators - the building blocks of machine learning and deep
 learning models - and a common file format to enable AI developers to use models
 with a variety of frameworks, tools, runtimes, and compilers.
 
-By the end of this guide you'll have an API endpoint that can handle any scale
-of traffic by running inference on serverless CPU's/GPUs.
+By the end of this guide, you'll have an API endpoint that can handle any scale
+of traffic by running inference on serverless CPUs/GPUs.
 
 ### Project set up
 
@@ -37,16 +37,16 @@ to authenticate all calls for this project.
 Now navigate to where your model code is stored. This could be in a notebook or
 in a plain `.py` file.
 
-To start, you should install the Cerebrium framework running the following
+To start, you should install the Cerebrium framework by running the following
 command in your notebook or terminal
 
 ```bash
 pip install --upgrade cerebrium
 ```
 
-Copy and paste our code below. This creates a simple 3 layer Neural
-Network that classifies flowers from the Iris dataset into 1 of 3 classes. This code could be replaced by any Tensorflow model. Make sure you have
-the required libraries installed.
+Copy and paste our code below. This creates a simple 3-layer Neural Network that classifies flowers from the Iris dataset into 1 of 3 classes. 
+This code could be replaced by any Tensorflow model. 
+Make sure you have the required libraries installed.
 
 ```bash
 pip install tensorflow tf2onnx onnx
@@ -108,7 +108,7 @@ output_flow = deploy((model_type.ONNX, "model.onnx"),"onnx-tensorflow", "<API_KE
 ![Deployed Model](/images/quickstarts/tf-onnx-2.png)
 
 Your model is now deployed and ready for inference all in under **10 seconds**!
-Navigate to the dashboard and on the Models page you will see your model.
+Navigate to the dashboard and on the Models page, you will see your model.
 
 You can run inference using `curl`
 
@@ -124,8 +124,7 @@ Your input data should be a **Dict** of the input variables you defined when you
 ![Onnx Postman Response](/images/quickstarts/tf-onnx-3.png)
 
 Navigate back to the dashboard and click on the name of the model you just
-deployed. You will see an API call was made and the inference time. From your
-dashboard you can monitor your model, roll back to previous versions and see
+deployed. You will see an API call was made and the inference time. From your dashboard, you can monitor your model, roll back to previous versions and see
 traffic.
 
 ![XGB Monitoring](/images/quickstarts/tf-onnx-4.png)
