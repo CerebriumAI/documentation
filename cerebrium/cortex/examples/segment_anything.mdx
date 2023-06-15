@@ -45,7 +45,16 @@ I then define the following in my main.py file
 from segment_anything import SamAutomaticMaskGenerator, sam_model_registry
 import cv2
 
-sam = sam_model_registry["default"](checkpoint="./sam_vit_h_4b8939.pth")
+
+print("Downloading file...")
+if not os.path.exists("/persistent-storage/segment-anything/sam_vit_h_4b8939.pth"):
+    response = requests.get("https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth")
+    with open("sam_vit_h_4b8939.pth", "wb") as f:
+        f.write(response.content)
+    print("Download complete")
+else:
+    print("File already exists")
+sam = sam_model_registry["default"](checkpoint="/persistent-storage/segment-anything/sam_vit_h_4b8939.pth")
 sam.to("cuda")
 mask_generator = SamAutomaticMaskGenerator(
     model=sam,
