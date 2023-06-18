@@ -3,13 +3,10 @@ title: "Persistent Storage for Caching"
 ---
 Cerebrium caches your models in a specific directory on the server. This cache
 persists across your project, meaning that if you deploy a new model with the same
-name or use the same HuggingFace model, it will be loaded from the cache rather than downloaded from the cloud. This allows 
-us to scale your model deployments to handle more requests quickly, as well as reducing the
-size of your deployment container images. Currently, the cache can be accessed through `/persistent-storage` in your container instance,
+name or use the same HuggingFace model, it will be loaded from the cache rather than downloaded from the cloud. This allows us to scale your model deployments to handle more requests quickly, as well as reduce the size of your deployment container images. Currently, the cache can be accessed through `/persistent-storage` in your container instance,
 should you wish to access it directly and store other artefacts. While you have full access to this drive, we recommend that you only 
 store files in directories other than `/persistent-storage/cache`, as this and its subdirectories are used by Cerebrium to store your models.
-
-In the future we will charge per GB of persistent storage used, but for now it is free while 
+In the future, we will charge per GB of persistent storage used, but for now, it is free while 
 we are in active development. We will also be implementing a way to clear the cache in the future, as well as pre-uploading
 models to the cache before deployment.
 
@@ -32,4 +29,4 @@ model = torch.jit.load(file_path)
 ... # Continue with your initialization
 ```
 
-Now, in subsequent deployments the model will load from the cache rather than downloading it again.
+Now, in subsequent deployments, the model will load from the cache rather than download it again.
