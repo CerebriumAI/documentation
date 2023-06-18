@@ -72,8 +72,8 @@ For the parameters above:
 
 Additionally, we provide two flags to further control which files you add to your deployment. They are:
 
-- **--include**: Regrex string of files or folders to include. eg. `--include "./modelFiles/" --include my-awesome-file.txt`
-- **--exclude**: The files or folders to exclude. eg. `--exclude "[.venv, ./private.py, ./folderToExclude]"`
+- **--include**: Regex string of files or folders to include. eg. `--include "./modelFiles/, my-awesome-file.txt"`
+- **--exclude**: The files or folders to exclude. eg. `--exclude ".venv, ./private.py, ./folderToExclude"`
 These flags can be repeated to add patterns individually or can receive a string array as shown ABOVE.
 
 Now, with just a few lines of code, your custom Python code will be deployed to serverless CPUs/GPUs without setting up any infrastructure! As simple as that!  
