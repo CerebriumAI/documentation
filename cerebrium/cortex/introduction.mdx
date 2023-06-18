@@ -67,11 +67,17 @@ cerebrium deploy <MODEL_NAME> <PRIVATE_API_KEY> --hardware=<HARDWARE>
 For the parameters above:
 
 - **\<MODEL_NAME\>**: Give your model a name for you to recognize on your Cerebrium dashboard
-- **\<HARDWARE\>**: This is either CPU, GPU or A10
 - **\<PRIVATE_API_KEY\>**: This is the private API key you can find on your Cerebrium dashboard
+- **\<HARDWARE\>**: This is either CPU, GPU or A10
 
-With just a few lines of code, your custom python code will be deployed to serverless CPUs/GPUs without setting up any infrastructure. After the first deployment,
-every subsequent deployment should be less than 10s, keeping the development lifecycle as quick as possible.
+Additionally, we provide two flags to further control which files you add to your deployment. They are:
+
+- **--include**: Regex string of files or folders to include. eg. `--include "./modelFiles/, my-awesome-file.txt"`
+- **--exclude**: The files or folders to exclude. eg. `--exclude ".venv, ./private.py, ./folderToExclude"`
+These flags can be repeated to add patterns individually or can receive a string array as shown ABOVE.
+
+Now, with just a few lines of code, your custom Python code will be deployed to serverless CPUs/GPUs without setting up any infrastructure! As simple as that!  
+After the first deployment, every subsequent deployment should be less than 10s, keeping the development lifecycle as quick as possible.
 
 Once you deploy a model, navigate back to the dashboard and click on the name of the model you just
 deployed. You will see the usual overview statistics of your model, but most importantly, you will see two tabs titled <b>builds</b> and <b>runs</b>.
@@ -79,6 +85,6 @@ deployed. You will see the usual overview statistics of your model, but most imp
 - <b>Builds</b>: This is where you can see the logs regarding the creation of your environment and the code specified in the <b>Init</b> function. You will see logs only on every deploy.
 - <b>Runs</b>: This is where you will see logs concerning every API call to your model endpoint. You can therefore debug every run based on input parameters and the model output.
 
-We recommend you check out the [advanced functionality](/cerebrium/cortex/advanced-functionality) section of Cortex as well as work through the [examples](/coretex/examples) to see how deployments were done for various different applications.
+We recommend you check out the [advanced functionality](/cerebrium/cortex/advanced-functionality) section of Cortex as well as work through the [examples](/coretex/examples) to see how deployments were done for various different sample applications.
 
 
