@@ -2,7 +2,7 @@
 title: "Sending File Input"
 ---
 
-You may also use files as input data to your model.
+You may also use files as input data for your model.
 This is particularly useful if you have a model that takes in images, audio files, or other binary data.
 To do this, you will need to supply at least an initial pre-processing function.
 You can then use the files in your model as you would any other input data.
@@ -38,7 +38,7 @@ conduit.deploy()
       -F files=@<FILES_PATH>
 ```
 </RequestExample>
-The parameters to a form request are similar to a JSON request, however both the `data` and `files` are passed in as *form data*.
+The parameters to a form request are similar to a JSON request, however, both the `data` and `files` are passed in as *form data*.
 
 <ParamField header="Authorization" type="string" required>
   This is the Cerebrium API key used to authenticate your request. You can get

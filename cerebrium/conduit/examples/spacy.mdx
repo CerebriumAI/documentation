@@ -6,7 +6,7 @@ description: "This example provides the steps to deploy a simple Spacy model (fr
 ## Intro
 
 spaCy is an open-source software library for advanced natural language processing and excels at large-scale information extraction tasks
-By the end of this guide you'll have a spaCy API endpoint that can handle any scale of traffic by running inference on serverless CPU's/GPUs.
+By the end of this guide you'll have a spaCy API endpoint that can handle any scale of traffic by running inference on serverless CPUs/GPUs.
 
 ## Project set up
 
@@ -26,11 +26,10 @@ to authenticate all calls for this project.
 
 ### Prepare model
 
-We are going to be creating a custom named entity recognition (NER) model.
+We are going to be creating a custom-named entity recognition (NER) model.
 This code could be replaced by any Spacy model. Make sure you have
-the required libraries installed - in this case we are just using **Spacy 3**.
-
-First let us create our training and evaluation data:
+the required libraries installed - in this case, we are just using **Spacy 3**.
+First, let us create our training and evaluation data:
 
 ```json
 [
@@ -89,15 +88,15 @@ if __name__ == "__main__":
 Now run this script with the location of your training data and again with your evaluation data.
 `!python convert.py en train.json train.spacy`
 
-When creating a Spacy model we can start with the standard template and edit it. You can run the following code to do this:
+When creating a Spacy model we can start with the standard template and edit it. You can run the following code to do this:  
 `!python -m spacy init config --lang en --pipeline ner config.cfg --force`
 
-Lastly we can train our model:
+Lastly, we can train our model:  
 `!python -m spacy train config.cfg --output ./training/ --paths.train train.spacy --paths.dev eval.spacy --training.eval_frequency 10 --training.max_steps 100 --gpu-id -1`
 
 ### Developing model
 
-To start, you should install the Cerebrium framework running the following
+To start, you should install the Cerebrium framework by running the following
 command in your notebook or terminal
 
 ```bash
@@ -127,7 +126,7 @@ conduit.deploy()
 ![Deployed Model](/images/quickstarts/spacy-1.png)
 
 Your model is now deployed and ready for inference all in under **10 seconds**!
-Navigate to the dashboard and on the Models page you will see your model.
+Navigate to the dashboard and on the Models page, you will see your model.
 
 You can run inference using `curl`
 
@@ -143,9 +142,7 @@ The response will be:
 ![Spacy Postman Response](/images/quickstarts/spacy-2.png)
 
 Navigate back to the dashboard and click on the name of the model you just
-deployed. You will see an API call was made and the inference time. From your
-dashboard you can monitor your model, roll back to previous versions and see
-traffic.
+deployed. You will see an API call was made and the inference time. From your dashboard, you can monitor your model, roll back to previous versions and see traffic.
 
 With one line of code, your model was deployed in seconds with automatic
 versioning, monitoring and the ability to scale based on traffic spikes. Try

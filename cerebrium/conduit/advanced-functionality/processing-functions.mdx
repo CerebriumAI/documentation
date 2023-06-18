@@ -2,7 +2,7 @@
 title: "Pre & Post Processing Functions"
 ---
 
-In many cases, you may want to process the data in your single or multi-model flow before returning it to the next flow stage or to the user. To do this, you can supply a both a pre-processing and a post-processing function to your flow, `pre` and `post` respectively.
+In many cases, you may want to process the data in your single or multi-model flow before returning it to the next flow stage or to the user. To do this, you can supply both a pre-processing and a post-processing function to your flow, `pre` and `post` respectively.
 The pre-processing will be applied to the input of the model, while the post-processing function will be applied to the output of your model before it is returned to the next flow stage.
 You will **need** to implement both of these functions if you wish to use binary files along with your input data.
 
