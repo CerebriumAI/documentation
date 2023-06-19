@@ -7,8 +7,9 @@ Webhook endpoints can be used to obtain asynchronous results from your requests.
 To use this feature, simply include the `webhook_endpoint` field in your request body, assigning it to your desired URL. As soon as this is done, your requests will return immediately with the `run_id`. After processing, a **POST** request containing the results and `run_id` will be made to the provided webhook_endpoint URL.
 
 <Note>
-    This feature is available on all model types: custom & pre-built. If you have any questions on how to use it please
-    reach out to us on Slack, Discord or <a href="mailto:support@cerebrium.ai">support@cerebrium.ai</a>.
+  This feature is available on all model types: custom & pre-built. If you have
+  any questions on how to use it please reach out to us on Slack, Discord or{" "}
+  <a href="mailto:support@cerebrium.ai">support@cerebrium.ai</a>.
 </Note>
 
 ## Example curl request
@@ -33,8 +34,8 @@ The response returned from your initial request will look something like this:
 
 ```json
 {
-    "run_id": "dummy-run-id-9ac612631200",
-    "message": "We will return the images to the endpoint provided when the task is complete."
+  "run_id": "dummy-run-id-9ac612631200",
+  "message": "We will return the images to the endpoint provided when the task is complete."
 }
 ```
 
@@ -49,10 +50,9 @@ The result sent to the webhook will look something like this:
 }
 ```
 
-
 To test webhook endpoints, https://webhook.site/ provides a great platform. You can create a free URL to receive your POST requests and inspect the results.
 
 <Note>
-    Make sure that the "webhook_endpoint" provided is able to handle POST requests and has the
-    appropriate configuration to receive the response data.
+  Make sure that the "webhook_endpoint" provided is able to handle POST requests
+  and has the appropriate configuration to receive the response data.
 </Note>
