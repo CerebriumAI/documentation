@@ -30,17 +30,21 @@ Awesome! Let's start creating ML-based applications
 
 Cerebrium caters to many different types of businesses and users so we have created abstractions that suit different users in different situations. Based on your use-case we recommend you look at the starting points below and examples in each sub-directory.
 
+#### When would you use Conduit over Cortex
+- The conduit is a very high level abstraction for deploying ML models and gives the end user a very specific way to deploy their ML models. Its best suited if you would like to deploy a model file or a HuggingFace model ID to production quickly with minimal setup. We recommend this for simple use cases that have simple pre/post processing or logging logic however don't worry, it can still scale to 10k requests per second.
+- We recommend using Cortex if you would like fine-grain control over your environment, package versions and implementation. Typically our clients use this when they have more complex logic, stricter latency requirements using packages such as Deepspeed, TensorRT etc and are communicating with many external tools.
+
 <CardGroup>
+<Card title="Conduit" href="cerebrium/conduit/introduction">
+  You have a model file or Hugging Face model ID and just want to turn it into
+  an API endpoint.
+</Card>
+
 <Card
   title="Cortex"
   href="cerebrium/cortex/introduction"
 >
   Deploy any custom Python code. Use this if you want very fine-grain control.
-</Card>
-
-<Card title="Conduit" href="cerebrium/conduit/introduction">
-  You have a model file or Hugging Face model ID and just want to turn it into
-  an API endpoint.
 </Card>
 
 <Card

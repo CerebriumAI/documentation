@@ -21,11 +21,12 @@ Below is a brief outline of its setup
 
 ### Components
 
-Currently, our implementation has three components:
+Currently, our implementation has four components:
 
-- **main.py** - This is where your python code lives.
-- **requirements.txt** - This is where you define your Python packages. Deployment will be quicker if you specify specific versions.
-- **pkglist.txt** - This is where you can define Linux packages you would like to install. We run the apt-install command for items here.
+- **main.py** - This is where your python code lives. This is mandatory to include.
+- **requirements.txt** - This is where you define your Python packages. Deployment will be quicker if you specify specific versions. This is optional to include.
+- **pkglist.txt** - This is where you can define Linux packages you would like to install. We run the apt-install command for items here. This is optional to include.
+- **conda_pkglist.txt** - This is where you can define Conda packages you would like to install if you prefer using it for some libraries over pip. You can use both conda and pip in conjunction. This is optional to include.
 
 However, you can contain images and other Python files in the same directory, and they will get packaged and uploaded when you deploy.
 
