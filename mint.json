@@ -54,6 +54,8 @@
       "group": "Cortex",
       "pages": [
         "cerebrium/cortex/introduction",
+        "cerebrium/cortex/build-status",
+        "cerebrium/cortex/model-status",
         {
           "group": "Advanced functionality",
           "pages": [
@@ -75,6 +77,7 @@
     "group": "Conduit",
       "pages": [
         "cerebrium/conduit/introduction",
+        "cerebrium/conduit/model-status",
         {
           "group": "Advanced functionality",
           "pages": [

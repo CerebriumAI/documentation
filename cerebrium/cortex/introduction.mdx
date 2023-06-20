@@ -10,7 +10,9 @@ We have been focusing hard on the developer experience that if your code runs lo
 Initial deploys take about a minute (installing packages etc.) however, thereafter every change is \< 20 seconds, and of course, inference requests have a cold start \<1 second!
 
 <Note>
-Model deployment and startup time is proportional to the model size (including dependencies). For lightning-fast deployments, start-ups, and scale-ups keep your model as small as possible!
+  Model deployment and startup time is proportional to the model size (including
+  dependencies). For lightning-fast deployments, start-ups, and scale-ups keep
+  your model as small as possible!
 </Note>
 
 You can get started with our simple tutorial below:
@@ -82,9 +84,12 @@ After the first deployment, every subsequent deployment should be less than 10s,
 Once you deploy a model, navigate back to the dashboard and click on the name of the model you just
 deployed. You will see the usual overview statistics of your model, but most importantly, you will see two tabs titled <b>builds</b> and <b>runs</b>.
 
-- <b>Builds</b>: This is where you can see the logs regarding the creation of your environment and the code specified in the <b>Init</b> function. You will see logs only on every deploy.
-- <b>Runs</b>: This is where you will see logs concerning every API call to your model endpoint. You can therefore debug every run based on input parameters and the model output.
+- <b>Builds</b>: This is where you can see the logs regarding the creation of
+  your environment and the code specified in the <b>Init</b> function. You will
+  see logs only on every deploy.
+- <b>Runs</b>: This is where you will see logs concerning every API call to your
+  model endpoint. You can therefore debug every run based on input parameters
+  and the model output.
+
 
 We recommend you check out the [advanced functionality](/cerebrium/cortex/advanced-functionality) section of Cortex as well as work through the [examples](/coretex/examples) to see how deployments were done for various different sample applications.
-
-

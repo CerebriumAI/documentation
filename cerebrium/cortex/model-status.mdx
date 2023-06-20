@@ -1,0 +1,43 @@
+---
+title: "Model Status"
+description: "Know your model's current state for efficient deployment and management"
+---
+
+Your Cortex model can be in one of several states at any given time.
+
+Here's what each status represents:
+
+- **Active**: The model is successfully deployed and available for use. If your model is sourced from a pre-built setup, it will immediately be in the active state.
+
+- **Cold**: This state indicates that your model is ready and can be called but will take a few seconds to start up.
+
+- **Deploying**: The model is currently in the process of being deployed. During this state, your model is not available for use.
+
+- **Starting**: Your model has been built and is now starting up, none of the replicas are ready yet but should be soon.
+
+- **Deleted**: This status signifies that there is no deployment associated with the model, which usually means the model has been removed.
+
+- **Unknown**: This state is assigned when the model's status cannot be determined, which could be due to an issue with retrieving deployment details.
+
+<Note>
+  Remember, the deployment and startup time is proportional to the model size
+  (including dependencies). For lightning-fast deployments, start-ups, and
+  scale-ups, keep your model as small as possible!
+</Note>
+
+When you navigate to your Cerebrium dashboard and click on the Models tab,
+you will be able to see the current state of your models.
+
+<Note>
+  Build Statues are related to but not the same as Model Statues. Build Statuses
+  indicate the state of your model's deployment during the deployment process.
+  Model Statuses indicate the state of your model's deployment after the
+  deployment process is complete. For more information on Build Statuses, refer
+  to the <a href="/cerebrium/cortex/build-status">Build Status</a> page.
+</Note>
+
+<Note>
+  If you encounter an 'Unknown' status or you would like to know more, please
+  reach out to us on Slack, Discord or{" "}
+  <a href="mailto:support@cerebrium.ai">support@cerebrium.ai</a>.
+</Note>
