@@ -16,13 +16,6 @@
     }
   },
   "api": {
-    "auth": {
-      "method": "basic",
-      "name": "user-key"
-    },
-    "playground": {
-      "mode": "simple"
-    }
   },
   "topbarCtaButton": {
     "name": "Sign Up",
