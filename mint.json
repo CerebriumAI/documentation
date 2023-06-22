@@ -60,7 +60,8 @@
           "group": "Advanced functionality",
           "pages": [
             "cerebrium/cortex/advanced-functionality/persistent-storage",
-            "cerebrium/cortex/advanced-functionality/using-secrets"
+            "cerebrium/cortex/advanced-functionality/using-secrets",
+            "cerebrium/cortex/advanced-functionality/cli-login"
           ]
         },
         {
