@@ -15,6 +15,15 @@
       "dark": "#121212"
     }
   },
+  "api": {
+    "auth": {
+      "method": "basic",
+      "name": "user-key"
+    },
+    "playground": {
+      "mode": "simple"
+    }
+  },
   "topbarCtaButton": {
     "name": "Sign Up",
     "url": "https://dashboard.cerebrium.ai/login"
