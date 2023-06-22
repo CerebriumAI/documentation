@@ -1,0 +1,37 @@
+---
+title: "Cortex CLI login usage"
+description: "Using the cortex login feature for ease of deployment."
+---
+
+## Introduction
+Keeping track of your private API key and having to constantly retrieve it from your dashboard can be tedious.  
+Fortunately, it is something you don't need to do when you use the login feature from Cerebrium's Cortex!
+
+
+
+## Pre-requisites:
+The first thing you will need is your private API key for the project that you intend to deploy your model into. You can find the API key by navigating to the API keys section in [your dashboard](https://dashboard.cerebrium.ai/projects/) on Cerebrium which should look as follows:
+
+![private_api_key](/images/coretex/api_keys_private_key.png)
+Note that each project has a unique API key so double check you are using the key that corresponds to the right project. 
+
+
+Secondly, you will need to make sure that you have the latest version of the CLI installed and on your path. The CLI is provided by the Cerebrium python package, so if you have not installed that yet, go ahead and do so by running `pip install cerebrium`.   
+If you have Cerebrium installed already, we recommend you upgrade your package with `pip install --upgrade cerebrium` as we are frequently releasing new features and improvements!  
+You can verify your installation by running `cerebrium --help` in your terminal.  
+If you do not get any output but you can run `import `cerebrium` in Python, ensure pip is on your path.
+
+
+## Login Usage
+To use the login feature, navigate to your terminal window which you would like to use to deploy your models and run the following command:
+
+```bash
+cerebrium login <YOUR_PRIVATE_API_KEY>
+```
+
+This will store your API key locally, ensuring that you are logged in whenever you open a terminal and use `cerebrium deploy` without you having to enter your API key again. 
+
+Some important details to note:
+- You will remain logged in between different terminals provided you are the same user.
+- You can still parse in an API key when deploying your models without being logged out. The parsed API key takes preference over the local one. This is particularly useful if you are deploying to a different project.
+
