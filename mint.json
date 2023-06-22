@@ -47,7 +47,8 @@
       "group": "Home",
       "pages": [
         "introduction",
-        "installation"
+        "installation",
+        "security"
       ]
     },
     {
@@ -157,10 +158,6 @@
           ]
         }
       ]
-    },
-    {
-      "group": "Updates",
-      "pages": ["changelog", "roadmap"]
     }
   ],
   "analytics": {
