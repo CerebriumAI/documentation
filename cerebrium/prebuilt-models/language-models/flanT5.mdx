@@ -30,6 +30,12 @@ Once you've deployed a FLAN model, you can supply the endpoint with a prompt. He
 <ParamField body="prompt" type="string" required>
   The prompt you would like FLAN to process.
 </ParamField>
+<ParamField body="max_length" type="integer" optional>
+  The maximum number of tokens you would like FLAN to respond with.
+</ParamField>
+<ParamField body="min_length" type="integer" optional>
+  The minimum number of tokens you would like FLAN to respond with.
+</ParamField>
 
 <ResponseExample>
 
