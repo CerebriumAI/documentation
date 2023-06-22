@@ -15,6 +15,8 @@
       "dark": "#121212"
     }
   },
+  "api": {
+  },
   "topbarCtaButton": {
     "name": "Sign Up",
     "url": "https://dashboard.cerebrium.ai/login"
@@ -47,7 +49,8 @@
       "group": "Home",
       "pages": [
         "introduction",
-        "installation"
+        "installation",
+        "security"
       ]
     },
     {
@@ -60,7 +63,8 @@
           "group": "Advanced functionality",
           "pages": [
             "cerebrium/cortex/advanced-functionality/persistent-storage",
-            "cerebrium/cortex/advanced-functionality/using-secrets"
+            "cerebrium/cortex/advanced-functionality/using-secrets",
+            "cerebrium/cortex/advanced-functionality/cli-login"
           ]
         },
         {
@@ -156,10 +160,6 @@
           ]
         }
       ]
-    },
-    {
-      "group": "Updates",
-      "pages": ["changelog", "roadmap"]
     }
   ],
   "analytics": {
