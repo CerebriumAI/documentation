@@ -160,7 +160,12 @@
           ]
         }
       ]
-    }
+    },
+    {"group": "FAQs and Tips",
+    "pages": [
+      "cerebrium/faqs-and-help/fast-deployments-dos-and-donts"
+    ]
+  }
   ],
   "analytics": {
     "ga4": {
