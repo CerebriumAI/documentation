@@ -33,11 +33,11 @@ In this brief guide, we delve into the strategies, best practices, and pitfalls 
 ### Downloading files and setting up models
 
 - **Do** make sure you utilise [persistent storage](/cerebrium/cortex/advanced-functionality/persistent-storage.mdx).
-- **Do** set the huggingface cache dir to `/persistent-storage` for your models, tokenizers and datasets.
+- **Do** set the Huggingface cache dir to `/persistent-storage` for your models, tokenizers and datasets.
 - **Don't** re-download models, tokenizers, etc. if possible.
 
 ## For faster inference:
 
 - **Do** only use your inference calls for inference. As simple as it sounds, do all the setup outside of the predict function so that it runs once during the build process and is not repeated for every inference.
-- **Do** ensure you take advantage of resources if available. Ensure that your model is running on the GPU if availible with:  
+- **Do** ensure you take advantage of resources if available. Ensure that your model is running on the GPU if available with:  
   `device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')`
