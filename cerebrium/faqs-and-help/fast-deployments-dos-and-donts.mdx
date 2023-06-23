@@ -1,46 +1,43 @@
 ---
-title: "Do's and Don'ts for faster deployments"
+title: "Do's and Don'ts for Faster Deployments"
 description: "Some guidelines to boost the speed of your deployments and cold starts."
 ---
 
 ## Introduction
+
 In today's fast-paced digital landscape, where productivity and efficiency reign supreme, the ability to deploy your code quickly and reliably saves you valuable time in your busy routine.
 Whether you're a seasoned developer or a tech enthusiast venturing, these guidelines of do's and don'ts can help you save time in deploying, building and inference of your Cerebrium model.
 
-In this brief guide, we delve into the strategies, best practices, and pitfalls to avoid when it comes to the deployment process. 
-
-
+In this brief guide, we delve into the strategies, best practices, and pitfalls to avoid when it comes to the deployment process.
 
 ### Setting up your requirements.txt
-- **Do** freeze the versions of your Python libraries.   
+
+- **Do** freeze the versions of your Python libraries.  
   Solving the requirements for your project can extend your build time unnecessarily. During the development process, your hard work setting up an environment for your model has already determined which versions you need for each of your requirements. Use these versions when creating your requirements.txt
-- **Don't** include built-in modules in your requirements file as this wastes time during your build. 
-   
+- **Don't** include built-in modules in your requirements file as this wastes time during your build.
 - **Do** reduce unused requirements where possible. They are extra baggage that slows down your build when you've gotta move fast.
-  
 - **Don't** dump your entire Python environment into the requirements.txt
 
-
 ### Deploying your code
-- **Do**, if possible, upload unchanging files to cloud storage.   
-    Downloading your weights from these servers in your main.py (instead of uploading them from your local computer) leverages the faster internet speeds of these servers, yielding faster deployments.
-
-- **Do** make use of the `--include` and `--exclude` flags to upload only the files you need.
-
-- **Do** as much of your prerequisite setup once, in the body of the `main.py` outside of your predict function.  
-  - Where possible, use make use of global variables to prevent re-computing variables every time you call inference.
-
-
-### Downloading files and setting up models
-- **Do** make sure you utilise [persistent storage](/cerebrium/cortex/advanced-functionality/persistent-storage.mdx).
-- **Do** set the huggingface cache dir to `/persistent-storage` for your models, tokenizers and datasets.
-- **Don't** re-download models, tokenizers, etc. if possible. 
-
-
 
 - **Do** check (and lint) your code before deploying.
   - Spelling mistakes and simple errors are easy to avoid and are one of the biggest handbrakes slowing down your development cycle.
+- **Do**, if possible, upload unchanging files to cloud storage.  
+   Downloading your weights from these servers in your main.py (instead of uploading them from your local computer) leverages the faster internet speeds of these servers, yielding faster deployments.
 
+- **Do** make use of the `--include` and `--exclude` flags to upload only the files you need.
+
+- **Do** as much of your prerequisite setup once, in the body of the `main.py` outside of your predict function.
+  - Where possible, use make use of global variables to prevent re-computing variables every time you call inference.
+
+### Downloading files and setting up models
+
+- **Do** make sure you utilise [persistent storage](/cerebrium/cortex/advanced-functionality/persistent-storage.mdx).
+- **Do** set the huggingface cache dir to `/persistent-storage` for your models, tokenizers and datasets.
+- **Don't** re-download models, tokenizers, etc. if possible.
 
 ## For faster inference:
-  - **Do** only use your inference calls for inference. As simple as it sounds, do all the setup outside of the predict function so that it runs once during the build process and is not repeated for every inference.
+
+- **Do** only use your inference calls for inference. As simple as it sounds, do all the setup outside of the predict function so that it runs once during the build process and is not repeated for every inference.
+- **Do** ensure you take advantage of resources if available. Ensure that your model is running on the GPU if availible with:  
+  `device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')`
