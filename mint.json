@@ -40,8 +40,13 @@
     },
     {
       "name": "Community",
-      "icon": "slack",
-      "url": "https://cerebriumworkspace.slack.com/signup#/domain-signup"
+      "icon": "discord",
+      "url": "https://discord.gg/ATj6USmeE2"
+    },
+    {
+      "name": "Status",
+      "icon": "eye",
+      "url": "https://status.cerebrium.ai"
     }
   ],
   "navigation": [
@@ -51,7 +56,7 @@
         "introduction",
         "installation",
         "security",
-        "cli-login"
+        "reliability-scalability"
       ]
     },
     {
@@ -64,7 +69,8 @@
           "group": "Advanced functionality",
           "pages": [
             "cerebrium/cortex/advanced-functionality/persistent-storage",
-            "cerebrium/cortex/advanced-functionality/using-secrets"
+            "cerebrium/cortex/advanced-functionality/using-secrets",
+            "cerebrium/cortex/advanced-functionality/async-functions"
           ]
         },
         {

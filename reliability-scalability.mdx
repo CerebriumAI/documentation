@@ -1,0 +1,33 @@
+---
+title: "Reliability and Scalability"
+description: ""
+---
+
+As engineers we know how important it is for platforms providing infrastructure to remain reliable and scalable when running our clients workloads. This is something that we don't take lightly at Cerebrium and so we have implemented several processes and tooling in order to manage this as effectively as possible.
+
+## How does Cerebrium achieve reliability and scalability?
+
+
+* **Automatic scaling:** 
+
+Cerebrium automatically scales instances based on the number of events in the queue and the time events are in the queue. 
+This ensures that Cerebrium can handle even the most demanding workloads. If one of either these two conditions are met, additional workers are spun up in < 3 seconds
+in order to handle the volume. Once workers fall below a certain utilization level, we start decreasing the number of workers.
+
+In terms of scale we are able to handle, Cerebrium has customers running at 120 transactions per second but we can do more than that:)
+
+* **Fault tolerance and High availability:**
+
+If an instance heads into a bad state due to memory or processing issues, Cerebrium automatically restarts a new instance to handle incoming load.
+This ensures that Cerebrium can continue to process events without user intervention. If you would like to be notified via email of any problems with your model
+you can toggle a switch in the top right corner of your model page - its right above your model stats.
+
+* **Monitoring:** 
+
+Cerebrium is monitored 24/7 and has a globally distributed team which allows us to quickly identify and fix any problems that may arise at any time during the day.
+Regardless of the severity of the incident, we hope to get things fixed as quickly as possible.  Customers can monitor our uptime on our status page
+here: https://status.cerebrium.ai. We strive for an uptime greater than 99.99%.
+
+## How can I get help if Cerebrium is not working?
+
+If Cerebrium is not working, you can contact our support team [here](https://cerebrium.ai/contact) or message on our Discord or Slack communities. We will work with you to resolve the issue as quickly as possible.
