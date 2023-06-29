@@ -19,8 +19,7 @@ to authenticate all calls for this project.
 1. Go to [dashboard.cerebrium.ai](https://dashboard.cerebrium.ai)
 2. Sign up or Login
 3. Navigate to the API Keys page
-4. You should see an API key with the source "Cerebrium". Click the eye icon to
-   display it. It will be in the format: c_api_key-xxx
+4. You will need your private API key for deployments. Click the copy button to copy it to your clipboard
 
 ![API Key](/images/quickstarts/onnx-1.png)
 
@@ -203,7 +202,7 @@ After a few minutes, your model should be deployed and an endpoint should be ret
 
 ```
 curl --location --request POST 'https://run.cerebrium.ai/v1/p-xxxxxx/segment-anything/predict' \
---header 'Authorization: dev-c_api_key-XXXXXXXXXXXX' \
+--header 'Authorization: public-XXXXXXXXXXXX' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "file_url": "https://cdn-www.thefashionspot.com/assets/uploads/gallery/the-off-duty-male-models-of-milan-mens-fashion-week/milano-m-moc-rf14-8533.jpg",

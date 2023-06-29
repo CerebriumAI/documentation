@@ -1,15 +1,15 @@
 ---
 title: "Langchain Q&A YouTube"
-description: "To deploy a Q&A application around a Youtube video"
+description: "To deploy a Q&A application around a YouTube video"
 ---
 
 In this tutorial, we will recreate a question-answering bot that can answer questions based on a YouTube video. We recreated the application built [here](https://colab.research.google.com/drive/1sKSTjt9cPstl_WMZ86JsgEqFG-aSAwkn?usp=sharing) by @m_morzywolek.
 
-To see the final implementation you can view it [here](https://github.com/CerebriumAI/examples/tree/master/3-langchain)
+To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/3-langchain)
 
 ## Create Cerebrium Account
 
-Before building you need to set up a Cerebrium account. This is as simple as
+Before building, you need to set up a Cerebrium account. This is as simple as
 starting a new Project in Cerebrium and copying the API key. This will be used
 to authenticate all calls for this project.
 
@@ -18,8 +18,7 @@ to authenticate all calls for this project.
 1. Go to [dashboard.cerebrium.ai](https://dashboard.cerebrium.ai)
 2. Sign up or Login
 3. Navigate to the API Keys page
-4. You should see an API key with the source "Cerebrium". Click the eye icon to
-   display it. It will be in the format: c_api_key-xxx
+4. You will need your private API key for deployments. Click the copy button to copy it to your clipboard
 
 ![API Key](/images/quickstarts/onnx-1.png)
 
@@ -121,7 +120,7 @@ import openai
 import faiss
 
 sentenceTransformer = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-os.environ["CEREBRIUMAI_API_KEY"] = "c_api_key-XXXXXXXXXXXX"
+os.environ["CEREBRIUMAI_API_KEY"] = "private-XXXXXXXXXXXX"
 
 def create_embeddings(texts, start_times):
     text_splitter = CharacterTextSplitter(chunk_size=1500, separator="\n")
@@ -151,19 +150,19 @@ def create_embeddings(texts, start_times):
 
 Above, we chunk our text segments and store them in a FAISS vector store. To create the embeddings, we use an open-source model from Hugging Face. The reason it is better to run Whisper and an embeddings model on the same machine is you save 2 round trips of network requests which will save you above 600ms+ on average.
 
-We then integrate langchain with a Cerebrium deployed endpoint to answer questions. Lastly, we return the results
+We then integrate Langchain with a Cerebrium deployed endpoint to answer questions. Lastly, we return the results
 
 To deploy the model to an A10, we use the following command:
 
 ```
-cerebrium-deploy -n langchain -h A10 -k c_api_key-XXXXXXXXXXXXX
+cerebrium-deploy -n langchain -h A10 -k private-XXXXXXXXXXXXX
 ```
 
 Once deployed, we can make the following request:
 
 ```curl
 curl --location --request POST 'https://run.cerebrium.ai/v1/dev-p-xxxxxx/langchain/predict' \
---header 'Authorization: dev-c_api_key-XXXXXXXXXXXX' \
+--header 'Authorization: public-XXXXXXXXXXXX' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "url": "https://www.youtube.com/watch?v=UF8uR6Z6KLc&ab_channel=Stanford",
