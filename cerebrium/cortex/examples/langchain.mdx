@@ -154,8 +154,8 @@ We then integrate Langchain with a Cerebrium deployed endpoint to answer questio
 
 To deploy the model to an A10, we use the following command:
 
-```
-cerebrium-deploy -n langchain -h A10 -k private-XXXXXXXXXXXXX
+```bash
+cerebrium deploy langchain --hardware A10 --api-key private-XXXXXXXXXXXXX
 ```
 
 Once deployed, we can make the following request:
