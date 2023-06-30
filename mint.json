@@ -84,6 +84,14 @@
       ]
     },
     {
+      "group": "Fine-tuning",
+      "pages": [
+        "cerebrium/fine-tuning/introduction",
+        "cerebrium/fine-tuning/dataset",
+        "cerebrium/fine-tuning/training"
+      ]
+    },
+    {
     "group": "Conduit",
       "pages": [
         "cerebrium/conduit/introduction",

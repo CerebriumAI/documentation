@@ -1,0 +1,25 @@
+---
+title: "Introduction"
+description: "Quickly and conveniently fine-tune your LLMs on with just one line of code"
+---
+
+<Note>Cerebrium's fine-tuning functionality is in public beta and so we are adding more functionality each week! Currently we only support the 
+training of CasualLM models. If you have a urgent requirement, we can help you just reach out to [support](mailto\:support@cerebrium.ai)</Note>
+
+
+The fine-tuning functionality on Cerebrium allows you to quickly and conveniently fine-tune your LLMs on Cerebrium with just one line of code. Cerebrium leverages
+the latest techniques such as PEFT and LoRA in order to train models in order to do so in the shortest amount of time (and therefore cost) while still achieving the
+same performance. 
+
+Currently, our fine-tuning capabilities are limited to any causal language models from the HuggingFace transformers library. Some of these models include:
+- [GPT-2](https://huggingface.co/gpt2), [GPT-J](https://huggingface.co/EleutherAI/gpt-j-6b), [GPT-Neo](https://huggingface.co/EleutherAI/gpt-neo-2.7B)
+- [OPT](https://huggingface.co/facebook/opt-1.3b)
+- [Bloom](https://huggingface.co/bigscience/bloom-560m)
+- [GPT-Neox-20B](https://huggingface.co/EleutherAI/gpt-neox-20b)
+- [LLaMa](https://huggingface.co/decapoda-research/llama-7b-hf)
+- [ChatGLM](https://huggingface.co/THUDM/chatglm2-6b)
+
+You can use any size variations of the models above. Additionally, we currently use the [Alpaca-Lora format](https://github.com/TianyiPeng/alpaca-lora/tree/main/templates) as the prompt template format. In future,
+we plan to release capabilities for custom prompting templates.
+
+We recommend you look at our guide on how to best curate your dataset in order to maximize the performance of your model and make sure it can handle sufficient edge cases.
