@@ -201,7 +201,7 @@ cerebrium deploy segment-anything --hardware A10 --api-key private-XXXXXXXXXXXXX
 After a few minutes, your model should be deployed and an endpoint should be returned. Let us create a CURL request to see the response
 
 ```
-curl --location --request POST 'https://run.cerebrium.ai/v1/p-xxxxxx/segment-anything/predict' \
+curl --location --request POST 'https://run.cerebrium.ai/v2/p-xxxxxx/segment-anything/predict' \
 --header 'Authorization: public-XXXXXXXXXXXX' \
 --header 'Content-Type: application/json' \
 --data-raw '{
