@@ -27,30 +27,29 @@ If you have trouble installing the package, please [contact](mailto:support@cere
 The first thing you will need is your private API key for the project that you intend to deploy your model into. You can find the API key by navigating to the API keys section in [your dashboard](https://dashboard.cerebrium.ai/projects/) on Cerebrium which should look as follows:
 
 ![private_api_key](/images/cortex/api_keys_private_key.png)
-Note that each project has a unique API key so double check you are using the key that corresponds to the right project. 
+Note that each project has a unique API key so double check you are using the key that corresponds to the right project.
 
-
-Secondly, you will need to make sure that you have the latest version of the CLI installed and on your path. The CLI is provided by the Cerebrium python package, so if you have not installed that yet, go ahead and do so by running `pip install cerebrium`.   
-If you have Cerebrium installed already, we recommend you upgrade your package with `pip install --upgrade cerebrium` as we are frequently releasing new features and improvements!  
+Secondly, you will need to make sure that you have the latest version of the CLI installed and on your path. The CLI is provided by the Cerebrium python package, so if you have not installed that yet, go ahead and do so by running `pip install cerebrium`.  
+If you have Cerebrium installed already, we recommend you upgrade your package with `pip install --upgrade cerebrium` as we are frequently releasing new features and improvements!
 
 You can verify your installation by running `cerebrium --help` in your terminal.  
 If you do not get any output but you can run `import `cerebrium` in Python, ensure pip is on your path.
 
-
 ## Login Usage
+
 To use the login feature, navigate to your terminal window which you would like to use to deploy your models and run the following command:
 
 ```bash
 cerebrium login <YOUR_PRIVATE_API_KEY>
 ```
 
-This will store your API key locally, ensuring that you are logged in whenever you open a terminal and use `cerebrium deploy` without you having to enter your API key again. 
+This will store your API key locally, ensuring that you are logged in whenever you open a terminal and use `cerebrium deploy` without you having to enter your API key again.
 
 Some important details to note:
+
 - You will remain logged in between different terminals provided you are the same user.
 - You can still parse in an API key when deploying your models without being logged out. The parsed API key takes preference over the local one. This is particularly useful if you are deploying to a different project.
 - If you would like to remove your login details, remove the entry in `~/.cerebrium/config.yaml`
-
 
 Awesome! Let's start creating ML-based applications
 
@@ -59,6 +58,7 @@ Awesome! Let's start creating ML-based applications
 Cerebrium caters to many different types of businesses and users so we have created abstractions that suit different users in different situations. Based on your use-case we recommend you look at the starting points below and examples in each sub-directory.
 
 #### When would you use Conduit over Cortex
+
 - The conduit is a very high level abstraction for deploying ML models and gives the end user a very streamlined and easy way to deploy their ML models. Its best suited if you would like to deploy a model file or a HuggingFace model ID to production quickly with minimal setup. We recommend this for simple use cases that have simple pre/post processing or logging logic.But don't let the simplicity fool you, it can still scale to 10k requests per second.
 - We recommend using Cortex if you would like fine-grain control over your environment, package versions and implementation. Typically our clients use this when they have more complex logic, stricter latency requirements using packages such as Deepspeed, TensorRT etc and are communicating with many external tools.
 
@@ -68,10 +68,7 @@ Cerebrium caters to many different types of businesses and users so we have crea
   an API endpoint.
 </Card>
 
-<Card
-  title="Cortex"
-  href="cerebrium/cortex/introduction"
->
+<Card title="Cortex" href="cerebrium/cortex/introduction">
   Deploy any custom Python code. Use this if you want very fine-grain control.
 </Card>
 
