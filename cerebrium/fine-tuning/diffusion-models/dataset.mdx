@@ -1,6 +1,6 @@
 ---
-title: "Training Diffusion Models"
-description: "Guide to fine-tuning a diffusion model on Cerebrium"
+title: "Dataset Curation"
+description: "Guide to curating a dataset for success when fine-tuning your diffusion model on Cerebrium."
 ---
 
 Curating your dataset is arguably the most important step in fine-tuning a diffusion model.  
@@ -9,8 +9,9 @@ The quality of your dataset will determine the quality of your outputs, so spend
 ## Curation guidelines
 
 The following is a set of guidelines to keep in mind when curating your dataset:
-- image size of 512 x 512 
-- images should be upright or in the same orientation.
+- Images should be sized to 512 x 512 for stable diffusion v1.5. 
+  - If not, we'll resize them for you, but this may result in a loss of quality.
+- Your images should all be upright or in the same orientation.
 - Keep the number of training images low. Aim for between 10 and 15 as your model may not converge if you use too many.
 - Make sure your images are of the same class. For example, if you are fine-tuning the prompt "Photo of a dog", all of your images should be of dogs.
 
