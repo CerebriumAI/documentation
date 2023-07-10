@@ -49,27 +49,35 @@ This will return a zip file which contains your **adapter** and **adapter config
 To deploy your model you can use Cortex. Below is an example that you can simply adapt in order to get deploy your model in just a few lines of code. We will be releasing
 auto-deploy functionality soon!
 
+
 ```python
-  from transformers import AutoModelForSeq2SeqLM
-+ from peft import PeftModel, PeftConfig
+  from transformers import AutoModelForCausalLM
+  from peft import PeftModel, PeftConfig # Add the peft libraries we need for the adapter
 
   peft_model_id = "path/toYourAdapter"
   config = PeftConfig.from_pretrained(peft_model_id)
-  model = AutoModelForSeq2SeqLM.from_pretrained(config.base_model_name_or_path)
-+ model = PeftModel.from_pretrained(model, peft_model_id)
+  model = AutoModelForCausalLM.from_pretrained(config.base_model_name_or_path)
+  model = PeftModel.from_pretrained(model, peft_model_id) # Add the adapter to the model
   tokenizer = AutoTokenizer.from_pretrained(config.base_model_name_or_path)
 
-  # Now just inference your model as you normally would.
-  model = model.to(device)
-  model.eval()
-  inputs = tokenizer("Insert your prompt matching the training template here:", return_tensors="pt")
+  model = model.to("cuda")
+  model.eval() # set the model to inference mode
+
+```
+*Note: if you have fine-tuned a Llama based model, ensure that you are using the latest huggingface transformers release that supports Llama models as part of the AutoModelForCausalLM class.*
+
+Now for inference, you just need to place the prompt into the template used for training. In this example we do it as follows
+``` python
+  template =  "### Instruction:\n{instruction}\n\n### Response:\n"
+  question = template.format(instruction=prompt) 
+  inputs = tokenizer(question, return_tensors="pt")
 
   with torch.no_grad():
     outputs = model.generate(input_ids=inputs["input_ids"].to("cuda"), max_new_tokens=10)
     print(tokenizer.batch_decode(outputs.detach().cpu().numpy(), skip_special_tokens=True)[0])
 
-
 ```
 
+These adapters can be combined with others when using your model at inference time.  
 For more information, see
 [Using Adapter Transformers at Hugging Face](https://huggingface.co/docs/hub/adapter-transformers#exploring-adaptertransformers-in-the-hub)
