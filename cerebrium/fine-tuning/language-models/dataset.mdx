@@ -3,12 +3,18 @@ title: "Dataset Curation"
 description: "Advice on how best to structure your datasets"
 ---
 
-The fine-tuning library has been built to leverage Parameter Efficient Fine-tuning and Low Rank Approximation to reduce the number of trainable parameters by >99.9% while providing results that are comparable to full fine-tuning.  
-Due to the much lower number of trainable parameters, the datasets used do not need to be greater than 1000 examples however, its always best to use as many, diverse training examples as possible to cover a wide variety of use cases.
+<Note>
+  Cerebrium's fine-tuning functionality is in public beta and we are adding
+  more functionality each week! If there are any issues or if you have an urgent requirement, please reach
+  out to [support](mailto\:support@cerebrium.ai) 
+</Note>
+
+The fine-tuning library has been built to leverage Parameter Efficient Fine-tuning and Low-Rank Approximation to reduce the number of trainable parameters by >99.9% while providing results that are comparable to full fine-tuning.  
+Due to the much lower number of trainable parameters, the datasets used do not need to be greater than 1000 examples however, it's always best to use as many, diverse training examples as possible to cover a wide variety of use cases.
 
 As mentioned, we are initially using the [Alpaca-Lora format](https://github.com/TianyiPeng/alpaca-lora/tree/main/templates) as our
 prompt template format. For your convenience, an example dataset has been provided for testing [here](../data/training-dataset-example.json). The dataset is
-a JSON or JSONL file which contain a "prompt", "completion", and if needed "context" parameters.
+a JSON or JSONL file which contains a "prompt", "completion", and if needed "context" parameters.
 
 Below are some helpful tips to take into consideration when preparing your datasets for fine-tuning:
 
@@ -19,7 +25,7 @@ Below are some helpful tips to take into consideration when preparing your datas
 Before fine-tuning models, ensure your data is of high quality. Clean data by removing outliers, duplicates, handle missing values appropriately and make sure you remove any irrelevant data.
 It is best to use a tool for this such as [NomicAI](https://home.nomic.ai/) in order to see a map of your data and easily remove data that is not relevant to your use case.
 
-Its important to keep a diverse dataset and make sure your dataset is balanced. For example make sure there are a similar number of positive outcomes than there
+Its important to keep a diverse dataset and make sure your dataset is balanced. For example, make sure there are a similar number of positive outcomes than there
 are negative outcomes as well as a similar number of female to male records etc.
 
 <b>
