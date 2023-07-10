@@ -15,8 +15,7 @@
       "dark": "#121212"
     }
   },
-  "api": {
-  },
+  "api": {},
   "topbarCtaButton": {
     "name": "Sign Up",
     "url": "https://dashboard.cerebrium.ai/login"
@@ -92,7 +91,7 @@
       ]
     },
     {
-    "group": "Conduit",
+      "group": "Conduit",
       "pages": [
         "cerebrium/conduit/introduction",
         "cerebrium/conduit/model-status",
@@ -169,17 +168,14 @@
         },
         {
           "group": "Other",
-          "pages": [
-            "cerebrium/prebuilt-models/other-models/salesforce-codegen"
-          ]
+          "pages": ["cerebrium/prebuilt-models/other-models/salesforce-codegen"]
         }
       ]
     },
-    {"group": "FAQs and Tips",
-    "pages": [
-      "cerebrium/faqs-and-help/fast-deployments-dos-and-donts"
-    ]
-  }
+    {
+      "group": "FAQs and Tips",
+      "pages": ["cerebrium/faqs-and-help/fast-deployments-dos-and-donts"]
+    }
   ],
   "analytics": {
     "ga4": {
