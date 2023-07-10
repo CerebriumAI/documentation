@@ -98,7 +98,8 @@
           "pages": [
             "cerebrium/fine-tuning/diffusion-models/introduction",
             "cerebrium/fine-tuning/diffusion-models/dataset",
-            "cerebrium/fine-tuning/diffusion-models/training"
+            "cerebrium/fine-tuning/diffusion-models/training",
+            "cerebrium/fine-tuning/diffusion-models/config"
           ]
         }
       ]
