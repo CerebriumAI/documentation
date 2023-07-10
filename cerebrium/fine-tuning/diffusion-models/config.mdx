@@ -10,7 +10,7 @@ In this section, we introduce the parameters you may want to manipulate for your
 
 If you would like to override the parameters in your config file during a deployment, the `--config-string` option in the command line accepts a JSON string. The parameters provided in the JSON string will override the values they may have been assigned in your config file.
 
-For your convenience, an example of the config file is available [here](./diffuser_config.yaml)
+For your convenience, an example of the config file is available [here](#example-yaml-config-file)
 
 ## Setting up a config file
 
@@ -21,7 +21,6 @@ In your YAML file, you need to include the following required parameters or pars
 ### Required parameters
 | Parameter               | Suggested Value                | Description                                                                          |
 | ----------------------- | ------------------------------ | ------------------------------------------------------------------------------------ |
-| **Required parameters** |                                |                                                                                      |
 | training_type           | diffuser                       | Type of training to run. Either diffuser or transformer. In this case, use diffuser. |
 | name                    | test-config-file               | Name of the experiment.                                                              |
 | api-key                 | Your private API key           | Your Cerebrium API key.                                                              |
@@ -36,7 +35,7 @@ Additionally, you can include the following parameters in your config file:
 
 | Parameter                        | Suggested Value         | Description                                                                |
 | -------------------------------- | ----------------------- | -------------------------------------------------------------------------- |
-| **Optional Diffuser Parameters** |                         |                                                                            |
+| **Diffuser Parameters** |                         |                                                                            |
 | revision                         | main                    | Revision of the diffuser model to use.                                     |
 | validation_prompt                | ~                       | an optional validation prompt to use. Will use the training prompt if "~". |
 | custom_tokenizer                 | ~                       | custom tokenizer from AutoTokenizer if required.                           |
