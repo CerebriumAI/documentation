@@ -85,24 +85,9 @@
     {
       "group": "Fine-tuning",
       "pages": [
-        {
-          "group": "Language Models",
-          "pages": [
-            "cerebrium/fine-tuning/language-models/introduction",
-            "cerebrium/fine-tuning/language-models/dataset",
-            "cerebrium/fine-tuning/language-models/training",
-            "cerebrium/fine-tuning/language-models/config"
-          ]
-        },
-        {
-          "group": "Diffusion Models",
-          "pages": [
-            "cerebrium/fine-tuning/diffusion-models/introduction",
-            "cerebrium/fine-tuning/diffusion-models/dataset",
-            "cerebrium/fine-tuning/diffusion-models/training",
-            "cerebrium/fine-tuning/diffusion-models/config"
-          ]
-        }
+        "cerebrium/fine-tuning/introduction",
+        "cerebrium/fine-tuning/dataset",
+        "cerebrium/fine-tuning/training"
       ]
     },
     {
