@@ -18,7 +18,7 @@ For your convenience, an example of the config file is available [here](#example
 
 ## Setting up a config file
 
-Your yaml config file can be placed anywhere on your system, just point the trainer to the file.
+Your Yaml config file can be placed anywhere on your system, just point the trainer to the file.
 
 In your YAML file, you need to include the following required parameters or parse them into the `cerebrium train` command:
 
@@ -59,7 +59,7 @@ In your YAML file, you need to include the following required parameters or pars
 |                     | r                           | 8                    | The r value for LoRA.                                                  |
 |                     | lora_alpha                  | 32                   | The lora_alpha value for LoRA.                                         |
 |                     | lora_dropout                | 0.05                 | The lora_dropout value for LoRA.                                       |
-|                     | target_modules              | ["q_proj", "v_proj"] | The target_modules for LoRA. These are the suggeseted values for Llama |
+|                     | target_modules              | ["q_proj", "v_proj"] | The target_modules for LoRA. These are the suggested values for Llama |
 |                     | bias                        | "none"               | Bias for LoRA.                                                         |
 |                     | task_type                   | "CAUSAL_LM"          | The task_type for LoRA.                                                |
 | **dataset_args**    |                             |                      | Custom args for your dataset.                                          |
