@@ -12,7 +12,6 @@ jobs:
       - name: Use Node.js 18
         uses: actions/setup-node@v3
         with:
-          cache: "yarn"
           node-version-file: ".nvmrc"
 
       - name: Prettify code
