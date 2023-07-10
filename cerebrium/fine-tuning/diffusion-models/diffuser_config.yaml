@@ -10,6 +10,7 @@ api-key: "YOUR PRIVATE CEREBRIUM API KEY" # Your Cerebrium API key.
 hf_model_path: "runwayml/stable-diffusion-v1-5"
 train_prompt: "Photo of a tsdf dog." 
 log_level: "INFO" # log_level level for logging. Can be "DEBUG", "INFO", "WARNING", "ERROR".
+train_image_dir: data/training_class_images/ # Directory of training images.
 
 
 #############################################
@@ -21,7 +22,6 @@ validation_prompt: ~ # an optional validation prompt to use. If ~, will use the 
 custom_tokenizer: "" # custom tokenizer from AutoTokenizer if required.
 
 # Dataset params
-train_image_dir: data/training_class_images/ # Directory of training images.
 prior_class_image_dir: ~ # or "path/to/your/prior_class_images". Optional directory of images to use if you would like to train prior class images as well.
 prior_class_prompt: "Photo of a dog."
 
