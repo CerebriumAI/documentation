@@ -10,13 +10,17 @@ description: "Guide to fine-tuning a diffusion model on Cerebrium"
   - [Setting up a config file](#setting-up-a-config-file)
     - [Optional parameters](#optional-parameters)
       - [Training parameters](#training-parameters)
+- [Using your Fine-tuned Diffuser](#using-your-fine-tuned-diffuser)
 
 # Running a diffuser fine-tuning
 
 Diffusion models are incredible at generating images from art, designs, logos and beyond. Fine-tuning stable diffusion models allows you to create your very own personal model which generates images of your object or in your style.  
-Using Cerebrium's trainer, you can fine-tune your model with one command using your very own data without having worry about any of the hardware or implementation details!  
+Using Cerebrium's trainer, you can fine-tune your model with one command using your very own data without having worry about any of the hardware or implementation details!
 
-While in the beta phase, the following models are supported for fine-tuning on Cerebrium:  
+Our diffusion fine-tuner leverages parameter efficient finetuning (PEFT) and low rank adaptors (LORA) to only train a small subset of the diffusion model. This drastically improves training time while focusing on the parts of the model that make the biggest difference to your results, saving you time while yielding results comparable to full network finetuning.
+
+While in the beta phase, the following models are supported for fine-tuning on Cerebrium:
+
 | Model Name                           | Huggingface Path               |
 | ------------------------------------ | ------------------------------ |
 | Stable Diffusion V1.5                | runwayml/stable-diffusion-v1-5 |
@@ -59,8 +63,7 @@ cerebrium get-training-logs <<Your training job ID>>
 
 _Note that your training logs will only be availible once the job has started running and will not be stored after it is complete._
 
-
-*Coming soon: logging your training with **weights and biases** is in the final stages of development.*
+_Coming soon: logging your training with **weights and biases** is in the final stages of development._
 
 # Config files
 
@@ -136,6 +139,47 @@ The following training parameters can be included if you need to modify the trai
 |               | allow_tf32                        | False           | Allow matmul using tf32. Defaults to False.                                                                        |
 |               | use_8bit_adam                     | True            | Use 8 bit adam for lower memory usage.                                                                             |
 |               | use_xformers                      | True            | Whether to use xformers memory efficient attention or not.                                                         |
+
+# Using your Fine-tuned Diffuser
+
+Using your finetuning results is done as follows:
+
+```python
+
+from diffusers import (
+    DiffusionPipeline,
+    DPMSolverMultistepScheduler,
+)
+import torch
+
+# Boilerplate loading of model
+pipeline = DiffusionPipeline.from_pretrained(
+    your_model_name, revision=your_model_revision, torch_dtype=torch.float16
+)
+pipeline.scheduler = DPMSolverMultistepScheduler.from_config(pipeline.scheduler.config)
+pipeline = pipeline.to("cuda")
+
+
+# LOAD IN YOUR TRAINING RESULTS
+# load attention processors from where they are saved in your_results/checkpoints/final/attn_procs/pytorch_lora_weights.bin
+pipeline.unet.load_attn_procs(os.path.join(final_output_dir, "attn_procs"))
+# And that's all you need to do to load in the finetuned result!
+# Now you can run your inference as you would like with the pipeline.
+
+
+# some inference variables
+your_prompt = "Your training prompt that you would like to use here"
+num_images =  4 # number of images to generate
+your_manual_seed = 42 # a manual seed if you would like repeatable results
+
+# run inference as you normally would
+generator = torch.Generator(device="cuda").manual_seed(your_manual_seed)
+images = [
+    pipeline(your_prompt, num_inference_steps=25, generator=generator).images[0]
+    for _ in range(num_images)
+]
+
+```
 
 <!--
 # Example yaml config file
