@@ -1,0 +1,17 @@
+name: Lint on Push
+
+on: [push]
+
+jobs:
+  build-only:
+    name: Lint with Prettier
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Prettify code
+        uses: creyD/prettier_action@v3.3
+        with:
+          prettier_options: --write **/*.{ts,tsx,js,jsx,yml,graphql,mdx,md,json}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
