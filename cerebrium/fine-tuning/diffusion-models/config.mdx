@@ -3,7 +3,6 @@ title: "Config Files"
 description: "Guide for the config files for fine-tuning a diffusion model on Cerebrium"
 ---
 
-
 In order to simplify the training experience and make deployments easier, we use YAML config files. This lets you keep track of all your training parameters in one place, giving you the flexibility to train your model with the parameters you need while still keeping the deployment process streamlined.
 
 In this section, we introduce the parameters you may want to manipulate for your training, however, we'll set the defaults to what we've found works well if you'd like to leave them out!
@@ -14,38 +13,41 @@ For your convenience, an example of the config file is available [here](#example
 
 ## Setting up a config file
 
-Your yaml config file can be placed anywhere on your system, just point the trainer to the file.
+Your YAML config file can be placed anywhere on your system, just point the trainer to the file.
 
 In your YAML file, you need to include the following required parameters or parse them into the `cerebrium train` command:
 
 ### Required parameters
-| Parameter               | Suggested Value                | Description                                                                          |
-| ----------------------- | ------------------------------ | ------------------------------------------------------------------------------------ |
-| training_type           | diffuser                       | Type of training to run. Either diffuser or transformer. In this case, use diffuser. |
-| name                    | test-config-file               | Name of the experiment.                                                              |
-| api-key                 | Your private API key           | Your Cerebrium API key.                                                              |
-| hf_model_path           | runwayml/stable-diffusion-v1-5 | ---                                                                                  |
-| train_prompt            | Photo of a tsdf dog.           | ---                                                                                  |
-| log_level               | INFO                           | log_level level for logging. Can be DEBUG, INFO, WARNING, ERROR.                     |
-| train_image_dir         | data/training_class_images/    | Directory of training images.                                                        |
+
+The following parameters need to be provided either in your command-line call of the trainer or in your config file:
+
+| Parameter       | Suggested Value                | Description                                                                          |
+| --------------- | ------------------------------ | ------------------------------------------------------------------------------------ |
+| training_type   | diffuser                       | Type of training to run. Either diffuser or transformer. In this case, use diffuser. |
+| name            | test-config-file               | Name of the experiment.                                                              |
+| api-key         | Your private API key           | Your Cerebrium API key. Can also be retrieved if you have run `cerebrium login`      |
+| hf_model_path   | runwayml/stable-diffusion-v1-5 | Path to your stable diffusion model on huggingface.                                  |
+| train_prompt    |                                | Your prompt to train.                                                                |
+| log_level       | INFO                           | log_level level for logging. Can be DEBUG, INFO, WARNING, ERROR.                     |
+| train_image_dir | data/training_class_images/    | Directory of training images.                                                        |
 
 #### Optional parameters
 
 Additionally, you can include the following parameters in your config file:
 
-| Parameter                        | Suggested Value         | Description                                                                |
-| -------------------------------- | ----------------------- | -------------------------------------------------------------------------- |
+| Parameter               | Suggested Value         | Description                                                                |
+| ----------------------- | ----------------------- | -------------------------------------------------------------------------- |
 | **Diffuser Parameters** |                         |                                                                            |
-| revision                         | main                    | Revision of the diffuser model to use.                                     |
-| validation_prompt                | ~                       | an optional validation prompt to use. Will use the training prompt if "~". |
-| custom_tokenizer                 | ~                       | custom tokenizer from AutoTokenizer if required.                           |
-| **Dataset params**               |                         |                                                                            |
-| prior_class_image_dir            | data/prior_class_images | Optional directory of images to use for prior class.                       |
-| prior_class_prompt               | Photo of a dog.         |
+| revision                | main                    | Revision of the diffuser model to use.                                     |
+| validation_prompt       | ~                       | an optional validation prompt to use. Will use the training prompt if "~". |
+| custom_tokenizer        | ~                       | custom tokenizer from AutoTokenizer if required.                           |
+| **Dataset params**      |                         |                                                                            |
+| prior_class_image_dir   | data/prior_class_images | Optional directory of images to use for prior class.                       |
+| prior_class_prompt      | Photo of a dog.         |
 
 ##### Training parameters
 
-The following training parameters can be included if you need to modify the training requirements. These must be child-parameters which fall under the **training_args** parameter in your config file.
+The following training parameters can be included if you need to modify the training requirements. These must be child parameters which fall under the **training_args** parameter in your config file.
 
 | Parameter     | Sub parameter                     | Suggested Value | Description                                                                                                        |
 | ------------- | --------------------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------ |
@@ -67,7 +69,7 @@ The following training parameters can be included if you need to modify the trai
 |               | lr_scheduler                      | constant        | Learning rate schedule. Can be one of ["constant", "linear", "cosine", "polynomial"]                               |
 |               | lr_warmup_steps                   | 5               | Number of learning rate warmup steps.                                                                              |
 |               | lr_num_cycles                     | 1               | Number of learning rate cycles to use.                                                                             |
-|               | lr_power                          | 1.0             | Power factor if using a spolynomial scheduler.                                                                     |
+|               | lr_power                          | 1.0             | Power factor if using a polynomial scheduler.                                                                      |
 |               | max_grad_norm                     | 1.0             | Maximum gradient norm.                                                                                             |
 |               | mixed_precision                   | fp16            | If you would like to use mixed precision. Supports fp16 and bf16 else train in fp32.                               |
 |               | scale_lr                          | False           | Scale the learning rate according to the gradient accumulation steps, training batch size and number of processes. |
@@ -75,32 +77,29 @@ The following training parameters can be included if you need to modify the trai
 |               | use_8bit_adam                     | True            | Use 8 bit adam for lower memory usage.                                                                             |
 |               | use_xformers                      | True            | Whether to use xformers memory efficient attention or not.                                                         |
 
-
-
-
 ## Example yaml config file
 
 ```yaml
 %YAML 1.2
 ---
 
-#############################################
-#  Mandatory Parameters
-#############################################
+###############################################################
+#  Mandatory Parameters. Must be provided here or in the CLI.
+###############################################################
 training_type: "diffuser" # Type of training to run. Either "diffuser" or "transformer".
 name: "test-config-file" # Name of the experiment.
 api-key: "YOUR PRIVATE CEREBRIUM API KEY" # Your Cerebrium API key.
-hf_model_path: "runwayml/stable-diffusion-v1-5"
-train_prompt: "Photo of a tsdf dog." 
+hf_model_path: "runwayml/stable-diffusion-v1-5" # Path to the huggingface diffusion model to train.
+train_prompt: "YOUR TRAINING PROMPT" # Your prompt to train.
 log_level: "INFO" # log_level level for logging. Can be "DEBUG", "INFO", "WARNING", "ERROR".
 train_image_dir: data/training_class_images/ # Directory of training images.
 
 
-#############################################
+###############################################################
 #  Optional Parameters
-#############################################
+###############################################################
 # Diffuser params
-revision: "main" # Revision of the diffuser model to use. 
+revision: "main" # Revision of the diffuser model to use.
 validation_prompt: ~ # an optional validation prompt to use. If ~, will use the training prompt.
 custom_tokenizer: "" # custom tokenizer from AutoTokenizer if required.
 
@@ -124,7 +123,7 @@ training_args:
   max_train_steps: ~ # maximum training steps which overrides number of training epochs
   validation_epochs: 5 # number of epochs before running validation and checkpointing
 
-  
+
   # Training loop params
   gradient_accumulation_steps: 1
   learning_rate: 0.0005
@@ -136,7 +135,7 @@ training_args:
   max_grad_norm: 1.0
   mixed_precision: "fp16"
   prior_generation_precision: ~
-  scale_lr: False 
+  scale_lr: False
   use_8bit_adam: True
   use_xformers: True # Whether to use xformers memory efficient attention or not.
 ```
