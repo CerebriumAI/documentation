@@ -4,9 +4,9 @@ description: "Guide to curating a dataset for success when fine-tuning your diff
 ---
 
 <Note>
-  Cerebrium's fine-tuning functionality is in public beta and we are adding
-  more functionality each week! If there are any issues or if you have an urgent requirement, please reach
-  out to [support](mailto:support@cerebrium.ai) 
+  Cerebrium's fine-tuning functionality is in public beta and we are adding more
+  functionality each week! If there are any issues or if you have an urgent
+  requirement, please reach out to [support](mailto:support@cerebrium.ai)
 </Note>
 
 Curating your dataset is arguably the most important step in fine-tuning a diffusion model.  
@@ -15,32 +15,33 @@ The quality of your dataset will determine the quality of your outputs, so spend
 ## Curation guidelines
 
 The following is a set of guidelines to keep in mind when curating your dataset:
-- Images should be sized to 512 x 512 for stable diffusion v1.5. 
+
+- Images should be sized to 512 x 512 for stable diffusion v1.5.
   - If not, we'll resize them for you, but this may result in a loss of quality.
 - Your images should all be upright or in the same orientation.
 - Keep the number of training images low. Aim for between 10 and 15 as your model may not converge if you use too many.
 - Make sure your images are of the same class. For example, if you are fine-tuning the prompt "Photo of a dog", all of your images should be of dogs.
 
-
-
 If you are doing style-based fine-tuning:
+
 - Fine-tune a single style at a time.
 - Keep the style consistent across all of your images.
 - Keep the colouring consistent across all of your images.
 
-
 For object-focused fine-tuning, each of your images should contribute new information on the subject.  
-  You can do this by varying:
-- camera angle   
-  (although try to keep the side of the object that is photographed consistently across your dataset.  i.e. only take photos from the front)
+ You can do this by varying:
+
+- camera angle  
+  (although try to keep the side of the object that is photographed consistently across your dataset. i.e. only take photos from the front)
 - pose
 - props or styles
 - background in the photos (if you would like varied backgrounds in your outputs.)
 - If your results are not what you expected, try training for more epochs or adding a new token to describe your object.
-  
+
 ## File structure
 
 The following is the file structure that Cerebrium expects for your local dataset:
+
 ```
 training_dataset/
 ├── image0.jpg
@@ -48,19 +49,20 @@ training_dataset/
 ├── image2.jpg
 ├── image3.jpg
 ```
-Where your image files can be named whatever you choose provided they are images in any of the following formats: 
+
+Where your image files can be named whatever you choose provided they are images in any of the following formats:
+
 - jpg
 - png
 - jpeg
 
-It is important to keep all your images under the same folder and use the `train_image_dir` parameter to specify the path to your dataset folder. Similarly, if you are using prior preservation, you can also specify the path to your prior class dataset folder using the `prior_class_image_dir` parameter. 
-
-
+It is important to keep all your images under the same folder and use the `train_image_dir` parameter to specify the path to your dataset folder. Similarly, if you are using prior preservation, you can also specify the path to your prior class dataset folder using the `prior_class_image_dir` parameter.
 
 # Using prior preservation
+
 Stable diffusion models are prone to catastrophic forgetting of classes when training.
 This means that fine-tuning a model on a new prompt may cause it to forget how to generate other prompts in the same class.  
-For example, if you have finetuned your model on a new prompt, say "Photo of a sdf dog" and supplied photos of a Labrador, your model may only predict photos of a labrador when asked for photos of a dog. 
+For example, if you have finetuned your model on a new prompt, say "Photo of a sdf dog" and supplied photos of a Labrador, your model may only predict photos of a labrador when asked for photos of a dog.
 
 Therefore prior preservation works as a kind of regularizer for stable diffusion models that will still be generating other prompts in the same class.
 
@@ -68,9 +70,9 @@ The idea is to supervise the fine-tuning process with the model's own generated 
 In practice, this means having the model fit both the new images and the generated images simultaneously during training.
 
 To use a prior class in training, there are two options:
+
 - The first is to provide the generation prompt for the prior class (eg. `prior_class_prompt: "Photo of a dog"`) and the number of prior images you require (eg. `num_prior_class_images: 10`).  
-Cerebrium will generate these images at training time. 
+  Cerebrium will generate these images at training time.
 
-- Alternatively, if you would like to generate these images beforehand,  you can upload the prior class image dataset and the prompt used to generate them.  
-    When curating a prior class dataset, the goal is to select a wide variety of outputs from your model. 
-
+- Alternatively, if you would like to generate these images beforehand, you can upload the prior class image dataset and the prompt used to generate them.  
+   When curating a prior class dataset, the goal is to select a wide variety of outputs from your model.

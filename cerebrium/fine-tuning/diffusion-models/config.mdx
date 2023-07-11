@@ -82,7 +82,6 @@ The following training parameters can be included if you need to modify the trai
 ```yaml
 %YAML 1.2
 ---
-
 ###############################################################
 #  Mandatory Parameters. Must be provided here or in the CLI.
 ###############################################################
@@ -93,7 +92,6 @@ hf_model_path: "runwayml/stable-diffusion-v1-5" # Path to the huggingface diffus
 train_prompt: "INSERT YOUR TRAINING PROMPT" # Your prompt to train.
 log_level: "INFO" # log_level level for logging. Can be "DEBUG", "INFO", "WARNING", "ERROR".
 train_image_dir: data/training_class_images/ # Directory of training images.
-
 
 ###############################################################
 #  Optional Parameters
@@ -121,7 +119,6 @@ training_args:
   prior_loss_weight: 1.0 # Weight of prior loss in the total loss.
   max_train_steps: ~ # maximum training steps which overrides number of training epochs
   validation_epochs: 5 # number of epochs before running validation and checkpointing
-
 
   # Training loop params
   gradient_accumulation_steps: 1
