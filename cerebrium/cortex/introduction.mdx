@@ -46,7 +46,7 @@ def predict(item, run_id, logger):
     if not item.parameter:
       logger.info('User did not send specific parameter in request')
       return {"status_code": 422} #returns a 422 status code
-   
+
     # Do something with parameters from item
 
     return {"key": "value}
