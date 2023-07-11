@@ -15,17 +15,17 @@ While this guide is a high-level overview of the process, you can find more deta
 
 ### Starting a job with the CLI
 
-Starting a job on cerebrium requires four things:
+Starting a job on Cerebrium requires four things:
 
 - A name for you to use to identify the training job.
 - Your API key.
-- A config file or json string. See [this section](/cerebrium/fine-tuning/diffusion-models/config.mdx) for more info.
+- A config file or JSON string. See [this section](/cerebrium/fine-tuning/diffusion-models/config.mdx) for more info.
 - Your dataset of training images along with the corresponding prompt.
 
 Once you have these, you can start a fine-tuning job using the following command:
 
 ```bash
-cerebrium train --name <<Name for your training>> --training-tupe "diffuser" --api-key <<Your api key if you haven't logged in>> --config-file <<Path to your config file>>
+cerebrium train --name <<Name for your training>> --training-type "diffuser" --api-key <<Your api key if you haven't logged in>> --config-file <<Path to your config file>>
 ```
 
 Your `config-file` or `config-string` could alternatively provide all the other parameters.
@@ -46,7 +46,7 @@ Retrieving the training logs can be done with:
 cerebrium get-training-logs <<Your training job ID>>
 ```
 
-_Note that your training logs will only be availible once the job has started running and will not be stored after it is complete._
+_Note that your training logs will only be available once the job has started running and will not be stored after it is complete._
 
 _Coming soon: logging your training with **weights and biases** is in the final stages of development._
 
