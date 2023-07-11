@@ -43,6 +43,10 @@ class Item(BaseModel):
 def predict(item, run_id, logger):
     item = Item(**item)
 
+    if not item.parameter:
+      logger.info('User did not send specific parameter in request')
+      return {"status_code": 422} #returns a 422 status code
+   
     # Do something with parameters from item
 
     return {"key": "value}
@@ -50,6 +54,18 @@ def predict(item, run_id, logger):
 
 The Item class is where you define the parameters your model receives as well as their type. Item needs to inherit from BaseModel.
 You need to define a function with the name **predict** which receives 3 params: item, run_id and logger.
+
+- **item**: This is the expected request parameters you defined above
+- **run_id**: This is a unique identifier for the user request if you want to use it to track predictions through another system
+- **logger**: Cerebrium only supports logging via the logger and will not log "print()" statements.The logger contains the 3 states across most loggers:
+  - logger.info
+  - logger.debug
+  - logger.error
+
+**Status Codes**
+
+To return a specific status code such as 422, 404 etc just return the json parameter "status_code". If no status_code value is returned and the function executes
+successfully then it will default of a 200 status code will be returned.
 
 Both the **requirements.txt** and **pkglist.txt** follow standard layouts in that each package should be on a new line.
 

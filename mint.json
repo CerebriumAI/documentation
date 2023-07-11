@@ -46,6 +46,11 @@
       "name": "Status",
       "icon": "eye",
       "url": "https://status.cerebrium.ai"
+    },
+    {
+      "name": "Pricing",
+      "icon": "money-bill",
+      "url": "https://www.cerebrium.ai/pricing"
     }
   ],
   "navigation": [
