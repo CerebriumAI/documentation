@@ -82,7 +82,6 @@ The following training parameters can be included if you need to modify the trai
 ```yaml
 %YAML 1.2
 ---
-
 ###############################################################
 #  Mandatory Parameters. Must be provided here or in the CLI.
 ###############################################################
@@ -90,10 +89,9 @@ training_type: "diffuser" # Type of training to run. Either "diffuser" or "trans
 name: "test-config-file" # Name of the experiment.
 api-key: "YOUR PRIVATE CEREBRIUM API KEY" # Your Cerebrium API key.
 hf_model_path: "runwayml/stable-diffusion-v1-5" # Path to the huggingface diffusion model to train.
-train_prompt: "YOUR TRAINING PROMPT" # Your prompt to train.
+train_prompt: "INSERT YOUR TRAINING PROMPT" # Your prompt to train.
 log_level: "INFO" # log_level level for logging. Can be "DEBUG", "INFO", "WARNING", "ERROR".
 train_image_dir: data/training_class_images/ # Directory of training images.
-
 
 ###############################################################
 #  Optional Parameters
@@ -105,14 +103,13 @@ custom_tokenizer: "" # custom tokenizer from AutoTokenizer if required.
 
 # Dataset params
 prior_class_image_dir: ~ # or "path/to/your/prior_class_images". Optional directory of images to use if you would like to train prior class images as well.
-prior_class_prompt: "Photo of a dog."
+prior_class_prompt: "INSERT YOUR PRIOR CLASS PROMPT HERE"
 
 # Training params
 training_args:
   # General training params
   num_validation_images: 4 # Number of images to generate in validation.
-  learning_rate: 1e-4
-  num_train_epochs: 10
+  num_train_epochs: 50
   seed: ~
   resolution: 512 # Resolution to train images at.
   center_crop: False # Whether to center crop images to resolution.
@@ -123,10 +120,9 @@ training_args:
   max_train_steps: ~ # maximum training steps which overrides number of training epochs
   validation_epochs: 5 # number of epochs before running validation and checkpointing
 
-
   # Training loop params
   gradient_accumulation_steps: 1
-  learning_rate: 0.0005
+  learning_rate: 5.0E-4
   lr_scheduler: "constant"
   lr_warmup_steps: 5
   lr_num_cycles: 1

@@ -4,14 +4,13 @@ description: "Guide to prompt templating when fine-tuning your language model on
 ---
 
 <Note>
-  Cerebrium's fine-tuning functionality is in public beta and we are adding
-  more functionality each week! If there are any issues or if you have an urgent requirement, please reach
-  out to [support](mailto:support@cerebrium.ai) 
+  Cerebrium's fine-tuning functionality is in public beta and we are adding more
+  functionality each week! If there are any issues or if you have an urgent
+  requirement, please reach out to [support](mailto:support@cerebrium.ai)
 </Note>
 
-
-
 ## Builtin Templates
+
 By default, we provide two templates for question-and-answering which we have adapted from [Alpaca-Lora format](https://github.com/TianyiPeng/alpaca-lora/tree/main/templates) as our prompt template format. You can use these templates or create your own. For more information on templating see [this page](/cerebrium/fine-tuning/language-models/custom-templates.mdx).
 
 There are two options for the templates, `short` and `long`. The `short` template is a single sentence prompt and the `long` template is a multi-sentence prompt. They are shown below:
@@ -25,14 +24,15 @@ prompt_no_input: "Below is an instruction that describes a task. Write a respons
 response_split: "### Response:"
 ```
 
-
 This would be used by adding the following to your **config.yaml** file:
 
 ```yaml
 dataset_args:
   prompt_template: "long"
 ```
+
 ### Alpaca template (short)
+
 ```yaml
 "description": "A shorter template to experiment with.",
 "prompt_input": "### Instruction:\n{instruction}\n\n### Input:\n{input}\n\n### Response:\n",
@@ -46,7 +46,6 @@ This would be used by adding the following to your **config.yaml** file:
 dataset_args:
   prompt_template: "short"
 ```
-
 
 ## Custom Templates
 
@@ -62,10 +61,9 @@ dataset_args:
 ```
 
 Where your template contains the following parameters in the template string:
+
 - `{instruction}`: The instruction for the prompt. This will be filled in with the `instruction_column` parameter from your dataset.
 - `{input}`: The context for the prompt. This will be filled in with the `context_column` parameter from your dataset.
 - `{response}`: The response prefix for the prompt. This will be filled in with the `label_column` parameter from your dataset.
 
 where `instruction_column`, `context_column`, and `label_column` are the parameters you have defined for your dataset in the `dataset_args` section of your config file and correspond to the labels in your dataset.json file.
-
-
