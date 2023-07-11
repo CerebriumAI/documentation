@@ -1,0 +1,99 @@
+---
+title: "Training"
+description: "Commands to use with fine-tuning"
+---
+
+Below are the set of commands for you to get started with fine-tuning. Please note that all fine-tuning functionality is currently done through the terminal - frontend pending.
+
+### Starting a job with the CLI
+
+Starting a job on Cerebrium requires four things:
+
+- A name for you to use to identify the training job.
+- Your API key.
+- A config file or JSON string. See [this section](/cerebrium/fine-tuning/language-models/config.mdx) for more info.
+- Your local dataset of training prompts and completions. See [this section](/cerebrium/fine-tuning/language-models/dataset.mdx) for info on creating your dataset.
+
+Once you have these, you can start a fine-tuning job using the following command:
+
+```bash
+cerebrium train  --config-file <<Path to your config file>>
+```
+
+Your `config-file` or `config-string` could alternatively provide all the other parameters.
+
+If you would like to provide the `name`, `training-type` or `api-key` from the command line, you can add them as follows:
+
+```bash
+cerebrium train  --config-file <<Path to your config file>> --name <<Name for your training>> --training-type "diffuser" --api-key <<Your api key if you haven't logged in>>
+```
+
+_Note that if these parameters are present in your `config-file` or `config-string`, they will be overridden by the command line args._
+
+## Retrieving your most recent training jobs
+
+Keeping track of the `jobIds` for all your different experiments can be challenging.  
+To retrieve the status and information on your most recent fine-tuning jobs, you can run the following command:
+
+```bash
+cerebrium get-training-jobs --api-key <<API_KEY_IF_NOT_LOGGED_IN>> --last-n <<AN_OPTIONAL_PARAM_TO_LIMIT_NUMBER_OF_JOBS_RETURNED>>
+```
+
+Where your API_KEY is the key for the project under which your fine-tuning has been deployed. Remember if you used the Cerebrium login command you don't have to paste your API Key
+
+# Stream the logs of your fine-tuning job
+
+To stream the logs of a specific fine-tuning job use:
+
+```bash
+cerebrium get-training-logs <<JOB_ID>> --api-key <<API_KEY_IF_NOT_LOGGED_IN>>
+```
+
+# Retrieving your training results
+
+Once your training is complete, you can download the training results using:
+
+```bash
+cerebrium download-model <<JOB_ID>> --api-key <<API_KEY_IF_NOT_LOGGED_IN>>  --download-path <<OPTIONAL_PATH_TO_DOWNLOAD_TO>>
+```
+
+This will return a zip file which contains your **adapter** and **adapter config** which should be in the order of 10MB for your 7B parameter model due to the extreme efficiency of PEFT fine-tuning.
+
+# Deploy your fine-tuned model
+
+To deploy your model you can use Cortex. Below is an example that you can simply adapt in order to get deploy your model in just a few lines of code. We will be releasing
+auto-deploy functionality soon!
+
+```python
+  from transformers import AutoModelForCausalLM
+  from peft import PeftModel, PeftConfig # Add the peft libraries we need for the adapter
+
+  peft_model_id = "path/toYourAdapter"
+  config = PeftConfig.from_pretrained(peft_model_id)
+  model = AutoModelForCausalLM.from_pretrained(config.base_model_name_or_path)
+  model = PeftModel.from_pretrained(model, peft_model_id) # Add the adapter to the model
+  tokenizer = AutoTokenizer.from_pretrained(config.base_model_name_or_path)
+
+  model = model.to("cuda")
+  model.eval() # set the model to inference mode
+
+```
+
+_Note: if you have fine-tuned a Llama based model, ensure that you are using the latest huggingface transformers release that supports Llama models as part of the AutoModelForCausalLM class._
+
+Now for inference, you just need to place the prompt into the template used for training. In this example, we do it as follows
+
+```python
+  template =  "### Instruction:\n{instruction}\n\n### Response:\n"
+  question = template.format(instruction=prompt)
+  inputs = tokenizer(question, return_tensors="pt")
+
+  with torch.no_grad():
+    outputs = model.generate(input_ids=inputs["input_ids"].to("cuda"), max_new_tokens=10)
+    print(tokenizer.batch_decode(outputs.detach().cpu().numpy(), skip_special_tokens=True)[0])
+
+```
+
+These adapters can be combined with others when using your model at inference time.  
+For more information, see
+[Using Adapter Transformers at Hugging Face](https://huggingface.co/docs/hub/adapter-transformers#exploring-adaptertransformers-in-the-hub)
