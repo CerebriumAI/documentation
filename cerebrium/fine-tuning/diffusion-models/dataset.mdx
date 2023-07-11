@@ -40,7 +40,7 @@ For object-focused fine-tuning, each of your images should contribute new inform
   
 ## File structure
 
-The following is the file structure that Cerebrium expects for your dataset:
+The following is the file structure that Cerebrium expects for your local dataset:
 ```
 training_dataset/
 ├── image0.jpg
@@ -48,12 +48,12 @@ training_dataset/
 ├── image2.jpg
 ├── image3.jpg
 ```
-Where your files can be in any of the following formats: 
+Where your image files can be named whatever you choose provided they are images in any of the following formats: 
 - jpg
 - png
 - jpeg
 
-It is important to keep all your images under the same folder and use the `train_image_dir` parameter to specify the path to your dataset folder. Similarly, if you are using prior preservation, you can also specify the path to your prior class dataset folder using the `prior_class_image_dir` parameter.
+It is important to keep all your images under the same folder and use the `train_image_dir` parameter to specify the path to your dataset folder. Similarly, if you are using prior preservation, you can also specify the path to your prior class dataset folder using the `prior_class_image_dir` parameter. 
 
 
 
