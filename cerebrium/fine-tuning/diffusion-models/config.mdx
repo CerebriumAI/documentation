@@ -25,7 +25,7 @@ The following parameters need to be provided either in your command-line call of
 | --------------- | ------------------------------ | ------------------------------------------------------------------------------------ |
 | training_type   | diffuser                       | Type of training to run. Either diffuser or transformer. In this case, use diffuser. |
 | name            | test-config-file               | Name of the experiment.                                                              |
-| api-key         | Your private API key           | Your Cerebrium API key. Can also be retrieved if you have run `cerebrium login`      |
+| api_key         | Your private API key           | Your Cerebrium API key. Can also be retrieved if you have run `cerebrium login`      |
 | hf_model_path   | runwayml/stable-diffusion-v1-5 | Path to your stable diffusion model on huggingface.                                  |
 | train_prompt    |                                | Your prompt to train.                                                                |
 | log_level       | INFO                           | log_level level for logging. Can be DEBUG, INFO, WARNING, ERROR.                     |
@@ -87,7 +87,7 @@ The following training parameters can be included if you need to modify the trai
 ###############################################################
 training_type: "diffuser" # Type of training to run. Either "diffuser" or "transformer".
 name: "test-config-file" # Name of the experiment.
-api-key: "YOUR PRIVATE CEREBRIUM API KEY" # Your Cerebrium API key.
+api_key: "YOUR PRIVATE CEREBRIUM API KEY" # Your Cerebrium API key.
 hf_model_path: "runwayml/stable-diffusion-v1-5" # Path to the huggingface diffusion model to train.
 train_prompt: "INSERT YOUR TRAINING PROMPT" # Your prompt to train.
 log_level: "INFO" # log_level level for logging. Can be "DEBUG", "INFO", "WARNING", "ERROR".
@@ -108,9 +108,10 @@ prior_class_prompt: "INSERT YOUR PRIOR CLASS PROMPT HERE"
 # Training params
 training_args:
   # General training params
+  learning_rate: 1.0E-5
   num_validation_images: 4 # Number of images to generate in validation.
   num_train_epochs: 50
-  seed: ~
+  seed: 1
   resolution: 512 # Resolution to train images at.
   center_crop: False # Whether to center crop images to resolution.
   train_batch_size: 2
@@ -122,9 +123,8 @@ training_args:
 
   # Training loop params
   gradient_accumulation_steps: 1
-  learning_rate: 5.0E-4
   lr_scheduler: "constant"
-  lr_warmup_steps: 5
+  lr_warmup_steps: 50
   lr_num_cycles: 1
   lr_power: 1.0
   allow_tf32: False
