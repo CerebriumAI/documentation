@@ -6,7 +6,7 @@
 #############################################
 training_type: "diffuser" # Type of training to run. Either "diffuser" or "transformer".
 name: "test-config-file" # Name of the experiment.
-api-key: "YOUR PRIVATE CEREBRIUM API KEY" # Your Cerebrium API key.
+api_key: "YOUR PRIVATE CEREBRIUM API KEY" # Your Cerebrium API key.
 hf_model_path: "runwayml/stable-diffusion-v1-5"
 train_prompt: "Photo of a tsdf dog." 
 log_level: "INFO" # log_level level for logging. Can be "DEBUG", "INFO", "WARNING", "ERROR".
