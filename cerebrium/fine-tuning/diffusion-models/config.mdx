@@ -71,7 +71,7 @@ The following training parameters can be included if you need to modify the trai
 |               | lr_num_cycles                     | 1               | Number of learning rate cycles to use.                                                                             |
 |               | lr_power                          | 1.0             | Power factor if using a polynomial scheduler.                                                                      |
 |               | max_grad_norm                     | 1.0             | Maximum gradient norm.                                                                                             |
-|               | mixed_precision                   | fp16            | If you would like to use mixed precision. Supports fp16 and bf16 else train in fp32.                               |
+|               | mixed_precision                   | no               | If you would like to use mixed precision. Supports 'fp16' and 'bf16' else defaults to 'no' which will train in fp32. Use with caution as it can cause the safety checker to misbehave.  |
 |               | scale_lr                          | False           | Scale the learning rate according to the gradient accumulation steps, training batch size and number of processes. |
 |               | allow_tf32                        | False           | Allow matmul using tf32. Defaults to False.                                                                        |
 |               | use_8bit_adam                     | True            | Use 8 bit adam for lower memory usage.                                                                             |
@@ -129,7 +129,7 @@ training_args:
   lr_power: 1.0
   allow_tf32: False
   max_grad_norm: 1.0
-  mixed_precision: "fp16"
+  mixed_precision: 'no' # If you would like to use mixed precision. Supports fp16 and bf16. Defaults to 'no'
   prior_generation_precision: ~
   scale_lr: False
   use_8bit_adam: True
