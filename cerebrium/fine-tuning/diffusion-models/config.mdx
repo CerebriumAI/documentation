@@ -49,34 +49,33 @@ Additionally, you can include the following parameters in your config file:
 
 The following training parameters can be included if you need to modify the training requirements. These must be child parameters which fall under the **training_args** parameter in your config file.
 
-| Parameter     | Sub parameter                     | Suggested Value | Description                                                                                                        |
-| ------------- | --------------------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------ |
-| training_args |                                   |                 |                                                                                                                    |
-|               | num_validation_images             | 4               | Number of images to generate at each validation step.                                                              |
-|               | num_train_epochs                  | 50              | Number of epochs to train for                                                                                      |
-|               | seed                              | ~               | manual seed to set for training.                                                                                   |
-|               | resolution                        | 512             | Resolution to train images at.                                                                                     |
-|               | center_crop                       | False           | Whether to center crop images to resolution.                                                                       |
-|               | train_batch_size                  | 2               | Batch size for training. Will significantly affect memory usage so we suggest leaving at 2.                        |
-|               | num_prior_class_images            | 10              | Number of images to generate using the **prior class prompt**                                                      |
-|               | prior_class_generation_batch_size | 2               | Batch size for generating prior class images. We suggest leaving at 2.                                             |
-|               | prior_generation_precision        | ~               | Precision used to generate prior class images if applicable.                                                       |
-|               | prior_loss_weight                 | 1.0             | Weight of prior loss in the total loss.                                                                            |
-|               | max_train_steps                   | ~               | maximum training steps which overrides number of training epochs                                                   |
-|               | validation_epochs                 | 5               | number of epochs before running validation and checkpointing                                                       |
-|               | num_validation_inference_steps    | 25              | number of inference steps when generating inference images                                                         |
-|               | gradient_accumulation_steps       | 1               | Number of gradient accumulation steps.                                                                             |
-|               | learning_rate                     | 1.0E-5          | The learning rate you would like to train with. Can be more aggressive than you would use to train a full network. |
-|               | lr_scheduler                      | constant        | Learning rate schedule. Can be one of ["constant", "linear", "cosine", "polynomial"]                               |
-|               | lr_warmup_steps                   | 5               | Number of learning rate warmup steps.                                                                              |
-|               | lr_num_cycles                     | 1               | Number of learning rate cycles to use.                                                                             |
-|               | lr_power                          | 1.0             | Power factor if using a polynomial scheduler.                                                                      |
-|               | max_grad_norm                     | 1.0             | Maximum gradient norm.                                                                                             |
-|               | mixed_precision                   | ~               | If you would like to use mixed precision. Supports fp16 and bf16 else train in fp32 by default. Use with caution.  |
-|               | scale_lr                          | False           | Scale the learning rate according to the gradient accumulation steps, training batch size and number of processes. |
-|               | allow_tf32                        | False           | Allow matmul using tf32. Defaults to False.                                                                        |
-|               | use_8bit_adam                     | True            | Use 8 bit adam for lower memory usage.                                                                             |
-|               | use_xformers                      | True            | Whether to use xformers memory efficient attention or not.                                                         |
+| Parameter     | Sub parameter                     | Suggested Value | Description                                                                                                                                                                            |
+| ------------- | --------------------------------- | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| training_args |                                   |                 |                                                                                                                                                                                        |
+|               | num_validation_images             | 4               | Number of images to generate at each validation step.                                                                                                                                  |
+|               | num_train_epochs                  | 50              | Number of epochs to train for                                                                                                                                                          |
+|               | seed                              | ~               | manual seed to set for training.                                                                                                                                                       |
+|               | resolution                        | 512             | Resolution to train images at.                                                                                                                                                         |
+|               | center_crop                       | False           | Whether to center crop images to resolution.                                                                                                                                           |
+|               | train_batch_size                  | 2               | Batch size for training. Will significantly affect memory usage so we suggest leaving at 2.                                                                                            |
+|               | num_prior_class_images            | 10              | Number of images to generate using the **prior class prompt**                                                                                                                          |
+|               | prior_class_generation_batch_size | 2               | Batch size for generating prior class images. We suggest leaving at 2.                                                                                                                 |
+|               | prior_generation_precision        | ~               | Precision used to generate prior class images if applicable.                                                                                                                           |
+|               | prior_loss_weight                 | 1.0             | Weight of prior loss in the total loss.                                                                                                                                                |
+|               | max_train_steps                   | ~               | maximum training steps which overrides number of training epochs                                                                                                                       |
+|               | validation_epochs                 | 5               | number of epochs before running validation and checkpointing                                                                                                                           |
+|               | gradient_accumulation_steps       | 1               | Number of gradient accumulation steps.                                                                                                                                                 |
+|               | learning_rate                     | 0.0005          | The learning rate you would like to train with. Can be more aggressive than you would use to train a full network.                                                                     |
+|               | lr_scheduler                      | constant        | Learning rate schedule. Can be one of ["constant", "linear", "cosine", "polynomial"]                                                                                                   |
+|               | lr_warmup_steps                   | 5               | Number of learning rate warmup steps.                                                                                                                                                  |
+|               | lr_num_cycles                     | 1               | Number of learning rate cycles to use.                                                                                                                                                 |
+|               | lr_power                          | 1.0             | Power factor if using a polynomial scheduler.                                                                                                                                          |
+|               | max_grad_norm                     | 1.0             | Maximum gradient norm.                                                                                                                                                                 |
+|               | mixed_precision                   | no              | If you would like to use mixed precision. Supports 'fp16' and 'bf16' else defaults to 'no' which will train in fp32. Use with caution as it can cause the safety checker to misbehave. |
+|               | scale_lr                          | False           | Scale the learning rate according to the gradient accumulation steps, training batch size and number of processes.                                                                     |
+|               | allow_tf32                        | False           | Allow matmul using tf32. Defaults to False.                                                                                                                                            |
+|               | use_8bit_adam                     | True            | Use 8 bit adam for lower memory usage.                                                                                                                                                 |
+|               | use_xformers                      | True            | Whether to use xformers memory efficient attention or not.                                                                                                                             |
 
 ## Example yaml config file
 
@@ -130,7 +129,7 @@ training_args:
   lr_power: 1.0
   allow_tf32: False
   max_grad_norm: 1.0
-  mixed_precision: ~ # If you would like to use mixed precision. Supports fp16 and bf16 else train in fp32.
+  mixed_precision: "no" # If you would like to use mixed precision. Supports fp16 and bf16. Defaults to 'no'
   prior_generation_precision: ~
   scale_lr: False
   use_8bit_adam: True
