@@ -103,7 +103,7 @@ custom_tokenizer: "" # custom tokenizer from AutoTokenizer if required.
 
 # Dataset params
 prior_class_image_dir: ~ # or "path/to/your/prior_class_images". Optional directory of images to use if you would like to train prior class images as well.
-prior_class_prompt: "INSERT YOUR PRIOR CLASS PROMPT HERE"
+prior_class_prompt: ~ # Set your prior class prompt here. If ~, will not use prior classes. Only use prior class preservation if you want to preserve the class in your results.
 
 # Training params
 training_args:
@@ -115,7 +115,7 @@ training_args:
   resolution: 512 # Resolution to train images at.
   center_crop: False # Whether to center crop images to resolution.
   train_batch_size: 2
-  num_prior_class_images: 10
+  num_prior_class_images: 5
   prior_class_generation_batch_size: 2
   prior_loss_weight: 1.0 # Weight of prior loss in the total loss.
   max_train_steps: ~ # maximum training steps which overrides number of training epochs

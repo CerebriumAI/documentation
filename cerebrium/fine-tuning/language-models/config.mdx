@@ -51,7 +51,7 @@ In your YAML file, you need to include the following required parameters or pars
 |                     | warmup_steps                | 0                    | Number of warmup steps for learning rate scheduler.                    |
 |                     | gradient_accumulation_steps | 4                    | Number of gradient accumulation steps.                                 |
 |                     | num_train_epochs            | 50                   | Number of training epochs.                                             |
-|                     | learning_rate               | 1e-4                 | Learning rate for training.                                            |
+|                     | learning_rate               | 1.0e-4               | Learning rate for training.                                            |
 |                     | group_by_length             | False                | Whether to group batches by length.                                    |
 | **base_model_args** |                             |                      | The kwargs for loading in the base model with _AutoModelForCausalLM()_ |
 |                     | load_in_8bit                | True                 | Whether to load in the model in 8bit.                                  |
@@ -97,7 +97,7 @@ training_args:
   warmup_steps: 0
   gradient_accumulation_steps: 4
   num_train_epochs: 50
-  learning_rate: 0.0001
+  learning_rate: 1.0E-4
   group_by_length: False
 
 base_model_args: # args for loading in the base model with AutoModelForCausalLM
@@ -105,8 +105,8 @@ base_model_args: # args for loading in the base model with AutoModelForCausalLM
   device_map: "auto"
 
 peft_lora_args: # peft lora args.
-  r: 8
-  lora_alpha: 32
+  r: 32
+  lora_alpha: 16
   lora_dropout: 0.05
   target_modules: ["q_proj", "v_proj"]
   bias: "none"
