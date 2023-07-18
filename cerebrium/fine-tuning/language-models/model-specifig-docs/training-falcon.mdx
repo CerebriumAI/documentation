@@ -3,68 +3,138 @@ title: Training Falcon Models
 description: "Guide to fine-tuning Falcon models using Cerebrium"
 ---
 
-
 ## Introduction
 
 <!-- TODO: An intro to falcon and why someone might want to use it. -->
+
+`Falcon` is a family of models released by the Technology Innovation Institute (TII) of the UAE.
+At the time of release, it topped the Huggingface leaderboards while also being one of the fastest LLMs available.
+Additionally, the TII team have released the model under an Apache 2.0 license, making it available for commercial use.
+
+The `Falcon` family of models are available in 2 sizes:
+
+- `Falcon 7B` - 7 billion parameters
+- `Falcon 40B` - 40 billion parameters
+
+These models come in two variants:
+
+- The raw, pretrained models `Falcon-7B/40B`
+- The instruct trained models `Falcon-7B/40B-instruct`
+  These have been further trained for instruct/chat capabilities.
+
+We provide full support for the finetuning of the Falcon 7B model.  
+The finetuning of the Falcon 40B model is currently in testing and will be released to the public soon.
 
 ## Getting Started
 
 ### Creating a Project
 
+To create a project, you will need to initialise a training configuration file and curate a [dataset](/cerebrium/fine-tuning/language-models/dataset).
+
+<!-- 
+We provide an example configuration file for the Falcon 7B model which can be used as a starting point for your own configuration file. Just run the following command:
 ```bash
 cerebrium init-trainer --trainer-type falcon --trainer-name my-falcon-trainer
-```
-<!-- TODO this init needs to be made -->
+``` -->
 
-- table of the important parameters that are created
-  
+<!-- TODO this init needs to be made before uncommenting -->
+
 ### Adjusting your config file
 
+Some important parameters to take note of in your config file are the following:
+
+| Parameter         | Description                                                                                | Required Value        |
+| ----------------- | ------------------------------------------------------------------------------------------ | --------------------- |
+| target_modules    | The modules to apply PEFT to. For Falcon, this parameter is different to Llama, GPT2, etc. | `["query_key_value"]` |
+| trust_remote_code | Whether to trust the remote code. Required to setup the falcon model                       | `true`                |
+| load_in_8bit      | Whether to load the model in 8bit. Set to `True` for Falcon-7B.                            | `true`                |
+
+<!-- | load_in_4bit      | Whether to load the model in 4bit. Set to `True` for Falcon-40B.                           | `true`                | -->
+
+<!-- TODO:
 - which parameters to adjust and when
- - epochs
- - learning rate
- - prompt template
-    - Should we include how to add stop tokens etc? 
-
-
-
-
-### Creating a Dataset
-- link to dataset guide
-
+- epochs
+- learning rate
+- prompt template
+  - Should we include how to add stop tokens etc? -->
 
 ## Train your model
+Training your model follows the same process as training any other model on Cerebrium, you'll need to run the same `cerebrium train` command.
 
 ```bash
-cerebrium train --config-file config.yaml
+cerebrium train <<YOUR CONFIG FILE>> 
 ```
 
-## Download your model weights
+See the [training](/cerebrium/fine-tuning/language-models/training) page for more information on training your model.
 
-```bash
-cerebrium download-model <<YOUR JOB ID>> --output-dir <<YOUR OUTPUT DIR.zip>>
-```
 
 ## Evaluate your model
+The output of training a Falcon model on Cerebrium is an adapter file. Once you have downloaded your adapter file (see the instructions [here](/cerebrium/fine-tuning/language-models/training)), it can be used to load the model into your own code and run inference on it.
 
-- Output is an adapter file
+To load the model into your Cortex deployment, you can use the following code snippet:
 
-- How to use the adapter file
-- example main.py
+```
+
+
+```python
+# Your normal imports in Cortex:
+import base64
+from typing import Optional
+
+# ADD THE FOLLOWING TO YOUR IMPORTS
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from peft import PeftModel, PeftConfig
+import torch
+
+# ADD THE FOLLOWING TO YOUR MODEL SETUP IN YOUR MAIN.PY
+peft_model_id = "results/" # Path to your results/ folder which contains "adapter_model.bin" and "adapter_config.json" 
+config = PeftConfig.from_pretrained(peft_model_id)
+model = AutoModelForCausalLM.from_pretrained(config.base_model_name_or_path,
+                                             low_cpu_mem_usage=True, # You may require this file to avoid memory issues
+                                             load_in_8bit=True,
+                                             trust_remote_code=True,
+                                             device_map="auto")
+model = PeftModel.from_pretrained(model, peft_model_id, trust_remote_code=True) # Add the adapter to the model
+tokenizer = AutoTokenizer.from_pretrained(config.base_model_name_or_path)
+
+model = model.to("cuda")
+```
+Your model is now ready to run inference on.
+
+To have control of the number of new tokens generated, (as well as other generation parameters) you can add a `max_new_tokens` parameter to your `Item` class in your `main.py` file.
+```python
+class Item(BaseModel):
+    prompt: str
+    max_new_tokens: Optional[int] = 250 # Add this line to your Item class
+```
+
+You can then add the following code to your `predict` function to run inference on your model:
+```python
+# ADD THE FOLLOWING TO YOUR PREDICT FUNCTION IN YOUR MAIN.PY
+def predict(item, run_id, logger):
+    item = Item(**item)
+     # REPLACE THIS WITH YOUR TEMPLATE USED FOR TRAINING
+    template =  "### Instruction:\n{instruction}\n\n### Response:\n" 
+
+    question = template.format(instruction=prompt) # Place the prompt into the template
+    inputs = tokenizer(question, return_tensors="pt")
+
+    with torch.no_grad(): # Run inference on the model
+      outputs = model.generate(input_ids=inputs["input_ids"].to("cuda"), max_new_tokens=item.max_new_tokens)
+      result = tokenizer.batch_decode(outputs.detach().cpu().numpy(), skip_special_tokens=True)[0]
+    return result
+```
 
 ## Deploy your model
 
-- How to deploy your model on cerebriums
-
-
-
+Your model can now be deployed using Cerebrium's Cortex. Just ensure that your adapter files are in the same directory as your `main.py` file and run `cerebrium deploy` as you would for any other model.
 
 # Falcon 7B vs Falcon 40B
 
 <!-- TODO this needs to become a comparison table -->
 
 ## Falcon 40B config:
+
 ```yaml
 training_type: transformer
 
@@ -73,7 +143,7 @@ api_key: YOUR API KEY HERE
 hf_model_path: tiiuae/falcon-40b
 model_type: AutoModelForCausalLM
 dataset_path: Your/Dataset/path/dataset.json
-custom_tokenizer: ''
+custom_tokenizer: ""
 seed: 42
 log_level: INFO
 training_args:
@@ -103,6 +173,7 @@ base_model_args:
 ```
 
 ## Falcon 7B config:
+
 ```yaml
 %YAML 1.2
 ---
@@ -114,7 +185,7 @@ api_key: Your API KEY HERE # Your Cerebrium API key.
 # Model params:
 hf_model_path: "tiiuae/falcon-7b"
 model_type: "AutoModelForCausalLM"
-dataset_path: /Users/michaelkatsoulis/Documents/Cerebrium/FineTuningData/cerebrium-qa-data.json # path to your local JSON dataset.
+dataset_path: /path/to/your/dataset.json # path to your local JSON dataset.
 custom_tokenizer: "" # custom tokenizer from AutoTokenizer if required.
 seed: 42 # random seed for reproducibility.
 log_level: "INFO" # log_level level for logging.
@@ -139,7 +210,6 @@ base_model_args: # args for loading in the base model.
   device_map: "auto"
   trust_remote_code: True
 
-
 peft_lora_args: # peft lora args.
   r: 32
   lora_alpha: 16
@@ -147,19 +217,4 @@ peft_lora_args: # peft lora args.
   target_modules: [query_key_value]
   bias: "none"
   task_type: "CAUSAL_LM"
-
-dataset_args:
-  # prompt_template: "short"
-  # if you would like a custom prompt template it's possible to specify it here as below:
-  prompt_template:
-    description: "A shorter template to experiment with."
-    prompt_input: "### Instruction:\n{instruction}\n\n### 
-Input:\n{input}\n\n### Response:\n"
-    prompt_no_input: "### Instruction:\n{instruction}\n\n### Response:\n"
-    response_split: "### Response:"
-  instruction_column:  "prompt"
-  label_column:  "completion"
-  context_column:  "context"
-  cutoff_len:  512
-  train_val_ratio:  0.9
-```   
+```
