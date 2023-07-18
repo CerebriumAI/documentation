@@ -5,8 +5,6 @@ description: "Guide to fine-tuning Falcon models using Cerebrium"
 
 ## Introduction
 
-<!-- TODO: An intro to falcon and why someone might want to use it. -->
-
 `Falcon` is a family of models released by the Technology Innovation Institute (TII) of the UAE.
 At the time of release, it topped the Huggingface leaderboards while also being one of the fastest LLMs available.
 Additionally, the TII team have released the model under an Apache 2.0 license, making it available for commercial use.
@@ -18,8 +16,8 @@ The `Falcon` family of models are available in 2 sizes:
 
 These models come in two variants:
 
-- The raw, pretrained models `Falcon-7B/40B`
-- The instruct trained models `Falcon-7B/40B-instruct`
+- The raw, pre-trained models `Falcon-7B/40B`
+- The instruct trained models `Falcon-7B/40B-instruct`.
   These have been further trained for instruct/chat capabilities.
 
 We provide full support for the finetuning of the Falcon 7B model.  
@@ -51,12 +49,13 @@ Some important parameters to take note of in your config file are the following:
 
 <!-- | load_in_4bit      | Whether to load the model in 4bit. Set to `True` for Falcon-40B.                           | `true`                | -->
 
-<!-- TODO:
-- which parameters to adjust and when
-- epochs
-- learning rate
-- prompt template
-  - Should we include how to add stop tokens etc? -->
+<!-- TODO: -->
+<!-- - which parameters to adjust and when -->
+<!-- - epochs -->
+<!-- - learning rate -->
+<!-- - prompt template -->
+  <!-- - Should we include how to add stop tokens etc?  -->
+
 
 ## Train your model
 Training your model follows the same process as training any other model on Cerebrium, you'll need to run the same `cerebrium train` command.
@@ -72,9 +71,6 @@ See the [training](/cerebrium/fine-tuning/language-models/training) page for mor
 The output of training a Falcon model on Cerebrium is an adapter file. Once you have downloaded your adapter file (see the instructions [here](/cerebrium/fine-tuning/language-models/training)), it can be used to load the model into your own code and run inference on it.
 
 To load the model into your Cortex deployment, you can use the following code snippet:
-
-```
-
 
 ```python
 # Your normal imports in Cortex:
