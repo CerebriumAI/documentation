@@ -42,6 +42,7 @@ Some important parameters to take note of in your config file are the following:
 | load_in_4bit      | Whether to load the model in 4bit. Set to `True` for Falcon-40B.                           | `true`                |
 
 Additionally, you can adjust the following parameters based on your needs to optimise your training:
+
 - num_train_epochs
 - learning_rate
 - lr_scheduler_type
@@ -62,6 +63,7 @@ See the [training](/cerebrium/fine-tuning/language-models/training) page for mor
 The output of training a Falcon model on Cerebrium is an adapter file. Once you have downloaded your adapter file (see the instructions [here](/cerebrium/fine-tuning/language-models/training)), it can be used to load the model into your own code and run inference on it.
 
 ### Deploying your model on Cortex
+
 To load the model into your Cortex deployment, you can use the following code snippet:
 
 ```python
@@ -116,7 +118,8 @@ def predict(item, run_id, logger):
     return result
 ```
 
-To run Falcon, you will need the following in your **requirements.txt** 
+To run Falcon, you will need the following in your **requirements.txt**
+
 ```txt
 torch
 git+https://github.com/huggingface/transformers.git
