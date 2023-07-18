@@ -97,7 +97,13 @@
             "cerebrium/fine-tuning/language-models/dataset",
             "cerebrium/fine-tuning/language-models/custom-templates",
             "cerebrium/fine-tuning/language-models/training",
-            "cerebrium/fine-tuning/language-models/config"
+            "cerebrium/fine-tuning/language-models/config",
+            {
+              "group": "Model Specific Docs",
+              "pages": [
+                "cerebrium/fine-tuning/language-models/model-specifig-docs/training-falcon"
+              ]
+            }
           ]
         },
         {
