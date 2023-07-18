@@ -10,10 +10,10 @@ description: "Advice on how best to structure your datasets"
 </Note>
 
 The fine-tuning library has been built to leverage Parameter Efficient Fine-tuning and Low-Rank Approximation to reduce the number of trainable parameters by >99.9% while providing results that are comparable to full fine-tuning.  
-Due to the much lower number of trainable parameters, the datasets used do not need to be greater than 1000 examples however, it's always best to use as many, diverse training examples as possible to cover a wide variety of use cases.
+Due to the much lower number of trainable parameters, the datasets used do not need to be greater than 1000 examples. Often, much smaller datasets of 200-500 examples are more than sufficient, however, it's always best to use as many diverse training examples as possible to cover a wide variety of use cases.
 
-By default, we provide two templates for question-and-answering which we have adapted from [Alpaca-Lora format](https://github.com/TianyiPeng/alpaca-lora/tree/main/templates) as our prompt template format. You can use these templates or create your own. For more information on templating see [this page](/cerebrium/fine-tuning/language-models/custom-templates.mdx).
-For your convenience, an example dataset has been provided for testing [here](../data/training-dataset-example.json). The dataset is
+By default, we provide two templates for question-and-answering which we have adapted from [Alpaca-Lora format](https://github.com/TianyiPeng/alpaca-lora/tree/main/templates) as our prompt template format. You can use these templates or create your own. For more information on templating see [this page](/cerebrium/fine-tuning/language-models/custom-templates).
+For your convenience, an example dataset has been provided for testing [here](#example-dataset). The dataset is
 a JSON or JSONL file which contains a "prompt", "completion", and if needed "context" parameters.
 
 Below are some helpful tips to take into consideration when preparing your datasets for fine-tuning:
@@ -43,3 +43,48 @@ Consider the structure of your data. Sequential data should be formatted differe
 
 While the initial curation of data is a difficult and time-consuming process it is very important for you to continuously monitor your model and the predictions/generates
 it gives your users and if those are good or bad. In doing this you can fine-tune your model further and provide better generations and cover more edge cases.
+
+
+## Example Dataset
+
+Below is an example of a short JSON dataset that can be used for fine-tuning:
+
+```json
+[
+  {
+    "prompt": "What is Cerebrium?",
+    "completion": "Cerebrium is an AWS Sagemaker alternative providing all the features you need to quickly build an ML product.",
+    "source": "https://docs.cerebrium.ai/introduction"
+  },
+  {
+    "prompt": "What is the goal of Cerebrium?",
+    "completion": "The goal of Cerebrium is to help companies create value through machine learning as quickly and as painlessly as possible by abstracting away a lot of the complexity and mundane infrastructure setup.",
+    "source": "https://docs.cerebrium.ai/introduction"
+  },
+  {
+    "prompt": "How can I send feedback to Cerebrium?",
+    "completion": "You can send feedback requests to Cerebrium at support@cerebrium.ai.",
+    "source": "https://docs.cerebrium.ai/introduction"
+  },
+  {
+    "prompt": "Where can I start a project and deploy my first model?",
+    "completion": "You can start a project and deploy your first model at https://dashboard.cerebrium.ai.",
+    "source": "https://docs.cerebrium.ai/introduction"
+  },
+  {
+    "prompt": "How do I set up a Cerebrium account?",
+    "completion": "To set up a Cerebrium account, follow these steps: 1. Go to [dashboard.cerebrium.ai](https://dashboard.cerebrium.ai) 2. Signup or Login 3. Navigate to the API Keys page 4. You should see an API key with the source 'Cerebrium'. Click the eye icon to display it. It will be in the format: c_api_key-xxx",
+    "source": "https://docs.cerebrium.ai/quickstarts/xgboost"
+  },
+  {
+    "prompt": "How do I install the Cerebrium framework?",
+    "completion": "To install the Cerebrium framework, run the following command in your notebook or terminal: `pip install cerebrium`",
+    "source": "https://docs.cerebrium.ai/quickstarts/xgboost"
+  },
+  {
+    "prompt": "How do I create and save an XGBoost model?",
+    "completion": "To create and save an XGBoost model, use the following code snippet: ```from sklearn.datasets import load_iris from xgboost import XGBClassifier iris = load_iris() X, y = iris.data, iris.target xgb = XGBClassifier() xgb.fit(X, y) xgb.save_model('iris.json')``` This code creates a simple XGBoost classifier for the Iris dataset and saves the model to a JSON file.",
+    "source": "https://docs.cerebrium.ai/quickstarts/xgboost"
+  }
+]
+```
