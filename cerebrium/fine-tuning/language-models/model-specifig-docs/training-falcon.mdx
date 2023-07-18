@@ -1,0 +1,165 @@
+---
+title: Training Falcon Models
+description: "Guide to fine-tuning Falcon models using Cerebrium"
+---
+
+
+## Introduction
+
+<!-- TODO: An intro to falcon and why someone might want to use it. -->
+
+## Getting Started
+
+### Creating a Project
+
+```bash
+cerebrium init-trainer --trainer-type falcon --trainer-name my-falcon-trainer
+```
+<!-- TODO this init needs to be made -->
+
+- table of the important parameters that are created
+  
+### Adjusting your config file
+
+- which parameters to adjust and when
+ - epochs
+ - learning rate
+ - prompt template
+    - Should we include how to add stop tokens etc? 
+
+
+
+
+### Creating a Dataset
+- link to dataset guide
+
+
+## Train your model
+
+```bash
+cerebrium train --config-file config.yaml
+```
+
+## Download your model weights
+
+```bash
+cerebrium download-model <<YOUR JOB ID>> --output-dir <<YOUR OUTPUT DIR.zip>>
+```
+
+## Evaluate your model
+
+- Output is an adapter file
+
+- How to use the adapter file
+- example main.py
+
+## Deploy your model
+
+- How to deploy your model on cerebriums
+
+
+
+
+# Falcon 7B vs Falcon 40B
+
+<!-- TODO this needs to become a comparison table -->
+
+## Falcon 40B config:
+```yaml
+training_type: transformer
+
+name: your-falcon-40b-name
+api_key: YOUR API KEY HERE
+hf_model_path: tiiuae/falcon-40b
+model_type: AutoModelForCausalLM
+dataset_path: Your/Dataset/path/dataset.json
+custom_tokenizer: ''
+seed: 42
+log_level: INFO
+training_args:
+  logging_steps: 10
+  per_device_train_batch_size: 2 # TODO These have not been optimised yet. Will depend on hardware
+  per_device_eval_batch_size: 2
+  warmup_steps: 0
+  gradient_accumulation_steps: 4
+  num_train_epochs: 3 # Just for testing. Increase to 30 or 50 for better results
+  learning_rate: 2.0E-4
+  group_by_length: false
+  fp16: true
+  max_grad_norm: 0.3
+  lr_scheduler_type: constant
+peft_lora_args:
+  r: 32
+  lora_alpha: 16
+  lora_dropout: 0.05
+  target_modules: ["query_key_value"]
+  bias: none
+  task_type: CAUSAL_LM
+base_model_args:
+  # load_in_8bit: true
+  load_in_4bit: true
+  device_map: auto
+  trust_remote_code: true
+```
+
+## Falcon 7B config:
+```yaml
+%YAML 1.2
+---
+training_type: "transformer" # Type of training to run. Either "diffuser" or "transformer".
+
+name: your-falcon-7b-name # Name of the experiment.
+api_key: Your API KEY HERE # Your Cerebrium API key.
+
+# Model params:
+hf_model_path: "tiiuae/falcon-7b"
+model_type: "AutoModelForCausalLM"
+dataset_path: /Users/michaelkatsoulis/Documents/Cerebrium/FineTuningData/cerebrium-qa-data.json # path to your local JSON dataset.
+custom_tokenizer: "" # custom tokenizer from AutoTokenizer if required.
+seed: 42 # random seed for reproducibility.
+log_level: "INFO" # log_level level for logging.
+
+# Training params:
+training_args:
+  logging_steps: 10
+  per_device_train_batch_size: 2
+  per_device_eval_batch_size: 2
+  warmup_steps: 0
+  gradient_accumulation_steps: 4
+  num_train_epochs: 3
+  learning_rate: 2.0e-4
+  group_by_length: False
+  fp16: True
+  max_grad_norm: 0.3
+  # max_steps: 1000
+  lr_scheduler_type: "constant"
+
+base_model_args: # args for loading in the base model.
+  load_in_8bit: True
+  device_map: "auto"
+  trust_remote_code: True
+
+
+peft_lora_args: # peft lora args.
+  r: 32
+  lora_alpha: 16
+  lora_dropout: 0.05
+  target_modules: [query_key_value]
+  bias: "none"
+  task_type: "CAUSAL_LM"
+
+dataset_args:
+  # prompt_template: "short"
+  # if you would like a custom prompt template it's possible to specify it here as below:
+  prompt_template:
+    description: "A shorter template to experiment with."
+    prompt_input: "### Instruction:\n{instruction}\n\n### 
+Input:\n{input}\n\n### Response:\n"
+    prompt_no_input: "### Instruction:\n{instruction}\n\n### Response:\n"
+    response_split: "### Response:"
+  instruction_column:  "prompt"
+  label_column:  "completion"
+  context_column:  "context"
+  cutoff_len:  512
+  train_val_ratio:  0.9
+```   
