@@ -10,7 +10,7 @@ description: "Advice on how best to structure your datasets"
 </Note>
 
 The fine-tuning library has been built to leverage Parameter Efficient Fine-tuning and Low-Rank Approximation to reduce the number of trainable parameters by >99.9% while providing results that are comparable to full fine-tuning.  
-Due to the much lower number of trainable parameters, the datasets used do not need to be greater than 1000 examples. Often, much smaller datasets of 200-500 examples are more than sufficient, however, it's always best to use as many diverse training examples as possible to cover a wide variety of use cases.
+Due to the much lower number of trainable parameters, the datasets used do not need to be greater than 1000 examples. Often much smaller datasets of 200-500 examples are more than sufficient to achieve good results. However, no matter the size of your dataset, it is always best to use a diverse set training examples such that your dataset has good variation and covers a wide variety of potential inputs.
 
 By default, we provide two templates for question-and-answering which we have adapted from [Alpaca-Lora format](https://github.com/TianyiPeng/alpaca-lora/tree/main/templates) as our prompt template format. You can use these templates or create your own. For more information on templating see [this page](/cerebrium/fine-tuning/language-models/custom-templates).
 For your convenience, an example dataset has been provided for testing [here](#example-dataset). The dataset is
