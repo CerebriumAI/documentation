@@ -1,0 +1,19 @@
+---
+title: Init a Training Project
+description: Using the CLI to quickly initialise a Cerebrium Finetuning project.
+---
+
+Setting up your fine-tuning config files is now easier than ever.  
+No more manually creating config files or having to find them in the documentation.
+
+All you need is two things, the type of finetuning (transformer or diffuser) and a path for your config file.
+
+You can quickly set up a Cerebrium Finetuning project by running the following command:
+
+```bash
+cerebrium init-trainer-project <<TRAINING_TYPE>> <<CONFIG_PATH>>
+```
+
+This will set up a YAMl config file with a sensible set of default parameters to help you get started quickly.
+
+Whether you are deploying a diffuser or transformer type of model, the default parameters are tailored to the type of model you are deploying so you can get good results immediately. All you need to do is fill in the model name and dataset parameters and you're good to go!
