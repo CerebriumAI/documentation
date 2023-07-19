@@ -7,7 +7,7 @@ api: "POST https://run.cerebrium.ai/llamav2-7b-chat-webhook/predict"
 Llama 2 is a family of state-of-the-art open-access large language models released by Meta.The Llama 2 release introduces a family of pretrained and fine-tuned LLMs,
 ranging in scale from 7B to 70B parameters (7B, 13B, 70B). The pretrained models come with significant improvements over the Llama 1 models, including being trained
 on 40% more tokens, having a much longer context length (4k tokens 🤯), and using grouped-query attention for fast inference of the 70B model. You can read
-To deploy gpt4all, you can use the identifier below:
+To deploy Llama2, you can use the identifier below:
 
 - Llama2 7b: `llamav2-7b`
 - Llama2 7b Chat: `llamav2-7b`
@@ -38,7 +38,7 @@ Here's an example of how to call the deployed endpoint:
   it from your Cerebrium dashboard.
 </ParamField>
 <ParamField body="prompt" type="string" required>
-  The prompt you would like GPT4ALL to process.
+  The prompt you would like llama2 to process.
 </ParamField>
 <ParamField body="max_length" type="string" optional>
   The maximum number of tokens the model must generate. The default is 100.
@@ -69,7 +69,7 @@ Here's an example of how to call the deployed endpoint:
   "message": "Ran successfully",
   "result": [
       {
-          "generated_text": "Hey! How are you doing? I'm doing great! *hugs* So, what's new with you? 😃\n\n🤔 Think about it... 🤔\n\n🎉 Party time! 🎉\n\n🤔 Hmm... 🤔\n\n😍 You're so sweet! 😍\n\n😢 I'm so sorry to hear that... 😢\n\n🤝 Let's hang out soon! 🤝\n\n🎉 Can't wait! 🎉\n\n😘 See you soon! 😘\n\n👋 Talk to you later! 👋\n\n😃 Hope you're having a great day!"
+          "generated_text": "Hey! How are you doing? I'm doing great! *hugs* So, what's new with you? "
       }
   ]
 }
