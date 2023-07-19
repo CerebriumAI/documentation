@@ -31,7 +31,7 @@ def predict(item, run_id, logger):
 ```
 
 Essentially what we are doing above is creating an event loop which is responsible for executing coroutines and scheduling callbacks.
-We then run two seperate async functions on the same loop since we would like both these tasks to finish. If this is not the case, you can create multiple different
+We then run two separate async functions on the same loop since we would like both these tasks to finish. If this is not the case, you can create multiple different
 loops. We then use the 'run_until_complete' function to wait until both functions have returned. Lastly we return the results from the two predict functions.
 
 The above code converts asynchronous code to run synchronously.

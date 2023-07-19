@@ -101,7 +101,7 @@
             {
               "group": "Model Specific Docs",
               "pages": [
-                "cerebrium/fine-tuning/language-models/model-specifig-docs/training-falcon"
+                "cerebrium/fine-tuning/language-models/model-specific-docs/training-falcon"
               ]
             }
           ]
