@@ -3,10 +3,10 @@ title: Init Cortex Project
 description: Using the CLI to quickly initialise a Cortex project.
 ---
 
-
 You can quickly set up a Cortex project by running the following command:
+
 ```bash
-cerebrium init-cortex-project <<your_initialisation_directory>> 
+cerebrium init-cortex-project <<your_initialisation_directory>>
 ```
 
 This will create a Cortex project in the specified directory with the following structure:
@@ -27,10 +27,9 @@ Alternatively, you can use the `--requirements-list`, `--pkg-list` and `--conda-
 
 For example, you can add a few packages to your requirements.txt as follows:
 
-```bash 
+```bash
 --requirements-list "['transformers', 'datasets', 'sentencepiece==0.1.97']"
 ```
-
 
 The `config.yaml` file contains the parameters for your deployment.
 It is initialised with the following default values:
@@ -39,14 +38,11 @@ It is initialised with the following default values:
 %YAML 1.2
 ---
 hardware: GPU
-include: '[./*, main.py, requirements.txt, pkglist.txt, conda_pkglist.txt]'
-exclude: '[./.*, ./__*]'
+include: "[./*, main.py, requirements.txt, pkglist.txt, conda_pkglist.txt]"
+exclude: "[./.*, ./__*]"
 log_level: INFO
 disable_animation: false
 ```
 
 However, you can change each of these values by using their respective flags as you would with a normal cortex deployment. For example, to change the hardware to CPU, you can run:
-See the documentation [here](/cerebrium/cortex/advanced-functionality/config-files) for more info on config files.  
-
-
-
+See the documentation [here](/cerebrium/cortex/advanced-functionality/config-files) for more info on config files.
