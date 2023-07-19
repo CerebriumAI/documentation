@@ -74,7 +74,10 @@
           "pages": [
             "cerebrium/cortex/advanced-functionality/persistent-storage",
             "cerebrium/cortex/advanced-functionality/using-secrets",
-            "cerebrium/cortex/advanced-functionality/async-functions"
+            "cerebrium/cortex/advanced-functionality/async-functions",
+            "cerebrium/cortex/advanced-functionality/config-files",
+            "cerebrium/cortex/advanced-functionality/init-cortex-project"
+
           ]
         },
         {
