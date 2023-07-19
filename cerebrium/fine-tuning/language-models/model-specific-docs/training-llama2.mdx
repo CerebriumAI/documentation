@@ -6,18 +6,19 @@ description: "Guide to fine-tuning Llama2 models using Cerebrium"
 Finetuning Llama2 on Cerebrium is simple and easy.  
 Once you have access to the Llama2 model weights, you can quickly finetune it on Cerebrium with just one CLI command!
 
-
 ## Config File
+
 The config file for Llama2 is similar to the config file for Llama.
 The only difference is that you need to specify your Huggingface Auth token that has access to the weights. This lets Cerebrium download the weights from Huggingface and run your fine-tuning job.
 
 You can find an example config file [here](#example-config-file).
 
 ## Inferencing with Llama2
+
 Inferencing with Llama2 is as simple as inferencing with any other model on Cerebrium.  
 Once you have your adapter files downloaded, place them in your Cortex deployment directory and add the following to your main.py file:
 
-For the model setup: 
+For the model setup:
 
 ```python
 
@@ -40,14 +41,13 @@ model = PeftModel.from_pretrained(model, peft_model_id)  # Add the adapter to th
 tokenizer = AutoTokenizer.from_pretrained(base_model_name, use_auth_token=auth_token)
 ```
 
-
 You can then add the following code to your `predict` function to run inference on your model:
 
 ```python
 def predict(item, run_id, logger):
     item = Item(**item)
     # Replace this with your template used in training
-    template = "### Instruction:\n{instruction}\n\n### Response:\n" 
+    template = "### Instruction:\n{instruction}\n\n### Response:\n"
 
     prompt = item.prompt
     question = template.format(instruction=prompt)
@@ -73,7 +73,6 @@ def predict(item, run_id, logger):
 
 And you should have a working Llama2 model on Cerebrium!
 
-
 ## Example Config File
 
 ```yaml
@@ -86,7 +85,7 @@ api_key: Your Cerebrium API key.
 auth_token: YOUR HUGGINGFACE API TOKEN THAT HAS ACCESS TO THE WEIGHTS
 
 # Model params:
-hf_model_path: 'meta-llama/Llama-2-7b-hf'
+hf_model_path: "meta-llama/Llama-2-7b-hf"
 model_type: "AutoModelForCausalLM"
 dataset_path: /path/to/your/dataset.json # path to your local JSON dataset.
 custom_tokenizer: "" # custom tokenizer from AutoTokenizer if required.
@@ -96,10 +95,10 @@ log_level: "INFO" # log_level level for logging.
 # Training params:
 training_args:
   logging_steps: 10
-  per_device_train_batch_size: 15 
+  per_device_train_batch_size: 15
   per_device_eval_batch_size: 15
   warmup_steps: 0
-  gradient_accumulation_steps: 4 
+  gradient_accumulation_steps: 4
   num_train_epochs: 30
   learning_rate: 0.0001
   group_by_length: False
@@ -123,6 +122,4 @@ dataset_args:
   context_column: "context"
   cutoff_len: 512
   train_val_ratio: 0.9
-
 ```
-
