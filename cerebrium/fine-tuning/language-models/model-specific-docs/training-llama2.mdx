@@ -1,0 +1,128 @@
+---
+title: Training Llama2 Models
+description: "Guide to fine-tuning Llama2 models using Cerebrium"
+---
+
+Finetuning Llama2 on Cerebrium is simple and easy.  
+Once you have access to the Llama2 model weights, you can quickly finetune it on Cerebrium with just one CLI command!
+
+
+## Config File
+The config file for Llama2 is similar to the config file for Llama.
+The only difference is that you need to specify your Huggingface Auth token that has access to the weights. This lets Cerebrium download the weights from Huggingface and run your fine-tuning job.
+
+You can find an example config file [here](#example-config-file).
+
+## Inferencing with Llama2
+Inferencing with Llama2 is as simple as inferencing with any other model on Cerebrium.  
+Once you have your adapter files downloaded, place them in your Cortex deployment directory and add the following to your main.py file:
+
+For the model setup: 
+
+```python
+
+from transformers import logging, AutoTokenizer, GenerationConfig, AutoModelForCausalLM
+from peft import PeftModel, PeftConfig  # Add the peft libraries we need for the adapter
+# Loading in base model and tokenizer
+base_model_name = "meta-llama/Llama-2-7b-hf"  # or meta-llama/Llama-2-7b-chat-hf
+auth_token = "YOUR HUGGINGFACE AUTH TOKEN"
+
+model = AutoModelForCausalLM.from_pretrained(
+    base_model_name,
+    use_auth_token=auth_token,
+    load_in_8bit=True, # to fit the 7B model on an A10 GPU, we need to load it in 8bit
+    device_map="auto",
+)
+
+peft_model_id = "./training-output" # where your adapter_model.bin and adapter_config.json are stored
+config = PeftConfig.from_pretrained(peft_model_id)
+model = PeftModel.from_pretrained(model, peft_model_id)  # Add the adapter to the model
+tokenizer = AutoTokenizer.from_pretrained(base_model_name, use_auth_token=auth_token)
+```
+
+
+You can then add the following code to your `predict` function to run inference on your model:
+
+```python
+def predict(item, run_id, logger):
+    item = Item(**item)
+    # Replace this with your template used in training
+    template = "### Instruction:\n{instruction}\n\n### Response:\n" 
+
+    prompt = item.prompt
+    question = template.format(instruction=prompt)
+    inputs = tokenizer(question, return_tensors="pt")
+
+    generation_config = GenerationConfig(
+        top_p=item.top_p,
+        top_k=item.top_k,
+        num_beams=item.num_beams,
+        max_new_tokens=item.max_new_tokens,
+    )
+
+    outputs = model.generate(
+        input_ids=inputs["input_ids"].to("cuda"),
+        generation_config=generation_config,
+    )
+    result = tokenizer.batch_decode(
+        outputs.detach().cpu().numpy(), skip_special_tokens=True
+    )[0]
+
+    return {"Prediction": result}
+```
+
+And you should have a working Llama2 model on Cerebrium!
+
+
+## Example Config File
+
+```yaml
+%YAML 1.2
+---
+training_type: "transformer" # Type of training to run. Either "diffuser" or "transformer".
+
+name: llama2 # Name of the experiment.
+api_key: Your Cerebrium API key.
+auth_token: YOUR HUGGINGFACE API TOKEN THAT HAS ACCESS TO THE WEIGHTS
+
+# Model params:
+hf_model_path: 'meta-llama/Llama-2-7b-hf'
+model_type: "AutoModelForCausalLM"
+dataset_path: /path/to/your/dataset.json # path to your local JSON dataset.
+custom_tokenizer: "" # custom tokenizer from AutoTokenizer if required.
+seed: 42 # random seed for reproducibility.
+log_level: "INFO" # log_level level for logging.
+
+# Training params:
+training_args:
+  logging_steps: 10
+  per_device_train_batch_size: 15 
+  per_device_eval_batch_size: 15
+  warmup_steps: 0
+  gradient_accumulation_steps: 4 
+  num_train_epochs: 30
+  learning_rate: 0.0001
+  group_by_length: False
+
+base_model_args: # args for loading in the base model.
+  load_in_8bit: True
+  device_map: "auto"
+
+peft_lora_args: # peft lora args.
+  r: 8
+  lora_alpha: 32
+  lora_dropout: 0.05
+  target_modules: ["q_proj", "v_proj"]
+  bias: "none"
+  task_type: "CAUSAL_LM"
+
+dataset_args:
+  prompt_template: "short" # Prompt template to use. Either "short" or "long". Otherwise look at our docs on templating
+  instruction_column: "prompt"
+  label_column: "completion"
+  context_column: "context"
+  cutoff_len: 512
+  train_val_ratio: 0.9
+
+```
+
