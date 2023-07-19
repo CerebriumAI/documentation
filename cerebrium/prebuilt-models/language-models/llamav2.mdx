@@ -6,11 +6,10 @@ api: "POST https://run.cerebrium.ai/llamav2-7b-chat-webhook/predict"
 
 Llama 2 is a family of state-of-the-art open-access large language models released by Meta.The Llama 2 release introduces a family of pretrained and fine-tuned LLMs,
 ranging in scale from 7B to 70B parameters (7B, 13B, 70B). The pretrained models come with significant improvements over the Llama 1 models, including being trained
-on 40% more tokens, having a much longer context length (4k tokens 🤯), and using grouped-query attention for fast inference of the 70B model. You can read
-To deploy Llama2, you can use the identifier below:
+on 40% more tokens, having a much longer context length (4k tokens 🤯), and using grouped-query attention for fast inference of the 70B model. To deploy Llama2, you can use the identifier below:
 
 - Llama2 7b: `llamav2-7b`
-- Llama2 7b Chat: `llamav2-7b`
+- Llama2 7b Chat: `llamav2-7b-chat`
 
 Here's an example of how to call the deployed endpoint:
 
@@ -65,7 +64,7 @@ Here's an example of how to call the deployed endpoint:
   1, then the number of sequences generated will be num_return_sequences, each
   one independently computed. The default is 1.
 </ParamField>
-<ParamField body="repetition_penalty" type="string" required>
+<ParamField body="repetition_penalty" type="string" optional>
   parameter used in text generation to penalize repeated words or tokens in the
   generated text. This is a number greater than or equal to 1.
 </ParamField>
