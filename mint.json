@@ -194,7 +194,8 @@
             "cerebrium/prebuilt-models/language-models/pygmalion",
             "cerebrium/prebuilt-models/language-models/tortoise",
             "cerebrium/prebuilt-models/language-models/gpt4all",
-            "cerebrium/prebuilt-models/language-models/llamav2"
+            "cerebrium/prebuilt-models/language-models/llamav2",
+            "cerebrium/prebuilt-models/language-models/falcon"
           ]
         },
         {

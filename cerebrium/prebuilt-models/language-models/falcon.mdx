@@ -1,15 +1,13 @@
 ---
-title: "Lama 2"
-description: "state-of-the-art open-access large language models released by Meta"
+title: "Falcon"
+description: "A causal decoder-only model built by TII"
 api: "POST https://run.cerebrium.ai/llamav2-7b-chat-webhook/predict"
 ---
 
-Llama 2 is a family of state-of-the-art open-access large language models released by Meta.The Llama 2 release introduces a family of pretrained and fine-tuned LLMs,
-ranging in scale from 7B to 70B parameters (7B, 13B, 70B). The pretrained models come with significant improvements over the Llama 1 models, including being trained
-on 40% more tokens, having a much longer context length (4k tokens 🤯), and using grouped-query attention for fast inference of the 70B model. To deploy Llama2, you can use the identifier below:
+Falcon is a 7B/13B/40B parameters causal decoder-only model built by TII and trained on 1,500B tokens of RefinedWeb enhanced with curated corpora. It is made available
+under the Apache 2.0 license. To deploy Falcon, you can use the identifier below:
 
-- Llama2 7b: `llamav2-7b`
-- Llama2 7b Chat: `llamav2-7b-chat`
+- Falcon 7b: `falcon-7b`
 
 Here's an example of how to call the deployed endpoint:
 
@@ -17,11 +15,11 @@ Here's an example of how to call the deployed endpoint:
 
 <RequestExample>
 ```bash Request
-  curl --location --request POST 'https://run.cerebrium.ai/llamav2-7b-chat-webhook/predict' \
+  curl --location --request POST 'https://run.cerebrium.ai/falcon-7b-webhook/predict' \
       --header 'Authorization: <API_KEY>' \
       --header 'Content-Type: application/json' \
       --data-raw '{
-        "prompt": "Hey! How are you doing?",
+        "prompt": "Hey! How are you?",
         "max_length": 100,
         "temperature": 0.9
         "top_p": 1.0
@@ -37,7 +35,7 @@ Here's an example of how to call the deployed endpoint:
   it from your Cerebrium dashboard.
 </ParamField>
 <ParamField body="prompt" type="string" required>
-  The prompt you would like llama2 to process.
+  The prompt you would like Falcon to process.
 </ParamField>
 <ParamField body="max_length" type="string" optional>
   The maximum number of tokens the model must generate. The default is 100.
@@ -73,12 +71,12 @@ Here's an example of how to call the deployed endpoint:
 
 ```json Response
 {
-  "run_id": "dc8f23ab-7237-42dc-b6cf-430abdbba8f7",
-  "run_time_ms": 10077.8913497924805,
+  "run_id": "c3b02252-2771-4898-b46c-3eca73a4c346",
+  "run_time_ms": 12521.568059921265,
   "message": "Ran successfully",
   "result": [
     {
-      "generated_text": "Hey! How are you doing? I'm doing great! *hugs* So, what's new with you? "
+      "generated_text": "Hey! How are you?\nI'm fine.\nI hope you're doing well."
     }
   ]
 }
@@ -100,5 +98,5 @@ Here's an example of how to call the deployed endpoint:
   Whether of not the response was successful
 </ResponseField>
 <ResponseField name="result" type="string" required>
-  The result generated from Llama2
+  The result generated from Falcon
 </ResponseField>
