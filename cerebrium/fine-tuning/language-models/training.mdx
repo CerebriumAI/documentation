@@ -5,6 +5,21 @@ description: "Commands to use with fine-tuning"
 
 Below are the set of commands for you to get started with fine-tuning. Please note that all fine-tuning functionality is currently done through the terminal - frontend pending.
 
+### Creating your project
+
+You can quickly set up a Cerebrium fine-tuning project by running the following command:
+
+```bash
+cerebrium init-trainer <<TRAINING_TYPE>> <<A_CONFIG_PATH>>
+```
+
+The above variables are:
+- the type of fine-tuning (transformer or diffuser)
+- a path of where to create your config file.
+
+This will set up a YAMl config file with a sensible set of default parameters to help you get started quickly. We recommend you look at the default config files
+ based on the model you are training [here](/cerebrium/fine-tuning/language-models/model-specific-docs/training-falcon)
+
 ### Starting a job with the CLI
 
 Starting a job on Cerebrium requires four things:

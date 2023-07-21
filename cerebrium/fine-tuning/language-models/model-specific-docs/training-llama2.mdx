@@ -3,8 +3,48 @@ title: Training Llama2 Models
 description: "Guide to fine-tuning Llama2 models using Cerebrium"
 ---
 
-Fine-tuning Llama2 on Cerebrium is simple and easy.  
-Once you have access to the Llama2 model weights, you can quickly finetune it on Cerebrium with just one CLI command!
+## Introduction
+
+Meta developed and publicly released the Llama 2 family of large language models (LLMs), a collection of pretrained and fine-tuned generative text models
+ranging in scale from 7 billion to 70 billion parameters. The fine-tuned LLMs, called Llama-2-Chat, are optimized for dialogue use cases.
+Additionally, the Meta team have released the model under an Apache 2.0 license, making it available for commercial use for organizations with less than 700m MAU.
+
+The `Llama 2` family of models are available in 2 sizes:
+
+- `Llama 2 7B` - 7 billion parameters
+- `Llama 2 13B` - 13 billion parameters
+- `Llama 2 70B` - 70 billion parameters
+
+of which, there are two variants on Hugging Face:
+
+- The raw, pre-trained models `llama-7B-hf/13B/70B`
+- The chat dialogue trained models llama-7B-chat-hf/13B/70B`.
+
+We provide full support for the fine- tuning of the [Llama 2 family](https://huggingface.co/meta-llama) model.  
+The fine-tuning of the Llama 2 70B model is currently in testing and will be released to the public soon. Contact us for early access
+
+## Getting Started
+
+### Creating a Project
+
+To create a project, you will need to initialise a training configuration file (below) and curate a [dataset](/cerebrium/fine-tuning/language-models/dataset).  
+
+### Adjusting your config file
+
+Some important parameters to take note of in your config file are the following:
+
+| Parameter         | Description                                                                                | Required Value        |
+| ----------------- | ------------------------------------------------------------------------------------------ | --------------------- |
+| auth_token        | We need your Hugging Face authentication token in order to download the model weights      | `true`                |
+| load_in_8bit      | Whether to load the model in 8bit. Set to `True` for Falcon-7B.                            | `true`                |
+| load_in_4bit      | Whether to load the model in 4bit. Set to `True` for Llama-13B.                            | `true`                |
+
+Additionally, you can adjust the following parameters based on your needs to optimise your training:
+
+- num_train_epochs
+- learning_rate
+- lr_scheduler_type
+- prompt_template (see [here](/cerebrium/fine-tuning/language-models/custom-templates) for more information on prompt templates)
 
 ## Config File
 

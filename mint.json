@@ -96,10 +96,9 @@
           "group": "Language Models",
           "pages": [
             "cerebrium/fine-tuning/language-models/introduction",
+            "cerebrium/fine-tuning/language-models/training",
             "cerebrium/fine-tuning/language-models/dataset",
             "cerebrium/fine-tuning/language-models/custom-templates",
-            "cerebrium/fine-tuning/language-models/training",
-            "cerebrium/fine-tuning/language-models/config",
             {
               "group": "Model Specific Docs",
               "pages": [
@@ -113,13 +112,11 @@
           "group": "Diffusion Models",
           "pages": [
             "cerebrium/fine-tuning/diffusion-models/introduction",
-            "cerebrium/fine-tuning/diffusion-models/dataset",
             "cerebrium/fine-tuning/diffusion-models/training",
+            "cerebrium/fine-tuning/diffusion-models/dataset",
             "cerebrium/fine-tuning/diffusion-models/config"
           ]
-        },
-        "cerebrium/fine-tuning/init-training-project"
-      ]
+        }]
     },
     {
       "group": "Conduit",
