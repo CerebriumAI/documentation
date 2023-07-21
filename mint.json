@@ -117,7 +117,8 @@
             "cerebrium/fine-tuning/diffusion-models/dataset",
             "cerebrium/fine-tuning/diffusion-models/config"
           ]
-        }]
+        }
+      ]
     },
     {
       "group": "Conduit",

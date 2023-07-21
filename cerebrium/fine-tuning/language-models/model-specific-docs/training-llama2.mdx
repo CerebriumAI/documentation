@@ -27,17 +27,17 @@ The fine-tuning of the Llama 2 70B model is currently in testing and will be rel
 
 ### Creating a Project
 
-To create a project, you will need to initialise a training configuration file (below) and curate a [dataset](/cerebrium/fine-tuning/language-models/dataset).  
+To create a project, you will need to initialise a training configuration file (below) and curate a [dataset](/cerebrium/fine-tuning/language-models/dataset).
 
 ### Adjusting your config file
 
 Some important parameters to take note of in your config file are the following:
 
-| Parameter         | Description                                                                                | Required Value        |
-| ----------------- | ------------------------------------------------------------------------------------------ | --------------------- |
-| auth_token        | We need your Hugging Face authentication token in order to download the model weights      | `true`                |
-| load_in_8bit      | Whether to load the model in 8bit. Set to `True` for Falcon-7B.                            | `true`                |
-| load_in_4bit      | Whether to load the model in 4bit. Set to `True` for Llama-13B.                            | `true`                |
+| Parameter    | Description                                                                           | Required Value |
+| ------------ | ------------------------------------------------------------------------------------- | -------------- |
+| auth_token   | We need your Hugging Face authentication token in order to download the model weights | `true`         |
+| load_in_8bit | Whether to load the model in 8bit. Set to `True` for Falcon-7B.                       | `true`         |
+| load_in_4bit | Whether to load the model in 4bit. Set to `True` for Llama-13B.                       | `true`         |
 
 Additionally, you can adjust the following parameters based on your needs to optimise your training:
 
