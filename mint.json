@@ -98,6 +98,7 @@
             "cerebrium/fine-tuning/language-models/introduction",
             "cerebrium/fine-tuning/language-models/training",
             "cerebrium/fine-tuning/language-models/dataset",
+            "cerebrium/fine-tuning/language-models/config",
             "cerebrium/fine-tuning/language-models/custom-templates",
             {
               "group": "Model Specific Docs",
