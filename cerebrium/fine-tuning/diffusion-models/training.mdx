@@ -12,6 +12,23 @@ description: "Guide to fine-tuning a diffusion model on Cerebrium"
 This guide will walk you through the process of fine-tuning a diffusion model on Cerebrium.  
 While this guide is a high-level overview of the process, you can find more detailed information on the available parameters in the [config](/cerebrium/fine-tuning/diffusion-models/config) and [dataset](/cerebrium/fine-tuning/diffusion-models/dataset) sections.
 
+### Creating your project
+
+You can quickly set up a Cerebrium fine-tuning project by running the following command:
+
+```bash
+cerebrium init-trainer <<TRAINING_TYPE>> <<A_CONFIG_PATH>>
+```
+
+The above variables are:
+
+- the type of fine-tuning (transformer or diffuser)
+- a path of where to create your config file.
+
+This will set up a YAMl config file with a sensible set of default parameters to help you get started quickly. Whether you are deploying a diffuser or transformer
+type of model, the default parameters are tailored to the type of model you are deploying so you can get good results immediately. All you need to do is fill in the
+model name and dataset parameters and you're good to go!
+
 ### Starting a job with the CLI
 
 Starting a job on Cerebrium requires four things:
