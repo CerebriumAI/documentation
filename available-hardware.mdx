@@ -1,0 +1,121 @@
+---
+title: "Available Hardware"
+description: "A list of hardware that is available on Cerebrium's platform."
+---
+
+The Cerebrium platform allows you to quickly and easily deploy your code on a variety of different hardware. 
+We handle all the hard work of setting up the hardware and making sure that your code runs on it so that you don't have to. Everything from the hardware drivers to the scaling of your deployments is managed by us so that you can focus on what matters most: your code.
+
+This page lists the hardware that is currently available on the platform.
+
+## Hardware
+### Graphics Cards
+
+We have the following graphics cards available on the platform:
+
+| Name | Memory |
+| ---- | ------ |
+| [NVIDIA H100](https://www.nvidia.com/en-us/data-center/h100/) | 80GB |
+| [NVIDIA A100 80GB](https://www.nvidia.com/en-us/data-center/a100/) | 80GB |
+| [NVIDIA A100 40GB](https://www.nvidia.com/en-us/data-center/a100/) | 40GB |
+| [NVIDIA RTX A6000](https://www.nvidia.com/en-us/design-visualization/rtx-a6000/) | 48GB |
+| [NVIDIA RTX A5000](https://www.nvidia.com/en-us/design-visualization/rtx-a5000/) | 24GB |
+| [NVIDIA RTX A4000](https://www.nvidia.com/en-us/design-visualization/rtx-a4000/) | 16GB | 
+| [NVIDIA Quadro RTX 5000](https://www.nvidia.com/en-us/design-visualization/quadro/quadro-rtx-5000/) | 16GB |
+| [NVIDIA Quadro RTX 4000](https://www.nvidia.com/en-us/design-visualization/quadro/quadro-rtx-4000/) | 8GB |
+| [NVIDIA A10 24GB](https://www.nvidia.com/en-us/data-center/a10-tensor-core-gpu/) | 24GB |
+| [NVIDIA T4](https://www.nvidia.com/en-us/data-center/tesla-t4/) | 16GB |
+
+<!-- TODO This table needs more  -->
+- [ ] what hardware is there
+  - [ ] When to use what    
+  - [ ] specs of each
+  - [ ] how to specify
+
+### CPUs
+We select the CPU based on your choice of hardware, choosing the best available options so you can get the performance you need. 
+
+You can choose the number of CPU cores you require for your deployment. If you don't need the cores, choose how many you require and pay for only what you need!
+
+<!-- TODO Flesh out how a user choses the number of required cpu cores -->
+
+### CPU Memory
+We let you select the amount of memory you require for your deployment. 
+This is the amount of memory that is available to your code when it is running and you should chose an adequate amount for your model to be loaded into VRAM if you are deploying onto a GPU. 
+Once again, you only pay for what you need!
+
+<!-- TODO Flesh out how a user choses the amount of memory they require -->
+
+
+### Storage
+We provide you with a persistent storage volume that is attached to your deployment.
+You can use this storage volume to store any data that you need to persist between deployments. Accessing your persistent storage is covered in depth for [conduit here](/cerebrium/conduit/advanced-functionality/persistent-memory) and [cortex here](/cerebrium/cortex/advanced-functionality/persistent-storage).
+
+The storage volume is backed by high-performance SSDs so that you can get the best performance possible
+Pricing for storage is based on the amount of storage you use and is charged per GB per month.
+
+
+
+# Calculating your cost
+
+The cost of your deployment is based on the hardware you select and the amount of time you use it for.
+GPU, CPU and Memory usage are all charged per second while persistent storage is charged per GB per month.
+
+Here's an example of how you can calculate the cost of your deployment:
+
+- Suppose you want to deploy a model that takes 2 seconds to run and you want to run it 1000 times.  
+- For this model, you choose a GPU with the required amount of memory and 2 CPU cores.
+- Additionally, you require 20GB of RAM and use 10GB of persistent storage.
+
+Suppose your app is deployed for 1 month. You're still starting out and have some traction but you're getting 100 000 requests per month.
+
+```python
+# Your variables
+average_inference_time = 3 # seconds
+number_of_inferences = 100000 # number of inferences per month
+
+
+
+# Cost of the hardware
+GPU_cost = 0.000356 # $ per second
+CPU_cost = 0.000001 # $ per second
+memory_cost = 0.0000065972 # $ per second
+persistant_storage_cost = 0.23 # $ per GB per month
+
+gb_of_persistent_storage = 10
+gb_of_RAM = 20
+num_of_cpu_cores = 2
+
+# cost calculation
+total_inference_time = average_inference_time * number_of_inferences
+compute_cost = (GPU_cost + CPU_cost*num_of_cpu_cores + memory_cost*gb_of_RAM ) * total_inference_time
+storage_cost = gb_of_persistent_storage * persistant_storage_cost
+
+total_cost = compute_cost + storage_cost 
+
+
+print(f"Compute cost: ${compute_cost :.4f}/month",
+      f"\nStorage cost: ${storage_cost :.4f}/month",
+      f"\nTotal cost: ${total_cost :.4f}/month")
+```
+
+From this, you can see that the cost of your deployment is:
+```bash
+Compute cost: $146.9832/month 
+Storage cost: $2.3000/month 
+Total cost: $149.2832/month
+```
+
+Now you would expect the cost to grow linearly with the number of requests you get however, we want to help you grow your business and so we are happy to discount your computing cost as you grow.
+To see the discounts you can get, check out our pricing page.
+
+As you grow, don't worry about the scaling of your deployment. 
+You can focus on your code and we'll handle the rest.
+
+
+# Plan Limits
+
+- [ ] number of concurrent instances/replicas
+- [ ] Where that can be set
+- [ ] How to request more/ How to tell how many you need. Simple calculation
+- [ ] 
