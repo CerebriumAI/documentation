@@ -1,0 +1,60 @@
+---
+title: Calculating your cost
+description: How to calculate the cost of your deployment on Cerebrium
+---
+
+The cost of your deployment is based on the hardware you select and the amount of time you use it for.
+GPU, CPU and Memory usage are all charged per second while persistent storage is charged per GB per month.
+
+Here's an example of how you can calculate the cost of your deployment:
+
+- Suppose you want to deploy a model that takes 2 seconds to run and you want to run it 1000 times.
+- For this model, you choose a GPU with the required amount of memory and 2 CPU cores.
+- Additionally, you require 20GB of RAM and use 10GB of persistent storage.
+
+Now let's say your app has been deployed for 1 month.  
+Your company is growing, you have some traction and you're getting 100 000 requests per month.
+
+```python
+# Your variables
+average_inference_time = 3 # seconds
+number_of_inferences = 100000 # number of inferences per month
+
+
+
+# Cost of the hardware
+GPU_cost = 0.000356 # $ per second
+CPU_cost = 0.000001 # $ per second
+memory_cost = 0.0000065972 # $ per second
+persistant_storage_cost = 0.23 # $ per GB per month
+
+gb_of_persistent_storage = 10
+gb_of_RAM = 20
+num_of_cpu_cores = 2
+
+# cost calculation
+total_inference_time = average_inference_time * number_of_inferences
+compute_cost = (GPU_cost + CPU_cost*num_of_cpu_cores + memory_cost*gb_of_RAM ) * total_inference_time
+storage_cost = gb_of_persistent_storage * persistant_storage_cost
+
+total_cost = compute_cost + storage_cost
+
+
+print(f"Compute cost: ${compute_cost :.2f}/month",
+      f"\nStorage cost: ${storage_cost :.2f}/month",
+      f"\nTotal cost: ${total_cost :.2f}/month")
+```
+
+From this, you can see that the cost of your deployment is:
+
+```bash
+Compute cost: $146.98/month 
+Storage cost: $2.30/month 
+Total cost: $149.28/month
+```
+
+Now you would expect the cost to grow linearly with the number of requests you get however, we want to help you grow your business and so we are happy to discount your computing cost as you grow.
+To see the discounts you can get for your volume, check out our pricing page or contact us directly.
+
+As you grow, don't worry about scaling your deployment with demand, sourcing new hardware or managing your infrastructure.  
+You can focus on your code and we'll handle the rest.
