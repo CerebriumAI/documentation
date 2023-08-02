@@ -92,37 +92,6 @@
       ]
     },
     {
-      "group": "Fine-tuning",
-      "pages": [
-        {
-          "group": "Language Models",
-          "pages": [
-            "cerebrium/fine-tuning/language-models/introduction",
-            "cerebrium/fine-tuning/language-models/training",
-            "cerebrium/fine-tuning/language-models/dataset",
-            "cerebrium/fine-tuning/language-models/config",
-            "cerebrium/fine-tuning/language-models/custom-templates",
-            {
-              "group": "Model Specific Docs",
-              "pages": [
-                "cerebrium/fine-tuning/language-models/model-specific-docs/training-falcon",
-                "cerebrium/fine-tuning/language-models/model-specific-docs/training-llama2"
-              ]
-            }
-          ]
-        },
-        {
-          "group": "Diffusion Models",
-          "pages": [
-            "cerebrium/fine-tuning/diffusion-models/introduction",
-            "cerebrium/fine-tuning/diffusion-models/training",
-            "cerebrium/fine-tuning/diffusion-models/dataset",
-            "cerebrium/fine-tuning/diffusion-models/config"
-          ]
-        }
-      ]
-    },
-    {
       "group": "Conduit",
       "pages": [
         "cerebrium/conduit/introduction",
@@ -164,6 +133,37 @@
                 "cerebrium/conduit/examples/huggingface/onnx-conversion"
               ]
             }
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Fine-tuning",
+      "pages": [
+        {
+          "group": "Language Models",
+          "pages": [
+            "cerebrium/fine-tuning/language-models/introduction",
+            "cerebrium/fine-tuning/language-models/training",
+            "cerebrium/fine-tuning/language-models/dataset",
+            "cerebrium/fine-tuning/language-models/config",
+            "cerebrium/fine-tuning/language-models/custom-templates",
+            {
+              "group": "Model Specific Docs",
+              "pages": [
+                "cerebrium/fine-tuning/language-models/model-specific-docs/training-falcon",
+                "cerebrium/fine-tuning/language-models/model-specific-docs/training-llama2"
+              ]
+            }
+          ]
+        },
+        {
+          "group": "Diffusion Models",
+          "pages": [
+            "cerebrium/fine-tuning/diffusion-models/introduction",
+            "cerebrium/fine-tuning/diffusion-models/training",
+            "cerebrium/fine-tuning/diffusion-models/dataset",
+            "cerebrium/fine-tuning/diffusion-models/config"
           ]
         }
       ]
