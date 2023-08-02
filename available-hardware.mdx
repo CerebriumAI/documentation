@@ -13,19 +13,20 @@ This page lists the hardware that is currently available on the platform.
 ### Graphics Cards
 
 We have the following graphics cards available on the platform:
+| Name | Memory | Minimum Plan | Max fp32 Model Params | Max fp16 Model Params | Max fp8 Model Params |
+| --------------------------------------------------------------------------------------------------- | :------: |------ | :-------------------: | :-------------------: | :------------------: |
+| [NVIDIA H100](https://www.nvidia.com/en-us/data-center/h100/) | 80GB | Enterprise | 18B | 36B | 72B |
+| [NVIDIA A100](https://www.nvidia.com/en-us/data-center/a100/) | 80GB | Enterprise | 18B | 36B | 72B |
+| [NVIDIA A100](https://www.nvidia.com/en-us/data-center/a100/) | 40GB | Standard | 9B | 18B | 36B |
+| [NVIDIA RTX A6000](https://www.nvidia.com/en-us/design-visualization/rtx-a6000/) | 48GB | Hobby | 10B | 21B | 43B |
+| [NVIDIA RTX A5000](https://www.nvidia.com/en-us/design-visualization/rtx-a5000/) | 24GB | Hobby | 5B | 10B | 21B |
+| [NVIDIA RTX A4000](https://www.nvidia.com/en-us/design-visualization/rtx-a4000/) | 16GB | Hobby | 3B | 7B | 14B |
+| [NVIDIA Quadro RTX 5000](https://www.nvidia.com/en-us/design-visualization/quadro/quadro-rtx-5000/) | 16GB | Hobby | 3B | 7B | 14B |
+| [NVIDIA Quadro RTX 4000](https://www.nvidia.com/en-us/design-visualization/quadro/quadro-rtx-4000/) | 8GB | Hobby | 1B | 3B | 7B |
+| [NVIDIA A10](https://www.nvidia.com/en-us/data-center/a10-tensor-core-gpu/) (_Depricating soon_) | 24GB | Hobby | 5B | 10B | 21B |
+| [NVIDIA T4](https://www.nvidia.com/en-us/data-center/tesla-t4/) (_Depricating soon_) | 16GB | Hobby | 3B | 7B | 14B |
 
-| Name                                                                                                | Memory |
-| --------------------------------------------------------------------------------------------------- | ------ |
-| [NVIDIA H100](https://www.nvidia.com/en-us/data-center/h100/)                                       | 80GB   |
-| [NVIDIA A100 80GB](https://www.nvidia.com/en-us/data-center/a100/)                                  | 80GB   |
-| [NVIDIA A100 40GB](https://www.nvidia.com/en-us/data-center/a100/)                                  | 40GB   |
-| [NVIDIA RTX A6000](https://www.nvidia.com/en-us/design-visualization/rtx-a6000/)                    | 48GB   |
-| [NVIDIA RTX A5000](https://www.nvidia.com/en-us/design-visualization/rtx-a5000/)                    | 24GB   |
-| [NVIDIA RTX A4000](https://www.nvidia.com/en-us/design-visualization/rtx-a4000/)                    | 16GB   |
-| [NVIDIA Quadro RTX 5000](https://www.nvidia.com/en-us/design-visualization/quadro/quadro-rtx-5000/) | 16GB   |
-| [NVIDIA Quadro RTX 4000](https://www.nvidia.com/en-us/design-visualization/quadro/quadro-rtx-4000/) | 8GB    |
-| [NVIDIA A10 24GB](https://www.nvidia.com/en-us/data-center/a10-tensor-core-gpu/)                    | 24GB   |
-| [NVIDIA T4](https://www.nvidia.com/en-us/data-center/tesla-t4/)                                     | 16GB   |
+_NOTE: The maximum model sizes are calculated as a guideline and are assuming that the model is the only thing loaded into VRAM. Longer inputs will result in a smaller maximum model size. Your milage may vary._
 
 <!-- TODO This table needs more  -->
 
@@ -120,4 +121,4 @@ You can focus on your code and we'll handle the rest.
 - [ ] number of concurrent instances/replicas
 - [ ] Where that can be set
 - [ ] How to request more/ How to tell how many you need. Simple calculation
-- [ ]
+- [ ] Link out to pricing page
