@@ -71,7 +71,7 @@ auth_token = "YOUR HUGGINGFACE AUTH TOKEN"
 model = AutoModelForCausalLM.from_pretrained(
     base_model_name,
     use_auth_token=auth_token,
-    dtype='torch.float16', # Load the model in 16bit so it will fit on the A6000 GPU. 
+    dtype='torch.float16', # Load the model in 16bit so it will fit on the A6000 GPU.
     # load_in_8bit=True, # Alternatively, Load the model in 8bit and use much larger batch sizes for significantly faster training
     device_map="auto",
 )
