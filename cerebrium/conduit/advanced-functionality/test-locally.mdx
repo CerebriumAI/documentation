@@ -29,11 +29,11 @@ The `hardware` parameter is an enum that can be one of the following:
 - **hardware.CPU**: This will run your model on a CPU. This is the default option for SKLearn, XGBoost, and SpaCy models.
 - **hardware.GPU**: This will run your model on a T4 GPU. This is the default option for Torch, ONNX, and HuggingFace models.
 - **hardware.A10**: This will run your model on an A10 GPU, which provides 24GB of VRAM. You should use this option if you are using a model that is too large to fit on the 16GB of VRAM that a T4 GPU provides. This will include most large HuggingFace models.
-- **hardware.QUADRO_RTX_4000** : A 8GB GPU that is great for lightweight models with less than 3B parameters in FP16.
-- **hardware.QUADRO_RTX_5000** : A 16GB GPU that is great for small models with less than 7B parameters in FP16. Most small HuggingFace models can run on this.
-- **hardware.RTX_A4000** : A 16GB GPU that is great for small models with less than 7B parameters in FP16. Significantly faster than an RTX 4000. Most small HuggingFace models can run on this.
-- **hardware.RTX_A5000** : A 24GB GPU that is great for medium models with less than 10B parameters in FP16. A great option for almost all HuggingFace models.
-- **hardware.RTX_A6000** : A 48GB GPU offering a great cost to performance ratio. This is great for medium models with less than 21B parameters in FP16. A great option for almost all HuggingFace models.
+- **hardware.TURING_4000** : A 8GB GPU that is great for lightweight models with less than 3B parameters in FP16.
+- **hardware.TURING_5000** : A 16GB GPU that is great for small models with less than 7B parameters in FP16. Most small HuggingFace models can run on this.
+- **hardware.AMPERE_A4000** : A 16GB GPU that is great for small models with less than 7B parameters in FP16. Significantly faster than an RTX 4000. Most small HuggingFace models can run on this.
+- **hardware.AMPERE_A5000** : A 24GB GPU that is great for medium models with less than 10B parameters in FP16. A great option for almost all HuggingFace models.
+- **hardware.AMPERE_A6000** : A 48GB GPU offering a great cost to performance ratio. This is great for medium models with less than 21B parameters in FP16. A great option for almost all HuggingFace models.
 - **hardware.A100** : A 40GB GPU offering some of the highest performance available. This is great for large models with less than 18B parameters in FP16. A great option for almost all HuggingFace models especially if inference speed is your priority.
 
 ```python
