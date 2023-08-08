@@ -1,46 +1,45 @@
 ---
-title: Calculating your cost
+title: Calculating compute cost
 description: How to calculate the cost of your deployment on Cerebrium
 ---
 
-The cost of your deployment is based on the hardware you select and the amount of time you use it for.
+The cost of your deployment is based on the hardware you select and the amount of time it executes for. Essentially, every time we run your code, we charge you.
 GPU, CPU and Memory usage are all charged per second while persistent storage is charged per GB per month.
 
-Here's an example of how you can calculate the cost of your deployment:
+When you deploy a model, there are two processes we charge you for:
+1. We charge you for the build process in order to setup your model environment. This means we need to download your Python version, download and install Linux packages, Python packages
+and any model files you require. We only charge you for a model build once until you change your environment ie: add more packages - then we will charge you again since
+we rebuild the environment.
+2. The model runtime. This is the amount of time it takes your code to run from start to finish. Its important for you to remember Cerebrium does not charge you for
+ cold starts only each runtime.
 
-- Suppose you want to deploy a model that takes 2 seconds to run and you want to run it 1000 times.
-- For this model, you choose a GPU with the required amount of memory and 2 CPU cores.
-- Additionally, you require 20GB of RAM and use 10GB of persistent storage.
+Let us go through an example of how you can calculate the cost of your deployment:
 
-Now let's say your app has been deployed for 1 month.  
-Your company is growing, you have some traction and you're getting 100 000 requests per month.
+The model you wish to deploy requires:
+- 24 GB VRam (A5000): $0.000356 per second
+- 2 CPU cores: $0.0000532 * 2 per second
+- 20GB Memory: $0.00000659 * 20 per second
+- 10 GB persistent storage: $0.23 * 10 per month
+
+Your model works on the first deployment and so you incur only one build process of 2 minutes and the model has a average runtime of 2 seconds. Let us calculate your
+expected cost at month end with you expecting to do 100 000 model inferences.
 
 ```python
 # Your variables
-average_inference_time = 3 # seconds
+average_inference_time = 2 # seconds
 number_of_inferences = 100000 # number of inferences per month
 
-
-
-# Cost of the hardware
-GPU_cost = 0.000356 # $ per second
-CPU_cost = 0.000001 # $ per second
-memory_cost = 0.0000065972 # $ per second
-persistant_storage_cost = 0.23 # $ per GB per month
-
-gb_of_persistent_storage = 10
-gb_of_RAM = 20
-num_of_cpu_cores = 2
-
 # cost calculation
+total_build_compute_cost = build_seconds * (GPU_cost + CPU_cost*num_of_cpu_cores + memory_cost*gb_of_RAM )
 total_inference_time = average_inference_time * number_of_inferences
-compute_cost = (GPU_cost + CPU_cost*num_of_cpu_cores + memory_cost*gb_of_RAM ) * total_inference_time
+inference_compute_cost = (GPU_cost + CPU_cost*num_of_cpu_cores + memory_cost*gb_of_RAM ) * total_inference_time
 storage_cost = gb_of_persistent_storage * persistant_storage_cost
 
-total_cost = compute_cost + storage_cost
+total_cost = inference_compute_cost + storage_cost + total_build_compute_cost
 
 
-print(f"Compute cost: ${compute_cost :.2f}/month",
+print(f"Build Compute cost: ${compute_cost :.2f}/month",
+      f"Inference Compute cost: ${compute_cost :.2f}/month",
       f"\nStorage cost: ${storage_cost :.2f}/month",
       f"\nTotal cost: ${total_cost :.2f}/month")
 ```
@@ -48,9 +47,10 @@ print(f"Compute cost: ${compute_cost :.2f}/month",
 From this, you can see that the cost of your deployment is:
 
 ```bash
-Compute cost: $146.98/month
+Build Compute cost: $0.07/month
+Inference Compute cost: $118.84/month
 Storage cost: $2.30/month
-Total cost: $149.28/month
+Total cost: $121.21/month
 ```
 
 Now you would expect the cost to grow linearly with the number of requests you get however, we want to help you grow your business and so we are happy to discount your computing cost as you grow.

@@ -51,8 +51,8 @@ In the Conduit object, there are the following parameters:
   get it [here](https://dashboard.cerebrium.ai/).
 - **HARDWARE**: The hardware parameter is a enum that can be one of the following:
   - **hardware.CPU**: This will run your model on a CPU. This is the default option for SKLearn, XGBoost, and SpaCy models.
-  - **hardware.GPU**: This will run your model on a T4 GPU. This is the default option for Torch, ONNX, and HuggingFace models.
-  - **hardware.A10**: This will run your model on an A10 GPU, which provides 24GB of VRAM. You should use this option if you are using a model that is too large to fit on the 16GB of VRAM that a T4 GPU provides. This will include most large HuggingFace models.
+  - **hardware.GPU**: (Deprecated) This will run your model on a T4 GPU. This is the default option for Torch, ONNX, and HuggingFace models.
+  - **hardware.A10**: (Deprecated) This will run your model on an A10 GPU, which provides 24GB of VRAM. You should use this option if you are using a model that is too large to fit on the 16GB of VRAM that a T4 GPU provides. This will include most large HuggingFace models.
   - **hardware.TURING_4000** : A 8GB GPU that is great for lightweight models with less than 3B parameters in FP16.
   - **hardware.TURING_5000** : A 16GB GPU that is great for small models with less than 7B parameters in FP16. Most small HuggingFace models can run on this.
   - **hardware.AMPERE_A4000** : A 16GB GPU that is great for small models with less than 7B parameters in FP16. Significantly faster than an RTX 4000. Most small HuggingFace models can run on this.

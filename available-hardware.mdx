@@ -3,35 +3,35 @@ title: "Available Hardware"
 description: "A list of hardware that is available on Cerebrium's platform."
 ---
 
-The Cerebrium platform allows you to quickly and easily deploy your code on a variety of different hardware.
-We handle all the hard work of setting up the hardware and making sure that your code runs on it so that you don't have to. Everything from the hardware drivers to the scaling of your deployments is managed by us so that you can focus on what matters most: your code.
+The Cerebrium platform allows you to quickly and easily fine-tune and deploy machine learning workloads on a variety of different hardware.
+We take care of all the hard work so you don't have to. Everything from the hardware drivers to the scaling of your deployments is managed by us so that you can focus on what matters most: your use-case.
 
 This page lists the hardware that is currently available on the platform.
 
 # Hardware
 
-## Graphics Cards
+## GPU's
 
 We have the following graphics cards available on the platform:
-| Name | Memory | Minimum Plan | Max fp32 Model Params | Max fp16 Model Params | Max fp8 Model Params |
-| --------------------------------------------------------------------------------------------------- | :------: |------ | :-------------------: | :-------------------: | :------------------: |
-| [NVIDIA H100](https://www.nvidia.com/en-us/data-center/h100/) | 80GB | Enterprise | 18B | 36B | 72B |
-| [NVIDIA A100](https://www.nvidia.com/en-us/data-center/a100/) | 80GB | Enterprise | 18B | 36B | 72B |
-| [NVIDIA A100](https://www.nvidia.com/en-us/data-center/a100/) | 40GB | Standard | 9B | 18B | 36B |
-| [NVIDIA RTX A6000](https://www.nvidia.com/en-us/design-visualization/rtx-a6000/) | 48GB | Hobby | 10B | 21B | 43B |
-| [NVIDIA RTX A5000](https://www.nvidia.com/en-us/design-visualization/rtx-a5000/) | 24GB | Hobby | 5B | 10B | 21B |
-| [NVIDIA RTX A4000](https://www.nvidia.com/en-us/design-visualization/rtx-a4000/) | 16GB | Hobby | 3B | 7B | 14B |
-| [NVIDIA Quadro RTX 5000](https://www.nvidia.com/en-us/design-visualization/quadro/quadro-rtx-5000/) | 16GB | Hobby | 3B | 7B | 14B |
-| [NVIDIA Quadro RTX 4000](https://www.nvidia.com/en-us/design-visualization/quadro/quadro-rtx-4000/) | 8GB | Hobby | 1B | 3B | 7B |
-| [NVIDIA A10](https://www.nvidia.com/en-us/data-center/a10-tensor-core-gpu/) (_Depricating soon_) | 24GB | Hobby | 5B | 10B | 21B |
-| [NVIDIA T4](https://www.nvidia.com/en-us/data-center/tesla-t4/) (_Depricating soon_) | 16GB | Hobby | 3B | 7B | 14B |
+| Name | Cerebrium Name | VRAM | Minimum Plan | Max fp32 Model Params | Max fp16 Model Params
+| --------------------------------------------------------------------------------------------------- | :------: |------ | :-------------------: | :-------------------: | :------------------: | 
+| [NVIDIA H100](https://www.nvidia.com/en-us/data-center/h100/) | H100 | 80GB | Enterprise | 18B | 36B 
+| [NVIDIA A100](https://www.nvidia.com/en-us/data-center/a100/) | AMPERE_A100 | 80GB | Standard | 18B | 36B 
+| [NVIDIA A100](https://www.nvidia.com/en-us/data-center/a100/) | AMPERE_A100_40GB | 40GB | Standard | 9B | 18B 
+| [NVIDIA RTX A6000](https://www.nvidia.com/en-us/design-visualization/rtx-a6000/) | AMPERE_A6000 | 48GB | Hobby | 10B | 21B 
+| [NVIDIA RTX A5000](https://www.nvidia.com/en-us/design-visualization/rtx-a5000/) | AMPERE_A5000 | 24GB | Hobby | 5B | 10B 
+| [NVIDIA RTX A4000](https://www.nvidia.com/en-us/design-visualization/rtx-a4000/) | AMPERE_A4000 | 16GB | Hobby | 3B | 7B 
+| [NVIDIA Quadro RTX 5000](https://www.nvidia.com/en-us/design-visualization/quadro/quadro-rtx-5000/) | TURING_5000 | 16GB | Hobby | 3B | 7B 
+| [NVIDIA Quadro RTX 4000](https://www.nvidia.com/en-us/design-visualization/quadro/quadro-rtx-4000/) | TURING_4000 | 8GB | Hobby | 1B | 3B 
+| [NVIDIA A10](https://www.nvidia.com/en-us/data-center/a10-tensor-core-gpu/) (_Depricating soon_) | A10 | 24GB | Hobby | 5B | 10B 
+| [NVIDIA T4](https://www.nvidia.com/en-us/data-center/tesla-t4/) (_Depricating soon_) | T4 | 16GB | Hobby | 3B | 7B 
 
 _NOTE: The maximum model sizes are calculated as a guideline and are assuming that the model is the only thing loaded into VRAM. Longer inputs will result in a smaller maximum model size. Your milage may vary._
 
 These GPUs can be selected using the `--hardware` flag when deploying your model on Cortex or by using the `hardware` parameter when deploying your model with the Conduit.  
 For more help on deciding which GPU you require, see this section [here](#choosing-a-gpu).
 
-_Due to the global shortage of GPUs at the moment, we may not always have the Enterprise edition of your GPU availible. In this case, we will deploy to the Workstation edition of the GPU._  
+_Due to the global shortage of GPUs at the moment, we may not always have the Enterprise edition of your GPU available. In this case, we will deploy to the Workstation edition of the GPU._  
 _These are the same GPUs and it will not affect the performance of your model in any way._
 
 ## CPUs
@@ -62,15 +62,15 @@ On one hand, you want the best performance possible but on the other hand, you d
 
 ## Choosing a GPU
 
-Choosing hardware can be a complicated task of calculating VRAM usage based on the number of parameters you have as well as the length of your inputs. Additionally, there are variables that are dependent on your inputs to your model which will affect the VRAM usage substantially. For example, with LLMs and transformer-based architectures, you need to factor in attention processes as well as any memory-heavy positional encoding that may be happening with can increase VRAM usage exponentially for some methods. Similarly, for CNNs, you need to look at the number of filters you are using as well as the size of your inputs.
+Choosing hardware can be a complicated task of calculating VRAM usage based on the number of parameters you have as well as the length of your inputs. Additionally, there are variables that are dependent on your inputs to your model which will affect the VRAM usage substantially. For example, with LLMs and transformer-based architectures, you need to factor in attention processes as well as any memory-heavy positional encoding that may be happening which can increase VRAM usage exponentially for some methods. Similarly, for CNNs, you need to look at the number of filters you are using as well as the size of your inputs.
 
-As a rule of thumb, the easier way is to choose the hardware that has at least 1.5x the minimum amount of VRAM that your model requires.
+As a rule of thumb, the easiest way is to choose the hardware that has at least 1.5x the minimum amount of VRAM that your model requires.
 This approach is conservative and will ensure that your model will fit on the hardware you choose even if you have longer inputs than you expect. However, it is just a rule of thumb and you should test the VRAM usage of your model to ensure that it will fit on the hardware you choose.
 
 You can calculate the VRAM usage of your model by using the following formula:
 
 ```python
-modelVRAM = numParams x \#bytesPerDataType
+modelVRAM = numParams x #bytesPerDataType
 ```
 
 For example, if you have a model that is 7B parameters and you decide to use 32-bit Floating point precision, you can calculate the VRAM usage as follows:
