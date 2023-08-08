@@ -70,7 +70,7 @@ This approach is conservative and will ensure that your model will fit on the ha
 You can calculate the VRAM usage of your model by using the following formula:
 
 ```python
-modelVRAM = numParams x #bytesPerDataType
+modelVRAM = numParams x numBytesPerDataType
 ```
 
 For example, if you have a model that is 7B parameters and you decide to use 32-bit Floating point precision, you can calculate the VRAM usage as follows:
