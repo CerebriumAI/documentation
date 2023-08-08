@@ -7,19 +7,21 @@ The cost of your deployment is based on the hardware you select and the amount o
 GPU, CPU and Memory usage are all charged per second while persistent storage is charged per GB per month.
 
 When you deploy a model, there are two processes we charge you for:
+
 1. We charge you for the build process in order to setup your model environment. This means we need to download your Python version, download and install Linux packages, Python packages
-and any model files you require. We only charge you for a model build once until you change your environment ie: add more packages - then we will charge you again since
-we rebuild the environment.
+   and any model files you require. We only charge you for a model build once until you change your environment ie: add more packages - then we will charge you again since
+   we rebuild the environment.
 2. The model runtime. This is the amount of time it takes your code to run from start to finish. Its important for you to remember Cerebrium does not charge you for
- cold starts only each runtime.
+   cold starts only each runtime.
 
 Let us go through an example of how you can calculate the cost of your deployment:
 
 The model you wish to deploy requires:
+
 - 24 GB VRam (A5000): $0.000356 per second
-- 2 CPU cores: $0.0000532 * 2 per second
-- 20GB Memory: $0.00000659 * 20 per second
-- 10 GB persistent storage: $0.23 * 10 per month
+- 2 CPU cores: $0.0000532 \* 2 per second
+- 20GB Memory: $0.00000659 \* 20 per second
+- 10 GB persistent storage: $0.23 \* 10 per month
 
 Your model works on the first deployment and so you incur only one build process of 2 minutes and the model has a average runtime of 2 seconds. Let us calculate your
 expected cost at month end with you expecting to do 100 000 model inferences.
