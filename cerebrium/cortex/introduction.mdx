@@ -91,9 +91,11 @@ cerebrium deploy <MODEL_NAME> <PRIVATE_API_KEY> --hardware=<HARDWARE>
 
 For the parameters above:
 
-- **\<MODEL_NAME\>**: Give your model a name for you to recognize on your Cerebrium dashboard
-- **\<PRIVATE_API_KEY\>**: This is the private API key you can find on your Cerebrium dashboard
-- **\<HARDWARE\>**: This can be any of the following options:
+- **\<name\>**: Give your model a name for you to recognize on your Cerebrium dashboard
+- **\<api_key\>**: This is the private API key you can find on your Cerebrium dashboard
+- **\<cpu\>**: This is the number of CPU cores you want to allocate to your model. Optional as it defaults to 2. Can be an integer between 1 and 32
+- **\<memory\>**: This is the number of GB of memory you'd like to allocate to your model. Optional as it defaults to 8.0GB. Depending on your hardware selection, this float can be between 2.0 and 256.0 
+- **\<hardware\>**: This can be any of the following options:
   - **CPU**: This will run your model on a CPU. This is the default option for SKLearn, XGBoost, and SpaCy models.
   - **GPU**: (Deprecated) This will run your model on a T4 GPU. This is the default option for Torch, ONNX, and HuggingFace models.
   - **A10**: (Deprecated) This will run your model on an A10 GPU, which provides 24GB of VRAM. You should use this option if you are using a model that is too large to fit on the 16GB of VRAM that a T4 GPU provides. This will include most large HuggingFace models.
@@ -103,7 +105,8 @@ For the parameters above:
   - **AMPERE_A5000** : A 24GB GPU that is great for medium models with less than 10B parameters in FP16. A great option for almost all HuggingFace models.
   - **AMPERE_A6000** : A 48GB GPU offering a great cost to performance ratio. This is great for medium models with less than 21B parameters in FP16. A great option for almost all HuggingFace models.
   - **A100** : A 40GB GPU offering some of the highest performance available. This is great for large models with less than 18B parameters in FP16. A great option for almost all HuggingFace models especially if inference speed is your priority.
-
+- **\<min_replicas\>**: The minimum number of replicas you would like to allow for your deployment. Set to 0 if you would like serverless deployments. Otherwise, for high volume applications, you can set this to a higher number to skip scale-up time and keep servers waiting. The minimum number of replicas is dependent on your subscription plan. Defaults to 0.
+- **\<MAX_REPLICAS\>**: The maximum number of replicas you would like to allow for your deployment. Useful for cost-sensitive applications when you need to limit the number of replicas that can be created. The maximum number of replicas is dependent on your subscription plan.
 ### Include or exclude files and folders on deployment
 
 Additionally, we provide two flags to further control which files you add to your deployment. They are:
