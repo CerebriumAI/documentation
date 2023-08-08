@@ -192,10 +192,10 @@ In the above code we do a few things:
 3. We run our "Segment Anything" model with the image the user sent through the request.
 4. Lastly, we responded with the converted images. All returns from your endpoint function must be of type list or JSON.
 
-We can then deploy our model to an AMPERE_A5000 instance with the following line of code
+We can then deploy our model to an AMPERE\_A5000 instance with the following line of code
 
 ```bash
-cerebrium deploy segment-anything --hardware AMPERE_A5000 --api-key private-XXXXXXXXXXXXX
+cerebrium deploy segment-anything --hardware AMPERE\_A5000 --api-key private-XXXXXXXXXXXXX
 ```
 
 After a few minutes, your model should be deployed and an endpoint should be returned. Let us create a CURL request to see the response

@@ -117,10 +117,10 @@ In the above code we do a few things:
 1. We run our Stable Diffusion model with parameters the user sent through the request. If the user didn't send any then we set default values.
 2. We convert the generated images to base64 to return it back to the user
 
-To deploy this function to an AMPERE_A5000 instance, we run the following code:
+To deploy this function to an AMPERE\_A5000 instance, we run the following code:
 
 ```bash
-cerebrium deploy stable-diffusion --hardware AMPERE_A5000 --api-key private-XXXXXXXXXXXXX
+cerebrium deploy stable-diffusion --hardware AMPERE\_A5000 --api-key private-XXXXXXXXXXXXX
 ```
 
 We can then make the following request:
