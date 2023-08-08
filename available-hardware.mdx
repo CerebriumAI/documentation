@@ -17,16 +17,16 @@ We have the following graphics cards available on the platform:
 | --------------------------------------------------------------------------------------------------- | :------: |------ | :-------------------: | :-------------------: | :------------------: |
 | [NVIDIA H100](https://www.nvidia.com/en-us/data-center/h100/) | Special Request | 80GB | Enterprise | 18B | 36B
 | [NVIDIA A100](https://www.nvidia.com/en-us/data-center/a100/) | Special Request | 80GB | Standard | 18B | 36B
-| [NVIDIA A100](https://www.nvidia.com/en-us/data-center/a100/) | AMPERE\_A100 | 40GB | Standard | 9B | 18B
-| [NVIDIA RTX A6000](https://www.nvidia.com/en-us/design-visualization/rtx-a6000/) | AMPERE\_A6000 | 48GB | Hobby | 10B | 21B
-| [NVIDIA RTX A5000](https://www.nvidia.com/en-us/design-visualization/rtx-a5000/) | AMPERE\_A5000 | 24GB | Hobby | 5B | 10B
-| [NVIDIA RTX A4000](https://www.nvidia.com/en-us/design-visualization/rtx-a4000/) | AMPERE\_A4000 | 16GB | Hobby | 3B | 7B
+| [NVIDIA A100](https://www.nvidia.com/en-us/data-center/a100/) | AMPERE_A100 | 40GB | Standard | 9B | 18B
+| [NVIDIA RTX A6000](https://www.nvidia.com/en-us/design-visualization/rtx-a6000/) | AMPERE_A6000 | 48GB | Hobby | 10B | 21B
+| [NVIDIA RTX A5000](https://www.nvidia.com/en-us/design-visualization/rtx-a5000/) | AMPERE_A5000 | 24GB | Hobby | 5B | 10B
+| [NVIDIA RTX A4000](https://www.nvidia.com/en-us/design-visualization/rtx-a4000/) | AMPERE_A4000 | 16GB | Hobby | 3B | 7B
 | [NVIDIA Quadro RTX 5000](https://www.nvidia.com/en-us/design-visualization/quadro/quadro-rtx-5000/) | TURING_5000 | 16GB | Hobby | 3B | 7B
 | [NVIDIA Quadro RTX 4000](https://www.nvidia.com/en-us/design-visualization/quadro/quadro-rtx-4000/) | TURING_4000 | 8GB | Hobby | 1B | 3B
-| [NVIDIA A10](https://www.nvidia.com/en-us/data-center/a10-tensor-core-gpu/) (*Depricating soon*) | A10 | 24GB | Hobby | 5B | 10B
-| [NVIDIA T4](https://www.nvidia.com/en-us/data-center/tesla-t4/) (*Depricating soon*) | T4 | 16GB | Hobby | 3B | 7B
+| [NVIDIA A10](https://www.nvidia.com/en-us/data-center/a10-tensor-core-gpu/) (_Depricating soon_) | A10 | 24GB | Hobby | 5B | 10B
+| [NVIDIA T4](https://www.nvidia.com/en-us/data-center/tesla-t4/) (_Depricating soon_) | T4 | 16GB | Hobby | 3B | 7B
 
-*NOTE: The maximum model sizes are calculated as a guideline, assuming that the model is the only thing loaded into VRAM. Longer inputs will result in a smaller maximum model size. Your mileage may vary.*
+_NOTE: The maximum model sizes are calculated as a guideline, assuming that the model is the only thing loaded into VRAM. Longer inputs will result in a smaller maximum model size. Your mileage may vary._
 
 These GPUs can be selected using the `--hardware` flag when deploying your model on Cortex or by using the `hardware` parameter when deploying your model with the Conduit.  
 For more help with deciding which GPU you require, see this section [here](#choosing-a-gpu).
