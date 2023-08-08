@@ -22,25 +22,25 @@ In the Conduit object, there are the following parameters:
 
 - A tuple of the model type and the model file:
 - **MODEL_TYPE**: This parameter specifies the type of model you are supplying
-    Cerebrium and **must** be a `model_type`. This is to ensure that Cerebrium
-    knows how to handle your model. The current supported model types are:
-    - **model_type.SKLEARN**: Expects a `.pkl` file (there is no requirement of
-      the model to be a regressor or classifier).
-    - **model_type.SKLEARN_CLASSIFIER**: Expects a `.pkl` file (the model must
-      be a classifier. returns a class probability distribution instead of a
-      single class prediction)
-    - **model_type.SKLEARN_PREPROCESSOR**: Expects a `.pkl` file. This is a
-      special model type that is used to preprocess data with the `.transform` method before it is sent to
-      the model, such as a scaler or a one-hot encoder.
-    - **model_type.TORCH**: Expects a `.pkl` file serialized with
-      `cloudpickle` or a JIT script **Torchscript** `.pt` file.
-    - **model_type.XGBOOST_REGRESSOR**: Expects a serialized `.pkl` file or a
-      XGB `.json` file.
-    - **model_type.XGBOOST_CLASSIFIER**: Expects a serialized `.pkl` file or a
-      XGB `.json` file.
-    - **model_type.ONNX**: Expects a serialized `.onnx` file
-    - **model_type.SPACY**: Expects a folder path of your Spacy model
-    - **model_type.HUGGINGFACE_PIPELINE**: Expects the task identifier and model identifier of the Hugging face model
+  Cerebrium and **must** be a `model_type`. This is to ensure that Cerebrium
+  knows how to handle your model. The current supported model types are:
+  - **model_type.SKLEARN**: Expects a `.pkl` file (there is no requirement of
+    the model to be a regressor or classifier).
+  - **model_type.SKLEARN_CLASSIFIER**: Expects a `.pkl` file (the model must
+    be a classifier. returns a class probability distribution instead of a
+    single class prediction)
+  - **model_type.SKLEARN_PREPROCESSOR**: Expects a `.pkl` file. This is a
+    special model type that is used to preprocess data with the `.transform` method before it is sent to
+    the model, such as a scaler or a one-hot encoder.
+  - **model_type.TORCH**: Expects a `.pkl` file serialized with
+    `cloudpickle` or a JIT script **Torchscript** `.pt` file.
+  - **model_type.XGBOOST_REGRESSOR**: Expects a serialized `.pkl` file or a
+    XGB `.json` file.
+  - **model_type.XGBOOST_CLASSIFIER**: Expects a serialized `.pkl` file or a
+    XGB `.json` file.
+  - **model_type.ONNX**: Expects a serialized `.onnx` file
+  - **model_type.SPACY**: Expects a folder path of your Spacy model
+  - **model_type.HUGGINGFACE_PIPELINE**: Expects the task identifier and model identifier of the Hugging face model
   - **MODEL_FILE**: This is the string path to the model object you have
     obtained as a result of training locally or in the cloud. This is usually
     some model object or model file that you have exported.
