@@ -25,6 +25,7 @@ to authenticate all calls for this project.
 ![API Key](/images/cortex/api_keys_private_key.png)
 
 ### Develop model
+
 To start, you should install the Cerebrium framework by running the following
 command in your notebook or terminal
 
@@ -33,7 +34,6 @@ pip install --upgrade cerebrium
 ```
 
 Now navigate to where your model code is stored. This could be in a notebook or a `.py` file.
-
 
 Copy and paste our code below. This creates a simple random forest classifier on the Iris dataset.
 This code could be replaced by any Sklearn model. Make sure you have
@@ -103,25 +103,27 @@ With one line of code, your model was deployed in seconds with automatic
 versioning, monitoring and the ability to scale based on traffic spikes. Try
 deploying your own model now or check out our other frameworks.
 
-
-
 ## Potential Pitfalls
+
 During your deployment, you may encounter an error along the lines of:
+
 ```bash
 ValueError: Couldn't import 'worker': node array from the pickle has an incompatible dtype:
 - expected: {'names': ['left_child', 'right_child', 'feature', ...
 - got     : [('left_child', '<i8'), ('right_child', '<i8'), ('feature', '<i8'), ...
 ```
 
-This is due to a version mismatch between the version of scikit-learn used to train and that used in inference. 
-To fix this, you can either match the version of scikit-learn on Cerebrium or you can define the version of scikit-learn in a requirements file which you parse into the conduit. 
+This is due to a version mismatch between the version of scikit-learn used to train and that used in inference.
+To fix this, you can either match the version of scikit-learn on Cerebrium or you can define the version of scikit-learn in a requirements file which you parse into the conduit.
 
 To do this, create a file called `requirements.txt` and add the following line:
+
 ```bash
 scikit-learn==<version>
 ```
 
 Then, when you deploy your model, modify your conduit deploy line to include the requirements file:
+
 ```python
 from cerebrium import Conduit, model_type, hardware
 
