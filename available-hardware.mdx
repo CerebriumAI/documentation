@@ -110,11 +110,10 @@ The following parameters are available to you when deploying your model on Corte
 
 ## Setting your minimum number of instances after a deployment
 
-When a normal deployment starts, we start with a single instance of your deployment. This instance is used to handle all the requests that come in. If the single instance is inadequate, we will scale up your deployment to handle the load automatically.
+When a normal deployment starts, we start with a single instance of your deployment and scale this up & down as required. This instance is used to handle all the requests that come in. If the single instance is inadequate, we will scale up your deployment to handle the load automatically.
 This approach allows us to keep your costs as low as possible while still providing you with the performance you need.  
-However, if you have sustained, high-volume (1000s of requests per second) you can quickly see where this approach can be improved.
+However, if you have sustained, high-volume (1000s of requests per second) you can set the scale of your deployment using a `min_replicas` parameter so you don't incur a cold-start/startup time.
 
-To tackle this problem, we allow you to set the scale of your deployment using a `min_replicas` parameter.  
 This lets you start your deployment with a minimum number of instances. This means, you skip the scaling up of your deployment and jump straight to the performance you need.
 For example, if you set `min_replicas=4`, your deployment will start with 4 instances and will scale up from there if required.
 
