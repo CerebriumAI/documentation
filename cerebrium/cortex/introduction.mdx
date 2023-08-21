@@ -122,12 +122,12 @@ deployed. You will see the usual overview statistics of your model, but most imp
 
 We recommend you check out the [advanced functionality](/cerebrium/cortex/advanced-functionality) section of Cortex as well as work through the [examples](/cortex/examples) to see how deployments were done for various different sample applications.
 
-
 ## Advanced Functionality
 
 Now that we have covered the basics of deploying a model, let's dive into some of the more advanced functionality that Cortex provides.
 
 Below are some links outlining some of the more advanced functionality that Cortex provides:
+
 - Using config files to deploy models. [See here](cerebrium/cortex/advanced-functionality/config-files).
 - Quickly initialising a new cortex deployment using the CLI. [See here](cerebrium/cortex/advanced-functionality/init-cortex-project).
 - Utilising persistent storage to share files between builds and runs. [See here](cerebrium/cortex/advanced-functionality/persistant-storage).
@@ -135,7 +135,9 @@ Below are some links outlining some of the more advanced functionality that Cort
 - Running async functions in Cortex. [See here](cerebrium/cortex/advanced-functionality/async-functions).
 
 ### Advanced Cortex Parameters
+
 #### `--include` or `--exclude` files and folders on deployment
+
 Additionally, we provide two flags to further control which files you add to your deployment. They are:
 
 - **--include**: Regex string of files or folders to include. eg. `--include "./modelFiles/*, my-awesome-file.txt"`
@@ -147,8 +149,9 @@ Now, with just a few lines of code, your custom Python code will be deployed to 
 After the first deployment, every subsequent deployment should be less than 10s, keeping the development lifecycle as quick as possible.
 
 #### `--forced-rebuild` to force a rebuild of your deployment
-If you want to force a rebuild of your deployment, you can use the `--forced-rebuild` flag. 
-This will force a rebuild of your deployment, even if the code has not changed. 
+
+If you want to force a rebuild of your deployment, you can use the `--forced-rebuild` flag.
+This will force a rebuild of your deployment, even if the code has not changed.
 
 This functionality is particularly useful if you would like to clear the cached dependencies of your deployment or if something has gone wrong with your deployment and you would like to start from scratch.
 

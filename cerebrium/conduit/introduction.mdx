@@ -69,11 +69,9 @@ In the Conduit object, there are the following parameters:
 - **REQUIREMENTS_FILE**: Optional path to a requirements.txt file that will be installed in the deployment environment. This is useful when you need additional libraries or packages to run your model. Defaults to None.
 - **FORCE_REBUILD**: Optional boolean to force a rebuild of the deployment environment. This is useful when you need to have a clean environment without any of the cached dependencies from previous deployments. Don't worry, your persistent storage is safe. Defaults to False.
 
-
 <Note>
   Every unique model name will create a _separate deployment_ with a _separate
-  endpoint_.  
-  It is important to keep track of the model names you have used so
+  endpoint_. It is important to keep track of the model names you have used so
   that you can call the correct model in the future. If you deploy a model with
   the same name as a previous model, the previous model will be archived and the
   new model will be deployed automatically. This is useful for versioning your
