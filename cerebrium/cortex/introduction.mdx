@@ -108,18 +108,6 @@ For the parameters above:
 - **\<min_replicas\>**: The minimum number of replicas you would like to allow for your deployment. Set to 0 if you would like serverless deployments. Otherwise, for high volume applications, you can set this to a higher number to skip scale-up time and keep servers waiting. The minimum number of replicas is dependent on your subscription plan. Defaults to 0.
 - **\<max_replicas\>**: The maximum number of replicas you would like to allow for your deployment. Useful for cost-sensitive applications when you need to limit the number of replicas that can be created. The maximum number of replicas is dependent on your subscription plan.
 
-### Include or exclude files and folders on deployment
-
-Additionally, we provide two flags to further control which files you add to your deployment. They are:
-
-- **--include**: Regex string of files or folders to include. eg. `--include "./modelFiles/*, my-awesome-file.txt"`
-- **--exclude**: The files or folders to exclude. eg. `--exclude ".venv, ./private.py, ./folderToExclude/*"`
-
-These flags can be repeated to add patterns individually or can receive a string array as shown ABOVE.
-
-Now, with just a few lines of code, your custom Python code will be deployed to serverless CPUs/GPUs without setting up any infrastructure! As simple as that!  
-After the first deployment, every subsequent deployment should be less than 10s, keeping the development lifecycle as quick as possible.
-
 ### View model statistics and logs
 
 Once you deploy a model, navigate back to the dashboard and click on the name of the model you just
@@ -133,3 +121,35 @@ deployed. You will see the usual overview statistics of your model, but most imp
   and the model output.
 
 We recommend you check out the [advanced functionality](/cerebrium/cortex/advanced-functionality) section of Cortex as well as work through the [examples](/cortex/examples) to see how deployments were done for various different sample applications.
+
+
+## Advanced Functionality
+
+Now that we have covered the basics of deploying a model, let's dive into some of the more advanced functionality that Cortex provides.
+
+Below are some links outlining some of the more advanced functionality that Cortex provides:
+- Using config files to deploy models. [See here](cerebrium/cortex/advanced-functionality/config-files).
+- Quickly initialising a new cortex deployment using the CLI. [See here](cerebrium/cortex/advanced-functionality/init-cortex-project).
+- Utilising persistent storage to share files between builds and runs. [See here](cerebrium/cortex/advanced-functionality/persistant-storage).
+- Utilising secrets to store sensitive information. [See here](cerebrium/cortex/advanced-functionality/using-secrets).
+- Running async functions in Cortex. [See here](cerebrium/cortex/advanced-functionality/async-functions).
+
+### Advanced Cortex Parameters
+#### `--include` or `--exclude` files and folders on deployment
+Additionally, we provide two flags to further control which files you add to your deployment. They are:
+
+- **--include**: Regex string of files or folders to include. eg. `--include "./modelFiles/*, my-awesome-file.txt"`
+- **--exclude**: The files or folders to exclude. eg. `--exclude ".venv, ./private.py, ./folderToExclude/*"`
+
+These flags can be repeated to add patterns individually or can receive a string array as shown ABOVE.
+
+Now, with just a few lines of code, your custom Python code will be deployed to serverless CPUs/GPUs without setting up any infrastructure! As simple as that!  
+After the first deployment, every subsequent deployment should be less than 10s, keeping the development lifecycle as quick as possible.
+
+#### `--forced-rebuild` to force a rebuild of your deployment
+If you want to force a rebuild of your deployment, you can use the `--forced-rebuild` flag. 
+This will force a rebuild of your deployment, even if the code has not changed. 
+
+This functionality is particularly useful if you would like to clear the cached dependencies of your deployment or if something has gone wrong with your deployment and you would like to start from scratch.
+
+This flag will not clear your persistent storage, so don't worry about losing your persistent files!
