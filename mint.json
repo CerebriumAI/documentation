@@ -110,14 +110,6 @@
           ]
         },
         {
-          "group": "Model Monitoring",
-          "pages": [
-            "cerebrium/conduit/logging/logging_intro",
-            "cerebrium/conduit/logging/censius",
-            "cerebrium/conduit/logging/arize"
-          ]
-        },
-        {
           "group": "Examples",
           "pages": [
             "cerebrium/conduit/examples/onnx",
