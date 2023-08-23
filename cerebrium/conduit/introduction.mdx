@@ -4,6 +4,12 @@ description: "To deploy your machine learning model to Cerebrium takes just 2 li
 code."
 ---
 
+<Note>
+  We are phasing out support for Python 3.8 at the end of September 2023. If you
+  are using Python 3.8, please update your dependencies and move your deployment
+  to Python >= 3.9.
+</Note>
+
 The Cerebrium conduit object creates an abstraction for you to deploy a model across any framework seamlessly with just a few lines of code.
 
 Below is the general layout of the Conduit object:
@@ -67,6 +73,8 @@ In the Conduit object, there are the following parameters:
 - **MIN_REPLICAS**: The minimum number of replicas you would like to keep active. Defaults to 0 to allow serverless execution. Can be set \>0 to keep a single replica active at all times. The maximum number of replicas is dependent on your subscription plan.
 - **MAX_REPLICAS**: The maximum number of replicas you would like to allow for your deployment. Useful for cost-sensitive applications when you need to limit the number of replicas that can be created. The maximum number of replicas is dependent on your subscription plan.
 - **REQUIREMENTS_FILE**: Optional path to a requirements.txt file that will be installed in the deployment environment. This is useful when you need additional libraries or packages to run your model. Defaults to None.
+- **FORCE_REBUILD**: Optional boolean to force a rebuild of the deployment environment. This is useful when you need to have a clean environment without any of the cached dependencies from previous deployments. Don't worry, your persistent storage is safe. Defaults to False.
+- **PYTHON_VERSION**: You can choose the version of Python that you would like to use for your deployment by using this optional parameter. We support Python 3.8, 3.9, 3.10, and 3.11. If you do not specify a Python version, we will default to Python 3.10.
 
 <Note>
   Every unique model name will create a _separate deployment_ with a _separate
