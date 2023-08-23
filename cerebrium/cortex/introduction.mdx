@@ -4,9 +4,10 @@ description: "Deploy any Python code to serverless CPUs/GPUs giving you fine-gra
 ---
 
 <Note>
-We are phasing out support for Python 3.8 at the end of September 2023. If you are using Python 3.8, please update your dependencies and move your deployment to Python >= 3.9.
+  We are phasing out support for Python 3.8 at the end of September 2023. If you
+  are using Python 3.8, please update your dependencies and move your deployment
+  to Python >= 3.9.
 </Note>
-
 
 Many of our more hardcore users wanted finer-grain control over their code and package dependencies, which is why we opened up our underlying architecture to allow engineers and data scientists to deploy
 any custom Python code.
@@ -142,6 +143,7 @@ Below are some links outlining some of the more advanced functionality that Cort
 ### Advanced Cortex Parameters
 
 #### `--python-version` to specify the Python version
+
 You can choose the version of python that you would like to use for your deployment by using the `--python-version` flag.
 We support Python 3.8, 3.9, 3.10, and 3.11. If you do not specify a Python version, we will default to Python 3.10.
 
@@ -165,4 +167,3 @@ This will force a rebuild of your deployment, even if the code has not changed.
 This functionality is particularly useful if you would like to clear the cached dependencies of your deployment or if something has gone wrong with your deployment and you would like to start from scratch.
 
 This flag will not clear your persistent storage, so don't worry about losing your persistent files!
-
