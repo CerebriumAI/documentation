@@ -1,0 +1,139 @@
+---
+title: "Available Hardware"
+description: "A list of hardware that is available on Cerebrium's platform."
+---
+
+The Cerebrium platform allows you to quickly and easily fine-tune and deploy machine learning workloads on a variety of different hardware.
+We take care of all the hard work so you don't have to. Everything from the hardware drivers to the scaling of your deployments is managed by us so that you can focus on what matters most: your use case.
+
+This page lists the hardware that is currently available on the platform.
+
+# Hardware
+
+## GPU's
+
+We have the following graphics cards available on the platform:
+| Name | Cerebrium Name | VRAM | Minimum Plan | Max fp32 Model Params | Max fp16 Model Params
+| --------------------------------------------------------------------------------------------------- | :------: |------ | :-------------------: | :-------------------: | :------------------: |
+| [NVIDIA H100](https://www.nvidia.com/en-us/data-center/h100/) | Special Request | 80GB | Enterprise | 18B | 36B
+| [NVIDIA A100](https://www.nvidia.com/en-us/data-center/a100/) | Special Request | 80GB | Standard | 18B | 36B
+| [NVIDIA A100](https://www.nvidia.com/en-us/data-center/a100/) | AMPERE_A100 | 40GB | Standard | 9B | 18B
+| [NVIDIA RTX A6000](https://www.nvidia.com/en-us/design-visualization/rtx-a6000/) | AMPERE_A6000 | 48GB | Hobby | 10B | 21B
+| [NVIDIA RTX A5000](https://www.nvidia.com/en-us/design-visualization/rtx-a5000/) | AMPERE_A5000 | 24GB | Hobby | 5B | 10B
+| [NVIDIA RTX A4000](https://www.nvidia.com/en-us/design-visualization/rtx-a4000/) | AMPERE_A4000 | 16GB | Hobby | 3B | 7B
+| [NVIDIA Quadro RTX 5000](https://www.nvidia.com/en-us/design-visualization/quadro/quadro-rtx-5000/) | TURING_5000 | 16GB | Hobby | 3B | 7B
+| [NVIDIA Quadro RTX 4000](https://www.nvidia.com/en-us/design-visualization/quadro/quadro-rtx-4000/) | TURING_4000 | 8GB | Hobby | 1B | 3B
+| [NVIDIA A10](https://www.nvidia.com/en-us/data-center/a10-tensor-core-gpu/) (_Depricating soon_) | A10 | 24GB | Hobby | 5B | 10B
+| [NVIDIA T4](https://www.nvidia.com/en-us/data-center/tesla-t4/) (_Depricating soon_) | T4 | 16GB | Hobby | 3B | 7B
+
+_NOTE: The maximum model sizes are calculated as a guideline, assuming that the model is the only thing loaded into VRAM. Longer inputs will result in a smaller maximum model size. Your mileage may vary._
+
+These GPUs can be selected using the `--hardware` flag when deploying your model on Cortex or by using the `hardware` parameter when deploying your model with the Conduit.  
+For more help with deciding which GPU you require, see this section [here](#choosing-a-gpu).
+
+_Due to the global shortage of GPUs at the moment, we may not always have the Enterprise edition of your GPU available. In this case, we will deploy to the Workstation edition of the GPU._  
+_These are the same GPUs and it will not affect the performance of your model in any way._
+
+## CPUs
+
+We select the CPU based on your choice of hardware, choosing the best available options so you can get the performance you need.
+
+You can choose the number of CPU cores you require for your deployment. If you don't need the cores, choose how many you require and pay for only what you need!
+
+## CPU Memory
+
+We let you select the amount of memory you require for your deployment.  
+All the memory you request is dedicated to your deployment and is not shared with any other deployments, ensuring that you get the performance you need.
+This is the amount of memory that is available to your code when it is running and you should choose an adequate amount for your model to be loaded into VRAM if you are deploying onto a GPU.
+Once again, you only pay for what you need!
+
+## Storage
+
+We provide you with a persistent storage volume that is attached to your deployment.
+You can use this storage volume to store any data that you need to persist between deployments. Accessing your persistent storage is covered in depth for [conduit here](/cerebrium/conduit/advanced-functionality/persistent-memory) and [cortex here](/cerebrium/cortex/advanced-functionality/persistent-storage).
+
+The storage volume is backed by high-performance SSDs so that you can get the best performance possible
+Pricing for storage is based on the amount of storage you use and is charged per GB per month.
+
+# Determine your Hardware Requirements
+
+Deciding which hardware you require for your deployment can be a daunting task.  
+On one hand, you want the best performance possible but on the other hand, you don't want to pay for more resources than you need.
+
+## Choosing a GPU
+
+Choosing hardware can be a complicated task of calculating VRAM usage based on the number of parameters you have as well as the length of your inputs. Additionally, some variables are dependent on your inputs to your model which will affect the VRAM usage substantially. For example, with LLMs and transformer-based architectures, you need to factor in attention processes as well as any memory-heavy positional encoding that may be happening which can increase VRAM usage exponentially for some methods. Similarly, for CNNs, you need to look at the number of filters you are using as well as the size of your inputs.
+
+As a rule of thumb, the easiest way is to choose the hardware that has at least 1.5x the minimum amount of VRAM that your model requires.
+This approach is conservative and will ensure that your model will fit on the hardware you choose even if you have longer inputs than you expect. However, it is just a rule of thumb and you should test the VRAM usage of your model to ensure that it will fit on the hardware you choose.
+
+You can calculate the VRAM usage of your model by using the following formula:
+
+```python
+modelVRAM = numParams x numBytesPerDataType
+```
+
+For example, if you have a model that is 7B parameters and you decide to use 32-bit Floating point precision, you can calculate the VRAM usage as follows:
+
+```python
+modelVRAM = 7B x 4 = 28GB
+```
+
+When you include the 1.5x multiplier from our rule of thumb, this means that you should choose a GPU with at least ~40GB of VRAM to ensure that your model will fit on the hardware you choose.
+
+Alternatively, if you were happy with the slight precision penalty of using quantisation, your model would have required 7GB of VRAM for 8-bit quantisation. So you could have chosen a GPU with 16GB of VRAM. This is the approach we recommend especially with large models (>20B parameters) as the precision penalty is minimal and your cost savings are substantial.
+
+<Note>
+  Pro tip: The precision loss from quantisation is negligible in comparison to
+  the performance gains you get from the larger model that can fit on the same
+  hardware.
+</Note>
+
+## Setting your number of CPU Cores
+
+If you are unsure of how many CPU cores you need, it's best to start with either 2 or 4 cores and scale up if you find you need more. For most use cases, 4 cores are sufficient.
+
+## Calculating your required CPU Memory
+
+A guideline for calculating the amount of CPU memory that you require is to use the same amount of CPU memory as you have VRAM. This is because the model will generally be loaded into CPU memory first during initialisation. This happens while the weights are being loaded from storage and the model is being compiled. Once the model is compiled, it is loaded into VRAM and the CPU memory is freed up.  
+Certain libraries, such as _transformers_, do have methods that allow you to use less CPU memory by setting flags such as `low_cpu_mem_usage` which trade off CPU memory for longer initialisation times.
+
+## Storage Requirements
+
+Storage is calculated on an ad-hoc basis and is calculated as you use it.  
+This storage is persistent and will be available to you for as long as you need it.
+
+# Advanced Parameters
+
+This section is for those users that have a large volume of requests and want to optimise their deployments for cost and performance.  
+The following parameters are available to you when deploying your model on Cortex or Conduit.
+
+## Setting your minimum number of instances after a deployment
+
+When a normal deployment starts, we start with a single instance of your deployment and scale this up & down as required. This instance is used to handle all the requests that come in. If the single instance is inadequate, we will scale up your deployment to handle the load automatically.
+This approach allows us to keep your costs as low as possible while still providing you with the performance you need.  
+However, if you have sustained, high-volume (1000s of requests per second) you can set the scale of your deployment using a `min_replicas` parameter so you don't incur a cold-start/startup time.
+
+This lets you start your deployment with a minimum number of instances. This means, you skip the scaling up of your deployment and jump straight to the performance you need.
+For example, if you set `min_replicas=4`, your deployment will start with 4 instances and will scale up from there if required.
+
+Note that the number of instances you can have running simultaneously for each of your models is determined by the subscription plan that you are on.
+
+## Calculating your minimum number of instances
+
+If you know the volume of requests you are expecting as well as the amount of time each request takes (in seconds), you can calculate the minimum number of instances you require as follows:
+
+```python
+minReplicas = ceil((requestsPerMin * requestDuration) ÷ 60)
+```
+
+So, if you're receiving 10 000 requests\min and each request takes 0.5s, you can calculate the minimum number of instances you require as follows:
+
+```python
+minReplicas = ceil((10 000 * 0.5) ÷ 60)
+# minReplicas = 84
+```
+
+## Setting your maximum number of instances
+
+You may want to limit the number of instances, in this case, you can limit the number of instances that your deployment can scale up to using the `max_replicas` parameter.

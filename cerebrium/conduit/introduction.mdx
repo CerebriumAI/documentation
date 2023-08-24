@@ -4,6 +4,12 @@ description: "To deploy your machine learning model to Cerebrium takes just 2 li
 code."
 ---
 
+<Note>
+  We are phasing out support for Python 3.8 at the end of September 2023. If you
+  are using Python 3.8, please update your dependencies and move your deployment
+  to Python >= 3.9.
+</Note>
+
 The Cerebrium conduit object creates an abstraction for you to deploy a model across any framework seamlessly with just a few lines of code.
 
 Below is the general layout of the Conduit object:
@@ -21,26 +27,26 @@ c.deploy()
 In the Conduit object, there are the following parameters:
 
 - A tuple of the model type and the model file:
-  - **MODEL_TYPE**: This parameter specifies the type of model you are supplying
-    Cerebrium and **must** be a `model_type`. This is to ensure that Cerebrium
-    knows how to handle your model. The current supported model types are:
-    - **model_type.SKLEARN**: Expects a `.pkl` file (there is no requirement of
-      the model to be a regressor or classifier).
-    - **model_type.SKLEARN_CLASSIFIER**: Expects a `.pkl` file (the model must
-      be a classifier. returns a class probability distribution instead of a
-      single class prediction)
-    - **model_type.SKLEARN_PREPROCESSOR**: Expects a `.pkl` file. This is a
-      special model type that is used to preprocess data with the `.transform` method before it is sent to
-      the model, such as a scaler or a one-hot encoder.
-    - **model_type.TORCH**: Expects a `.pkl` file serialized with
-      `cloudpickle` or a JIT script **Torchscript** `.pt` file.
-    - **model_type.XGBOOST_REGRESSOR**: Expects a serialized `.pkl` file or a
-      XGB `.json` file.
-    - **model_type.XGBOOST_CLASSIFIER**: Expects a serialized `.pkl` file or a
-      XGB `.json` file.
-    - **model_type.ONNX**: Expects a serialized `.onnx` file
-    - **model_type.SPACY**: Expects a folder path of your Spacy model
-    - **model_type.HUGGINGFACE_PIPELINE**: Expects the task identifier and model identifier of the Hugging face model
+- **MODEL_TYPE**: This parameter specifies the type of model you are supplying
+  Cerebrium and **must** be a `model_type`. This is to ensure that Cerebrium
+  knows how to handle your model. The current supported model types are:
+  - **model_type.SKLEARN**: Expects a `.pkl` file (there is no requirement of
+    the model to be a regressor or classifier).
+  - **model_type.SKLEARN_CLASSIFIER**: Expects a `.pkl` file (the model must
+    be a classifier. returns a class probability distribution instead of a
+    single class prediction)
+  - **model_type.SKLEARN_PREPROCESSOR**: Expects a `.pkl` file. This is a
+    special model type that is used to preprocess data with the `.transform` method before it is sent to
+    the model, such as a scaler or a one-hot encoder.
+  - **model_type.TORCH**: Expects a `.pkl` file serialized with
+    `cloudpickle` or a JIT script **Torchscript** `.pt` file.
+  - **model_type.XGBOOST_REGRESSOR**: Expects a serialized `.pkl` file or a
+    XGB `.json` file.
+  - **model_type.XGBOOST_CLASSIFIER**: Expects a serialized `.pkl` file or a
+    XGB `.json` file.
+  - **model_type.ONNX**: Expects a serialized `.onnx` file
+  - **model_type.SPACY**: Expects a folder path of your Spacy model
+  - **model_type.HUGGINGFACE_PIPELINE**: Expects the task identifier and model identifier of the Hugging face model
   - **MODEL_FILE**: This is the string path to the model object you have
     obtained as a result of training locally or in the cloud. This is usually
     some model object or model file that you have exported.
@@ -51,8 +57,24 @@ In the Conduit object, there are the following parameters:
   get it [here](https://dashboard.cerebrium.ai/).
 - **HARDWARE**: The hardware parameter is a enum that can be one of the following:
   - **hardware.CPU**: This will run your model on a CPU. This is the default option for SKLearn, XGBoost, and SpaCy models.
-  - **hardware.GPU**: This will run your model on a T4 GPU. This is the default option for Torch, ONNX, and HuggingFace models.
-  - **hardware.A10**: This will run your model on an A10 GPU, which provides 24GB of VRAM. You should use this option if you are using a model that is too large to fit on the 16GB of VRAM that a T4 GPU provides. This will include most large HuggingFace models.
+  - **hardware.GPU**: (Deprecated) This will run your model on a T4 GPU. This is the default option for Torch, ONNX, and HuggingFace models.
+  - **hardware.A10**: (Deprecated) This will run your model on an A10 GPU, which provides 24GB of VRAM. You should use this option if you are using a model that is too large to fit on the 16GB of VRAM that a T4 GPU provides. This will include most large HuggingFace models.
+  - **hardware.TURING_4000** : A 8GB GPU that is great for lightweight models with less than 3B parameters in FP16.
+  - **hardware.TURING_5000** : A 16GB GPU that is great for small models with less than 7B parameters in FP16. Most small HuggingFace models can run on this.
+  - **hardware.AMPERE_A4000** : A 16GB GPU that is great for small models with less than 7B parameters in FP16. Significantly faster than an RTX 4000. Most small HuggingFace models can run on this.
+  - **hardware.AMPERE_A5000** : A 24GB GPU that is great for medium models with less than 10B parameters in FP16. A great option for almost all HuggingFace models.
+  - **hardware.AMPERE_A6000** : A 48GB GPU offering a great cost to performance ratio. This is great for medium models with less than 21B parameters in FP16. A great option for almost all HuggingFace models.
+  - **hardware.A100** : A 40GB GPU offering some of the highest performance available. This is great for large models with less than 18B parameters in FP16. A great option for almost all HuggingFace models especially if inference speed is your priority.
+- **CPU**: This is the number of CPU cores you want to allocate to your model.
+  Optional as it defaults to 2. Can be an integer between 1 and 32
+- **MEMORY**: This is the number of GB of memory you'd like to allocate to
+  your model. Optional as it defaults to 8.0GB. Depending on your hardware
+  selection, this float can be between 2.0 and 256.0
+- **MIN_REPLICAS**: The minimum number of replicas you would like to keep active. Defaults to 0 to allow serverless execution. Can be set \>0 to keep a single replica active at all times. The maximum number of replicas is dependent on your subscription plan.
+- **MAX_REPLICAS**: The maximum number of replicas you would like to allow for your deployment. Useful for cost-sensitive applications when you need to limit the number of replicas that can be created. The maximum number of replicas is dependent on your subscription plan.
+- **REQUIREMENTS_FILE**: Optional path to a requirements.txt file that will be installed in the deployment environment. This is useful when you need additional libraries or packages to run your model. Defaults to None.
+- **FORCE_REBUILD**: Optional boolean to force a rebuild of the deployment environment. This is useful when you need to have a clean environment without any of the cached dependencies from previous deployments. Don't worry, your persistent storage is safe. Defaults to False.
+- **PYTHON_VERSION**: You can choose the version of Python that you would like to use for your deployment by using this optional parameter. We support Python 3.8, 3.9, 3.10, and 3.11. If you do not specify a Python version, we will default to Python 3.10.
 
 <Note>
   Every unique model name will create a _separate deployment_ with a _separate
