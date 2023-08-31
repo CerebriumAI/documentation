@@ -4,16 +4,16 @@ description: Learn how to seamlessly deploy your trained model to a production e
 ---
 
 # Introduction
-If you are reading this guide, chances are that you have successfully trained a model on Cerebrium. Congratulations!  
 
+If you are reading this guide, chances are that you have successfully trained a model on Cerebrium. Congratulations!
 
 Now that your model has been successfully trained, you have two options for deploying to a production environment:
+
 - The first is to download the trained adapter weights using `cerebrium download-model` and write your own deployment code.
-- The second is to use the built-in auto-deployment feature of Cerebrium's trainer. 
+- The second is to use the built-in auto-deployment feature of Cerebrium's trainer.
 
 While you have more flexibility writing custom deployment code for your finetuned weights, the second option is the method that we recommend for most users!  
 It's faster, easier and gets your model up and running in no time.
-
 
 Auto-deployment streamlines the process of getting your model into a production environment. With this approach, deployment occurs automatically as soon as training is completed. This feature not only saves time but also provides a seamless way to test your model's performance before considering any modifications to the deployment code.
 
@@ -21,9 +21,9 @@ An auto-deployment can be configured in the `config.yml` file. The auto-deployme
 
 # Configuration of your Auto-deployment
 
-While an auto-deployment will generate all the code needed to deploy your model, you'll need to configure a few parameters to get it up and running. These parameters are added to the `config.yml` file of your training under the title `autodeploy`. 
+While an auto-deployment will generate all the code needed to deploy your model, you'll need to configure a few parameters to get it up and running. These parameters are added to the `config.yml` file of your training under the title `autodeploy`.
 
-We've kept the configuration as simple as possible, using the same format and parameters that you're used to in the [config file](cerebrium/cortex/advanced-functionality/init-cortex-project) of a Cortex deployment. 
+We've kept the configuration as simple as possible, using the same format and parameters that you're used to in the [config file](cerebrium/cortex/advanced-functionality/init-cortex-project) of a Cortex deployment.
 
 The following parameters are the parameters we suggest you supply for an auto-deployment:
 
@@ -37,18 +37,15 @@ autodeploy:
   autodeploy-pkglist-file: /Path/To/Your/pkglist.txt # Optional pkglist that you would need in a cortex deployment
 ```
 
-*Keep in mind that the values for `autodeploy-requirements-file` and `autodeploy-pkglist-file` are the paths to the files on your local machine. These files will be uploaded to the Cerebrium platform and used in your deployment.*
+_Keep in mind that the values for `autodeploy-requirements-file` and `autodeploy-pkglist-file` are the paths to the files on your local machine. These files will be uploaded to the Cerebrium platform and used in your deployment._
 
 Feel free to include additional parameters such as `min_replicas`, `max_replicas`, or any [other parameters](cerebrium/cortex/introduction) typically used in the config of a Cortex deployment.
 
-
 With these steps completed, all that's left to do is run your `cerebrium train` command to upload your data and config. In no time your trained model will be up and running in a production environment, ready to make predictions!
-
 
 ## Post Auto-Deployment Steps
 
 Once your training is finished and the auto-deployment is executed, your auto-deployed model will be visible in your dashboard. To test your model, use the endpoint provided in the training logs or within the `Example Code` tab of the model's dashboard.
 
-You can obtain the deployment code from the `builds` tab of the model dashboard. Clicking the download button will fetch a zip file containing your code used for the auto-deployment. This is particularly useful if you intend to customize deployment parameters or functionalities.   
+You can obtain the deployment code from the `builds` tab of the model dashboard. Clicking the download button will fetch a zip file containing your code used for the auto-deployment. This is particularly useful if you intend to customize deployment parameters or functionalities.  
 Additionally, your model weights can be found in the downloaded zip file. If you plan to modify the deployment code, make sure to include the updated weights in the deployment folder.
-
