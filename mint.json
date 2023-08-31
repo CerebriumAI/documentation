@@ -157,7 +157,8 @@
             "cerebrium/fine-tuning/diffusion-models/dataset",
             "cerebrium/fine-tuning/diffusion-models/config"
           ]
-        }
+        },
+        "cerebrium/fine-tuning/auto-deploying"
       ]
     },
     {
