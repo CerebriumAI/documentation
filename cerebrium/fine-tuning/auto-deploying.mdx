@@ -27,11 +27,11 @@ autodeploy:
   hardware: AMPERE_A5000 # Hardware to use for the deployment
   cpu: 2 # Number of CPUs to allocate to the deployment
   memory: 14.5 # Memory to allocate to the deployment. This depends on your model but for most 7B models, 14.5GB is sufficient.
-  autodeploy-requirements-file: /Path/To/Your/requirements.txt # Optional requirements.txt
-  autodeploy-pkglist-file: /Path/To/Your/pkglist.txt # Optional pkglist.txt
 ```
 
-_While we've tried to include all the requirements your model may need. You can overwrite our defaults by providing files for `autodeploy-requirements-file` and `autodeploy-pkglist-file`. This is particularly useful if you want to use a specific version of a library or find you want to include an extra package._
+<Note>
+While we've tried to include all the requirements your model may need. You can overwrite our defaults by providing files for `autodeploy-requirements-file` and `autodeploy-pkglist-file`. This is particularly useful if you want to use a specific version of a library or find you want to include an extra package.
+<\Note>
 
 Feel free to include additional parameters such as `min_replicas`, `max_replicas`, or any [other parameters](cerebrium/cortex/introduction) typically used in the config of a Cortex deployment.
 
