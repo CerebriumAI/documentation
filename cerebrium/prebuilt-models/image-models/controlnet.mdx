@@ -24,7 +24,7 @@ You can follow this example of how to call the deployed endpoint:
         "image": "<BASE_64_STRING>",
         "file_url": "https://your-url.com/image.png"
         "hf_token": "<your_token>",
-        "model_id": "<your_id>",
+        "hf_model_path": "<your_id>",
         "height": 512,
         "width": 512,
         "num_inference_steps": 50,
@@ -65,7 +65,7 @@ You can follow this example of how to call the deployed endpoint:
 <ParamField body="hf_token" type="string" optional>
    This is the token from your HuggingFace profile to access your model repo. This is a required parameter if you enter a model id that is private.
 </ParamField>
-<ParamField body="model_id" type="string" optional>
+<ParamField body="hf_model_path" type="string" optional>
    This is the Hugging Face id of your model repo. If nothing is provided we use the Stable diffusion base model.
 </ParamField>
 <ParamField body="height" type="integer" optional>

@@ -20,7 +20,7 @@ Once you've deployed a custom Dreambooth model, you can follow this example of h
       --data-raw '{
         "prompt": "a photo of an astronaut riding a horse on mars.",
         "hf_token": "<your_token>",
-        "model_id": "<your_id>",
+        "hf_model_path": "<your_id>",
         "height": 512,
         "width": 512,
         "num_inference_steps": 50,
@@ -42,7 +42,7 @@ Once you've deployed a custom Dreambooth model, you can follow this example of h
 <ParamField body="hf_token" type="string" required>
    This is the token from your HuggingFace profile to access your model repo. This is a required parameter if you model is privately hosted on Hugging face.
 </ParamField>
-<ParamField body="model_id" type="string" required>
+<ParamField body="hf_model_path" type="string" required>
    This is the Hugging Face id of your model repo. This is a required parameter.
 </ParamField>
 <ParamField body="height" type="integer" optional>
