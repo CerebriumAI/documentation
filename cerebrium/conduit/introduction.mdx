@@ -19,7 +19,12 @@ from cerebrium import Conduit, model_type, hardware
 
 Some model training logic...
 
-c = Conduit(('<MODEL_TYPE>', '<MODEL_PATH>'), '<MODEL_NAME>', '<API_KEY>', '<HARDWARE>')
+c = Conduit(
+    name="<MODEL_NAME>",
+    api_key="<API_KEY>",
+    flow=("<MODEL_TYPE>", "<MODEL_PATH>"),
+    hardware="<HARDWARE>",
+)
 
 c.deploy()
 ```
