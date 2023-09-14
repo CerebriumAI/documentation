@@ -19,7 +19,12 @@ from cerebrium import Conduit, model_type, hardware
 
 Some model training logic...
 
-c = Conduit(('<MODEL_TYPE>', '<MODEL_FILE>'), '<MODEL_NAME>', '<API_KEY>', '<HARDWARE>')
+c = Conduit(
+    name="<MODEL_NAME>",
+    api_key="<API_KEY>",
+    flow=("<MODEL_TYPE>", "<MODEL_PATH>"),
+    hardware="<HARDWARE>",
+)
 
 c.deploy()
 ```
@@ -47,9 +52,7 @@ In the Conduit object, there are the following parameters:
   - **model_type.ONNX**: Expects a serialized `.onnx` file
   - **model_type.SPACY**: Expects a folder path of your Spacy model
   - **model_type.HUGGINGFACE_PIPELINE**: Expects the task identifier and model identifier of the Hugging face model
-  - **MODEL_FILE**: This is the string path to the model object you have
-    obtained as a result of training locally or in the cloud. This is usually
-    some model object or model file that you have exported.
+  - **MODEL_PATH**: The path to your weights. This is either the path to the weights on your local machine or the path to the weights on in the cloud. For huggingface models, this is the Hugginface model identifier e.g. 'meta-llama/Llama-2-13b-chat-hf'.
 - **MODEL_NAME**: The name you would like to give your model (alphanumeric, with
   hyphens and less than 20 characters). This is a unique identifier for your
   model and will be used to call your model in the future.

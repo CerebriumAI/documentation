@@ -51,11 +51,11 @@ from cerebrium import Conduit, model_type, hardware
 
 # Create a conduit
 c = Conduit(
-    'hf-gpt',
-    '<API_KEY>',
-    [
+    name='my-hf-gpt-model',
+    api_key='<API_KEY>',
+    flow=[
         (model_type.HUGGINGFACE_PIPELINE, {"task": "text-generation", "model": "EleutherAI/gpt-neo-125M", "max_new_tokens": 100}),
-    ],
+    ]
 )
 ```
 
