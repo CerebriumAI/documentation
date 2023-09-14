@@ -31,3 +31,24 @@ model = torch.jit.load(file_path)
 ```
 
 Now, in subsequent deployments, the model will load from the cache rather than download it again.
+
+## Increasing your Persistent Storage Size
+
+<Note>Once increased, your persistent storage size cannot be decreased.</Note>
+
+By default, your account is given 50GB of persistent storage to start with. However, if you find you need more (for example, you get an error saying `disk quote exceeded`) then you can increase your allocation using the following steps:
+
+1. Check your current persistent storage allocation by running:
+
+```bash
+cerebrium storage --get-capacity
+```
+
+This will return your current persistent storage allocation in GB.
+
+2. To increase your persistent storage allocation run:
+
+```bash
+cerebrium storage --increase-in-gb <number of GB to increase by>
+```
+This will return a confirmation message and your new persistent storage allocation in GB if successful.
