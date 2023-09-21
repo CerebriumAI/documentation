@@ -12,7 +12,7 @@ There are three parameters that regulate the scaling of your deployment:
 - maxReplicas: The maximum number of replicas you would like to allow for your deployment. Useful for cost-sensitive applications when you need to limit the number of replicas that can be created. By default this is not set and we scale your model to fit the your volume of requests.
 - cooldown: Cooldown period in seconds is the period of inactivity before the number of replicas for your deployment is scaled down by 1. Defaults to 60s.
 
-While these parameters are set at deployment time, you can change them at any time using the Cerebrium CLI. 
+While these parameters are set at deployment time, you can change them at any time using the Cerebrium CLI.
 To change the scaling parameters for your deployment, run the following command:
 
 ```bash
@@ -21,13 +21,14 @@ cerebrium model-scaling <<<YOUR_MODEL_NAME>>>                 \
                         --min-replicas <<INTEGER>>          \
                         --max-replicas <<INTEGER>>
 ```
+
 Each of the parameters are optional and your current values will be preserved if you do not specify them.
 
 ## Updating model scaling using a rest endpoint
 
 You may want to update your model using a rest endpoint. To do so, you can use the following endpoint:
 
-```bash 
+```bash
 curl --location 'https://rest-api.cerebrium.ai/update-model-scaling' \
 --header 'Authorization: YOUR-PRIVATE-API-KEY' \
 --header 'Content-Type: application/json' \
