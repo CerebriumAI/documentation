@@ -4,17 +4,19 @@ description: Tips and tricks for multi-GPU inferencing.
 ---
 
 # Multi-GPU Inferencing
+
 Multi GPU inference on cerebrium is as simple as setting the `num_gpus` parameter when deploying your Cortex or Conduit model.  
 If using huggingface transformers, you then just need to set the `device_map` to auto and the model will be automatically distributed across all available GPUs.
 
 # Speeding up inference
 
 Larger models are, by nature, slower as there are more calculations to be done due to there being more parameters.  
-However, there are a few ways to speed up inference. 
+However, there are a few ways to speed up inference.
 
 The first is to use **mixed precision**. This is a technique that uses half precision floating point numbers (float16) instead of the standard float32. Since the model is smaller, it is faster to run.
 
 If using Huggingface transformers, you can use the **Accelerate** library to prepare your model after loading in the weights. This is done with:
+
 ```python
 from accelerate import Accelerator
 accelerator = Accelerator()
@@ -22,6 +24,7 @@ model = accelerator.prepare(model)
 ```
 
 Most transformers models also allow you to use **bettertransformers** to speed up inference. This is done with:
+
 ```python
 model.to_bettertransformer()
 ```
