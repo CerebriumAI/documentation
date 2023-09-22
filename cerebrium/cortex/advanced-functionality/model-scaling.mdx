@@ -33,9 +33,19 @@ curl --location 'https://rest-api.cerebrium.ai/update-model-scaling' \
 --header 'Authorization: YOUR-PRIVATE-API-KEY' \
 --header 'Content-Type: application/json' \
 --data '{
-    "name": "your-amazing-model",
+    "name": "your-models-unique-name-here",
     "minReplicaCount": 0,
     "maxReplicaCount": 1,
     "cooldownPeriodSeconds": 180
 }'
+```
+
+Just replace the values for `minReplicaCount`, `maxReplicaCount` and `cooldownPeriodSeconds` with your desired values. All values are optional so if you don't want to update your max replicas, just leave it out of the request body. Also make sure that `name` matches the name you gave your model when you deployed it!
+
+You'll recieve the following confirmation response if successful:
+
+```
+{
+    "message": "✅ Model scaling successfully"
+}
 ```
