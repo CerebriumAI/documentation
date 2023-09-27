@@ -80,7 +80,8 @@
             "cerebrium/cortex/advanced-functionality/async-functions",
             "cerebrium/cortex/advanced-functionality/config-files",
             "cerebrium/cortex/advanced-functionality/long-running-tasks",
-            "cerebrium/cortex/advanced-functionality/model-scaling"
+            "cerebrium/cortex/advanced-functionality/model-scaling",
+            "cerebrium/cortex/advanced-functionality/faster-model-loading"
           ]
         },
         {
