@@ -32,10 +32,10 @@ To use **Tensorizer**, you need to first serialise your model and save it to you
 
 ```python
 from tensorizer import TensorSerializer
-def serialise_model(model, model_path):
-    """Serialise the model and saving the weights to the model_path"""
+def serialise_model(model, save_path):
+    """Serialise the model and save the weights to the save_path"""
     try:
-        serializer = TensorSerializer(model_path)
+        serializer = TensorSerializer(save_path)
         start = time.time()
         serializer.write_module(model)
         end = time.time()
@@ -176,107 +176,3 @@ def serialise_model(model, model_path):
         print("Serialisation failed with error: ", e,  file=sys.stderr)
         return False
 ```
-
-## Pytorch Lightning
-
-[Pytorch Lightning's fabric](https://lightning.ai/docs/fabric/latest/) is a library that utilises the optimisations in _Pytorch Lightning_ but at higher level.  
-One of the features of **fabric** is that it allows you to load your model from storage into GPU memory in a single step using their serialised checkpoints.
-
-In our testing, we observed that this method is slightly slower than using **Tensorizer** but it is still faster than huggingface's default method of loading the model by around 10%.
-
-### Installation
-
-To install Pytorch Lightning's **fabric**, add the following to your `requirements.txt` file:
-
-```txt
-lightning
-```
-
-### Usage
-
-Following the same principles as before, here's an example of the methods you would use to load your model using **fabric**.
-
-```python
-import time
-from huggingface_hub import hf_api
-import torch
-import os
-import sys
-from transformers import AutoModelForCausalLM, AutoConfig
-from lightning.fabric import Fabric
-from accelerate import init_empty_weights
-
-# Initialise the fabric object.
-fabric = Fabric()
-
-# Setup the paths to the model cache
-APP_NAME = os.environ.get("APP_NAME", "default") # this gets the name of your deployment from the environment variables
-private_model_path = f"/persistent-storage/.cache/tensorised-models/{APP_NAME}/{{org}}/{{model_name}}.ckpt"
-def fabric_fast_load(model_id, load_weights_func):
-    org, model_name = model_id.split("/")
-    model_path = private_model_path.format(org=org, model_name=model_name)
-
-    # Make sure the directory exists
-    os.makedirs(os.path.dirname(model_path), exist_ok=True)
-
-    # Check if the model exists in the cache
-    if os.path.isfile(model_path):
-        # if yes, deserialise it
-        print((f"Deserialising model from {model_path}"),  file=sys.stderr)
-        print("",  file=sys.stderr)
-        model = deserialise_saved_model(model_path, model_id)
-    else:
-        # if not, download it and serialise it
-        model = load_weights_func()
-        print((f"Serialising model to {model_path}"),  file=sys.stderr)
-        serialise_model(model, model_path)
-    return model
-
-
-
-def deserialise_saved_model(model_path, model_id):
-    """Deserialise the model from the model_path"""
-
-    # create a config object that we can use to init an empty model
-    config = AutoConfig.from_pretrained(model_id)
-
-    # Init without loading weights into gpu. We'll load later.
-    print(("Initialising empty model"),  file=sys.stderr)
-    start = time.time()
-    with init_empty_weights():
-        # Load your model here
-        model = AutoModelForCausalLM.from_config(config)
-    end_init = time.time() - start
-
-
-    # Load the weights into the model
-    print(("Loading model"),  file=sys.stderr)
-    start = time.time()
-    fabric.load(path=model_path, state={"model":model})
-    end = time.time()
-
-    # Report on the timings.
-    print(f"Initialising empty model took {end_init} seconds",  file=sys.stderr)
-    print((f"\nDeserialising model took {end - start} seconds\n"),  file=sys.stderr)
-    return model
-
-
-def serialise_model(model, model_path):
-    """Serialise the model to the model_path"""
-    try:
-        start = time.time()
-        # pytorch lightning wants a state dictionary. So we place the model in a dictionary as follows
-        fabric.save(path=model_path, state={"model":model})
-        end = time.time()
-        print((f"Serialising model took {end - start} seconds"),  file=sys.stderr)
-        return True
-    except Exception as e:
-        print("Serialisation failed with error: ", e,  file=sys.stderr)
-        return False
-
-```
-
-<Note>
-  Serialising with Pytorch Lightning's fabric is memory intensive so make sure
-  your deployment has the same amount of memory as your model size.
-</Note>
