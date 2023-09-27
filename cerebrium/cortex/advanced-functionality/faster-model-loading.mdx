@@ -89,7 +89,6 @@ def deserialise_saved_model(model_path, model_id, plaid=True):
     return model
 ```
 
-
-Note that your model does not need to be a transformers or even a huggingface model. 
+Note that your model does not need to be a transformers or even a huggingface model.
 If you have a diffusers, skitlearn or even a custom pytorch model, you can still use **Tensorizer** to load your model from storage into GPU memory in a single step.  
 The only requirement to obtain the speedup from deserialisation is that you can initialise an empty model. The Deserialiser object will then restore the weights into the empty model.
