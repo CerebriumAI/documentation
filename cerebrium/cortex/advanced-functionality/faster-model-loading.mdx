@@ -119,7 +119,7 @@ def fast_load(model_id, load_weights_func, faster=False):
         model = deserialise_saved_model(model_path, model_id, plaid=faster)
     else:
         # some function where you load your model, send it to GPU and prep it for inference
-        model = load_weights_func() 
+        model = load_weights_func()
         print((f"Serialising model to {model_path}"),  file=sys.stderr)
         serialise_model(model, model_path)
     return model
@@ -177,16 +177,15 @@ def serialise_model(model, model_path):
         return False
 ```
 
-
-
 ## Pytorch Lightning
 
-[Pytorch Lightning's fabric](https://lightning.ai/docs/fabric/latest/) is a library that utilises the optimisations in *Pytorch Lightning* but at higher level.  
-One of the features of **fabric** is that it allows you to load your model from storage into GPU memory in a single step using their serialised checkpoints.  
+[Pytorch Lightning's fabric](https://lightning.ai/docs/fabric/latest/) is a library that utilises the optimisations in _Pytorch Lightning_ but at higher level.  
+One of the features of **fabric** is that it allows you to load your model from storage into GPU memory in a single step using their serialised checkpoints.
 
 In our testing, we observed that this method is slightly slower than using **Tensorizer** but it is still faster than huggingface's default method of loading the model by around 10%.
 
 ### Installation
+
 To install Pytorch Lightning's **fabric**, add the following to your `requirements.txt` file:
 
 ```txt
@@ -216,10 +215,10 @@ private_model_path = f"/persistent-storage/.cache/tensorised-models/{APP_NAME}/{
 def fabric_fast_load(model_id, load_weights_func):
     org, model_name = model_id.split("/")
     model_path = private_model_path.format(org=org, model_name=model_name)
-    
+
     # Make sure the directory exists
     os.makedirs(os.path.dirname(model_path), exist_ok=True)
-    
+
     # Check if the model exists in the cache
     if os.path.isfile(model_path):
         # if yes, deserialise it
@@ -267,7 +266,7 @@ def serialise_model(model, model_path):
     try:
         start = time.time()
         # pytorch lightning wants a state dictionary. So we place the model in a dictionary as follows
-        fabric.save(path=model_path, state={"model":model}) 
+        fabric.save(path=model_path, state={"model":model})
         end = time.time()
         print((f"Serialising model took {end - start} seconds"),  file=sys.stderr)
         return True
@@ -277,8 +276,7 @@ def serialise_model(model, model_path):
 
 ```
 
-
 <Note>
-Serialising with Pytorch Lightning's fabric is memory intensive so make sure your deployment has the same amount of memory as your model size.
+  Serialising with Pytorch Lightning's fabric is memory intensive so make sure
+  your deployment has the same amount of memory as your model size.
 </Note>
-
