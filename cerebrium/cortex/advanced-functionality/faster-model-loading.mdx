@@ -3,7 +3,7 @@ title: Decrease Model Loading Time
 description: Decrease the time it takes to load your model from storage into GPU
 ---
 
-One of the biggest contributions to the startup time of your model is the time it takes to load your model from storage into GPU memory. This is especially true for large models.
+One of the biggest contributions to the startup time of your model is the time it takes to load your model from storage into GPU memory. For example, in larger models of 20B+ parameters, it can take >40s for your model to be loaded using a normal huggingface load, even with the 2GB/s transfer speeds from persistent storage.
 
 While we've optimised the underlying hardware to load models as fast as possible, there are a few things you can do to decrease the time it takes to load your model and, therefore, your coldstart times.
 
