@@ -3,37 +3,12 @@ title: "Deploying Prebuilt Models"
 description: "Cerebrium provides prebuilt models that you can deploy to an API seamlessly"
 ---
 
-Cerebrium and its community keep a library of popular pre-built models that you can deploy using one click or one line of code. If you would like any pre-built models added you can:
+Cerebrium and its community keep a library of popular pre-built models that you can deploy using one click. If you would like any pre-built models added you can:
 
+- [Submit PR on Github](https://github.com/CerebriumAI/cerebrium-prebuilts) All our prebuilt models live here so submit a PR or one you would like to contribute to the community. Instructions in the README :)
 - Post a [bounty](https://www.cerebrium.ai/bounties) for our community to create it
 - [Contact](mailto:support@cerebrium.ai) the Cerebrium team and we will see what we can do
 
-You can deploy prebuilt models via Cerebrium using two methods.
+You can deploy prebuilt models via Cerebrium by using a simple one-click deploy from your dashboard by navigating to the <b>Prebuilt tab</b>.
 
-<ol>
-  <li>
-    Doing simple one-click deploys from your dashboard by navigating to the{" "}
-    <b>Prebuilt tab</b>
-  </li>
-  <li>Through our Python framework. </li>
-</ol>
-Deploying a prebuilt model through our framework is largely similar to deploying
-a custom model. The only difference is that you do not need to upload a model file.
-Instead, you specify which prebuilt model you want to deploy using the corresponding
-identifier.
-
-```bash Install Cerebrium package
-pip install --upgrade cerebrium
-```
-
-```python Deploy a prebuilt Whisper Model
-from cerebrium import deploy, model_type
-endpoint = deploy((model_type.PREBUILT, "whisper-medium"), 'my-flow', "<API_KEY>")
-```
-
-<Note>
-  You can not use prebuilt models in ensembles or with processing functions.
-  They should be contained within single-model flows only.
-</Note>
-
-You can check out the available models through your dashboard or by reading our docs below
+Check out the available models through your dashboard or by reading our docs below!

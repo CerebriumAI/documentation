@@ -69,7 +69,8 @@ You need to define a function with the name **predict** which receives 3 params:
 
 - **item**: This is the expected request parameters you defined above
 - **run_id**: This is a unique identifier for the user request if you want to use it to track predictions through another system
-- **logger**: Cerebrium only supports logging via the logger and will not log "print()" statements.The logger contains the 3 states across most loggers:
+- **logger**: Cerebrium supports logging via the logger (we also support "print()" statements) however, using the logger will format your logs nicer. It contains
+  the 3 states across most loggers:
   - logger.info
   - logger.debug
   - logger.error
@@ -102,9 +103,6 @@ For the parameters above:
 - **\<cpu\>**: This is the number of CPU cores you want to allocate to your model. Optional as it defaults to 2. Can be an integer between 1 and 32
 - **\<memory\>**: This is the number of GB of memory you'd like to allocate to your model. Optional as it defaults to 8.0GB. Depending on your hardware selection, this float can be between 2.0 and 256.0
 - **\<hardware\>**: This can be any of the following options:
-  - **CPU**: This will run your model on a CPU. This is the default option for SKLearn, XGBoost, and SpaCy models.
-  - **GPU**: (Deprecated) This will run your model on a T4 GPU. This is the default option for Torch, ONNX, and HuggingFace models.
-  - **A10**: (Deprecated) This will run your model on an A10 GPU, which provides 24GB of VRAM. You should use this option if you are using a model that is too large to fit on the 16GB of VRAM that a T4 GPU provides. This will include most large HuggingFace models.
   - **TURING_4000** : A 8GB GPU that is great for lightweight models with less than 3B parameters in FP16.
   - **TURING_5000** : A 16GB GPU that is great for small models with less than 7B parameters in FP16. Most small HuggingFace models can run on this.
   - **AMPERE_A4000** : A 16GB GPU that is great for small models with less than 7B parameters in FP16. Significantly faster than an RTX 4000. Most small HuggingFace models can run on this.
@@ -112,8 +110,10 @@ For the parameters above:
   - **AMPERE_A6000** : A 48GB GPU offering a great cost to performance ratio. This is great for medium models with less than 21B parameters in FP16. A great option for almost all HuggingFace models.
   - **A100** : A 40GB GPU offering some of the highest performance available. This is great for large models with less than 18B parameters in FP16. A great option for almost all HuggingFace models especially if inference speed is your priority.
 - **\<num-gpus\>** Number of GPUs to use in your Cortex deployment. Defaults to 1 but can be an integer between 1 and 8 if you're using GPU.
-- **\<min-replicas\>**: The minimum number of replicas you would like to allow for your deployment. Set to 0 if you would like serverless deployments. Otherwise, for high volume applications, you can set this to a higher number to skip scale-up time and keep servers waiting. The minimum number of replicas is dependent on your subscription plan. Defaults to 0.
-- **\<max-replicas\>**: The maximum number of replicas you would like to allow for your deployment. Useful for cost-sensitive applications when you need to limit the number of replicas that can be created. The maximum number of replicas is dependent on your subscription plan.
+- **\<cooldown\>**: Cooldown period, in seconds since the last request is completed, before an inactive replica of your deployment is scaled down. Defaults to 60s.
+- **\<min_replicas\>**: The minimum number of replicas you would like to allow for your deployment. Set to 0 if you would like serverless deployments. Otherwise, for high volume applications, you can set this to a higher number to skip scale-up time and keep servers waiting. The minimum number of replicas is dependent on your subscription plan. Defaults to 0.
+- **\<max_replicas\>**: The maximum number of replicas you would like to allow for your deployment. Useful for cost-sensitive applications when you need to limit the number of replicas that can be created. The maximum number of replicas is dependent on your subscription plan.
+- **\<forced-rebuild\>**: This will force a rebuild of your deployment, even if the code has not changed. This functionality is particularly useful if you would like to clear the cached dependencies of your deployment or if something has gone wrong with your deployment and you would like to start from scratch.This flag will not clear your persistent storage, so don't worry about losing your persistent files!
 
 ### View model statistics and logs
 
@@ -136,35 +136,8 @@ Now that we have covered the basics of deploying a model, let's dive into some o
 Below are some links outlining some of the more advanced functionality that Cortex provides:
 
 - Using config files to deploy models. [See here](cerebrium/cortex/advanced-functionality/config-files).
+- Handle Long running. [See here](cerebrium/cortex/advanced-functionality/long-running-tasks).
 - Quickly initialising a new cortex deployment using the CLI. [See here](cerebrium/cortex/advanced-functionality/init-cortex-project).
 - Utilising persistent storage to share files between builds and runs. [See here](cerebrium/cortex/advanced-functionality/persistant-storage).
 - Utilising secrets to store sensitive information. [See here](cerebrium/cortex/advanced-functionality/using-secrets).
 - Running async functions in Cortex. [See here](cerebrium/cortex/advanced-functionality/async-functions).
-
-### Advanced Cortex Parameters
-
-#### `--python-version` to specify the Python version
-
-You can choose the version of python that you would like to use for your deployment by using the `--python-version` flag.
-We support Python 3.8, 3.9, 3.10, and 3.11. If you do not specify a Python version, we will default to Python 3.10.
-
-#### `--include` or `--exclude` files and folders on deployment
-
-Additionally, we provide two flags to further control which files you add to your deployment. They are:
-
-- **--include**: Regex string of files or folders to include. eg. `--include "./modelFiles/*, my-awesome-file.txt"`
-- **--exclude**: The files or folders to exclude. eg. `--exclude ".venv, ./private.py, ./folderToExclude/*"`
-
-These flags can be repeated to add patterns individually or can receive a string array as shown ABOVE.
-
-Now, with just a few lines of code, your custom Python code will be deployed to serverless CPUs/GPUs without setting up any infrastructure! As simple as that!  
-After the first deployment, every subsequent deployment should be less than 10s, keeping the development lifecycle as quick as possible.
-
-#### `--forced-rebuild` to force a rebuild of your deployment
-
-If you want to force a rebuild of your deployment, you can use the `--forced-rebuild` flag.
-This will force a rebuild of your deployment, even if the code has not changed.
-
-This functionality is particularly useful if you would like to clear the cached dependencies of your deployment or if something has gone wrong with your deployment and you would like to start from scratch.
-
-This flag will not clear your persistent storage, so don't worry about losing your persistent files!
