@@ -1,0 +1,94 @@
+---
+title: Decrease Model Loading Time
+description: Decrease the time it takes to load your model from storage into GPU
+---
+
+One of the biggest contributions to the startup time of your model is the time it takes to load your model from storage into GPU memory. For example, in larger models of 20B+ parameters, it can take >40s for your model to be loaded using a normal huggingface load, even with the 2GB/s transfer speeds from persistent storage.
+
+While we've optimised the underlying hardware to load models as fast as possible, there are a few things you can do to decrease the time it takes to load your model and, therefore, your coldstart times.
+
+# Using a serialisation and zero-copy initialisation libraries
+
+## Tensorizer (recommended)
+
+[Tensorizer](https://github.com/coreweave/tensorizer) is a library that allows you to load your model from storage into GPU memory in a single step.  
+While initially built to fetch models from S3, it can be used to load models from file as well and so, can be used to load models from Cerebrium's persistent storage which features a near 2GB/s read speed.
+In the case of large models of 20B+ parameters, we've observed a **30-50%** decrease in model loading time which further increases with larger models.  
+For more information on the underlying methods, take a look at their github page [here](https://github.com/coreweave/tensorizer).
+
+In this section below, we'll show you how to use **Tensorizer** to load your model from storage straight into GPU memory in a single step.
+
+### Installation
+
+Add the following to your `requirements.txt` file to install **Tensorizer** in your deployment:
+
+```txt
+tensorizer
+```
+
+### Usage
+
+To use **Tensorizer**, you need to first serialise your model and save it to your persistent-storage.
+
+```python
+from tensorizer import TensorSerializer
+def serialise_model(model, save_path):
+    """Serialise the model and save the weights to the save_path"""
+    try:
+        serializer = TensorSerializer(save_path)
+        start = time.time()
+        serializer.write_module(model)
+        end = time.time()
+        print((f"Serialising model took {end - start} seconds"),  file=sys.stderr)
+        serializer.close()
+        return True
+    except Exception as e:
+        print("Serialisation failed with error: ", e,  file=sys.stderr)
+        return False
+```
+
+This will convert your model to a protocol buffer serialised format that is optimised for faster transfer speeds and fast loading into GPU memory.
+
+Then, the next time your deployment starts, you can load your serialised model from storage into GPU memory in a single step.
+You would do this as follows:
+
+```python
+
+from tensorizer import TensorDeserializer
+from tensorizer.utils import no_init_or_tensor
+def deserialise_saved_model(model_path, model_id, plaid=True):
+    """Deserialise the model from the model_path and load into GPU memory"""
+
+    # create a config object that we can use to init an empty model
+    config = AutoConfig.from_pretrained(model_id)
+
+    # Init an empty model without loading weights into gpu. We'll load later.
+    print(("Initialising empty model"),  file=sys.stderr)
+    start = time.time()
+    with no_init_or_tensor():
+        # Load your model here using whatever class you need to initialise an empty model from a config.
+        model = AutoModelForCausalLM.from_config(config)
+    end_init = time.time() - start
+
+    # Create the deserialiser object
+    #   Note: plaid_mode is a flag that does a much faster deserialisation but isn't safe for training.
+    #    -> only use it for inference.
+    deserializer = TensorDeserializer(model_path, plaid_mode=True)
+
+    # Deserialise the model straight into GPU (zero-copy)
+    print(("Loading model"),  file=sys.stderr)
+    start = time.time()
+    deserializer.load_into_module(model)
+    end = time.time()
+    deserializer.close()
+
+    # Report on the timings.
+    print(f"Initialising empty model took {end_init} seconds",  file=sys.stderr)
+    print((f"\nDeserialising model took {end - start} seconds\n"),  file=sys.stderr)
+
+    return model
+```
+
+Note that your model does not need to be a transformers or even a huggingface model.
+If you have a diffusers, scikit learn or even a custom pytorch model, you can still use **Tensorizer** to load your model from storage into GPU memory in a single step.  
+The only requirement to obtain the speedup from deserialisation is that you can initialise an empty model. The Deserialiser object will then restore the weights into the empty model.
