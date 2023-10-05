@@ -103,7 +103,7 @@ For the parameters above:
 - **\<cpu\>**: This is the number of CPU cores you want to allocate to your model. Optional as it defaults to 2. Can be an integer between 1 and 32
 - **\<memory\>**: This is the number of GB of memory you'd like to allocate to your model. Optional as it defaults to 8.0GB. Depending on your hardware selection, this float can be between 2.0 and 256.0
 - **\<hardware\>**: This can be any of the following options:
-  - **CPU** : A CPU only deployment. 
+  - **CPU** : A CPU only deployment.
   - **TURING_4000** : A 8GB GPU that is great for lightweight models with less than 3B parameters in FP16.
   - **TURING_5000** : A 16GB GPU that is great for small models with less than 7B parameters in FP16. Most small HuggingFace models can run on this.
   - **AMPERE_A4000** : A 16GB GPU that is great for small models with less than 7B parameters in FP16. Significantly faster than an RTX 4000. Most small HuggingFace models can run on this.
