@@ -93,7 +93,7 @@ pip install --upgrade cerebrium
 Then navigate to where your model code (specifically your `main.py`) is located and run the following command:
 
 ```bash
-cerebrium deploy <MODEL_NAME> <PRIVATE_API_KEY> --hardware=<HARDWARE>
+cerebrium deploy <MODEL_NAME> --api-key <PRIVATE_API_KEY> --hardware <HARDWARE>
 ```
 
 For the parameters above:
@@ -103,12 +103,13 @@ For the parameters above:
 - **\<cpu\>**: This is the number of CPU cores you want to allocate to your model. Optional as it defaults to 2. Can be an integer between 1 and 32
 - **\<memory\>**: This is the number of GB of memory you'd like to allocate to your model. Optional as it defaults to 8.0GB. Depending on your hardware selection, this float can be between 2.0 and 256.0
 - **\<hardware\>**: This can be any of the following options:
+  - **CPU** : A CPU only deployment. 
   - **TURING_4000** : A 8GB GPU that is great for lightweight models with less than 3B parameters in FP16.
   - **TURING_5000** : A 16GB GPU that is great for small models with less than 7B parameters in FP16. Most small HuggingFace models can run on this.
   - **AMPERE_A4000** : A 16GB GPU that is great for small models with less than 7B parameters in FP16. Significantly faster than an RTX 4000. Most small HuggingFace models can run on this.
   - **AMPERE_A5000** : A 24GB GPU that is great for medium models with less than 10B parameters in FP16. A great option for almost all HuggingFace models.
   - **AMPERE_A6000** : A 48GB GPU offering a great cost to performance ratio. This is great for medium models with less than 21B parameters in FP16. A great option for almost all HuggingFace models.
-  - **A100** : A 40GB GPU offering some of the highest performance available. This is great for large models with less than 18B parameters in FP16. A great option for almost all HuggingFace models especially if inference speed is your priority.
+  - **A100** : An 80GB NVLINK enabled GPU offering some of the highest performance available. This is great for large models with less than 18B parameters in FP16. A great option for almost all HuggingFace models especially if inference speed is your priority.
 - **\<num-gpus\>** Number of GPUs to use in your Cortex deployment. Defaults to 1 but can be an integer between 1 and 8 if you're using GPU.
 - **\<cooldown\>**: Cooldown period, in seconds since the last request is completed, before an inactive replica of your deployment is scaled down. Defaults to 60s.
 - **\<min_replicas\>**: The minimum number of replicas you would like to allow for your deployment. Set to 0 if you would like serverless deployments. Otherwise, for high volume applications, you can set this to a higher number to skip scale-up time and keep servers waiting. The minimum number of replicas is dependent on your subscription plan. Defaults to 0.

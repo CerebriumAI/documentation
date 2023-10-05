@@ -67,7 +67,7 @@ In the Conduit object, there are the following parameters:
   - **hardware.AMPERE_A4000** : A 16GB GPU that is great for small models with less than 7B parameters in FP16. Significantly faster than an RTX 4000. Most small HuggingFace models can run on this.
   - **hardware.AMPERE_A5000** : A 24GB GPU that is great for medium models with less than 10B parameters in FP16. A great option for almost all HuggingFace models.
   - **hardware.AMPERE_A6000** : A 48GB GPU offering a great cost to performance ratio. This is great for medium models with less than 21B parameters in FP16. A great option for almost all HuggingFace models.
-  - **hardware.A100** : A 40GB GPU offering some of the highest performance available. This is great for large models with less than 18B parameters in FP16. A great option for almost all HuggingFace models especially if inference speed is your priority.
+  - **hardware.A100** : An 80GB NVLINK enabled GPU offering some of the highest performance available. This is great for large models with less than 18B parameters in FP16. A great option for almost all HuggingFace models especially if inference speed is your priority.
 - **CPU**: This is the number of CPU cores you want to allocate to your model.
   Optional as it defaults to 2. Can be an integer between 1 and 32
 - **MEMORY**: This is the number of GB of memory you'd like to allocate to
