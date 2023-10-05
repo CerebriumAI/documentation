@@ -98,10 +98,7 @@
     },
     {
       "group": "Cerebrium Jobs",
-      "pages": [
-        "cerebrium/jobs/introduction",
-        "cerebrium/jobs/config-files"
-      ]
+      "pages": ["cerebrium/jobs/introduction", "cerebrium/jobs/config-files"]
     },
     {
       "group": "Conduit",
