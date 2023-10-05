@@ -4,24 +4,25 @@ description: "Deploy any job to a serverless CPU/GPU on Cerebrium"
 ---
 
 # Introduction:
-Driven by the invaluable feedback from our dedicated users, we're excited to annoynce that we've extended the capabilities of our underlying architecture.   
+
+Driven by the invaluable feedback from our dedicated users, we're excited to annoynce that we've extended the capabilities of our underlying architecture.  
 Now, in addition to deploying custom Python code, engineers and data scientists can seamlessly integrate one-off jobs into their workflows, opening up new possibilities.
 
-We've placed a premium on refining the developer experience. If your code runs locally, deploying it to serverless CPUs/GPUs is still breeze with a single command. 
+We've placed a premium on refining the developer experience. If your code runs locally, deploying it to serverless CPUs/GPUs is still breeze with a single command.
 
 **Introducing New Features:**
 
 Now, with the introduction of one-off jobs, you canarness the same GPU capabilities available in Cortex deployments for a variety of tasks. Whether you're focused on training, data processing, downloading large model weights, or handling one-off runs, our platform ensures efficiency and ease across diverse use cases.
 
 You can expect the same rich features and functionality available in Cortex deployments, including:
-- Secrets, providing an additional layer of security to your jobs.  
+
+- Secrets, providing an additional layer of security to your jobs.
 - Persistent storage facilitates seamless file sharing between different jobs and deployments, streamlining your dev experience.
 - A wide range of hardware options, including CPUs and GPUs, to suit your needs.
 - Configurable hardware-as-config, enabling you to customize your job to your specific needs.
 - Multi-GPU support, enabling you to leverage the power of multiple GPUs in a single job.
 
 The possibilities are endless. We're excited to see what you build!
-
 
 # Components
 
@@ -45,24 +46,26 @@ cerebrium job <job_name> --api-key <api_key>
 ```
 
 Additionally, you can specify the following optional parameters:
+
 - **\<cpu\>**: This is the number of CPU cores you want to allocate to your model. Optional as it defaults to 2. Can be an integer between 1 and 32
 - **\<memory\>**: This is the number of GB of memory you'd like to allocate to your model. Optional as it defaults to 8.0GB. Depending on your hardware selection, this float can be between 2.0 and 256.0
 - **\<hardware\>**: This can be any of the following options:
-  - **CPU** : A CPU only deployment. 
+  - **CPU** : A CPU only deployment.
   - **TURING_4000** : A 8GB GPU that is great for lightweight models with less than 3B parameters in FP16.
   - **TURING_5000** : A 16GB GPU that is great for running small work loads.
   - **AMPERE_A4000** : A 16GB GPU that is great for running small work loads.
   - **AMPERE_A5000** : A 24GB GPU that is great for running medium sized work loads.
-  - **AMPERE_A6000** : A 48GB GPU offering a great cost to performance ratio for large work loads. 
-  - **A100** : An 80GB NVLINK enabled GPU offering some of the highest performance available. 
+  - **AMPERE_A6000** : A 48GB GPU offering a great cost to performance ratio for large work loads.
+  - **A100** : An 80GB NVLINK enabled GPU offering some of the highest performance available.
 - **\<num-gpus\>**: Number of GPUs to use in your Cerebrium Job. Defaults to 1 but can be an integer between 1 and 8 if you're using GPU.
 - **\<config-file\>**: A path to a config file to govern your job
 
-
 ## Config files
+
 Config files operate the same way as they do for Cortex deployments and all the same options are available with the exception of the following:
+
 - min_replicas
 - max_replicas
 - cooldown
 
-As these are parameters are not relevant to jobs. However, if you would like to reuse a cortex config file that contains these parameters, we'll safely ignore them for you. 
+As these are parameters are not relevant to jobs. However, if you would like to reuse a cortex config file that contains these parameters, we'll safely ignore them for you.
