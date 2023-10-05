@@ -98,9 +98,7 @@
     },
     {
       "group": "Cerebrium Jobs",
-      "pages": [
-        "cerebrium/jobs/introduction"
-      ]
+      "pages": ["cerebrium/jobs/introduction"]
     },
     {
       "group": "Conduit",
