@@ -13,11 +13,15 @@ When you deploy a model, there are two processes we charge you for:
    and any model files you require. We only charge you for a model build once until you change your environment ie: add more packages - then we will charge you again since
    we rebuild the environment. This process happens every time you do 'cerebrium deploy'.
 2. The model runtime. This is the amount of time it takes your code to run from start to finish on each request. There are two 3 costs to consider here:
-- <u>Cold start</u>: This is the amount of time it takes to spin up a server(s), load your environment, connect storage etc. This is part of the Cerebrium service and
-something we are working on every day to get as low as possible. <b>We do not charge you for this</b>
-- <u>Model initialization</u>: This part of your code is outside of the predict function and only runs when your model incurs a cold start. You are charged for the amount of
-time it takes for this code to run.
-- <u>Predict runtime</u>: This is the code stored in your predict function and runs every time a request hits your endpoint
+
+- <u>Cold start</u>: This is the amount of time it takes to spin up a server(s),
+  load your environment, connect storage etc. This is part of the Cerebrium
+  service and something we are working on every day to get as low as possible. <b>We do not charge you for this</b>
+- <u>Model initialization</u>: This part of your code is outside of the predict
+  function and only runs when your model incurs a cold start. You are charged
+  for the amount of time it takes for this code to run.
+- <u>Predict runtime</u>: This is the code stored in your predict function and
+  runs every time a request hits your endpoint
 
 Let us go through an example of how you can calculate the cost of your deployment:
 
