@@ -83,7 +83,6 @@
             "cerebrium/cortex/advanced-functionality/model-scaling",
             "cerebrium/cortex/advanced-functionality/faster-model-loading",
             "cerebrium/cortex/advanced-functionality/config-files"
-
           ]
         },
         {
