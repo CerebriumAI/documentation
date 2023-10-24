@@ -78,12 +78,11 @@
             "cerebrium/cortex/advanced-functionality/persistent-storage",
             "cerebrium/cortex/advanced-functionality/using-secrets",
             "cerebrium/cortex/advanced-functionality/async-functions",
-            "cerebrium/cortex/advanced-functionality/config-files",
-            "cerebrium/cortex/advanced-functionality/init-cortex-project",
             "cerebrium/cortex/advanced-functionality/multi-gpu-inferencing",
             "cerebrium/cortex/advanced-functionality/long-running-tasks",
             "cerebrium/cortex/advanced-functionality/model-scaling",
-            "cerebrium/cortex/advanced-functionality/faster-model-loading"
+            "cerebrium/cortex/advanced-functionality/faster-model-loading",
+            "cerebrium/cortex/advanced-functionality/config-files"
           ]
         },
         {
@@ -92,44 +91,6 @@
             "cerebrium/cortex/examples/stable_diffusion",
             "cerebrium/cortex/examples/segment_anything",
             "cerebrium/cortex/examples/langchain"
-          ]
-        }
-      ]
-    },
-    {
-      "group": "Conduit",
-      "pages": [
-        "cerebrium/conduit/introduction",
-        "cerebrium/conduit/model-status",
-        {
-          "group": "Advanced functionality",
-          "pages": [
-            "cerebrium/conduit/advanced-functionality/model-ensembles",
-            "cerebrium/conduit/advanced-functionality/persistent-memory",
-            "cerebrium/conduit/advanced-functionality/processing-functions",
-            "cerebrium/conduit/advanced-functionality/saving-files",
-            "cerebrium/conduit/advanced-functionality/test-locally",
-            "cerebrium/conduit/advanced-functionality/using-files",
-            "cerebrium/conduit/advanced-functionality/using-secrets",
-            "cerebrium/conduit/advanced-functionality/using-webhook-endpoints"
-          ]
-        },
-        {
-          "group": "Examples",
-          "pages": [
-            "cerebrium/conduit/examples/onnx",
-            "cerebrium/conduit/examples/pytorch",
-            "cerebrium/conduit/examples/scikit",
-            "cerebrium/conduit/examples/spacy",
-            "cerebrium/conduit/examples/tensorflow",
-            "cerebrium/conduit/examples/xgboost",
-            {
-              "group": "HuggingFace",
-              "pages": [
-                "cerebrium/conduit/examples/huggingface/transformers",
-                "cerebrium/conduit/examples/huggingface/onnx-conversion"
-              ]
-            }
           ]
         }
       ]
