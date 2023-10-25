@@ -126,10 +126,6 @@
             "cerebrium/prebuilt-models/language-models/llamav2",
             "cerebrium/prebuilt-models/language-models/falcon"
           ]
-        },
-        {
-          "group": "Other",
-          "pages": ["cerebrium/prebuilt-models/other-models/salesforce-codegen"]
         }
       ]
     },
