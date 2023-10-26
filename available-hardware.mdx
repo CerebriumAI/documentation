@@ -23,12 +23,10 @@ We have the following graphics cards available on the platform:
 | [NVIDIA RTX A4000](https://www.nvidia.com/en-us/design-visualization/rtx-a4000/) | AMPERE_A4000 | 16GB | Hobby | 3B | 7B
 | [NVIDIA Quadro RTX 5000](https://www.nvidia.com/content/dam/en-zz/Solutions/design-visualization/quadro-product-literature/quadro-rtx-5000-data-sheet-us-nvidia-704120-r4-web.pdf) | TURING_5000 | 16GB | Hobby | 3B | 7B
 | [NVIDIA Quadro RTX 4000](https://www.nvidia.com/content/dam/en-zz/Solutions/design-visualization/quadro-product-literature/quadro-rtx-4000-datasheet-us-nvidia-1060942-r2-web.pdf) | TURING_4000 | 8GB | Hobby | 1B | 3B
-| [NVIDIA A10](https://www.nvidia.com/en-us/data-center/a10-tensor-core-gpu/) (_Depricating soon_) | A10 | 24GB | Hobby | 5B | 10B
-| [NVIDIA T4](https://www.nvidia.com/en-us/data-center/tesla-t4/) (_Depricating soon_) | T4 | 16GB | Hobby | 3B | 7B
 
 _NOTE: The maximum model sizes are calculated as a guideline, assuming that the model is the only thing loaded into VRAM. Longer inputs will result in a smaller maximum model size. Your mileage may vary._
 
-These GPUs can be selected using the `--hardware` flag when deploying your model on Cortex or by using the `hardware` parameter when deploying your model with the Conduit.  
+These GPUs can be selected using the `--hardware` flag when deploying your model on Cortex.  
 For more help with deciding which GPU you require, see this section [here](#choosing-a-gpu).
 
 _Due to the global shortage of GPUs at the moment, we may not always have the Enterprise edition of your GPU available. In this case, we will deploy to the Workstation edition of the GPU._  
@@ -50,7 +48,7 @@ Once again, you only pay for what you need!
 ## Storage
 
 We provide you with a persistent storage volume that is attached to your deployment.
-You can use this storage volume to store any data that you need to persist between deployments. Accessing your persistent storage is covered in depth for [conduit here](/cerebrium/conduit/advanced-functionality/persistent-memory) and [cortex here](/cerebrium/cortex/advanced-functionality/persistent-storage).
+You can use this storage volume to store any data that you need to persist between deployments. Accessing your persistent storage is covered in depth for [cortex here](/cerebrium/cortex/advanced-functionality/persistent-storage).
 
 The storage volume is backed by high-performance SSDs so that you can get the best performance possible
 Pricing for storage is based on the amount of storage you use and is charged per GB per month.
@@ -106,7 +104,7 @@ This storage is persistent and will be available to you for as long as you need 
 # Advanced Parameters
 
 This section is for those users that have a large volume of requests and want to optimise their deployments for cost and performance.  
-The following parameters are available to you when deploying your model on Cortex or Conduit.
+The following parameters are available to you when deploying your model on Cortex.
 
 ## Setting your minimum number of instances after a deployment
 

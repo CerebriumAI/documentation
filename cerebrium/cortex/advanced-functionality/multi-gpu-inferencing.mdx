@@ -5,7 +5,7 @@ description: Tips and tricks for multi-GPU inferencing.
 
 # Multi-GPU Inferencing
 
-Multi GPU inference on cerebrium is as simple as setting the `num_gpus` parameter when deploying your Cortex or Conduit model.  
+Multi GPU inference on cerebrium is as simple as setting the `num_gpus` parameter when deploying your Cortex model.  
 If using huggingface transformers, you then just need to set the `device_map` to auto and the model will be automatically distributed across all available GPUs.
 
 While you can select any types of GPUs for your multi-GPU deployment, if you are looking for the best performance possible, we recommend using the A100 GPUs as these are connected with NVLINK. This means that the GPUs can communicate with each other much faster than with other GPUs.
