@@ -3,9 +3,12 @@ title: "Streaming Endpoints"
 ---
 
 Streaming allows users to stream live output from their models using server-sent event (SSE) streams. This works for Python objects which implement the
-iterator protocol which is anything that essentially uses the 'yield' command in Python. You can return any content types as long as it is returned as a string 
+iterator protocol which is anything that essentially uses the 'yield' command in Python. You can return any content types as long as it is returned as a string
 
-<Note>This feature is currently in beta and so if you would like to stream output, please replace '**predict**' in your endpoint url with '**stream**'</Note>
+<Note>
+  This feature is currently in beta and so if you would like to stream output,
+  please replace '**predict**' in your endpoint url with '**stream**'
+</Note>
 
 Let us see how we can implement a simple example below:
 
@@ -16,6 +19,6 @@ def predict(item, run_id, logger):
         time.sleep(1)
 ```
 
-Once you deploy this code snippet and hit the stream endpoint, you will see the SSE events progressively appear. The latest Postman has great functionality to show this. 
+Once you deploy this code snippet and hit the stream endpoint, you will see the SSE events progressively appear. The latest Postman has great functionality to show this.
 
 If you want to see an example of implementing this with Falcon-7b, please check out the example [here]()
