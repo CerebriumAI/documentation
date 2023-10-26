@@ -79,11 +79,11 @@
             "cerebrium/cortex/advanced-functionality/using-secrets",
             "cerebrium/cortex/advanced-functionality/async-functions",
             "cerebrium/cortex/advanced-functionality/config-files",
-            "cerebrium/cortex/advanced-functionality/init-cortex-project",
             "cerebrium/cortex/advanced-functionality/multi-gpu-inferencing",
             "cerebrium/cortex/advanced-functionality/long-running-tasks",
             "cerebrium/cortex/advanced-functionality/model-scaling",
-            "cerebrium/cortex/advanced-functionality/faster-model-loading"
+            "cerebrium/cortex/advanced-functionality/faster-model-loading",
+            "cerebrium/cortex/advanced-functionality/streaming"
           ]
         },
         {
