@@ -116,20 +116,14 @@
           "group": "Language Models",
           "pages": [
             "cerebrium/prebuilt-models/language-models/whisper",
-            "cerebrium/prebuilt-models/language-models/mt0",
             "cerebrium/prebuilt-models/language-models/flanT5",
             "cerebrium/prebuilt-models/language-models/GPT-Neo",
-            "cerebrium/prebuilt-models/language-models/roberta",
             "cerebrium/prebuilt-models/language-models/pygmalion",
             "cerebrium/prebuilt-models/language-models/tortoise",
             "cerebrium/prebuilt-models/language-models/gpt4all",
             "cerebrium/prebuilt-models/language-models/llamav2",
             "cerebrium/prebuilt-models/language-models/falcon"
           ]
-        },
-        {
-          "group": "Other",
-          "pages": ["cerebrium/prebuilt-models/other-models/salesforce-codegen"]
         }
       ]
     },

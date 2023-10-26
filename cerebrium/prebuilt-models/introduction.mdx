@@ -9,6 +9,12 @@ Cerebrium and its community keep a library of popular pre-built models that you 
 - Post a [bounty](https://www.cerebrium.ai/bounties) for our community to create it
 - [Contact](mailto:support@cerebrium.ai) the Cerebrium team and we will see what we can do
 
-You can deploy prebuilt models via Cerebrium by using a simple one-click deploy from your dashboard by navigating to the <b>Prebuilt tab</b>.
+You can deploy prebuilt models via Cerebrium by using a simple one-click deploy from your dashboard by navigating to the <b>Prebuilt tab</b>.  
+Otherwise, if you would like to read through the source code, you can navigate to the [Cerebrium Prebuilts Github](https://github.com/CerebriumAI/cerebrium-prebuilts) where you can find the source code for each of the models.  
+Each model's folder is a cortex deployment that can be deployed using the `cerebrium deploy` command. Simply navigate to the folder of the model you would like to deploy and run the command.
 
-Check out the available models through your dashboard or by reading our docs below!
+```bash
+cerebrium deploy <<your-name-for-your-model>> --config-file config.yaml
+```
+
+Check out the available models through your Cerebrium dashboard or by reading our docs in the **Prebuilt Models** tab!
