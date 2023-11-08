@@ -3,16 +3,16 @@ title: "Keep models warm"
 description: "Based on traffic and implementation you might want to keep instances running"
 ---
 
-Well we strive to lower cold start times and improve model loading onto the GPU, it might be beneficial to keep containers warm in order to handle incoming requests.
-There are two ways to do this based on your use-case:
+While we strive to lower cold start times and improve model loading onto the GPU, you may prefer to keep your instances warm and waiting in order to handle incoming requests.
+There are two ways to do this based on your use case:
 
 1. Set min replicas to 1 or more.
 
-This is set through the **min_replicas** option in your config.yaml file. This is typically the best option if you would like to sustain a base load or would like
+This is set through the **min_replicas** option in your `config.yaml` file. This is typically the best option if you would like to sustain a base load or would like
 to meet minimum SLA's with customers. Please note that you are charged for 24/7 usage of the instances
 
 2. Set your cooldown period
 
-You set this using the **cooldown** parameter in your config.yaml and is by default set to 60 seconds. This is the amount of seconds of inactivity from when your last
+You set this using the **cooldown** parameter in your `config.yaml` and is by default set to 60 seconds. This is the number of seconds of inactivity from when your last
 request finishes that a container must experience before terminating. Every time you get a new request, this time is reset. It is important to note that you are charged
 for the cooldown time since your container is constantly running.
