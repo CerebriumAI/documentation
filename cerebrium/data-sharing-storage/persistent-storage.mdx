@@ -1,17 +1,15 @@
 ---
-title: "Persistent Storage for Caching"
+title: "Persistent Storage"
 ---
 
-Cerebrium caches your models in a specific directory on the server. This cache
-persists across your project, meaning that if you deploy a new model with the same
-name or use the same HuggingFace model, it will be loaded from the cache rather than downloaded from the cloud. This allows us to scale your model deployments to handle more requests quickly, as well as reduce the size of your deployment container images. Currently, the cache can be accessed through `/persistent-storage` in your container instance,
-should you wish to access it directly and store other artefacts. While you have full access to this drive, we recommend that you only
-store files in directories other than `/persistent-storage/cache`, as this and its subdirectories are used by Cerebrium to store your models.
-In the future, we will charge per GB of persistent storage used, but for now, it is free while
-we are in active development. We will also be implementing a way to clear the cache in the future, as well as pre-uploading
-models to the cache before deployment.
+Cerebrium gives to access to persistent storage in order to store model weights, files and much more. This storage volume persists across your project, meaning that if
+you refer to model weights or a file that was created in a different deployment, you will be able to access it!
 
-As a simple example, suppose you have an external SAM model that you want to use in your custom deployment. You can download it to the cache
+This allows you to load in model weights more efficiently as well as reduce the size of your deployment container images. Currently,
+the volume can be accessed through `/persistent-storage` in your container instance, should you wish to access it directly and store other artifacts. 
+
+While you have full access to this drive, we recommend that you only store files in directories other than `/persistent-storage/cache`, as this and its subdirectories
+are used by Cerebrium to store your models. As a simple example, suppose you have an external SAM model that you want to use in your custom deployment. You can download it to the cache
 as such:
 
 ```python

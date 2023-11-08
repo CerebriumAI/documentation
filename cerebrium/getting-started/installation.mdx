@@ -1,0 +1,48 @@
+---
+title: "Installation"
+description: "Cerebrium is our Python framework that meets you where you work - whether it be
+in Notebooks or .py files we want you to feel comfortable and be environment
+agnostic."
+---
+
+## Installation
+
+The package is available from the public PyPi. Install it using the following
+command:
+
+```bash
+pip install --upgrade cerebrium
+```
+
+You can verify your installation by running `cerebrium --help` in your terminal. If you do not get any output
+but you can run `import `cerebrium` in Python, ensure pip is on your path.
+
+If you have trouble installing the package, please [contact](mailto:support@cerebrium.ai) the team immediately!
+
+## Login to your Cerebrium account
+
+1. If you haven't already, sign up for
+   [Cerebrium](https://dashboard.cerebrium.ai) using your email address or
+   Google login credentials.
+2. From your dashboard you will be able to view all deployed models, API calls,
+   and invite teammates!
+
+The first thing you will need is your private API key for the project that you intend to deploy your model into. You can find the API key by navigating to the API keys section in [your dashboard](https://dashboard.cerebrium.ai/projects/) on Cerebrium.
+
+<Note>Note that each project has a unique API key so double check you are using the key that corresponds to the right project.</Note>
+
+To use the login feature, navigate to your terminal window which you would like to use to deploy your models and run the following command:
+
+```bash
+cerebrium login <YOUR_PRIVATE_API_KEY>
+```
+
+This will store your API key locally, ensuring that you are logged in whenever you open a terminal and use `cerebrium deploy` without you having to enter your API key again.
+
+Some important details to note:
+
+- You will remain logged in between different terminals provided you are the same user.
+- You can still parse in an API key when deploying your models without being logged out. The parsed API key takes preference over the local one. This is particularly useful if you are deploying to a different project.
+- If you would like to remove your login details, remove the entry in `~/.cerebrium/config.yaml`
+
+Awesome! Let's start creating ML-based applications
