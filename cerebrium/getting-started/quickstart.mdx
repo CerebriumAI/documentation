@@ -15,7 +15,7 @@ Currently, our implementation has five components:
 - **requirements.txt** - This is where you define your Python packages where each package should be on a new line. Deployment will be quicker if you specify specific versions. This is optional to include.
 - **pkglist.txt** - This is where you can define Linux packages where each package should be on a new line. We run the apt-install command for items here. This is optional to include.
 - **conda_pkglist.txt** - This is where you can define Conda packages where each package should be on a new line. if you prefer using it for some libraries over pip. You can use both conda and pip in conjunction. This is optional to include.
-- **config.yaml** - This is where you define all the configurations around your model such as the hardware you use, memory required, min replicas etc. Check [here]() for a full list
+- **config.yaml** - This is where you define all the configurations around your model such as the hardware you use, memory required, min replicas etc. Check [here](../environments/initial-setup) for a full list
 
 Every main.py you deploy needs the following mandatory layout:
 
@@ -74,8 +74,8 @@ Now that we have covered the basics of deploying a model, let's dive into some o
 
 Below are some links outlining some of the more advanced functionality that Cortex provides:
 
-- [Custom Images](cerebrium/environments/custom-images): How to create your custom environments to run your ML Models.
-- [Secrets](cerebrium/environments/using-secrets): Use secrets to authenticate with third party platforms.
-- [Persistent Storage](cerebrium/data-sharing-storage/persistent-storage): Store model weights and files locally for faster access.
-- [Long Running Tasks](cerebrium/deployments/long-running-tasks): Execute long running tasks in the background.
-- [Streaming](cerebrium/endpoints/streaming): Stream output live back to your endpoint
+- [Custom Images](../environments/custom-images): How to create your custom environments to run your ML Models.
+- [Secrets](../environments/using-secrets): Use secrets to authenticate with third party platforms.
+- [Persistent Storage](../data-sharing-storage/persistent-storage): Store model weights and files locally for faster access.
+- [Long Running Tasks](../deployments/long-running-tasks): Execute long running tasks in the background.
+- [Streaming](../endpoints/streaming): Stream output live back to your endpoint
