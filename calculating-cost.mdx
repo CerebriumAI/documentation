@@ -9,14 +9,15 @@ view the pricing of various compute on our [pricing page](https://www.cerebrium.
 
 When you deploy a model, there are two processes we charge you for:
 
-1. We charge you for the build process in order to setup your model environment. This means we need to download your Python version, download and install Linux packages, Python packages
-   and any model files you require. We only charge you for a model build once until you change your environment ie: add more packages or specify different versions - then we will charge you again since
-   we rebuild the environment. This process happens every time you do 'cerebrium deploy'. However, we do a lot of caching so each subsequent build should be a lot less than the first.
+1. We charge you for the build process where we set up your model environment. In this step, we set up a Python environment according to your parameters before downloading and installing the required apt packages, Conda and Python packages as well as any model files you require.  
+   You are only charged for a build if we need to rebuild your environment, ie: you have run a `build` or `deploy` command and have changed your requirements, parameters or code. Note that we cache each of the steps in a build so subsequent builds will cost substantially less than the first.  
+
 2. The model runtime. This is the amount of time it takes your code to run from start to finish on each request. There are 3 costs to consider here:
 
 - <u>Cold start</u>: This is the amount of time it takes to spin up a server(s),
   load your environment, connect storage etc. This is part of the Cerebrium
-  service and something we are working on every day to get as low as possible. <b>We do not charge you for this!</b>
+  service and something we are working on every day to get as low as possible.  
+  <b>We do not charge you for this!</b>
 - <u>Model initialization</u>: This part of your code is outside of the predict
   function and only runs when your model incurs a cold start. You are charged
   for the amount of time it takes for this code to run. Typically this is
@@ -71,6 +72,6 @@ Total cost: $121.567/month
 ```
 
 Now you would expect the cost to grow linearly with the number of requests you get however, we want to help you grow your business and so we are happy to discount your computing cost as you grow.
-To see the discounts you can get for your volume, please contact us directly on [Sales](mailto:sales@cerebrium.ai)
+To see the discounts you can get for your volume, please contact us directly at [Sales](mailto:sales@cerebrium.ai)
 
 As you grow, don't worry about scaling your deployment with demand, sourcing new hardware or managing your infrastructure. You can focus on your code and we'll handle the rest.
