@@ -74,9 +74,7 @@
     },
     {
       "group": "Data Storage",
-      "pages": [
-        "cerebrium/data-sharing-storage/persistent-storage"
-      ]
+      "pages": ["cerebrium/data-sharing-storage/persistent-storage"]
     },
     {
       "group": "Deployments",
@@ -87,22 +85,15 @@
     },
     {
       "group": "Endpoints",
-      "pages": [
-        "cerebrium/endpoints/rest-api",
-        "cerebrium/endpoints/streaming"
-      ]
+      "pages": ["cerebrium/endpoints/rest-api", "cerebrium/endpoints/streaming"]
     },
     {
       "group": "Misc",
-      "pages": [
-        "cerebrium/misc/faster-model-loading"
-      ]
+      "pages": ["cerebrium/misc/faster-model-loading"]
     },
     {
       "group": "Prebuilt Models",
-      "pages": [
-        "cerebrium/prebuilt-models/introduction"
-      ]
+      "pages": ["cerebrium/prebuilt-models/introduction"]
     },
     {
       "group": "FAQs and Tips",
@@ -111,7 +102,8 @@
         "reliability-scalability",
         "available-hardware",
         "calculating-cost",
-        "cerebrium/faqs-and-help/fast-deployments-dos-and-donts"]
+        "cerebrium/faqs-and-help/fast-deployments-dos-and-donts"
+      ]
     }
   ],
   "analytics": {
