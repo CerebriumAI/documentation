@@ -35,23 +35,22 @@ Your config file can be named anything you want and can be placed anywhere on yo
 
 The parameters for your config file are the same as those which you would use as flags for a normal `cerebrium deploy` command. They're tabulated below for your convenience:
 
-| Parameter           | Description                                   | Type    | Default                                                            |
-| ------------------- | --------------------------------------------- | ------- | ------------------------------------------------------------------ |
-| `name`              | Name of the deployment                        | string  |                                                                    |
-| `api_key`           | API key for the deployment                    | string  | not included for safety                                            |
-| `hardware`          | Hardware to use for the deployment            | string  | GPU                                                                |
-| `gpu_count`         | The number of GPUs to specify                 | int     | 2                                                                  |
-| `cpu`               | The number of CPU cores to use                | int     | 2                                                                  |
-| `memory`            | The amount of Memory to use in GB             | int     | 14.5                                                               |
-| `log_level`         | Log level for the deployment                  | string  | INFO                                                               |
-| `include`           | Local iles to include in the deployment       | string  | '[./*, main.py, requirements.txt, pkglist.txt, conda_pkglist.txt]' |
-| `exclude`           | Local Files to exclude from the deployment    | string  | '[./.*, ./__*]'                                                    |
-| `disable_animation` | Whether to disable the animation in the logs. | boolean | false                                                              |
-| `python_version`    | The Python version you would like to run      | float   | 3.9                                                                |
-| `min_replicas`      | The minimum number of replicas to run.        | int     | 0                                                                  |
-| `max_replicas`      | The maximum number of replicas to scale to.   | int     | \*plan limit                                                       |
+| Parameter           | Description                                                                                     | Type    | Default                                                            |
+| ------------------- | ----------------------------------------------------------------------------------------------- | ------- | ------------------------------------------------------------------ |
+| `name`              | Name of the deployment                                                                          | string  |                                                                    |
+| `api_key`           | API key for the deployment                                                                      | string  | not included for safety                                            |
+| `hardware`          | Hardware to use for the deployment                                                              | string  | GPU                                                                |
+| `gpu_count`         | The number of GPUs to specify                                                                   | int     | 2                                                                  |
+| `cpu`               | The number of CPU cores to use                                                                  | int     | 2                                                                  |
+| `memory`            | The amount of Memory to use in GB                                                               | int     | 14.5                                                               |
+| `log_level`         | Log level for the deployment                                                                    | string  | INFO                                                               |
+| `include`           | Local iles to include in the deployment                                                         | string  | '[./*, main.py, requirements.txt, pkglist.txt, conda_pkglist.txt]' |
+| `exclude`           | Local Files to exclude from the deployment                                                      | string  | '[./.*, ./__*]'                                                    |
+| `disable_animation` | Whether to disable the animation in the logs.                                                   | boolean | false                                                              |
+| `python_version`    | The Python version you would like to run                                                        | float   | 3.9                                                                |
+| `min_replicas`      | The minimum number of replicas to run.                                                          | int     | 0                                                                  |
+| `max_replicas`      | The maximum number of replicas to scale to.                                                     | int     | \*plan limit                                                       |
 | `cooldown`          | The number of seconds to keep your model warm after each request. It resets after every request | int     | 60                                                                 |
-
 
 ## Config File Example
 

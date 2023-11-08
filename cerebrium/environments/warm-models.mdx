@@ -6,7 +6,7 @@ description: "Based on traffic and implementation you might want to keep instanc
 Well we strive to lower cold start times and improve model loading onto the GPU, it might be beneficial to keep containers warm in order to handle incoming requests.
 There are two ways to do this based on your use-case:
 
-1. Set min replicas to 1 or more. 
+1. Set min replicas to 1 or more.
 
 This is set through the **min_replicas** option in your config.yaml file. This is typically the best option if you would like to sustain a base load or would like
 to meet minimum SLA's with customers. Please note that you are charged for 24/7 usage of the instances

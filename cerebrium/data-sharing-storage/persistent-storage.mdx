@@ -6,7 +6,7 @@ Cerebrium gives to access to persistent storage in order to store model weights,
 you refer to model weights or a file that was created in a different deployment, you will be able to access it!
 
 This allows you to load in model weights more efficiently as well as reduce the size of your deployment container images. Currently,
-the volume can be accessed through `/persistent-storage` in your container instance, should you wish to access it directly and store other artifacts. 
+the volume can be accessed through `/persistent-storage` in your container instance, should you wish to access it directly and store other artifacts.
 
 While you have full access to this drive, we recommend that you only store files in directories other than `/persistent-storage/cache`, as this and its subdirectories
 are used by Cerebrium to store your models. As a simple example, suppose you have an external SAM model that you want to use in your custom deployment. You can download it to the cache
