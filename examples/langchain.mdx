@@ -1,32 +1,24 @@
 ---
-title: "Langchain Q&A YouTube"
+title: "Langchain Q&A on a YouTube Video"
 description: "To deploy a Q&A application around a YouTube video"
 ---
 
 In this tutorial, we will recreate a question-answering bot that can answer questions based on a YouTube video. We recreated the application built [here](https://colab.research.google.com/drive/1sKSTjt9cPstl_WMZ86JsgEqFG-aSAwkn?usp=sharing) by @m_morzywolek.
 
-To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/3-langchain)
-
-## Create Cerebrium Account
-
-Before building, you need to set up a Cerebrium account. This is as simple as
-starting a new Project in Cerebrium and copying the API key. This will be used
-to authenticate all calls for this project.
-
-### Create a project
-
-1. Go to [dashboard.cerebrium.ai](https://dashboard.cerebrium.ai)
-2. Sign up or Login
-3. Navigate to the API Keys page
-4. You will need your private API key for deployments. Click the copy button to copy it to your clipboard
-
-![API Key](/images/cortex/api_keys_private_key.png)
+To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/8-lanchain-QA)
 
 ## Basic Setup
 
 It is important to think of the way you develop models using Cerebrium should be identical to developing on a virtual machine or Google Colab - so converting this should be very easy!
+Please make sure you have the Cerebrium package installed and have logged in. If not, please take a look at our docs [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation)
 
-Let us create our **_requirements.txt_** file and add the following packages:
+First we create our project:
+
+```
+cerebrium init langchain-QA
+```
+
+We need certain Python packages in order to implement this project. Lets add those to our **_requirements.txt_** file:
 
 ```
 pytube # For audio downloading
@@ -39,7 +31,7 @@ sentence_transformers
 cerebrium
 ```
 
-To use Whisper we also have to install ffmpeg and a few other packages as a Linux package and therefore have to create another file to define it, **pkglist.txt** - this is to install all Linux-based packages.
+To use Whisper we also have to install ffmpeg and a few other packages as a Linux package and therefore have to define these in **pkglist.txt** - this is to install all Linux-based packages.
 
 ```
 ffmpeg
@@ -47,7 +39,7 @@ libopenblas-base
 libomp-dev
 ```
 
-To start, we need to create a **main.py** file which will contain our main Python code. This is a relatively simple implementation, so we can do everything in 1 file. We would like a user to send in a link to a YouTube video with a question and return to them the answer as well as the time segment of where we got that response.
+Our **main.py** file will contain our main Python code. This is a relatively simple implementation, so we can do everything in 1 file. We would like a user to send in a link to a YouTube video with a question and return to them the answer as well as the time segment of where we got that response.
 So let us define our request object.
 
 ```python
@@ -58,7 +50,7 @@ class Item(BaseModel):
     question: str
 ```
 
-Above, we use Pydantic as our data validation library, and BaseModel is where Cerebrium keeps some default parameters like "webhook_url" that you can use for long-running tasks but do not worry about that functionality for this tutorial. Due to the way that we have defined the Base Model, "url" and "question" are required parameters and so if they are not present in the request, the user will automatically receive an error message.
+Above, we use Pydantic as our data validation library. Due to the way that we have defined the Base Model, "url" and "question" are required parameters and so if they are not present in the request, the user will automatically receive an error message.
 
 ## Convert Video to text
 
@@ -67,6 +59,7 @@ Below, we will use the Whisper model from OpenAI to convert the video audio to t
 ```python
 import pytube
 from datetime import datetime
+import whisper
 
 model = whisper.load_model("small")
 
@@ -107,7 +100,7 @@ def predict(item, run_id, logger):
 
 ### Langchain Implementation
 
-Below, we will implement [Langchain](https://python.langchain.com/en/latest/index.html) to use a vectorstore, where we will store all our video segments above, with an LLM, Flan-T5, hosted on Cerebrium in order to generate answers.
+Below, we will implement [Langchain](https://python.langchain.com/en/latest/index.html) to use a vectorstore, where we will store all our video segments above, with an LLM, locally hosted on Cerebrium, in order to generate answers.
 
 ```python
 from langchain.embeddings.openai import OpenAIEmbeddings
@@ -120,7 +113,7 @@ import openai
 import faiss
 
 sentenceTransformer = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-os.environ["CEREBRIUMAI_API_KEY"] = "private-XXXXXXXXXXXX"
+os.environ["CEREBRIUMAI_API_KEY"] = <JWT_TOKEN>
 
 def create_embeddings(texts, start_times):
     text_splitter = CharacterTextSplitter(chunk_size=1500, separator="\n")
@@ -152,17 +145,35 @@ Above, we chunk our text segments and store them in a FAISS vector store. To cre
 
 We then integrate Langchain with a Cerebrium deployed endpoint to answer questions. Lastly, we return the results
 
-To deploy the model to an AMPERE_A5000, we use the following command:
+## Deploy
+
+Your config.yaml file is where you can set your compute/environment. Please make sure that the hardware you specify is a AMPERE_A5000 and that you have enough memory (RAM) on your instance to run the models. You config.yaml file should look like:
+
+```
+%YAML 1.2
+---
+hardware: AMPERE_A5000
+memory: 14
+cpu: 2
+min_replicas: 0
+log_level: INFO
+include: '[./*, main.py, requirements.txt, pkglist.txt, conda_pkglist.txt]'
+exclude: '[./.*, ./__*]'
+cooldown: 60
+disable_animation: false
+```
+
+To deploy the model use the following command:
 
 ```bash
-cerebrium deploy langchain --hardware AMPERE\_A5000 --api-key private-XXXXXXXXXXXXX
+cerebrium deploy langchain-QA
 ```
 
 Once deployed, we can make the following request:
 
 ```curl
-curl --location --request POST 'https://run.cerebrium.ai/v1/dev-p-xxxxxx/langchain/predict' \
---header 'Authorization: public-XXXXXXXXXXXX' \
+curl --location --request POST 'https://run.cerebrium.ai/v3/p-xxxxxx/langchain/predict' \
+--header 'Authorization: <JWT-TOKEN>' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "url": "https://www.youtube.com/watch?v=UF8uR6Z6KLc&ab_channel=Stanford",
