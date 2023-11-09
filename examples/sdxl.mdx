@@ -13,6 +13,7 @@ It is important to think of the way you develop models using Cerebrium should be
 Please make sure you have the Cerebrium package installed and have logged in. If not, please take a look at our docs [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation)
 
 First we create our project:
+
 ```
 cerebrium init sdxl-refiner
 ```
@@ -74,7 +75,7 @@ Below we simply get the parameters from our request and pass it to the SDXL mode
 ```python
 def predict(item, run_id, logger):
     item = Item(**item)
-    
+
     init_image = load_image(item.url).convert("RGB")
     images = pipe(
         item.prompt,

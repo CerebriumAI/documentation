@@ -14,6 +14,7 @@ It is important to think of the way you develop models using Cerebrium should be
 Please make sure you have the Cerebrium package installed and have logged in. If not, please take a look at our docs [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation)
 
 First we create our project:
+
 ```
 cerebrium init distil-whisper
 ```
@@ -71,7 +72,7 @@ def save_base64_string_to_file(logger, audio: str):
 
 ```
 
-Now that our utility functions are complete, go to the **main.py** file which will contain our main Python code. We would like the user to send us either a base64 encoded string of the file or a public url from which we can download the file. We would then pass this file to our model and return the output to the user. 
+Now that our utility functions are complete, go to the **main.py** file which will contain our main Python code. We would like the user to send us either a base64 encoded string of the file or a public url from which we can download the file. We would then pass this file to our model and return the output to the user.
 So let us define our request object.
 
 ```python
@@ -85,7 +86,7 @@ class Item(BaseModel):
 ```
 
 Above, we use Pydantic as our data validation library. Due to the way that we have defined the Base Model, "audio" and "file_url" are optional parameters but we must do a check to make sure we are given the one or the other. The webhook_endpoint parameter is something Cerebrium automatically includes in every request and can be used for long running requests.
-Currently Cerebrium has a max timeout of 3 minutes for each inference request. For long audio files (2 hours) which take a couple minutes to process it would be best to use a **webhook_endpoint** which is a url we will make a **POST** request to with the results of your function. 
+Currently Cerebrium has a max timeout of 3 minutes for each inference request. For long audio files (2 hours) which take a couple minutes to process it would be best to use a **webhook_endpoint** which is a url we will make a **POST** request to with the results of your function.
 
 ## Setup Model and inference
 
@@ -156,44 +157,30 @@ Our endpoint will then get the following results:
 
 ```json
 {
-    "run_id": "2R5PnHprwNqiS5tcFMor-4c6rSrxuzrVtBU1JfjT5iWFG6s4pHo1Ug==",
-    "message": "Finished inference request with run_id: `2R5PnHprwNqiS5tcFMor-4c6rSrxuzrVtBU1JfjT5iWFG6s4pHo1Ug==`",
-    "result": {
+  "run_id": "2R5PnHprwNqiS5tcFMor-4c6rSrxuzrVtBU1JfjT5iWFG6s4pHo1Ug==",
+  "message": "Finished inference request with run_id: `2R5PnHprwNqiS5tcFMor-4c6rSrxuzrVtBU1JfjT5iWFG6s4pHo1Ug==`",
+  "result": {
+    "text": " Testing, one, two, three, testing.",
+    "segments": [
+      {
+        "id": 0,
+        "seek": 0,
+        "start": 0,
+        "end": 4,
         "text": " Testing, one, two, three, testing.",
-        "segments": [
-            {
-                "id": 0,
-                "seek": 0,
-                "start": 0,
-                "end": 4,
-                "text": " Testing, one, two, three, testing.",
-                "tokens": [
-                    50364,
-                    45517,
-                    11,
-                    472,
-                    11,
-                    220,
-                    20534,
-                    11,
-                    220,
-                    27583,
-                    11,
-                    220,
-                    83,
-                    8714,
-                    13,
-                    50564
-                ],
-                "temperature": 0,
-                "avg_logprob": -0.3824356023003073,
-                "compression_ratio": 1,
-                "no_speech_prob": 0.019467202946543694
-            }
+        "tokens": [
+          50364, 45517, 11, 472, 11, 220, 20534, 11, 220, 27583, 11, 220, 83,
+          8714, 13, 50564
         ],
-        "language": "en"
-    },
-    "status_code": 200,
-    "run_time_ms": 2053.8525581359863
+        "temperature": 0,
+        "avg_logprob": -0.3824356023003073,
+        "compression_ratio": 1,
+        "no_speech_prob": 0.019467202946543694
+      }
+    ],
+    "language": "en"
+  },
+  "status_code": 200,
+  "run_time_ms": 2053.8525581359863
 }
 ```

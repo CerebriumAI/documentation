@@ -13,9 +13,11 @@ It is important to think of the way you develop models using Cerebrium should be
 Please make sure you have the Cerebrium package installed and have logged in. If not, please take a look at our docs [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation)
 
 First we create our project:
+
 ```
 cerebrium init streaming-falcon
 ```
+
 It is important to think of the way you develop models using Cerebrium should be identical to developing on a virtual machine or Google Colab - so converting this should be very easy!
 
 Let us create our **_requirements.txt_** file and add the following packages:
@@ -138,7 +140,9 @@ cerebrium deploy streaming-falcon
 
 Once deployed, we can make the following request:
 
-<Note>Please note the end of the URL is set to **stream** instead of predict</Note>
+<Note>
+  Please note the end of the URL is set to **stream** instead of predict
+</Note>
 
 ```curl
 curl --location --request POST 'https://run.cerebrium.ai/v3/p-xxxxxx/streaming-falcon/stream' \
@@ -154,5 +158,6 @@ We then get the output of the model as SSE (Server Side events). Below is an exa
 
 ![Streaming](/images/cortex/streaming-postman.png)
 
+```
 
 ```

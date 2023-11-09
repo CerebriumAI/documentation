@@ -3,10 +3,9 @@ title: "Mistral 7B with vLLM"
 description: "Deploy Mistral 7B with vLLM"
 ---
 
-In this tutorial, we will show you how to deploy Mistral 7B using the popular vLLM inference framework. 
+In this tutorial, we will show you how to deploy Mistral 7B using the popular vLLM inference framework.
 
 To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/4-faster-inference-with-vllm)
-
 
 ## Basic Setup
 
@@ -14,6 +13,7 @@ It is important to think of the way you develop models using Cerebrium should be
 Please make sure you have the Cerebrium package installed and have logged in. If not, please take a look at our docs [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation)
 
 First we create our project:
+
 ```
 cerebrium init mistral-vllm
 ```
@@ -61,8 +61,8 @@ def predict(item, run_id, logger):
 
     # Now jusst setup your sampling parameters for inference:
     sampling_params = SamplingParams(temperature=item.temperature, top_p=item.top_p, top_k=item.top_k, max_tokens=item.max_tokens, frequency_penalty=item.frequency_penalty)
-    
-    # And feed your prompt and sampling params into your LLM pipeline as follows. 
+
+    # And feed your prompt and sampling params into your LLM pipeline as follows.
     outputs = llm.generate([item.prompt], sampling_params)
 
     # Extract your text outputs:
@@ -71,7 +71,7 @@ def predict(item, run_id, logger):
         generated_text.append(output.outputs[0].text)
 
     # And return the result
-    return {"result": generated_text}       
+    return {"result": generated_text}
 
 ```
 
@@ -119,14 +119,12 @@ We then get the following results:
 
 ```json
 {
-    "run_id": "nZL6mD8q66u4lHTXcqmPCc6pxxFwn95IfqQvEix0gHaOH4gkHUdz1w==",
-    "message": "Finished inference request with run_id: `nZL6mD8q66u4lHTXcqmPCc6pxxFwn95IfqQvEix0gHaOH4gkHUdz1w==`",
-    "result": {
-        "result": [
-            "\nA: Paris"
-        ]
-    },
-    "status_code": 200,
-    "run_time_ms": 151.24988555908203
+  "run_id": "nZL6mD8q66u4lHTXcqmPCc6pxxFwn95IfqQvEix0gHaOH4gkHUdz1w==",
+  "message": "Finished inference request with run_id: `nZL6mD8q66u4lHTXcqmPCc6pxxFwn95IfqQvEix0gHaOH4gkHUdz1w==`",
+  "result": {
+    "result": ["\nA: Paris"]
+  },
+  "status_code": 200,
+  "run_time_ms": 151.24988555908203
 }
 ```

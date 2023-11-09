@@ -15,6 +15,7 @@ It is important to think of the way you develop models using Cerebrium should be
 Please make sure you have the Cerebrium package installed and have logged in. If not, please take a look at our docs [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation)
 
 First we create our project:
+
 ```
 cerebrium init controlnet-logo
 ```
@@ -86,7 +87,7 @@ Below we simply get the parameters from our request and pass it to the ControlNe
 ```python
 def predict(item, run_id, logger):
     item = Item(**item)
-    
+
     init_image = load_image(item.image_url)
     image = np.array(init_image)
     image = cv2.Canny(image, 100, 200)
