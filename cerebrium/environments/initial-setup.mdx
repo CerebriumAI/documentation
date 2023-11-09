@@ -23,10 +23,10 @@ project_name/
 Cortex supports the use of config YAML files to configure various aspects of your project such as hardware requirements, memory and much more.
 Using config files makes it easier to keep track of your Cerebrium deployments, share them and use git versioning to show changes over time.
 
-To deploy your model with a config file, you can use the `cortex deploy` command with the `--config-file` flag to specify the path to your config file.
+To deploy your model with a specific config file, you can use the `cerebrium deploy` command with the `--config-file` flag to specify the path to your config file. Otherwise `cerebrium deploy` will use the only yaml in the file directory.
 
 ```bash
-cerebrium deploy --config-file your_config_file.yaml
+cerebrium deploy
 ```
 
 Your config file can be named anything you want and can be placed anywhere on your local machine. However, remember to use the `cerebrium deploy` command in the same directory as your main.py as you would normally.
