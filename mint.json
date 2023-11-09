@@ -26,6 +26,12 @@
       "url": "mailto:support@cerebrium.ai"
     }
   ],
+  "tabs": [
+    {
+        "name": "Examples",
+        "url": "examples"
+    }
+  ],
   "anchors": [
     {
       "name": "Dashboard",
@@ -103,6 +109,17 @@
         "available-hardware",
         "calculating-cost",
         "cerebrium/faqs-and-help/fast-deployments-dos-and-donts"
+      ]
+    },
+    {
+      "group": "Examples",
+      "pages": [
+        "examples/sdxl",
+        "examples/logo-controlnet",
+        "examples/mistral-vllm",
+        "examples/streaming-falcon-7B",
+        "examples/langchain",
+        "examples/transcribe-whisper"
       ]
     }
   ],

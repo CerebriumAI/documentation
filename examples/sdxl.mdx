@@ -1,0 +1,155 @@
+---
+title: "Generate Images using SDXL"
+description: "Generate high quality images using SDXL with refiner"
+---
+
+This is a simple tutorial on how to generate a high quality image using the SDXL refiner model located on [Huggingface](https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0) from Stability AI.
+
+To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/10-sdxl-refiner)
+
+## Basic Setup
+
+It is important to think of the way you develop models using Cerebrium should be identical to developing on a virtual machine or Google Colab - so converting this should be very easy!
+Please make sure you have the Cerebrium package installed and have logged in. If not, please take a look at our docs [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation)
+
+First we create our project:
+```
+cerebrium init sdxl-refiner
+```
+
+It is important to think of the way you develop models using Cerebrium should be identical to developing on a virtual machine or Google Colab - so converting this should be very easy!
+
+Let us create our **_requirements.txt_** file and add the following packages:
+
+```
+invisible_watermark
+transformers
+accelerate
+safetensors
+diffusers
+```
+
+To start, we need to create a **main.py** file which will contain our main Python code. This is a relatively simple implementation, so we can do everything in 1 file. We would like a user to send in a link to a YouTube video with a question and return to them the answer as well as the time segment of where we got that response.
+So let us define our request object.
+
+```python
+from typing import Optional
+from pydantic import BaseModel
+import torch
+from diffusers import StableDiffusionXLImg2ImgPipeline
+from diffusers.utils import load_image
+import io
+import base64
+
+class Item(BaseModel):
+    prompt: str
+    url: str
+    negative_prompt: Optional[str] = None
+    conditioning_scale: Optional[float] = 0.5
+    height: Optional[int] = 512
+    width: Optional[int] = 512
+    num_inference_steps: Optional[int] = 20
+    guidance_scale: Optional[float] = 7.5
+    num_images_per_prompt: Optional[int] = 1
+```
+
+Above, we import all the various Python libraries we require as well as use Pydantic as our data validation library. Due to the way that we have defined the Base Model, "prompt" and "url" are required parameters and so if they are not present in the request, the user will automatically receive an error message. Everything else is optional.
+
+## Instantiate model
+
+Below we load in our SDXL model. This will download during your deployment however in subsequent deploys or inference requests it will be automatically cached in your persistent storage for subsequent use. You can read more about persistent storage [here]()
+We do this outside of our **predict** function since we only want this code to run on a cold start (ie: on startup). If the container is already warm, we just want it to do inference and it will execute just the **predict** function.
+
+```python
+pipe = StableDiffusionXLImg2ImgPipeline.from_pretrained(
+    "stabilityai/stable-diffusion-xl-refiner-1.0", torch_dtype=torch.float16, variant="fp16", use_safetensors=True
+)
+pipe = pipe.to("cuda")
+```
+
+## Predict Function
+
+Below we simply get the parameters from our request and pass it to the SDXL model in order to generate the image(s). You will notice we convert the images to base64, this is so we can return it directly instead of writing the files to an S3 bucket - the return of the predict function needs to be JSON serializable.
+
+```python
+def predict(item, run_id, logger):
+    item = Item(**item)
+    
+    init_image = load_image(item.url).convert("RGB")
+    images = pipe(
+        item.prompt,
+        negative_prompt=item.negative_prompt,
+        controlnet_conditioning_scale=item.conditioning_scale,
+        height=item.height,
+        width=item.width,
+        num_inference_steps=item.num_inference_steps,
+        guidance_scale=item.guidance_scale,
+        num_images_per_prompt=item.num_images_per_prompt,
+        image=init_image
+    ).images
+
+    finished_images = []
+    for image in images:
+        buffered = io.BytesIO()
+        image.save(buffered, format="PNG")
+        finished_images.append(base64.b64encode(buffered.getvalue()).decode("utf-8"))
+
+    return {"images": finished_images}
+
+```
+
+## Deploy
+
+Your config.yaml file is where you can set your compute/environment. Please make sure that the hardware you specify is a AMPERE_A5000 and that you have enough memory (RAM) on your instance to run the models. You config.yaml file should look like:
+
+```
+%YAML 1.2
+---
+hardware: AMPERE_A5000
+memory: 14
+cpu: 2
+min_replicas: 0
+log_level: INFO
+include: '[./*, main.py, requirements.txt, pkglist.txt, conda_pkglist.txt]'
+exclude: '[./.*, ./__*]'
+cooldown: 60
+disable_animation: false
+```
+
+To deploy the model use the following command:
+
+```bash
+cerebrium deploy sdxl-refiner
+```
+
+Once deployed, we can make the following request:
+
+```curl
+curl --location 'https://run.cerebrium.ai/v3/p-xxxxx/sdxl-refiner/predict' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: <JWT_TOKEN>' \
+--data '{
+    "url": "https://huggingface.co/datasets/patrickvonplaten/images/resolve/main/aa_xl/000000009.png",
+    "prompt": "a photo of an astronaut riding a horse on mars"
+}''
+```
+
+We then get the following results:
+
+```json
+{
+    "run_id": "Gd2fLvweh1sHpdEQd4XnxYRvtGmghFxSg2rpbchK7wWAFeso9-sOVg==",
+    "message": "Finished inference request with run_id: `Gd2fLvweh1sHpdEQd4XnxYRvtGmghFxSg2rpbchK7wWAFeso9-sOVg==`",
+    "result": {
+        "images": [
+            <BASE64_ENCODED_STRING>
+        ]
+    },
+    "status_code": 200,
+    "run_time_ms": 4388.460874557495
+}
+```
+
+Our image looks like this:
+
+![SDXL](/images/examples/sdxl-refiner.png)
