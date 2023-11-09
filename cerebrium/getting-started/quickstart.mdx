@@ -3,7 +3,7 @@ title: "Quickstart"
 description: "Get up and running with your first deployed model on Cerebrium"
 ---
 
-You can get started by running the command below. It will create a starter template for you.
+The fastest way to get started developing a Cerebrium deployment is to set up a template project using the `cerebrium init` command below. This will create a folder with all the necessary files to get you started. You can then add your code and deploy it to Cerebrium.
 
 ```bash
 cerebrium init first-project
@@ -11,7 +11,7 @@ cerebrium init first-project
 
 Currently, our implementation has five components:
 
-- **main.py** - This is where your python code lives. This is mandatory to include.
+- **main.py** - This is where your Python code lives. This is mandatory to include.
 - **requirements.txt** - This is where you define your Python packages where each package should be on a new line. Deployment will be quicker if you specify specific versions. This is optional to include.
 - **pkglist.txt** - This is where you can define Linux packages where each package should be on a new line. We run the apt-install command for items here. This is optional to include.
 - **conda_pkglist.txt** - This is where you can define Conda packages where each package should be on a new line. if you prefer using it for some libraries over pip. You can use both conda and pip in conjunction. This is optional to include.
@@ -65,7 +65,7 @@ deployed. You will see the usual overview statistics of your model, but most imp
 
 - <b>Builds</b>: This is where you can see the logs regarding the creation of
   your environment and the code specified in the <b>Init</b> function. You will
-  see logs only on every deploy.
+  see logs only on every deployment.
 - <b>Runs</b>: This is where you will see logs concerning every API call to your
   model endpoint. You can therefore debug every run based on input parameters
   and the model output.
@@ -75,7 +75,7 @@ Now that we have covered the basics of deploying a model, let's dive into some o
 Below are some links outlining some of the more advanced functionality that Cortex provides:
 
 - [Custom Images](../environments/custom-images): How to create your custom environments to run your ML Models.
-- [Secrets](../environments/using-secrets): Use secrets to authenticate with third party platforms.
+- [Secrets](../environments/using-secrets): Use secrets to authenticate with third-party platforms.
 - [Persistent Storage](../data-sharing-storage/persistent-storage): Store model weights and files locally for faster access.
 - [Long Running Tasks](../deployments/long-running-tasks): Execute long running tasks in the background.
 - [Streaming](../endpoints/streaming): Stream output live back to your endpoint
