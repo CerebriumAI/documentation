@@ -1,0 +1,53 @@
+---
+title: "Persistent Storage"
+---
+
+Cerebrium gives to access to persistent storage in order to store model weights, files and much more. This storage volume persists across your project, meaning that if
+you refer to model weights or a file that was created in a different deployment, you will be able to access it!
+
+This allows you to load in model weights more efficiently as well as reduce the size of your deployment container images. Currently,
+the volume can be accessed through `/persistent-storage` in your container instance, should you wish to access it directly and store other artifacts.
+
+While you have full access to this drive, we recommend that you only store files in directories other than `/persistent-storage/cache`, as this and its subdirectories
+are used by Cerebrium to store your models. As a simple example, suppose you have an external SAM model that you want to use in your custom deployment. You can download it to the cache
+as such:
+
+```python
+import os
+import torch
+
+file_path = "/persistent-storage/segment-anything/model.pt"
+# Check if the file already exists, if not download it
+if not os.path.exists("/persistent-storage/segment-anything/"):
+    response = requests.get("https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth")
+    with open(file_path, "wb") as f:
+        f.write(response.content)
+
+# Load the model
+model = torch.jit.load(file_path)
+... # Continue with your initialization
+```
+
+Now, in subsequent deployments, the model will load from the cache rather than download it again.
+
+## Increasing your Persistent Storage Size
+
+<Note>Once increased, your persistent storage size cannot be decreased.</Note>
+
+By default, your account is given 50GB of persistent storage to start with. However, if you find you need more (for example, you get an error saying `disk quote exceeded`) then you can increase your allocation using the following steps:
+
+1. Check your current persistent storage allocation by running:
+
+```bash
+cerebrium storage --get-capacity
+```
+
+This will return your current persistent storage allocation in GB.
+
+2. To increase your persistent storage allocation run:
+
+```bash
+cerebrium storage --increase-in-gb <number of GB to increase by>
+```
+
+This will return a confirmation message and your new persistent storage allocation in GB if successful.

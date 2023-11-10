@@ -26,6 +26,12 @@
       "url": "mailto:support@cerebrium.ai"
     }
   ],
+  "tabs": [
+    {
+      "name": "Examples",
+      "url": "examples"
+    }
+  ],
   "anchors": [
     {
       "name": "Dashboard",
@@ -55,82 +61,66 @@
   ],
   "navigation": [
     {
-      "group": "Home",
+      "group": "Getting Started",
       "pages": [
-        "introduction",
-        "installation",
-        "security",
-        "reliability-scalability",
-        "available-hardware",
-        "calculating-cost"
+        "cerebrium/getting-started/introduction",
+        "cerebrium/getting-started/installation",
+        "cerebrium/getting-started/quickstart"
       ]
     },
     {
-      "group": "Cortex",
+      "group": "Environment Setup",
       "pages": [
-        "cerebrium/cortex/introduction",
-        "cerebrium/cortex/build-status",
-        "cerebrium/cortex/model-status",
-        {
-          "group": "Advanced functionality",
-          "pages": [
-            "cerebrium/cortex/advanced-functionality/init-cortex-project",
-            "cerebrium/cortex/advanced-functionality/persistent-storage",
-            "cerebrium/cortex/advanced-functionality/using-secrets",
-            "cerebrium/cortex/advanced-functionality/async-functions",
-            "cerebrium/cortex/advanced-functionality/config-files",
-            "cerebrium/cortex/advanced-functionality/multi-gpu-inferencing",
-            "cerebrium/cortex/advanced-functionality/long-running-tasks",
-            "cerebrium/cortex/advanced-functionality/model-scaling",
-            "cerebrium/cortex/advanced-functionality/faster-model-loading",
-            "cerebrium/cortex/advanced-functionality/streaming"
-          ]
-        },
-        {
-          "group": "Examples",
-          "pages": [
-            "cerebrium/cortex/examples/stable_diffusion",
-            "cerebrium/cortex/examples/segment_anything",
-            "cerebrium/cortex/examples/langchain"
-          ]
-        }
+        "cerebrium/environments/initial-setup",
+        "cerebrium/environments/custom-images",
+        "cerebrium/environments/using-secrets",
+        "cerebrium/environments/multi-gpu-inferencing",
+        "cerebrium/environments/warm-models"
       ]
+    },
+    {
+      "group": "Data Storage",
+      "pages": ["cerebrium/data-sharing-storage/persistent-storage"]
+    },
+    {
+      "group": "Deployments",
+      "pages": [
+        "cerebrium/deployments/long-running-tasks",
+        "cerebrium/deployments/async-functions"
+      ]
+    },
+    {
+      "group": "Endpoints",
+      "pages": ["cerebrium/endpoints/rest-api", "cerebrium/endpoints/streaming"]
+    },
+    {
+      "group": "Misc",
+      "pages": ["cerebrium/misc/faster-model-loading"]
     },
     {
       "group": "Prebuilt Models",
-      "pages": [
-        "cerebrium/prebuilt-models/introduction",
-        {
-          "group": "Image Models",
-          "pages": [
-            "cerebrium/prebuilt-models/image-models/stable-diffusion-2",
-            "cerebrium/prebuilt-models/image-models/img2img-stable-diffusion",
-            "cerebrium/prebuilt-models/image-models/img2text",
-            "cerebrium/prebuilt-models/image-models/custom-dreambooth",
-            "cerebrium/prebuilt-models/image-models/controlnet",
-            "cerebrium/prebuilt-models/image-models/stable-diffusion-upscaler",
-            "cerebrium/prebuilt-models/image-models/esrgan-upscaler",
-            "cerebrium/prebuilt-models/image-models/segment-anything"
-          ]
-        },
-        {
-          "group": "Language Models",
-          "pages": [
-            "cerebrium/prebuilt-models/language-models/whisper",
-            "cerebrium/prebuilt-models/language-models/flanT5",
-            "cerebrium/prebuilt-models/language-models/GPT-Neo",
-            "cerebrium/prebuilt-models/language-models/pygmalion",
-            "cerebrium/prebuilt-models/language-models/tortoise",
-            "cerebrium/prebuilt-models/language-models/gpt4all",
-            "cerebrium/prebuilt-models/language-models/llamav2",
-            "cerebrium/prebuilt-models/language-models/falcon"
-          ]
-        }
-      ]
+      "pages": ["cerebrium/prebuilt-models/introduction"]
     },
     {
       "group": "FAQs and Tips",
-      "pages": ["cerebrium/faqs-and-help/fast-deployments-dos-and-donts"]
+      "pages": [
+        "security",
+        "reliability-scalability",
+        "available-hardware",
+        "calculating-cost",
+        "cerebrium/faqs-and-help/fast-deployments-dos-and-donts"
+      ]
+    },
+    {
+      "group": "Examples",
+      "pages": [
+        "examples/sdxl",
+        "examples/logo-controlnet",
+        "examples/mistral-vllm",
+        "examples/streaming-falcon-7B",
+        "examples/langchain",
+        "examples/transcribe-whisper"
+      ]
     }
   ],
   "analytics": {

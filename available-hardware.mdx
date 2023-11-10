@@ -3,10 +3,10 @@ title: "Available Hardware"
 description: "A list of hardware that is available on Cerebrium's platform."
 ---
 
-The Cerebrium platform allows you to quickly and easily fine-tune and deploy machine learning workloads on a variety of different hardware.
+The Cerebrium platform allows you to quickly and easily deploy machine learning workloads on a variety of different hardware.
 We take care of all the hard work so you don't have to. Everything from the hardware drivers to the scaling of your deployments is managed by us so that you can focus on what matters most: your use case.
 
-This page lists the hardware that is currently available on the platform.
+This page lists the hardware that is currently available on the platform. If you would like us to support additional hardware options on the platform please reach out to [Support](mailto:support@cerebrium.ai)
 
 # Hardware
 
@@ -26,7 +26,7 @@ We have the following graphics cards available on the platform:
 
 _NOTE: The maximum model sizes are calculated as a guideline, assuming that the model is the only thing loaded into VRAM. Longer inputs will result in a smaller maximum model size. Your mileage may vary._
 
-These GPUs can be selected using the `--hardware` flag when deploying your model on Cortex.  
+These GPUs can be selected using the `--hardware` flag when deploying your model on Cortex or can be specified in your config.yaml.
 For more help with deciding which GPU you require, see this section [here](#choosing-a-gpu).
 
 _Due to the global shortage of GPUs at the moment, we may not always have the Enterprise edition of your GPU available. In this case, we will deploy to the Workstation edition of the GPU._  
@@ -48,7 +48,7 @@ Once again, you only pay for what you need!
 ## Storage
 
 We provide you with a persistent storage volume that is attached to your deployment.
-You can use this storage volume to store any data that you need to persist between deployments. Accessing your persistent storage is covered in depth for [cortex here](/cerebrium/cortex/advanced-functionality/persistent-storage).
+You can use this storage volume to store any data that you need to persist between deployments. Accessing your persistent storage is covered in depth for [cortex here](./cerebrium/data-sharing-storage/persistent-storage).
 
 The storage volume is backed by high-performance SSDs so that you can get the best performance possible
 Pricing for storage is based on the amount of storage you use and is charged per GB per month.

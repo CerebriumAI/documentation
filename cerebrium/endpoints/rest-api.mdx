@@ -1,0 +1,31 @@
+---
+title: "Rest API"
+description: ""
+---
+
+By default, all deployments on Cerebrium are a REST API that are accessible through an authenticated POST request. Authentication is done using your JWT token from
+your API Keys section on your dashboard.
+
+Typically, a POST requests take the form:
+
+```bash
+curl --location --request POST 'https://run.cerebrium.ai/v3/p-xxxxx/test-model/predict' \
+--header 'Authorization: <JWT_TOKEN>' \
+--header 'Content-Type: application/json' \
+--data '{
+    "prompt": "Hello world!"
+}'
+```
+
+Responses then take the form:
+
+```bash
+{
+    "run_id": "52eda406-b81b-43f5-8deb-fcf80dfsb74b",
+    "message": "Your input said: Hello World!",
+    "runtime: 326.34
+}
+```
+
+All responses if successful, will return a 200 on success and a 500 on error. If you would like to return custom status codes based on certain functionality
+such as 422, 404 etc just return the json parameter **status_code** from your \*main.py\*\*.
