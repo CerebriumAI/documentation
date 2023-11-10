@@ -21,14 +21,14 @@ In this brief guide, we delve into the strategies, best practices, and pitfalls 
 ### Deploying your code
 
 - **Do** check (and lint) your code before deploying.
-  - Spelling mistakes and simple errors are easy to avoid and are one of the biggest handbrakes slowing down your development cycle.
+- Spelling mistakes and simple errors are easy to avoid and are one of the biggest handbrakes slowing down your development cycle.
 - **Do**, if possible, upload unchanging files to cloud storage.  
-   Downloading your weights from these servers in your main.py (instead of uploading them from your local computer) leverages the faster internet speeds of these servers, yielding faster deployments.
+  Downloading your weights from these servers in your main.py (instead of uploading them from your local computer) leverages the faster internet speeds of these servers, yielding faster deployments.
 
 - **Do** make use of the `--include` and `--exclude` flags to upload only the files you need.
 
 - **Do** as much of your prerequisite setup once, in the body of the `main.py` outside of your predict function.
-  - Where possible, use make use of global variables to prevent re-computing variables every time you call inference.
+- Where possible, use make use of global variables to prevent re-computing variables every time you call inference.
 
 ### Downloading files and setting up models
 
@@ -38,6 +38,6 @@ In this brief guide, we delve into the strategies, best practices, and pitfalls 
 
 ## For faster inference:
 
-- **Do** only use your inference calls for inference. As simple as it sounds, do all the setup outside of the predict function so that it runs once during the build process and is not repeated for every inference.
+- **Do** only use your inference calls for inference. As simple as it sounds, do all the setup outside the predict function so that it runs once during the build process and is not repeated for every inference.
 - **Do** ensure you take advantage of resources if available. Ensure that your model is running on the GPU if available with:  
   `device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')`

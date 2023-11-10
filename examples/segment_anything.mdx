@@ -21,7 +21,7 @@ cerebrium init segment-anything
 
 It is important to think of the way you develop models using Cerebrium should be identical to developing on a virtual machine or Google Colab.
 
-We need certain Python packages in order to implement this project. Lets add those to our **_requirements.txt_** file:
+We need certain Python packages to implement this project. Lets add those to our **_requirements.txt_** file:
 
 ```
 
@@ -86,7 +86,7 @@ With the SAM model, you are able to set parameters about how precise or how deta
 clothes on an image, we don't want the segmentation to be that granular. You can look from Meta's documentation the different parameters you can set.
 
 In the documentation, we need to select a model type and a checkpoint. Meta recommends three — We will just use the default. I then download the ViT-H SAM model
-checkpoint. You can simply add this checkpoint file to the same directory as your **main.py** and when you deploy your model, Cerebrium will automatically upload it.
+checkpoint. You can add this checkpoint file to the same directory as your **main.py** and when you deploy your model, Cerebrium will automatically upload it.
 
 I then would like the user to send in a few parameters for the model via API, and so I need to define what the request object would look like:
 
@@ -101,8 +101,8 @@ class Item(BaseModel):
 
 ```
 
-Pydantic is a data validation library and BaseModel is where Cerebrium keeps some default parameters like "webhook_url" that allows a user to send in a webhook url,
-and we will call it when the job has finished processing — this is useful for long-running tasks. Do not worry about that functionality for this tutorial. The reason
+Pydantic is a data validation library and BaseModel is where Cerebrium keeps some default parameters like "webhook_url" that allows a user to send in a webhook url.
+We will call it when the job has finished processing — this is useful for long-running tasks. Do not worry about that functionality for this tutorial. The reason
 the user is sending in an image or a file url is giving the user a choice to send in a base64 encoded image or a publicly accessible file_url we can download.
 
 ## Identifying and classifying objects

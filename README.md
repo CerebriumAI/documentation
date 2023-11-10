@@ -6,7 +6,8 @@ Cerebrium is an AWS Sagemaker alternative providing all the features you need to
 
 ### 🚀 Setup
 
-Install the [Mintlify CLI](https://www.npmjs.com/package/mintlify) to preview the documentation changes locally. To install, use the following command
+Install the [Mintlify CLI](https://www.npmjs.com/package/mintlify) to preview the documentation changes locally. To
+install, use the following command
 
 ```
 npm i mintlify -g
@@ -20,7 +21,8 @@ Run the following command at the root of your Mintlify application to preview ch
 mintlify dev
 ```
 
-Note - `mintlify dev` requires `yarn` and it's recommended you install it as a global installation. If you don't have yarn installed already run `npm install --global yarn` in your terminal.
+Note - `mintlify dev` requires `yarn` and it's recommended you install it as a global installation. If you don't have
+yarn installed already run `npm install --global yarn` in your terminal.
 
 ### 😎 Publishing Changes
 
