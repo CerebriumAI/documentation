@@ -3,8 +3,8 @@ title: "ControlNet Generated Logo"
 description: "Generate a custom Logo using ControlNet"
 ---
 
-In this tutorial, we will be using ControlNet Canny and SDXL, to alter an images of the HuggingFace logo in order to make it more appealing to the end user. SDXL is the
-Stable Diffusion model released by Stability AI for high resolution image generation. ControlNet allows you to provide a image and to replace parts of the image keeping the
+In this tutorial, we will be using ControlNet Canny and SDXL, to alter the images of the HuggingFace logo to make it more appealing to the end user. SDXL is the
+Stable Diffusion model released by Stability AI for high-resolution image generation. ControlNet allows you to provide a image and to replace parts of the image keeping the
 original outlines of the image.
 
 To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/9-logo-controlnet)
@@ -14,7 +14,7 @@ To see the final implementation, you can view it [here](https://github.com/Cereb
 It is important to think of the way you develop models using Cerebrium should be identical to developing on a virtual machine or Google Colab - so converting this should be very easy!
 Please make sure you have the Cerebrium package installed and have logged in. If not, please take a look at our docs [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation)
 
-First we create our project:
+First, we create our project:
 
 ```
 cerebrium init controlnet-logo
@@ -62,8 +62,8 @@ Above, we import all the various Python libraries we require as well as use Pyda
 
 ## Instantiate model
 
-Below we load in our ControlNet and SDXL models. This will download during your deployment however in subsequent deploys or inference requests it will be automatically cached in your persistent storage for subsequent use. You can read more about persistent storage [here]()
-We do this outside of our **predict** function since we only want this code to run on a cold start (ie: on startup). If the container is already warm, we just want it to do inference and it will execute just the **predict** function.
+Below, we load in our ControlNet and SDXL models. This will be downloaded during your deployment, however, in subsequent deploys or inference requests it will be automatically cached in your persistent storage for subsequent use. You can read more about persistent storage [here]()
+We do this outside our **predict** function since we only want this code to run on a cold start (ie: on startup). If the container is already warm, we just want it to do inference and it will execute just the **predict** function.
 
 ```python
 controlnet = ControlNetModel.from_pretrained(
@@ -82,7 +82,7 @@ pipe.enable_model_cpu_offload()
 
 ## Predict Function
 
-Below we simply get the parameters from our request and pass it to the ControlNet model in order to generate the image(s). You will notice we convert the images to base64, this is so we can return it directly instead of writing the files to an S3 bucket - the return of the predict function needs to be JSON serializable.
+Below we simply get the parameters from our request and pass it to the ControlNet model to generate the image(s). You will notice we convert the images to base64, this is so we can return it directly instead of writing the files to an S3 bucket - the return of the predict function needs to be JSON serializable.
 
 ```python
 def predict(item, run_id, logger):
@@ -135,7 +135,7 @@ cooldown: 60
 disable_animation: false
 ```
 
-To deploy the model use the following command:
+To deploy the model, use the following command:
 
 ```bash
 cerebrium deploy controlnet-logo

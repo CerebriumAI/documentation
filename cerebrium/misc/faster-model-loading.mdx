@@ -12,9 +12,9 @@ While we've optimised the underlying hardware to load models as fast as possible
 ## Tensorizer (recommended)
 
 [Tensorizer](https://github.com/coreweave/tensorizer) is a library that allows you to load your model from storage into GPU memory in a single step.  
-While initially built to fetch models from S3, it can be used to load models from file as well and so, can be used to load models from Cerebrium's persistent storage which features a near 2GB/s read speed.
-In the case of large models of 20B+ parameters, we've observed a **30-50%** decrease in model loading time which further increases with larger models.  
-For more information on the underlying methods, take a look at their github page [here](https://github.com/coreweave/tensorizer).
+While initially built to fetch models from S3, it can be used to load models from file as well and so, can be used to load models from Cerebrium's persistent storage, which features a near 2GB/s read speed.
+In the case of large models (20B+ parameters), we've observed a **30–50%** decrease in model loading time which further increases with larger models.
+For more information on the underlying methods, take a look at their GitHub page [here](https://github.com/coreweave/tensorizer).
 
 In this section below, we'll show you how to use **Tensorizer** to load your model from storage straight into GPU memory in a single step.
 
@@ -90,5 +90,5 @@ def deserialise_saved_model(model_path, model_id, plaid=True):
 ```
 
 Note that your model does not need to be a transformers or even a huggingface model.
-If you have a diffusers, scikit learn or even a custom pytorch model, you can still use **Tensorizer** to load your model from storage into GPU memory in a single step.  
+If you have a diffusers, scikit-learn or even a custom pytorch model, you can still use **Tensorizer** to load your model from storage into GPU memory in a single step.
 The only requirement to obtain the speedup from deserialisation is that you can initialise an empty model. The Deserialiser object will then restore the weights into the empty model.

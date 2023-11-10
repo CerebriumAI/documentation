@@ -40,9 +40,9 @@ curl --location 'https://rest-api.cerebrium.ai/update-model-scaling' \
 }'
 ```
 
-Just replace the values for `minReplicaCount`, `maxReplicaCount` and `cooldownPeriodSeconds` with your desired values. All values are optional so if you don't want to update your max replicas, just leave it out of the request body. Also make sure that `name` matches the name you gave your model when you deployed it!
+Replace the values for `minReplicaCount`, `maxReplicaCount` and `cooldownPeriodSeconds` with your desired values. All values are optional so if you don't want to update your max replicas, just leave it out of the request body. Also make sure that `name` matches the name you gave your model when you deployed it!
 
-You'll recieve the following confirmation response if successful:
+You'll receive the following confirmation response if successful:
 
 ```
 {

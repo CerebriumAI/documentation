@@ -18,7 +18,7 @@ First we create our project:
 cerebrium init langchain-QA
 ```
 
-We need certain Python packages in order to implement this project. Lets add those to our **_requirements.txt_** file:
+We need certain Python packages to implement this project. Let's add those to our **_requirements.txt_** file:
 
 ```
 pytube # For audio downloading
@@ -100,7 +100,7 @@ def predict(item, run_id, logger):
 
 ### Langchain Implementation
 
-Below, we will implement [Langchain](https://python.langchain.com/en/latest/index.html) to use a vectorstore, where we will store all our video segments above, with an LLM, locally hosted on Cerebrium, in order to generate answers.
+Below, we will implement [Langchain](https://python.langchain.com/en/latest/index.html) to use a vectorstore, where we will store all our video segments above, with an LLM, locally hosted on Cerebrium, to generate answers.
 
 ```python
 from langchain.embeddings.openai import OpenAIEmbeddings

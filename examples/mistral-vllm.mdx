@@ -18,7 +18,7 @@ First we create our project:
 cerebrium init mistral-vllm
 ```
 
-We need certain Python packages in order to implement this project. Lets add those to our **_requirements.txt_** file:
+We need certain Python packages to implement this project. Lets add those to our **_requirements.txt_** file:
 
 ```
 sentencepiece
@@ -75,14 +75,14 @@ def predict(item, run_id, logger):
 
 ```
 
-We load the model in outside of the predict function. The reason for this is that the API request will run the predict function every time and we don't want to load our model in every request as that takes time.
+We load the model outside the predict function. The reason for this is that the API request will run the predict function every time, and we don't want to load our model in every request as that takes time.
 The code outside the predict function will run on model startup ie: when the model is cold.
 
 The implementation in our **predict** function is pretty straight forward in that we pass input parameters from our request into the model and then generate outputs that we return to the user.
 
 ## Deploy
 
-Your config.yaml file is where you can set your compute/environment. Please make sure that the hardware you specify is a AMPERE_A5000 and that you have enough memory (RAM) on your instance to run the models. You config.yaml file should look like:
+Your config.yaml file is where you can set your compute/environment. Please make sure that the hardware you specify is an AMPERE_A5000, and that you have enough memory (RAM) on your instance to run the models. Your config.yaml file should look like:
 
 ```
 %YAML 1.2
