@@ -78,6 +78,7 @@ pipe = StableDiffusionXLControlNetPipeline.from_pretrained(
     torch_dtype=torch.float16,
 )
 pipe.enable_model_cpu_offload()
+pipe = pipe.to("cuda")
 ```
 
 ## Predict Function
