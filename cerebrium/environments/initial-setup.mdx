@@ -51,6 +51,9 @@ The parameters for your config file are the same as those which you would use as
 | `min_replicas`      | The minimum number of replicas to run.                                                          | int     | 0                                                                  |
 | `max_replicas`      | The maximum number of replicas to scale to.                                                     | int     | \*plan limit                                                       |
 | `cooldown`          | The number of seconds to keep your model warm after each request. It resets after every request | int     | 60                                                                 |
+| `predict-data`      | A JSON object for you to test inference on your endpoint when a deployment is made              | json    | {}                                                                 |
+| `disable-predict`   | Whether to disable testing your predict function with input                                     | boolean | false                                                              |
+
 
 ## Config File Example
 
@@ -67,4 +70,6 @@ disable_animation: false
 python_version: 3.9
 min_replicas: 0
 max_replicas: 30
+predict_data: '{"prompt": "The quick brown fox jumps over the lazy dog"}'
+disable-predict: false
 ```
