@@ -86,12 +86,12 @@ class Item(BaseModel):
 ```
 
 Above, we use Pydantic as our data validation library. Due to the way that we have defined the Base Model, "audio" and "file_url" are optional parameters but we must do a check to make sure we are given the one or the other. The webhook_endpoint parameter is something Cerebrium automatically includes in every request and can be used for long running requests.
-Currently Cerebrium has a max timeout of 3 minutes for each inference request. For long audio files (2 hours) which take a couple minutes to process it would be best to use a **webhook_endpoint** which is a url we will make a **POST** request to with the results of your function.
+Currently, Cerebrium has a max timeout of 3 minutes for each inference request. For long audio files (2 hours) which take a couple minutes to process it would be best to use a **webhook_endpoint** which is a url we will make a **POST** request to with the results of your function.
 
 ## Setup Model and inference
 
-Below we import the required packages and load in our Whisper model. This will download during your deployment however in subsequent deploys or inference requests it will be automatically cached in your persistent storage for subsequent use. You can read more about persistent storage [here]()
-We do this outside of our **predict** function since we only want this code to run on a cold start (ie: on startup). If the container is already warm, we just want it to do inference and it will execute just the **predict** function.
+Below, we import the required packages and load in our Whisper model. This will download during your deployment however in subsequent deploys or inference requests it will be automatically cached in your persistent storage for subsequent use. You can read more about persistent storage [here]()
+We do this outside our **predict** function since we only want this code to run on a cold start (ie: on startup). If the container is already warm, we just want it to do inference and it will execute just the **predict** function.
 
 ```python
 from huggingface_hub import hf_hub_download

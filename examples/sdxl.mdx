@@ -58,8 +58,8 @@ Above, we import all the various Python libraries we require as well as use Pyda
 
 ## Instantiate model
 
-Below we load in our SDXL model. This will download during your deployment however in subsequent deploys or inference requests it will be automatically cached in your persistent storage for subsequent use. You can read more about persistent storage [here]()
-We do this outside of our **predict** function since we only want this code to run on a cold start (ie: on startup). If the container is already warm, we just want it to do inference and it will execute just the **predict** function.
+Below, we load in our SDXL model. This will be downloaded during your deployment, however, in subsequent deploys or inference requests it will be automatically cached in your persistent storage for subsequent use. You can read more about persistent storage [here]()
+We do this outside our **predict** function since we only want this code to run on a cold start (ie: on startup). If the container is already warm, we just want it to do inference and it will execute just the **predict** function.
 
 ```python
 pipe = StableDiffusionXLImg2ImgPipeline.from_pretrained(
@@ -70,7 +70,7 @@ pipe = pipe.to("cuda")
 
 ## Predict Function
 
-Below we simply get the parameters from our request and pass it to the SDXL model in order to generate the image(s). You will notice we convert the images to base64, this is so we can return it directly instead of writing the files to an S3 bucket - the return of the predict function needs to be JSON serializable.
+Below we simply get the parameters from our request and pass it to the SDXL model to generate the image(s). You will notice we convert the images to base64, this is so we can return it directly instead of writing the files to an S3 bucket - the return of the predict function needs to be JSON serializable.
 
 ```python
 def predict(item, run_id, logger):

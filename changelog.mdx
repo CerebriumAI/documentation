@@ -44,11 +44,11 @@ description: "We release features and fixes regularly! See some of the changes w
 - Myriad of dependency updates.
 - ONNX Models can now be used in multi-model flows (this is an experimental feature).
 - Bug fixes:
-  - PyTorch Models now detach data from the GPU correctly when running Conduits.
-  - Fixed ONNX models input data being malformed.
-  - Fix CUDA driver not being loaded correctly in the Conduit runtime.
+- PyTorch Models now detach data from the GPU correctly when running Conduits.
+- Fixed ONNX models input data being malformed.
+- Fix CUDA driver not being loaded correctly in the Conduit runtime.
 - LLM updates
-  - FLAN-T5 and Stable Diffusion no longer suffer from timeouts and severe cold starts.
+- FLAN-T5 and Stable Diffusion no longer suffer from timeouts and severe cold starts.
 
 ## 0.4.1
 
@@ -62,14 +62,14 @@ description: "We release features and fixes regularly! See some of the changes w
   on feedback. We are also working on adding support for other monitoring tools, with Arize being on track to be released in Q1 2023.
 - Fixed a bug where the client was unable to deploy SKLearn models, XGB Regressor models, and ONNX models.
 - Reworked the response signature for a model. Now returns a JSON object with 3 fields:
-  - `result`: The data returned by the deployed Conduit.
-  - `run_id`: The ID of the run.
-  - `prediction_ids`: The prediction IDs of each prediction made. Used to track/update the predictions logged to monitoring tools.
+- `result`: The data returned by the deployed Conduit.
+- `run_id`: The ID of the run.
+- `prediction_ids`: The prediction IDs of each prediction made. Used to track/update the predictions logged to monitoring tools.
 - Added pre-built deployment for the following LLMs:
-  - whisper-medium
-  - dreambooth
+- whisper-medium
+- dreambooth
 - Added webhook support for the following LLMs:
-  - dreambooth
+- dreambooth
 
 ## 0.3.1
 

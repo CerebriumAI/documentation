@@ -3,7 +3,7 @@ title: "Streaming Output - Falcon 7B"
 description: "Stream outputs live from Falcon 7B using SSE"
 ---
 
-In this tutorial, we will show you how to implement streaming in order to return results to your users as soon as possible with the use of SSE.
+In this tutorial, we will show you how to implement streaming to return results to your users as soon as possible with the use of SSE.
 
 To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/7-streaming-endpoint)
 
@@ -74,12 +74,12 @@ model = AutoModelForCausalLM.from_pretrained(
 )
 ```
 
-In the above we simply import the required packages and instantiate the tokenizer and model. We do this outside the **predict** function so we don't load our model weights
+In the above, we simply import the required packages and instantiate the tokenizer and model. We do this outside the **predict** function, so we don't load our model weights
 onto the GPU with every request but rather only on model startup.
 
 ## Streaming Implementation
 
-Below we define our predict function which will be responsible for our logic in order to stream results back from our endpoint.
+Below, we define our predict function, which will be responsible for our logic to stream results back from our endpoint.
 
 ```python
 def predict(item, run_id, logger):
@@ -111,8 +111,8 @@ def predict(item, run_id, logger):
 
 ```
 
-Above we receive our inputs from the request item we defined. We then implement a TextIteratorStreamer in order to stream output from the model as its ready. Lastly and most
-importantly we use the **yield** keyword in order to return output from our model as its generated.
+Above, we receive our inputs from the request item we defined. We then implement a TextIteratorStreamer to stream output from the model as it's ready. Lastly and most
+importantly, we use the **yield** keyword to return output from our model as its generated.
 
 ## Deploy
 
