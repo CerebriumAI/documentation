@@ -48,10 +48,8 @@ You need to define a function with the name **predict** which receives 3 params:
 
 As long as your **main.py** contains the above you can write any other Python code. Import classes, add other functions etc.
 
-
 Take note of the parameters you've defined in your `Item` class.  
 These are the parameters that you will pass to your model when you make an API call to your model endpoint. You can define as many parameters as you like and name them as you see fit. Just make sure to update the `predict_data` in your **config.yaml** so that you can test your model with some sample data. Otherwise, disable testing by setting `disable_predict` to `true`.
-
 
 ### Deploy model
 
@@ -84,5 +82,3 @@ Below are some links outlining some of the more advanced functionality that Cort
 - [Persistent Storage](../data-sharing-storage/persistent-storage): Store model weights and files locally for faster access.
 - [Long Running Tasks](../deployments/long-running-tasks): Execute long running tasks in the background.
 - [Streaming](../endpoints/streaming): Stream output live back to your endpoint
-
-
