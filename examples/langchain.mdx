@@ -5,7 +5,7 @@ description: "To deploy a Q&A application around a YouTube video"
 
 In this tutorial, we will recreate a question-answering bot that can answer questions based on a YouTube video. We recreated the application built [here](https://colab.research.google.com/drive/1sKSTjt9cPstl_WMZ86JsgEqFG-aSAwkn?usp=sharing) by @m_morzywolek.
 
-To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/8-lanchain-QA)
+To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/8-langchain-QA)
 
 ## Basic Setup
 
@@ -31,7 +31,7 @@ sentence_transformers
 cerebrium
 ```
 
-To use Whisper we also have to install ffmpeg and a few other packages as a Linux package and therefore have to define these in **pkglist.txt** - this is to install all Linux-based packages.
+To use Whisper, we also have to install ffmpeg and a few other packages as a Linux package and therefore have to define these in **pkglist.txt** - this is to install all Linux-based packages.
 
 ```
 ffmpeg
@@ -147,7 +147,7 @@ We then integrate Langchain with a Cerebrium deployed endpoint to answer questio
 
 ## Deploy
 
-Your config.yaml file is where you can set your compute/environment. Please make sure that the hardware you specify is a AMPERE_A5000 and that you have enough memory (RAM) on your instance to run the models. You config.yaml file should look like:
+Your config.yaml file is where you can set your compute/environment. Please make sure that the hardware you specify is a AMPERE_A5000, and that you have enough memory (RAM) on your instance to run the models. You config.yaml file should look like:
 
 ```
 %YAML 1.2
