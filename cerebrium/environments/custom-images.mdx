@@ -8,10 +8,9 @@ By default, Cerebrium models are executed in Python 3.9 unless the Python versio
 Traditionally, when working with Python, you will need access to Apt packages, Pip packages and Conda packages. For a deployment to cerebrium, you can specify all of these in your **cerebrium.toml** file in the following locations:
 
 - **[cerebrium.dependencies.pip]** - This is where you define your Pip packages in the form `module = version_constraints`.
-- **[cerebrium.dependencies.conda]** - This is where you can define Conda packages you would like to install if you prefer using it for some libraries over pip. You can use both conda and pip in conjunction.  
+- **[cerebrium.dependencies.conda]** - This is where you can define Conda packages you would like to install if you prefer using it for some libraries over pip. You can use both conda and pip in conjunction.
 
-- **[cerebrium.dependencies.apt]** - This is where you can define Linux apt packages you would like to install. 
-
+- **[cerebrium.dependencies.apt]** - This is where you can define Linux apt packages you would like to install.
 
 Here is an example of the dependencies section of a **cerebrium.toml** file:
 
