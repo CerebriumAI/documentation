@@ -86,12 +86,12 @@
   },
   {
     "prompt": "How do I deploy a machine learning model to Cerebrium?",
-    "completion": "To deploy your machine learning model to Cerebrium, you need to import the Cerebrium Python framework and use the `deploy` function. The function takes a tuple of the model type and the model file, the model name, and your API key as parameters. Here's an example code snippet:\n\n```bash\nfrom cerebrium import deploy, model_type\n\nSome model training logic...\n\nendpoint = deploy(('<MODEL_TYPE>', '<MODEL_FILE>'), '<MODEL_NAME>', '<API_KEY>')\n```\n\nYou can find the supported model types and their respective formats in the Cerebrium documentation.",
+    "completion": "To deploy your machine learning model to Cerebrium, you need to import the Cerebrium Python framework and use the `deploy` function. The function takes a tuple of the model type and the model file, the model name, and your API key as parameters. Here's an example code snippet:\n\n```bash\nfrom cerebrium import deploy, model_type\n\nSome model training logic...\n\nendpoint = deploy(('<MODEL_TYPE>', '<MODEL_FILE>'), '<APP_NAME>', '<API_KEY>')\n```\n\nYou can find the supported model types and their respective formats in the Cerebrium documentation.",
     "source": "https://docs.cerebrium.ai/cerebrium/test-and-deploy"
   },
   {
     "prompt": "How can I test my model locally before deploying it to Cerebrium?",
-    "completion": "To test your model locally before deploying it to Cerebrium, you can use the `load` and `run` commands. The `load` command loads your pipeline into memory using the paths you specified in `deploy` from a base path, while `run` sequentially executes your loaded pipeline. Here's an example code snippet:\n\n```python\nfrom cerebrium import deploy, model_type\n\nconduit = deploy(('<MODEL_TYPE>', '<MODEL_FILE>'), '<MODEL_NAME>', '<API_KEY>')\nconduit.load('./')\nconduit.run(data)\n```\n\nIn this example, `data` is the data you would send to your model, usually a 2D/3D array for vision models or single lists for XGBoost models. You may feed an `ndarray` or `Tensor` directly into this function.",
+    "completion": "To test your model locally before deploying it to Cerebrium, you can use the `load` and `run` commands. The `load` command loads your pipeline into memory using the paths you specified in `deploy` from a base path, while `run` sequentially executes your loaded pipeline. Here's an example code snippet:\n\n```python\nfrom cerebrium import deploy, model_type\n\nconduit = deploy(('<MODEL_TYPE>', '<MODEL_FILE>'), '<APP_NAME>', '<API_KEY>')\nconduit.load('./')\nconduit.run(data)\n```\n\nIn this example, `data` is the data you would send to your model, usually a 2D/3D array for vision models or single lists for XGBoost models. You may feed an `ndarray` or `Tensor` directly into this function.",
     "source": "https://docs.cerebrium.ai/cerebrium/test-and-deploy"
   },
   {
@@ -191,7 +191,7 @@
   },
   {
     "prompt": "How can I use files as input data to my model in Cerebrium?",
-    "completion": "To use files as input data to your model in Cerebrium, you need to supply an initial pre-processing function. You can then use the files in your model as you would any other input data. Remember that `conduit.run` expects the files to be passed in as binary data on the cloud, so you will need to open the files and read them in as binary data before passing them to test with `conduit.run` locally. Here's an example of how to do this:\n\n```python\ndef pre_process(data, files):\n    import numpy as np\n    from PIL import Image\n    labelled = {d: Image.open(f) for d, f in zip(data, files)}\n    return labelled\n\nfrom cerebrium import Conduit, model_type\nconduit = Conduit('<MODEL_NAME>', '<API_KEY>', [('<MODEL_TYPE>', '<MODEL_FILE>', {\"pre\": pre_process\"})])\nconduit.load('./')\nconduit.run(data, files) # files should be a list of binary objects\nconduit.deploy()\n```",
+    "completion": "To use files as input data to your model in Cerebrium, you need to supply an initial pre-processing function. You can then use the files in your model as you would any other input data. Remember that `conduit.run` expects the files to be passed in as binary data on the cloud, so you will need to open the files and read them in as binary data before passing them to test with `conduit.run` locally. Here's an example of how to do this:\n\n```python\ndef pre_process(data, files):\n    import numpy as np\n    from PIL import Image\n    labelled = {d: Image.open(f) for d, f in zip(data, files)}\n    return labelled\n\nfrom cerebrium import Conduit, model_type\nconduit = Conduit('<APP_NAME>', '<API_KEY>', [('<MODEL_TYPE>', '<MODEL_FILE>', {\"pre\": pre_process\"})])\nconduit.load('./')\nconduit.run(data, files) # files should be a list of binary objects\nconduit.deploy()\n```",
     "source": "https://docs.cerebrium.ai/cerebrium/advanced-functionality/using-files"
   },
   {
@@ -211,7 +211,7 @@
   },
   {
     "prompt": "How do I pass binary data to the `conduit.run` function?",
-    "completion": "To pass binary data to the `conduit.run` function, you need to open the files and read them in as binary data before passing them to the function. Here's an example of how to do this:\n\n```python\nfrom cerebrium import Conduit, model_type\nconduit = Conduit('<MODEL_NAME>', '<API_KEY>', [('<MODEL_TYPE>', '<MODEL_FILE>', {\"pre\": pre_process\"})])\nconduit.load('./')\n\n# Open the files and read them as binary data\nwith open('<FILE_PATH>', 'rb') as file:\n    binary_data = file.read()\n\n# Pass the binary data to the conduit.run function\nconduit.run(data, [binary_data])\n```\n\nIn this example, `files` should be a list of binary objects.",
+    "completion": "To pass binary data to the `conduit.run` function, you need to open the files and read them in as binary data before passing them to the function. Here's an example of how to do this:\n\n```python\nfrom cerebrium import Conduit, model_type\nconduit = Conduit('<APP_NAME>', '<API_KEY>', [('<MODEL_TYPE>', '<MODEL_FILE>', {\"pre\": pre_process\"})])\nconduit.load('./')\n\n# Open the files and read them as binary data\nwith open('<FILE_PATH>', 'rb') as file:\n    binary_data = file.read()\n\n# Pass the binary data to the conduit.run function\nconduit.run(data, [binary_data])\n```\n\nIn this example, `files` should be a list of binary objects.",
     "source": "https://docs.cerebrium.ai/cerebrium/advanced-functionality/using-files"
   },
   {
@@ -221,7 +221,7 @@
   },
   {
     "prompt": "How do I deploy my model after using files as input data in Cerebrium?",
-    "completion": "After using files as input data and testing your model with `conduit.run` in Cerebrium, you can deploy your model by calling the `conduit.deploy()` function. Here's an example of how to do this:\n\n```python\nfrom cerebrium import Conduit, model_type\nconduit = Conduit('<MODEL_NAME>', '<API_KEY>', [('<MODEL_TYPE>', '<MODEL_FILE>', {\"pre\": pre_process\"})])\nconduit.load('./')\nconduit.run(data, files) # files should be a list of binary objects\n\n# Deploy the model\nconduit.deploy()\n```\n\nThis will deploy your model to the cloud, making it accessible via the Cerebrium API.",
+    "completion": "After using files as input data and testing your model with `conduit.run` in Cerebrium, you can deploy your model by calling the `conduit.deploy()` function. Here's an example of how to do this:\n\n```python\nfrom cerebrium import Conduit, model_type\nconduit = Conduit('<APP_NAME>', '<API_KEY>', [('<MODEL_TYPE>', '<MODEL_FILE>', {\"pre\": pre_process\"})])\nconduit.load('./')\nconduit.run(data, files) # files should be a list of binary objects\n\n# Deploy the model\nconduit.deploy()\n```\n\nThis will deploy your model to the cloud, making it accessible via the Cerebrium API.",
     "source": "https://docs.cerebrium.ai/cerebrium/advanced-functionality/using-files"
   },
   {
