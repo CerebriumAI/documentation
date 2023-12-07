@@ -14,13 +14,10 @@ This will create a Cortex project in the specified directory with the following 
 ```
 project_name/
 ├── main.py
-├── requirements.txt
-├── pkglist.txt
-├── conda_pkglist.txt
-└── config.yaml
+└── cerebrium.toml
 ```
 
-Cortex supports the use of config YAML files to configure various aspects of your project such as hardware requirements, memory and much more.
+Cortex supports the use of `toml` config files to configure various aspects of your project such as hardware requirements, scaling parameters and much more.
 Using config files makes it easier to keep track of your Cerebrium deployments, share them and use git versioning to show changes over time.
 
 To deploy your model with a specific config file, you can use the `cerebrium deploy` command with the `--config-file` flag to specify the path to your config file. Otherwise `cerebrium deploy` will use the only yaml in the file directory.
@@ -35,36 +32,72 @@ Your config file can be named anything you want and can be placed anywhere on yo
 
 The parameters for your config file are the same as those which you would use as flags for a normal `cerebrium deploy` command. They're tabulated below for your convenience:
 
-| Parameter           | Description                                                                                     | Type    | Default                                                            |
-| ------------------- | ----------------------------------------------------------------------------------------------- | ------- | ------------------------------------------------------------------ |
-| `name`              | Name of the deployment                                                                          | string  |                                                                    |
-| `api_key`           | API key for the deployment                                                                      | string  | not included for safety                                            |
-| `hardware`          | Hardware to use for the deployment                                                              | string  | GPU                                                                |
-| `gpu_count`         | The number of GPUs to specify                                                                   | int     | 2                                                                  |
-| `cpu`               | The number of CPU cores to use                                                                  | int     | 2                                                                  |
-| `memory`            | The amount of Memory to use in GB                                                               | int     | 14.5                                                               |
-| `log_level`         | Log level for the deployment                                                                    | string  | INFO                                                               |
-| `include`           | Local files to include in the deployment                                                        | string  | '[./*, main.py, requirements.txt, pkglist.txt, conda_pkglist.txt]' |
-| `exclude`           | Local Files to exclude from the deployment                                                      | string  | '[./.*, ./__*]'                                                    |
-| `disable_animation` | Whether to disable the animation in the logs.                                                   | boolean | false                                                              |
-| `python_version`    | The Python version you would like to run                                                        | float   | 3.9                                                                |
-| `min_replicas`      | The minimum number of replicas to run.                                                          | int     | 0                                                                  |
-| `max_replicas`      | The maximum number of replicas to scale to.                                                     | int     | \*plan limit                                                       |
-| `cooldown`          | The number of seconds to keep your model warm after each request. It resets after every request | int     | 60                                                                 |
+| Section | Parameter | Description | Type | Default |
+| --- | --- | --- | --- | --- |
+| `cerebrium.build` | A section for all the parameters governing your cortex builds | | | |
+| | `predict_data` | The data to use to test your predict function on build. This is the same as the payload in a inference call | string | '{"prompt": "Here is some example predict data for your cerebrium.toml which will be used to test your predict function on build."}'  |
+| | `force_rebuild` | Whether to force a rebuild of your deployment | boolean | false |
+| | `disable_animation` | Whether to disable the animation in the logs. | boolean | false |
+| | `log_level` | Log level for the deployment | string | INFO |
+| | `disable_deployment_confirmation` | Whether to disable the pre-deployment confirmation prompt | boolean | false |
+| `cerebrium.deployment` | All the parameters related to the lifetime of your deployment live here. | | |
+| | `python_version` | The Python version you would like to run | float | 3.9 |
+| | `include` | Local files to include in the deployment | string | '[./*, main.py, requirements.txt, pkglist.txt, conda_pkglist.txt]' |
+| | `exclude` | Local Files to exclude from the deployment | string | '[./.*, ./__*]' |
+| `cerebrium.hardware` | Select the specifics for the machine you would like to run here. | | |
+| | `gpu` | The GPU you would like to use. | string | AMPERE_A5000 |    
+| | `cpu` | The number of CPU cores to use | int | 2 |
+| | `memory` | The amount of Memory to use in GB | float | 14.5 |
+| | `gpu_count` | The number of GPUs to specify | int | 2 |
+| `cerebrium.scaling` | All the parameters related to the auto scaling of your deployment when live are placed here. | | |
+| | `min_replicas` | The minimum number of replicas to run. | int | 0 |
+| | `max_replicas` | The maximum number of replicas to scale to. | int | \*plan limit |
+| | `cooldown` | The number of seconds to keep your model warm after each request. It resets after every request ends. | int | 60 |
+| `cerebrium.requirements` | All the parameters related to the packages you would like to install on your deployment are placed here. | | |
+| | `pip` | The pip packages you would like to install. In the format 'module' = 'version_constraints' | dict (toml) | |
+| | `conda` | The conda packages you would like to install. In the format 'module' = 'version_constraints' | dict (toml) | |
+| | `apt` | The apt packages you would like to install. | list (toml) | |
+
+
+
 
 ## Config File Example
 
-```yaml
-%YAML 1.2
----
-name: an-optional-name
-api_key: an-optional-api-key
-hardware: GPU
-exclude: "[./.*, ./__*]"
-include: "[./*, main.py, requirements.txt, pkglist.txt, conda_pkglist.txt]"
-log_level: INFO
-disable_animation: false
-python_version: 3.9
-min_replicas: 0
-max_replicas: 30
+```toml
+# This file was automatically generated by Cerebrium as a starting point for your project. 
+# You can edit it as you wish.
+# If you would like to learn more about your Cerebrium config, please visit https://docs.cerebrium.ai/cerebrium/environments/initial-setup#config-file-example
+
+[cerebrium.build]
+predict_data = "{\"prompt\": \"Here is some example predict data for your cerebrium.toml which will be used to test your predict function on build.\"}"
+force_rebuild = false
+disable_animation = false
+log_level = "INFO"
+disable_deployment_confirmation = false
+
+[cerebrium.deployment]
+python_version = "3.10"
+include = "[./*, main.py, requirements.txt, pkglist.txt, conda_pkglist.txt]"
+exclude = "[./.*, ./__*]"
+
+[cerebrium.hardware]
+gpu = "AMPERE_A5000"
+cpu = 2
+memory = 16.0
+gpu_count = 1
+
+[cerebrium.scaling]
+min_replicas = 0
+cooldown = 60
+
+[cerebrium.requirements.pip]
+torch = ">=2.0.0"
+
+[cerebrium.requirements.conda]
+cuda = ">=11.7"
+cudatoolkit = "==11.7"
+
+[cerebrium.requirements]
+apt = [ "libgl1-mesa-glx", "libglib2.0-0"]
+
 ```

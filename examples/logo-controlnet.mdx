@@ -22,14 +22,15 @@ cerebrium init controlnet-logo
 
 It is important to think of the way you develop models using Cerebrium should be identical to developing on a virtual machine or Google Colab - so converting this should be very easy!
 
-Let us create our **_requirements.txt_** file and add the following packages:
+Let us add the following packages to the **[cerebrium.requirements.pip]** section of our `cerebrium.toml` file:
 
-```
-accelerate
-transformers
-safetensors
-opencv-python
-diffusers
+```toml
+[cerebrium.requirements.pip]
+accelerate = ""
+transformers = ">=4.35.0"
+safetensors = ""
+opencv-python = ""
+diffusers = ""
 ```
 
 To start, we need to create a **main.py** file which will contain our main Python code. This is a relatively simple implementation, so we can do everything in 1 file. We would like a user to send in a link to a YouTube video with a question and return to them the answer as well as the time segment of where we got that response.
@@ -120,20 +121,45 @@ def predict(item, run_id, logger):
 
 ## Deploy
 
-Your config.yaml file is where you can set your compute/environment. Please make sure that the hardware you specify is a AMPERE_A5000 and that you have enough memory (RAM) on your instance to run the models. You config.yaml file should look like:
+Your cerebrium.toml file is where you can set your compute/environment. Please make sure that the hardware you specify is a AMPERE_A5000 and that you have enough memory (RAM) on your instance to run the models. You cerebrium.toml file should look like:
 
-```
-%YAML 1.2
----
-hardware: AMPERE_A5000
-memory: 14
-cpu: 2
-min_replicas: 0
-log_level: INFO
-include: '[./*, main.py, requirements.txt, pkglist.txt, conda_pkglist.txt]'
-exclude: '[./.*, ./__*]'
-cooldown: 60
-disable_animation: false
+```toml
+
+[cerebrium.build]
+predict_data = "{\"prompt\": \"Here is some example predict data for your cerebrium.toml which will be used to test your predict function on build.\"}"
+force_rebuild = false
+disable_animation = false
+log_level = "INFO"
+disable_deployment_confirmation = false
+
+[cerebrium.deployment]
+name = "controlnet-logo"
+python_version = "3.10"
+include = "[./*, main.py]"
+exclude = "[./.*, ./__*]"
+
+[cerebrium.hardware]
+gpu = "AMPERE_A5000"
+cpu = 2
+memory = 16.0
+gpu_count = 1
+
+[cerebrium.scaling]
+min_replicas = 0
+cooldown = 60
+
+[cerebrium.requirements]
+apt = ["ffmpeg"]
+
+[cerebrium.requirements.pip]
+accelerate = ""
+transformers = ">=4.35.0"
+safetensors = ""
+opencv-python = ""
+diffusers = ""
+
+[cerebrium.requirements.conda]
+
 ```
 
 To deploy the model, use the following command:

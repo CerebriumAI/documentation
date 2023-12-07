@@ -18,25 +18,24 @@ First we create our project:
 cerebrium init langchain-QA
 ```
 
-We need certain Python packages to implement this project. Let's add those to our **_requirements.txt_** file:
+We need certain Python packages to implement this project. Let's add those to our **[cerebrium.requirements.pip]** section of our `cerebrium.toml` file:
 
-```
-pytube # For audio downloading
-langchain
-faiss-gpu
-ffmpeg
-openai-whisper
-transformers
-sentence_transformers
-cerebrium
+```toml
+[cerebrium.requirements.pip]
+pytube = "" # For audio downloading
+langchain = ""
+faiss-gpu = ""
+ffmpeg = ""
+openai-whisper = ""
+transformers = ">=4.35.0"
+sentence_transformers = ">=2.2.0"
 ```
 
-To use Whisper, we also have to install ffmpeg and a few other packages as a Linux package and therefore have to define these in **pkglist.txt** - this is to install all Linux-based packages.
+To use Whisper, we also have to install ffmpeg and a few other packages as a Linux package and therefore have to define these in **[cerebrium.requirements]** - this is to install all Linux-based packages.
 
-```
-ffmpeg
-libopenblas-base
-libomp-dev
+```toml
+[cerebrium.requirements]
+apt = [ "ffmpeg", "libopenblas-base", "libomp-dev"]
 ```
 
 Our **main.py** file will contain our main Python code. This is a relatively simple implementation, so we can do everything in 1 file. We would like a user to send in a link to a YouTube video with a question and return to them the answer as well as the time segment of where we got that response.
@@ -147,26 +146,54 @@ We then integrate Langchain with a Cerebrium deployed endpoint to answer questio
 
 ## Deploy
 
-Your config.yaml file is where you can set your compute/environment. Please make sure that the hardware you specify is a AMPERE_A5000, and that you have enough memory (RAM) on your instance to run the models. You config.yaml file should look like:
+Your cerebrium.toml file is where you can set your compute/environment. Please make sure that the hardware you specify is a AMPERE_A5000, and that you have enough memory (RAM) on your instance to run the models. You cerebrium.toml file should look like:
 
-```
-%YAML 1.2
----
-hardware: AMPERE_A5000
-memory: 14
-cpu: 2
-min_replicas: 0
-log_level: INFO
-include: '[./*, main.py, requirements.txt, pkglist.txt, conda_pkglist.txt]'
-exclude: '[./.*, ./__*]'
-cooldown: 60
-disable_animation: false
+
+```toml
+
+[cerebrium.build]
+predict_data = "{\"prompt\": \"Here is some example predict data for your cerebrium.toml which will be used to test your predict function on build.\"}"
+force_rebuild = false
+disable_animation = false
+log_level = "INFO"
+disable_deployment_confirmation = false
+
+[cerebrium.deployment]
+name = "langchain-qa"
+python_version = "3.10"
+include = "[./*, main.py, requirements.txt, pkglist.txt, conda_pkglist.txt]"
+exclude = "[./.*, ./__*]"
+
+[cerebrium.hardware]
+gpu = "AMPERE_A5000"
+cpu = 2
+memory = 16.0
+gpu_count = 1
+
+[cerebrium.scaling]
+min_replicas = 0
+cooldown = 60
+
+[cerebrium.requirements]
+apt = [ "ffmpeg", "libopenblas-base", "libomp-dev"]
+
+[cerebrium.requirements.pip]
+pytube = "" # For audio downloading
+langchain = ""
+faiss-gpu = ""
+ffmpeg = ""
+openai-whisper = ""
+transformers = ">=4.35.0"
+sentence_transformers = ">=2.2.0"
+
+[cerebrium.requirements.conda]
+
 ```
 
 To deploy the model use the following command:
 
 ```bash
-cerebrium deploy langchain-QA
+cerebrium deploy
 ```
 
 Once deployed, we can make the following request:
