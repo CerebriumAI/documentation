@@ -32,39 +32,36 @@ Your config file can be named anything you want and can be placed anywhere on yo
 
 The parameters for your config file are the same as those which you would use as flags for a normal `cerebrium deploy` command. They're tabulated below for your convenience:
 
-| Section | Parameter | Description | Type | Default |
-| --- | --- | --- | --- | --- |
-| `cerebrium.build` | A section for all the parameters governing your cortex builds | | | |
-| | `predict_data` | The data to use to test your predict function on build. This is the same as the payload in a inference call | string | '{"prompt": "Here is some example predict data for your cerebrium.toml which will be used to test your predict function on build."}'  |
-| | `force_rebuild` | Whether to force a rebuild of your deployment | boolean | false |
-| | `disable_animation` | Whether to disable the animation in the logs. | boolean | false |
-| | `log_level` | Log level for the deployment | string | INFO |
-| | `disable_deployment_confirmation` | Whether to disable the pre-deployment confirmation prompt | boolean | false |
-| `cerebrium.deployment` | All the parameters related to the lifetime of your deployment live here. | | |
-| | `python_version` | The Python version you would like to run | float | 3.9 |
-| | `include` | Local files to include in the deployment | string | '[./*, main.py, requirements.txt, pkglist.txt, conda_pkglist.txt]' |
-| | `exclude` | Local Files to exclude from the deployment | string | '[./.*, ./__*]' |
-| `cerebrium.hardware` | Select the specifics for the machine you would like to run here. | | |
-| | `gpu` | The GPU you would like to use. | string | AMPERE_A5000 |    
-| | `cpu` | The number of CPU cores to use | int | 2 |
-| | `memory` | The amount of Memory to use in GB | float | 14.5 |
-| | `gpu_count` | The number of GPUs to specify | int | 2 |
-| `cerebrium.scaling` | All the parameters related to the auto scaling of your deployment when live are placed here. | | |
-| | `min_replicas` | The minimum number of replicas to run. | int | 0 |
-| | `max_replicas` | The maximum number of replicas to scale to. | int | \*plan limit |
-| | `cooldown` | The number of seconds to keep your model warm after each request. It resets after every request ends. | int | 60 |
-| `cerebrium.requirements` | All the parameters related to the packages you would like to install on your deployment are placed here. | | |
-| | `pip` | The pip packages you would like to install. In the format 'module' = 'version_constraints' | dict (toml) | |
-| | `conda` | The conda packages you would like to install. In the format 'module' = 'version_constraints' | dict (toml) | |
-| | `apt` | The apt packages you would like to install. | list (toml) | |
-
-
-
+| Section                  | Parameter                                                                                                | Description                                                                                                 | Type        | Default                                                                                                                              |
+| ------------------------ | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `cerebrium.build`        | A section for all the parameters governing your cortex builds                                            |                                                                                                             |             |                                                                                                                                      |
+|                          | `predict_data`                                                                                           | The data to use to test your predict function on build. This is the same as the payload in a inference call | string      | '{"prompt": "Here is some example predict data for your cerebrium.toml which will be used to test your predict function on build."}' |
+|                          | `force_rebuild`                                                                                          | Whether to force a rebuild of your deployment                                                               | boolean     | false                                                                                                                                |
+|                          | `disable_animation`                                                                                      | Whether to disable the animation in the logs.                                                               | boolean     | false                                                                                                                                |
+|                          | `log_level`                                                                                              | Log level for the deployment                                                                                | string      | INFO                                                                                                                                 |
+|                          | `disable_deployment_confirmation`                                                                        | Whether to disable the pre-deployment confirmation prompt                                                   | boolean     | false                                                                                                                                |
+| `cerebrium.deployment`   | All the parameters related to the lifetime of your deployment live here.                                 |                                                                                                             |             |
+|                          | `python_version`                                                                                         | The Python version you would like to run                                                                    | float       | 3.9                                                                                                                                  |
+|                          | `include`                                                                                                | Local files to include in the deployment                                                                    | string      | '[./*, main.py, requirements.txt, pkglist.txt, conda_pkglist.txt]'                                                                   |
+|                          | `exclude`                                                                                                | Local Files to exclude from the deployment                                                                  | string      | '[./.*, ./__*]'                                                                                                                      |
+| `cerebrium.hardware`     | Select the specifics for the machine you would like to run here.                                         |                                                                                                             |             |
+|                          | `gpu`                                                                                                    | The GPU you would like to use.                                                                              | string      | AMPERE_A5000                                                                                                                         |
+|                          | `cpu`                                                                                                    | The number of CPU cores to use                                                                              | int         | 2                                                                                                                                    |
+|                          | `memory`                                                                                                 | The amount of Memory to use in GB                                                                           | float       | 14.5                                                                                                                                 |
+|                          | `gpu_count`                                                                                              | The number of GPUs to specify                                                                               | int         | 2                                                                                                                                    |
+| `cerebrium.scaling`      | All the parameters related to the auto scaling of your deployment when live are placed here.             |                                                                                                             |             |
+|                          | `min_replicas`                                                                                           | The minimum number of replicas to run.                                                                      | int         | 0                                                                                                                                    |
+|                          | `max_replicas`                                                                                           | The maximum number of replicas to scale to.                                                                 | int         | \*plan limit                                                                                                                         |
+|                          | `cooldown`                                                                                               | The number of seconds to keep your model warm after each request. It resets after every request ends.       | int         | 60                                                                                                                                   |
+| `cerebrium.requirements` | All the parameters related to the packages you would like to install on your deployment are placed here. |                                                                                                             |             |
+|                          | `pip`                                                                                                    | The pip packages you would like to install. In the format 'module' = 'version_constraints'                  | dict (toml) |                                                                                                                                      |
+|                          | `conda`                                                                                                  | The conda packages you would like to install. In the format 'module' = 'version_constraints'                | dict (toml) |                                                                                                                                      |
+|                          | `apt`                                                                                                    | The apt packages you would like to install.                                                                 | list (toml) |                                                                                                                                      |
 
 ## Config File Example
 
 ```toml
-# This file was automatically generated by Cerebrium as a starting point for your project. 
+# This file was automatically generated by Cerebrium as a starting point for your project.
 # You can edit it as you wish.
 # If you would like to learn more about your Cerebrium config, please visit https://docs.cerebrium.ai/cerebrium/environments/initial-setup#config-file-example
 

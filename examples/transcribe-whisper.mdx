@@ -123,7 +123,6 @@ In our predict function, which only runs on inference requests, we simply create
 
 Your cerebrium.toml file is where you can set your compute/environment. Please make sure that the hardware you specify is a AMPERE_A5000 and that you have enough memory (RAM) on your instance to run the models. You cerebrium.toml file should look like:
 
-
 ```toml
 
 [cerebrium.build]
@@ -157,6 +156,7 @@ openai-whisper
 [cerebrium.requirements.conda]
 
 ```
+
 To deploy the model use the following command:
 
 ```bash
