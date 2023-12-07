@@ -21,10 +21,10 @@ cerebrium init distil-whisper
 
 It is important to think of the way you develop models using Cerebrium should be identical to developing on a virtual machine or Google Colab - so converting this should be very easy!
 
-Let us add the following packages to the **[cerebrium.requirements.pip]** section of our `cerebrium.toml` file:
+Let us add the following packages to the **[cerebrium.dependencies.pip]** section of our `cerebrium.toml` file:
 
 ```toml
-[cerebrium.requirements.pip]
+[cerebrium.dependencies.pip]
 accelerate = ""
 transformers = ">=4.35.0"
 openai-whisper
@@ -148,12 +148,12 @@ gpu_count = 1
 min_replicas = 0
 cooldown = 60
 
-[cerebrium.requirements.pip]
+[cerebrium.dependencies.pip]
 accelerate = ""
 transformers = ">=4.35.0"
 openai-whisper
 
-[cerebrium.requirements.conda]
+[cerebrium.dependencies.conda]
 
 ```
 

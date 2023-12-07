@@ -53,7 +53,7 @@ The parameters for your config file are the same as those which you would use as
 |                          | `min_replicas`                                                                                           | The minimum number of replicas to run.                                                                      | int         | 0                                                                                                                                    |
 |                          | `max_replicas`                                                                                           | The maximum number of replicas to scale to.                                                                 | int         | \*plan limit                                                                                                                         |
 |                          | `cooldown`                                                                                               | The number of seconds to keep your model warm after each request. It resets after every request ends.       | int         | 60                                                                                                                                   |
-| `cerebrium.requirements` | All the parameters related to the packages you would like to install on your deployment are placed here. |                                                                                                             |             |
+| `cerebrium.dependencies` | All the parameters related to the packages you would like to install on your deployment are placed here. |                                                                                                             |             |
 |                          | `pip`                                                                                                    | The pip packages you would like to install. In the format 'module' = 'version_constraints'                  | dict (toml) |                                                                                                                                      |
 |                          | `conda`                                                                                                  | The conda packages you would like to install. In the format 'module' = 'version_constraints'                | dict (toml) |                                                                                                                                      |
 |                          | `apt`                                                                                                    | The apt packages you would like to install.                                                                 | list (toml) |                                                                                                                                      |
@@ -87,14 +87,14 @@ gpu_count = 1
 min_replicas = 0
 cooldown = 60
 
-[cerebrium.requirements.pip]
+[cerebrium.dependencies.pip]
 torch = ">=2.0.0"
 
-[cerebrium.requirements.conda]
+[cerebrium.dependencies.conda]
 cuda = ">=11.7"
 cudatoolkit = "==11.7"
 
-[cerebrium.requirements]
+[cerebrium.dependencies]
 apt = [ "libgl1-mesa-glx", "libglib2.0-0"]
 
 ```

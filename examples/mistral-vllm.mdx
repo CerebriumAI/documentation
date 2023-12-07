@@ -18,10 +18,10 @@ First we create our project:
 cerebrium init mistral-vllm
 ```
 
-We need certain Python packages to implement this project. Lets add those to our **[cerebrium.requirements.pip]** in our `cerebrium.toml` file:
+We need certain Python packages to implement this project. Lets add those to our **[cerebrium.dependencies.pip]** in our `cerebrium.toml` file:
 
 ```
-[cerebrium.requirements.pip]
+[cerebrium.dependencies.pip]
 sentencepiece = ""
 torch = ">=2.0.0"
 vllm = ""
@@ -110,10 +110,10 @@ gpu_count = 1
 min_replicas = 0
 cooldown = 60
 
-[cerebrium.requirements]
+[cerebrium.dependencies]
 apt = ["ffmpeg"]
 
-[cerebrium.requirements.pip]
+[cerebrium.dependencies.pip]
 sentencepiece = ""
 torch = ">=2.0.0"
 vllm = ""
@@ -121,7 +121,7 @@ transformers = ">=4.35.0"
 accelerate = ""
 xformers = ""
 
-[cerebrium.requirements.conda]
+[cerebrium.dependencies.conda]
 
 ```
 

@@ -18,10 +18,10 @@ First we create our project:
 cerebrium init langchain-QA
 ```
 
-We need certain Python packages to implement this project. Let's add those to our **[cerebrium.requirements.pip]** section of our `cerebrium.toml` file:
+We need certain Python packages to implement this project. Let's add those to our **[cerebrium.dependencies.pip]** section of our `cerebrium.toml` file:
 
 ```toml
-[cerebrium.requirements.pip]
+[cerebrium.dependencies.pip]
 pytube = "" # For audio downloading
 langchain = ""
 faiss-gpu = ""
@@ -31,10 +31,10 @@ transformers = ">=4.35.0"
 sentence_transformers = ">=2.2.0"
 ```
 
-To use Whisper, we also have to install ffmpeg and a few other packages as a Linux package and therefore have to define these in **[cerebrium.requirements]** - this is to install all Linux-based packages.
+To use Whisper, we also have to install ffmpeg and a few other packages as a Linux package and therefore have to define these in **[cerebrium.dependencies]** - this is to install all Linux-based packages.
 
 ```toml
-[cerebrium.requirements]
+[cerebrium.dependencies]
 apt = [ "ffmpeg", "libopenblas-base", "libomp-dev"]
 ```
 
@@ -173,10 +173,10 @@ gpu_count = 1
 min_replicas = 0
 cooldown = 60
 
-[cerebrium.requirements]
+[cerebrium.dependencies]
 apt = [ "ffmpeg", "libopenblas-base", "libomp-dev"]
 
-[cerebrium.requirements.pip]
+[cerebrium.dependencies.pip]
 pytube = "" # For audio downloading
 langchain = ""
 faiss-gpu = ""
@@ -185,7 +185,7 @@ openai-whisper = ""
 transformers = ">=4.35.0"
 sentence_transformers = ">=2.2.0"
 
-[cerebrium.requirements.conda]
+[cerebrium.dependencies.conda]
 
 ```
 

@@ -28,10 +28,10 @@ To start, we need to create a **main.py** file which will contain our main Pytho
 
 I then go straight to the [Meta Repo](https://github.com/facebookresearch/segment-anything) to see how I can run this code.
 
-We need certain Python packages to implement this project. Let's add those to our **[cerebrium.requirements.pip]** section of our `cerebrium.toml` file:
+We need certain Python packages to implement this project. Let's add those to our **[cerebrium.dependencies.pip]** section of our `cerebrium.toml` file:
 
 ```toml
-[cerebrium.requirements.pip]
+[cerebrium.dependencies.pip]
 segment-anything = "git+https://github.com/facebookresearch/segment-anything.git|
 opencv-python = ""
 pycocotools = ""
