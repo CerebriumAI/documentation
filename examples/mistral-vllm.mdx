@@ -22,12 +22,12 @@ We need certain Python packages to implement this project. Lets add those to our
 
 ```
 [cerebrium.dependencies.pip]
-sentencepiece = ""
+sentencepiece = "latest"
 torch = ">=2.0.0"
-vllm = ""
+vllm = "latest"
 transformers = ">=4.35.0"
-accelerate = ""
-xformers = ""
+accelerate = "latest"
+xformers = "latest"
 ```
 
 Our **main.py** file will contain our main Python code. This is a relatively simple implementation, so we can do everything in 1 file. We would like a user to send in a link to a YouTube video with a question and return to them the answer as well as the time segment of where we got that response.
@@ -110,16 +110,16 @@ gpu_count = 1
 min_replicas = 0
 cooldown = 60
 
-[cerebrium.dependencies]
-apt = ["ffmpeg"]
+[cerebrium.dependencies.apt]
+ffmpeg = "latest"
 
 [cerebrium.dependencies.pip]
-sentencepiece = ""
+sentencepiece = "latest"
 torch = ">=2.0.0"
-vllm = ""
+vllm = "latest"
 transformers = ">=4.35.0"
-accelerate = ""
-xformers = ""
+accelerate = "latest"
+xformers = "latest"
 
 [cerebrium.dependencies.conda]
 

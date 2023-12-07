@@ -22,11 +22,11 @@ We need certain Python packages to implement this project. Let's add those to ou
 
 ```toml
 [cerebrium.dependencies.pip]
-pytube = "" # For audio downloading
-langchain = ""
-faiss-gpu = ""
-ffmpeg = ""
-openai-whisper = ""
+pytube = "latest" # For audio downloading
+langchain = "latest"
+faiss-gpu = "latest"
+ffmpeg = "latest"
+openai-whisper = "latest"
 transformers = ">=4.35.0"
 sentence_transformers = ">=2.2.0"
 ```
@@ -173,15 +173,17 @@ gpu_count = 1
 min_replicas = 0
 cooldown = 60
 
-[cerebrium.dependencies]
-apt = [ "ffmpeg", "libopenblas-base", "libomp-dev"]
+[cerebrium.dependencies.apt]
+ffmpeg = "latest"
+"libopenblas-base" = "latest"
+"libomp-dev" = "latest"
 
 [cerebrium.dependencies.pip]
-pytube = "" # For audio downloading
-langchain = ""
-faiss-gpu = ""
-ffmpeg = ""
-openai-whisper = ""
+pytube = "latest" # For audio downloading
+langchain = "latest"
+faiss-gpu = "latest"
+ffmpeg = "latest"
+openai-whisper = "latest"
 transformers = ">=4.35.0"
 sentence_transformers = ">=2.2.0"
 
