@@ -5,12 +5,19 @@ description: Specify your versions, dependencies and packages to use
 
 By default, Cerebrium models are executed in Python 3.9 unless the Python version specified by you in your **cerebrium.toml** is different. However, Cerebrium only supports version 3.9 and above.
 
-Traditionally, when working with Python, you will need access to Apt packages, Pip packages and Conda packages, and so we replicate this functionality as if you were developing locally.
-When creating your Cortex project, you can contain the following files
+Traditionally, when working with Python, you will need access to Apt packages, Pip packages and Conda packages. For a deployment to cerebrium, you can specify all of these in your **cerebrium.toml** file in the following locations:
 
-- **requirements.txt** - This is where you define your Pip packages.
-- **pkglist.txt** - This is where you can define Linux packages you would like to install. We run the apt-install command for items here.
-- **conda_pkglist.txt** - This is where you can define Conda packages you would like to install if you prefer using it for some libraries over pip. You can use both conda and pip in conjunction.
+- **[cerebrium.requirements.pip]** - This is where you define your Pip packages in the form `module = version_constraints`. For example, `transformers = ">=4.35.0"`
+- **[cerebrium.requirements.conda]** - This is where you can define Conda packages you would like to install if you prefer using it for some libraries over pip. You can use both conda and pip in conjunction. Define your Conda packages in the form `module = version_constraints`. For example, `cuda = ">=11.7"`
+
+For apt or linux packages, they are defined without versions, therefore, you can define them in the following location:
+
+```toml
+[cerebrium.requirements]
+apt = ["ffmpeg", "libopenblas-base", "libomp-dev"]
+```
+
+We run the apt-install command for items here.
 
 Each package must be represented on a new line just as you would locally. All the files above are optional, however, have to contain these file names specifically.
 
