@@ -63,7 +63,7 @@ On one hand, you want the best performance possible, but on the other hand, you 
 Choosing a GPU can be a complicated task of calculating VRAM usage based on the number of parameters you have as well as the length of your inputs. Additionally, some variables are dependent on your inputs to your model which will affect the VRAM usage substantially. For example, with LLMs and transformer-based architectures, you need to factor in attention processes as well as any memory-heavy positional encoding that may be happening which can increase VRAM usage exponentially for some methods. Similarly, for CNNs, you need to look at the number of filters you are using as well as the size of your inputs.
 
 As a rule of thumb, the easiest way is to choose the GPU that has at least 1.5x the minimum amount of VRAM that your model requires.
-This approach is conservative and will ensure that your model will fit on the GPU you choose even if you have longer inputs than you expect. However, it is just a rule of thumb and you should test the VRAM usage of your model to ensure that it will fit on the GOU you choose.
+This approach is conservative and will ensure that your model will fit on the GPU you choose even if you have longer inputs than you expect. However, it is just a rule of thumb and you should test the VRAM usage of your model to ensure that it will fit on the GPU you choose.
 
 You can calculate the VRAM usage of your model by using the following formula:
 
