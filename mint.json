@@ -102,6 +102,10 @@
       "pages": ["cerebrium/prebuilt-models/introduction"]
     },
     {
+      "group": "Legacy Docs",
+      "pages": ["cerebrium/environments/legacy-yaml-config"]
+    },
+    {
       "group": "FAQs and Tips",
       "pages": [
         "security",
