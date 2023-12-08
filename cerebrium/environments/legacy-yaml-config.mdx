@@ -3,19 +3,20 @@ title: Legacy YAML Config
 description: Using yaml config files to configure Cortex deployments easily and quickly
 ---
 
-
 ## Introduction
+
 This document is for users who have been using Cerebrium for a while and are familiar with the legacy YAML config file format. If you are new to Cerebrium, please refer to the [initial setup](./initial-setup) guide.
 
 <Note>
-Your legacy YAML config file can be converted to a `toml` config file by answering yes to the prompt when you run `cerebrium deploy` as normal. 
-This will create a `cerebrium.toml` file in your project directory which you can then edit as you wish.  
-Additionally, all the dependencies in your `pkglist.txt` and `conda_pkglist.txt` files will be added to the `cerebrium.toml` file automatically
+  Your legacy YAML config file can be converted to a `toml` config file by
+  answering yes to the prompt when you run `cerebrium deploy` as normal. This
+  will create a `cerebrium.toml` file in your project directory which you can
+  then edit as you wish. Additionally, all the dependencies in your
+  `pkglist.txt` and `conda_pkglist.txt` files will be added to the
+  `cerebrium.toml` file automatically
 </Note>
 
-
 ## Legacy Folder Structure
-
 
 Cortex supports the use of config YAML files to configure various aspects of your project such as hardware requirements, memory and much more.
 Using config files makes it easier to keep track of your Cerebrium deployments, share them and use git versioning to show changes over time.
@@ -38,7 +39,6 @@ Deploying your model with a config file is as simple as:
 cerebrium deploy
 ```
 
-
 ### Config File Format and Parameters
 
 The parameters for your config file are the same as those which you would use as flags for a normal `cerebrium deploy` command. They're tabulated below for your convenience:
@@ -59,7 +59,6 @@ The parameters for your config file are the same as those which you would use as
 | `min_replicas`      | The minimum number of replicas to run.                                                          | int     | 0                                                                  |
 | `max_replicas`      | The maximum number of replicas to scale to.                                                     | int     | \*plan limit                                                       |
 | `cooldown`          | The number of seconds to keep your model warm after each request. It resets after every request | int     | 60                                                                 |
-
 
 ## Config File Example
 

@@ -23,9 +23,12 @@ Using config files makes it easier to keep track of your Cerebrium deployments, 
 To deploy your model with a specific config file, you can use the `cerebrium deploy` command with the `--config-file` flag to specify the path to your config file. Otherwise `cerebrium deploy` will use the `cerebrium.toml` file in your directory.
 
 <Note>
-If you are still on the legacy YAML config file format, you can convert your config file to a `toml` config file by answering yes to the prompt when you run `cerebrium deploy` as normal.
-This will create a `cerebrium.toml` file in your project directory which you can then edit as you wish.  
-Additionally, all the dependencies in your `pkglist.txt` and `conda_pkglist.txt` files will be added to the `cerebrium.toml` file automatically
+  If you are still on the legacy YAML config file format, you can convert your
+  config file to a `toml` config file by answering yes to the prompt when you
+  run `cerebrium deploy` as normal. This will create a `cerebrium.toml` file in
+  your project directory which you can then edit as you wish. Additionally, all
+  the dependencies in your `pkglist.txt` and `conda_pkglist.txt` files will be
+  added to the `cerebrium.toml` file automatically
 </Note>
 
 ```bash
