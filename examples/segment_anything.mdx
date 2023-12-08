@@ -21,30 +21,20 @@ cerebrium init segment-anything
 
 It is important to think of the way you develop models using Cerebrium should be identical to developing on a virtual machine or Google Colab.
 
-We need certain Python packages to implement this project. Lets add those to our **_requirements.txt_** file:
-
-```
-
-```
-
-To use Whisper we also have to install ffmpeg and a few other packages as a Linux package and therefore have to define these in **pkglist.txt** - this is to install all Linux-based packages.
-
-```
-
-```
-
 Our **main.py** file will contain our main Python code. This is a relatively simple implementation, so we can do everything in 1 file. We would like a user to send in a link to a YouTube video with a question and return to them the answer as well as the time segment of where we got that response.
 So let us define our request object.
 
 To start, we need to create a **main.py** file which will contain our main Python code. This is a relatively simple implementation, so we can do everything in 1 file.
 
 I then go straight to the [Meta Repo](https://github.com/facebookresearch/segment-anything) to see how I can run this code.
-I need to install a few dependencies. To do this, I need to create a **requirements.txt** file with the following dependencies:
 
-```
-git+https://github.com/facebookresearch/segment-anything.git
-opencv-python
-pycocotools
+We need certain Python packages to implement this project. Let's add those to our **[cerebrium.dependencies.pip]** section of our `cerebrium.toml` file:
+
+```toml
+[cerebrium.dependencies.pip]
+segment-anything = "git+https://github.com/facebookresearch/segment-anything.git|
+opencv-python = "latest"
+pycocotools = "latest"
 ```
 
 I then define the following in my main.py file
@@ -204,7 +194,7 @@ In the above code we do a few things:
 We can then deploy our model to an AMPERE_A5000 instance with the following line of code
 
 ```bash
-cerebrium deploy segment-anything --hardware AMPERE\_A5000 --api-key private-XXXXXXXXXXXXX
+cerebrium deploy segment-anything --gpu AMPERE_A5000 --api-key private-XXXXXXXXXXXXX
 ```
 
 After a few minutes, your model should be deployed and an endpoint should be returned. Let us create a CURL request to see the response

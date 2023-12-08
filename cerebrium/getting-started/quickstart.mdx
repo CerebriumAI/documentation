@@ -12,10 +12,7 @@ cerebrium init first-project
 Currently, our implementation has five components:
 
 - **main.py** - This is where your Python code lives. This is mandatory to include.
-- **requirements.txt** - This is where you define your Python packages where each package should be on a new line. Deployment will be quicker if you specify specific versions. This is optional to include.
-- **pkglist.txt** - This is where you can define Linux packages where each package should be on a new line. We run the apt-install command for items here. This is optional to include.
-- **conda_pkglist.txt** - This is where you can define Conda packages where each package should be on a new line. if you prefer using it for some libraries over pip. You can use both conda and pip in conjunction. This is optional to include.
-- **config.yaml** - This is where you define all the configurations around your model such as the hardware you use, memory required, min replicas etc. Check [here](../environments/initial-setup) for a full list
+- **cerebrium.toml** - This is where you define all the configurations around your model such as the hardware you use, scaling parameters, deployment config, build parameters, etc. Check [here](../environments/initial-setup) for a full list
 
 Every main.py you deploy needs the following mandatory layout:
 

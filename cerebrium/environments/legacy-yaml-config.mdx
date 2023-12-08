@@ -1,0 +1,78 @@
+---
+title: Legacy YAML Config
+description: Using yaml config files to configure Cortex deployments easily and quickly
+---
+
+## Introduction
+
+This document is for users who have been using Cerebrium for a while and are familiar with the legacy YAML config file format. If you are new to Cerebrium, please refer to the [initial setup](./initial-setup) guide.
+
+<Note>
+  Your legacy YAML config file can be converted to a `toml` config file by
+  answering yes to the prompt when you run `cerebrium deploy` as normal. This
+  will create a `cerebrium.toml` file in your project directory which you can
+  then edit as you wish. Additionally, all the dependencies in your
+  `pkglist.txt` and `conda_pkglist.txt` files will be added to the
+  `cerebrium.toml` file automatically
+</Note>
+
+## Legacy Folder Structure
+
+Cortex supports the use of config YAML files to configure various aspects of your project such as hardware requirements, memory and much more.
+Using config files makes it easier to keep track of your Cerebrium deployments, share them and use git versioning to show changes over time.
+
+```
+project_name/
+├── main.py
+├── requirements.txt
+├── pkglist.txt
+├── conda_pkglist.txt
+└── config.yaml
+```
+
+To deploy your model with a specific config file, you can use the `cerebrium deploy` command with the `--config-file` flag to specify the path to your config file. Otherwise `cerebrium deploy` will use the config.yaml (if there is no `cerebrium.toml`) in the file directory.  
+Your config file can be named anything you want and can be placed anywhere on your local machine. However, remember to use the `cerebrium deploy` command in the same directory as your main.py as you would normally.
+
+Deploying your model with a config file is as simple as:
+
+```bash
+cerebrium deploy
+```
+
+### Config File Format and Parameters
+
+The parameters for your config file are the same as those which you would use as flags for a normal `cerebrium deploy` command. They're tabulated below for your convenience:
+
+| Parameter           | Description                                                                                     | Type    | Default                                                            |
+| ------------------- | ----------------------------------------------------------------------------------------------- | ------- | ------------------------------------------------------------------ |
+| `name`              | Name of the deployment                                                                          | string  |                                                                    |
+| `api_key`           | API key for the deployment                                                                      | string  | not included for safety                                            |
+| `hardware`          | Hardware to use for the deployment                                                              | string  | GPU                                                                |
+| `gpu_count`         | The number of GPUs to specify                                                                   | int     | 2                                                                  |
+| `cpu`               | The number of CPU cores to use                                                                  | int     | 2                                                                  |
+| `memory`            | The amount of Memory to use in GB                                                               | int     | 14.5                                                               |
+| `log_level`         | Log level for the deployment                                                                    | string  | INFO                                                               |
+| `include`           | Local files to include in the deployment                                                        | string  | '[./*, main.py, requirements.txt, pkglist.txt, conda_pkglist.txt]' |
+| `exclude`           | Local Files to exclude from the deployment                                                      | string  | '[./.*, ./__*]'                                                    |
+| `disable_animation` | Whether to disable the animation in the logs.                                                   | boolean | false                                                              |
+| `python_version`    | The Python version you would like to run                                                        | float   | 3.9                                                                |
+| `min_replicas`      | The minimum number of replicas to run.                                                          | int     | 0                                                                  |
+| `max_replicas`      | The maximum number of replicas to scale to.                                                     | int     | \*plan limit                                                       |
+| `cooldown`          | The number of seconds to keep your model warm after each request. It resets after every request | int     | 60                                                                 |
+
+## Config File Example
+
+```yaml
+%YAML 1.2
+---
+name: an-optional-name
+api_key: an-optional-api-key
+hardware: GPU
+exclude: "[./.*, ./__*]"
+include: "[./*, main.py, requirements.txt, pkglist.txt, conda_pkglist.txt]"
+log_level: INFO
+disable_animation: false
+python_version: 3.9
+min_replicas: 0
+max_replicas: 30
+```
