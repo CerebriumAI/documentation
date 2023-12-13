@@ -48,7 +48,7 @@ The parameters for your config file are the same as those which you would use as
 | `cerebrium.build.force_rebuild`                   | Whether to force a rebuild of your deployment                                                               | boolean     | false                                                                                                                                  |
 | `cerebrium.build.disable_animation`               | Whether to disable the animation in the logs.                                                               | boolean     | false                                                                                                                                  |
 | `cerebrium.build.log_level`                       | Log level for the deployment                                                                                | string      | INFO                                                                                                                                   |
-| `cerebrium.build.disable_deployment_confirmation` | Whether to disable the pre-deployment confirmation prompt                                                   | boolean     | false                                                                                                                                  |
+| `cerebrium.build.disable_confirmation` | Whether to disable the pre-deployment confirmation prompt                                                   | boolean     | false                                                                                                                                  |
 | `cerebrium.deployment.named         `             | The name of your deployment                                                                                 | string      | my-model                                                                                                                               |
 | `cerebrium.deployment.python_version`             | The Python version you would like to run                                                                    | float       | 3.9                                                                                                                                    |
 | `cerebrium.deployment.include`                    | Local files to include in the deployment                                                                    | string      | '[./\*, main.py]'                                                                                                                      |
@@ -76,7 +76,7 @@ predict_data = "{\"prompt\": \"Here is some example predict data for your cerebr
 force_rebuild = false
 disable_animation = false
 log_level = "INFO"
-disable_deployment_confirmation = false
+disable_confirmation = false
 
 [cerebrium.deployment]
 name = "my-model"
