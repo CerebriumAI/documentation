@@ -9,7 +9,7 @@ These settings and more are all configurable using config files.
 
 ## Deployment Parameters
 
-Deployment parameters are govern the persistent environment in which your model is deployed.
+Deployment parameters govern the persistent environment in which your model is deployed.
 These parameters are specified under the `cerebrium.deployment` section of your config file.
 
 The available deployment parameters are:
@@ -63,11 +63,6 @@ The available scaling parameters in your config are:
 | `cooldown` | The number of seconds to keep your model warm after each request. It resets after every request ends. | int | 60 |
 
 ## Adding Dependencies
-
-- What dependencies can I add?
-- How do I add them?
-- How are dependencies handled in Cerebrium?
-- requirements.txt into toml. What is the priority?
 
 The dependencies section of your config file is where you can specify any dependencies you would like to install in your deployment. We support pip, conda and apt dependencies and you can specify each of these in their relevant subsection of the dependencies section.
 
