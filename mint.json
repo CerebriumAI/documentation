@@ -72,6 +72,7 @@
       "group": "Environment Setup",
       "pages": [
         "cerebrium/environments/initial-setup",
+        "cerebrium/environments/config-files",
         "cerebrium/environments/custom-images",
         "cerebrium/environments/using-secrets",
         "cerebrium/environments/multi-gpu-inferencing",

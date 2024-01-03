@@ -1,0 +1,150 @@
+---
+title: Using Config Files
+description: Using config files to configure Cortex deployments easily and quickly
+---
+
+After you've created your Cortex project, you may find that you need more control over your deployment than the default `cerebrium deploy` command provides.
+For example, you may want to specify the number of GPUs to use, the amount of memory to use or even the version of Python for your environment.
+These settings and more are all configurable using config files.
+
+## Deployment Parameters
+
+Deployment parameters govern the persistent environment in which your model is deployed.
+These parameters are specified under the `cerebrium.deployment` section of your config file.
+
+The available deployment parameters are:
+| parameter | description | type | default |
+| --- | --- | --- | --- |
+| `name` | The name of your deployment | string | my-model |
+| `python_version` | The Python version available for your runtime | float | 3.10 |
+| `include` | Local files to include in the deployment. | string | '[./\*, main.py]' |
+| `exclude` | Local Files to exclude from the deployment. | string | '[./.\*, ./__\*]' |
+
+## Build Parameters
+
+Build parameters are used during the build phase of your deployment.
+They give you control over how your deployment is built and how it is tested.  
+These parameters are specified under the `cerebrium.build` section of your config file.
+
+The available build parameters are:
+| parameter | description | type | default |
+| --- | --- | --- | --- |
+| `predict_data` | The data to use to test your predict function on build. This is the same as the payload in a inference call | string | '\{"prompt": "Here is some example predict data for your cerebrium.toml which will be used to test your predict function on build."\}' |
+| `force_rebuild` | Whether to force a rebuild of your deployment, clearing all caches and starting from scratch. | boolean | false |
+| `disable_animation` | Whether to disable the animation in the logs. | boolean | false |
+| `log_level` | Log level for the build step of your deployment | string | INFO |
+| `disable_confirmation` | Whether to disable all CLI confirmations before deploying. Use for CI/CD | boolean | false |
+
+## Hardware Parameters
+
+The hardware parameters section is where you can define the specifications of the machine you would like to use for your deployment. This allows you to tailor your deployment to your specific needs, optimising for cost or performance as you see fit.  
+These parameters are specified under the `cerebrium.hardware` section of your config file.
+
+The available hardware parameters in your config are:
+| parameter | description | type | default |
+| --- | --- | --- | --- |
+| `gpu` | The GPU you would like to use. | string | AMPERE_A5000 |
+| `cpu` | The number of CPU cores to use. | int | 2 |
+| `memory` | The amount of Memory to use in GB. | float | 14.5 |
+| `gpu_count` | The number of GPUs to specify. | int | 1 |
+
+## Scaling Parameters
+
+This section lets you configure how you would like your deployment to scale.  
+You can use these parameters to control the minimum and maximum number of replicas to run, as well as the cooldown period between requests. For example, you could increase your cooldown time or even set a minimum number of replicas to run, increasing availability and avoiding cold starts.  
+Or, if you are looking to reduce your costs, you could decrease your cooldown time or set a maximum number of replicas to run, reducing the amount of time your deployment is running.  
+These parameters are specified under the `cerebrium.scaling` section of your config file.
+
+The available scaling parameters in your config are:
+| parameter | description | type | default |
+| --- | --- | --- | --- |
+| `min_replicas` | The minimum number of replicas to run at all times. | int | 0 |
+| `max_replicas` | The maximum number of replicas to scale to. | int | plan limit |
+| `cooldown` | The number of seconds to keep your model warm after each request. It resets after every request ends. | int | 60 |
+
+## Adding Dependencies
+
+The dependencies section of your config file is where you can specify any dependencies you would like to install in your deployment. We support pip, conda and apt dependencies and you can specify each of these in their relevant subsection of the dependencies section.
+
+For each dependency type, you can specify the name of the package you would like to install and the version constraints. If you do not want to specify any version constraints, you can use the `latest` keyword to install the latest version of the package.
+
+If you have an existing **requirements.txt**, **pkglist.txt** or **conda_pkglist.txt**, we'll prompt you to automatically integrate these into your config file when you run `cerebrium deploy`.
+
+### pip
+
+Your pip dependencies are specified under the `cerebrium.dependencies.pip` section of your config file.
+An example of a pip dependency is shown below:
+
+```toml
+[cerebrium.dependencies.pip]
+torch = ">=2.0.0"
+numpy = "latest"
+```
+
+### conda
+
+Similarly, your conda dependencies are specified under the `cerebrium.dependencies.conda` section of your config file.
+An example of a conda dependency is shown below:
+
+```toml
+[cerebrium.dependencies.conda]
+cuda = ">=11.7"
+cudatoolkit = "11.7"
+```
+
+### apt
+
+Finally, your apt dependencies are specified under the `cerebrium.dependencies.apt` section of your config file.  
+These are any package that you would install using `apt-get install` on a Linux machine.
+An example of an apt dependency is shown below:
+
+```toml
+[cerebrium.dependencies.apt]
+"libgl1-mesa-glx" = "latest"
+"libglib2.0-0" = "latest"
+```
+
+## Config File Example
+
+That was a lot of information!  
+Let's see an example of a config file in action.
+
+Below is an example of a config file that takes advantage of all the features we've discussed so far.
+
+```toml
+
+[cerebrium.build]
+predict_data = "{\"prompt\": \"Here is some example predict data for your cerebrium.toml which will be used to test your predict function on build.\"}"
+force_rebuild = false
+disable_animation = false
+log_level = "INFO"
+disable_confirmation = false
+
+[cerebrium.deployment]
+name = "my-model"
+python_version = "3.10"
+include = "[./*, main.py]"
+exclude = "[./.*, ./__*]"
+
+[cerebrium.hardware]
+gpu = "AMPERE_A5000"
+cpu = 2
+memory = 16.0
+gpu_count = 1
+
+[cerebrium.scaling]
+min_replicas = 0
+cooldown = 60
+
+[cerebrium.dependencies.pip]
+torch = ">=2.0.0"
+
+[cerebrium.dependencies.conda]
+cuda = ">=11.7"
+cudatoolkit = "11.7"
+
+[cerebrium.dependencies.apt]
+"libgl1-mesa-glx" = "latest"
+"libglib2.0-0" = "latest"
+
+```
