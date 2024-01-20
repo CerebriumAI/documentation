@@ -21,30 +21,30 @@ If you have trouble installing the package, please [contact](mailto:support@cere
 
 ## Login to your Cerebrium account
 
-1. If you haven't already, sign up for
-   [Cerebrium](https://dashboard.cerebrium.ai) using your email address or
-   Google login credentials.
-2. From your dashboard you will be able to view all deployed models, API calls,
-   and invite teammates!
-
-The first thing you will need is your private API key for the project that you intend to deploy your model into. You can find the API key by navigating to the API keys section in [your dashboard](https://dashboard.cerebrium.ai/projects/) on Cerebrium.
-
-<Note>
-  Note that each project has a unique API key so double check you are using the
-  key that corresponds to the right project.
-</Note>
-
-To use the login feature, navigate to your terminal window which you would like to use to deploy your models and run the following command:
+Run the following command:
 
 ```bash
-cerebrium login <YOUR_PRIVATE_API_KEY>
+cerebrium login
 ```
 
-This will store your API key locally, ensuring that you are logged in whenever you open a terminal and use `cerebrium deploy` without you having to enter your API key again.
+This should open up your web browser to the Cerebrium dashboard. If you have not created an account, please sign up otherwise if you are already logged in it should authenticate automatically
+and you should be able to return to your terminal. You should get the following success message.
 
-Some important details to note:
+```
+Logged in successfully
+```
 
-- You will remain logged in between different terminals provided you are the same user.
-- You can still parse in an API key when deploying your models without being logged out. The parsed API key takes preference over the local one. This is particularly useful if you are deploying to a different project.
+You will see it prints out your current project - think of this as your working environment. In the top left of your Cerebrium dashboard you can create multiple projects, such as a dev and prod 
+environment for your application. You can then switch your project for all future commands to relate to that project. You can see your projects using:
+
+```
+cerebrium project list
+```
+
+and switch your working environment using
+
+```
+cerebrium project set p-xxxx
+```
 
 Awesome! Let's start creating ML-based applications
