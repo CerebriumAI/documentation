@@ -3,17 +3,16 @@ title: Faster development with Serve
 description: Use the `cerebrium serve` command to rapidly iterate on your development
 ---
 
-
 When you are developing a `cortex` deployment on **cerebrium**, waiting for a build to complete can be time-consuming. To speed up your development process, you can use the `cerebrium serve` command to rapidly iterate on your deployment.
 
 This allows you to run your deployment on a dedicated server, and see the results of your changes quickly without rebuilding the entire deployment.
 For simple changes to your deployment, you can see the results of your changes in seconds, rather than minutes.
 
-
 <Note>
-This feature is currently in alpha and is available to all users. As such, you may encounter bugs or limitations.
-We are actively working on improving the experience and adding more features.  
-If you have any feedback or suggestions, we'd love to hear from you on discord or slack!
+  This feature is currently in alpha and is available to all users. As such, you
+  may encounter bugs or limitations. We are actively working on improving the
+  experience and adding more features. If you have any feedback or suggestions,
+  we'd love to hear from you on discord or slack!
 </Note>
 
 ## How it works
@@ -26,12 +25,12 @@ When you run `cerebrium serve start`, the following happens:
 4. If you make changes to your main.py or other code in your deployment, the server reloads your deployment and applies your changes without rebuilding the entire deployment.
 5. When you're done, you can stop the server by pressing `Ctrl+C` in the same terminal where you started the server.
 
-
 ## Usage
 
 To start a served instance, first navigate to the root folder of your **cortex deployment**.
 
 Then, simply run the following command in your terminal:
+
 ```bash
 cerebrium serve start
 ```
@@ -40,9 +39,8 @@ After running the `cerebrium serve start` command, you will see output in your t
 
 Here are some additional commands that can be useful when working with `cerebrium serve`:
 
-
-
 ### Stopping a served instance
+
 To stop a served instance, you can simply press `Ctrl+C` in the terminal where the server is running. This will gracefully shut down the server and terminate the served instance.
 
 If, for some reason, your session does not close gracefully, you can also use the following command to end a served instance:
@@ -51,34 +49,32 @@ If, for some reason, your session does not close gracefully, you can also use th
 cerebrium serve stop <<serve_id>>
 ```
 
-
 ### Testing inference on the served instance
 
 #### Using the built in CLI predict utility
 
-The goal of the `cerebrium serve` is to allow you to build and test your deployment as quickly as possible. 
+The goal of the `cerebrium serve` is to allow you to build and test your deployment as quickly as possible.
 To help with this, we've added a `cerebrium serve predict` command that allows you to send requests to your served deployment without having to leave your ide or terminal.
 
 To use the `cerebrium serve predict` command, first start a served instance using `cerebrium serve start` and then run `cerebrium serve predict` with the input data for your deployment as a json object.
 
 For example:
+
 ```bash
 cerebrium serve predict '{"prompt": "this is my input data"}'
 ```
 
-
-
-
-
 #### Using the local REST server
-Whn you run `cerebrium serve start`, the CLI will print a local rest server address that you can use to send requests to your deployment. 
+
+Whn you run `cerebrium serve start`, the CLI will print a local rest server address that you can use to send requests to your deployment.
 
 To use the local server to test inference, you can send a **post** request to: `localhost:8000/predict`
 and the body of the request should be a json object with the input data for your deployment.
 
 Here is an example curl command:
+
 ```bash
-curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" --data '{"prompt": "this is my input data"}' 
+curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" --data '{"prompt": "this is my input data"}'
 ```
 
 Since we are using a local api server, you don't need to worry about providing an api key or any other authentication details.  
@@ -88,19 +84,19 @@ Your served instance will be running on port 8000 by default, however, you can c
 Additionally, if you have more than one serve instance running, you can specify the id of the serve instance you want to send the request by using the following pattern: `localhost:8000/{serve_id}/predict` and we'll make sure the request is sent to the correct instance.
 
 <Note>
-While we are alpha testing this product, the results of your request will be printed to your terminal of your `cerebrium serve` as opposed to being returned as a response to your post request.
+  While we are alpha testing this product, the results of your request will be
+  printed to your terminal of your `cerebrium serve` as opposed to being
+  returned as a response to your post request.
 </Note>
 
-
-
 ## Notes and Tips
+
 - When you make changes to your deployment, the server will automatically reload your deployment and apply your changes without rebuilding the entire deployment. This can save you a lot of time when you are iterating on your deployment.
 - If you need to change requirements (pip, apt or conda), you will have to stop the server and start it again for the changes to take effect.
+
   - This is because the server will only install the requirements when it starts up, and will not automatically install new requirements when they are added to your deployment.
   - _This is only for the alpha release. We will be automating this rebuild process in due course_
 
 - If you encounter any issues or have questions, don't hesitate to reach out to the Cerebrium community on Discord. There's a wealth of knowledge and experience available from other users.
-
-
 
 By following these guidelines, you can effectively utilize cerebrium serve to expedite your development process, making it easier to test and refine your deployments.
