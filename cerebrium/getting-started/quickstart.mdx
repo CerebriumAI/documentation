@@ -14,26 +14,31 @@ Currently, our implementation has five components:
 - **main.py** - This is where your Python code lives. This is mandatory to include.
 - **cerebrium.toml** - This is where you define all the configurations around your model such as the hardware you use, scaling parameters, deployment config, build parameters, etc. Check [here](../environments/initial-setup) for a full list
 
-Every main.py you deploy needs the following mandatory layout:
+Below is an implementation of us using [Pydantic](https://docs.pydantic.dev/latest/) in order to validate the request parameters our users send in. Please note, using Pydantic is completely **optional**.
+Every **main.py** you deploy needs the following mandatory layout:
 
 ```bash
 from pydantic import BaseModel
 
-
 class Item(BaseModel):
-    parameter: value
+    prompt: str ##Pydantic validation
 
 
 def predict(item, run_id, logger):
+    ##with Pydantic
     item = Item(**item)
+    const value = item.prompt
+
+    ##without Pydantic
+    const value = item["prompt"]
 
     # Do something with parameters from item
 
-    return {"key": "value}
+    return {"result": value}
 ```
 
-The Item class is where you define the parameters your model receives as well as their type. Item needs to inherit from BaseModel which uses Pydantic to validate request schemas.
-You need to define a function with the name **predict** which receives 3 params: item, run_id and logger.
+The Item class is where you define the parameters your model receives as well as their type. Item needs to inherit from BaseModel which uses Pydantic to validate request schemas. Make sure
+to include pydantic as a pip requirement. You need to define a function with the name **predict** which receives 3 params: item, run_id and logger.
 
 - **item**: This is the expected request object containing the parameters you defined above.
 - **run_id**: This is a unique identifier for the user request if you want to use it to track predictions through another system
