@@ -76,7 +76,8 @@
         "cerebrium/environments/custom-images",
         "cerebrium/environments/using-secrets",
         "cerebrium/environments/multi-gpu-inferencing",
-        "cerebrium/environments/warm-models"
+        "cerebrium/environments/warm-models",
+        "cerebrium/development/serve.mdx" // TODO move this to a more appropriate section. Maybe it's own group
       ]
     },
     {
