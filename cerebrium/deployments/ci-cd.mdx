@@ -10,6 +10,7 @@ respective branch you can do so using the commands below. We will be using a Git
 
 Cerebrium stores your credentials in the directory ~/.cerebrium/config.yaml. If you run the command 'cat ~/.cerebrium/config' then
 you should see an output of 3 variables, namely:
+
 - accessToken
 - refreshToken
 - projectId
@@ -22,9 +23,9 @@ Go to your Github respository -> Settings -> Enviorenments
 
 ![Github](/images/githubActions.png)
 
-
 You shoud create a new environment with a title of your choice (prod and dev). Within these environments you have two types
 of variables you can work with:
+
 - Environment secrets: These are encrypted and do not show in your workflows logs
 - Environment variables: These are not encrypted and so will show in the workflow logs.
 
@@ -33,6 +34,7 @@ In our use case we will store all our variables (accessToken, refreshToken, proj
 ### 3. Github Actions Workflow
 
 In this flow, we do the following:
+
 1. Install a python version of our choice (3.8 to 3.11)
 2. Pip install the cerebrium package
 3. Login to Cerebrium using our credentials
