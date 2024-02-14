@@ -91,12 +91,17 @@ Additionally, if you have more than one serve instance running, you can specify 
 
 ## Notes and Tips
 
+By following these guidelines, you can effectively utilize `cerebrium serve` to expedite your development process, making it easier to test and refine your deployments.
+
 - When you make changes to your deployment, the server will automatically reload your deployment and apply your changes without rebuilding the entire deployment. This can save you a lot of time when you are iterating on your deployment.
+  - If you would like to get your serve session started faster, offload your model weights to a cloud storage platform (huggingface is great for this). This means your local build resources are smaller, avoiding long initial uploads. 
+  
 - If you need to change requirements (pip, apt or conda), you will have to stop the server and start it again for the changes to take effect.
 
   - This is because the server will only install the requirements when it starts up, and will not automatically install new requirements when they are added to your deployment.
   - _This is only for the alpha release. We will be automating this rebuild process in due course_
 
+- To end a `serve` session, simply press <<ctrl+c>> in your terminal where you started your serve session. This triggers a shutdown routine that will end your session. 
+
 - If you encounter any issues or have questions, don't hesitate to reach out to the Cerebrium community on Discord. There's a wealth of knowledge and experience available from other users.
 
-By following these guidelines, you can effectively utilize cerebrium serve to expedite your development process, making it easier to test and refine your deployments.
