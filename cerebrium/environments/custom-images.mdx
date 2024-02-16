@@ -41,8 +41,12 @@ updating, please add the following flag to your deploy command: `cerebrium deplo
 
 Cerebrium gives you the ability to run shell commands - this is for more complicated use cases of cloning repositories, running install scripts etc.
 
-<Note>Please note that shell commands are run last in the build process which means it happens after dependancy installation. If you would like to
-install a pip package after some shell commands, then run 'pip install transformers' in your shell commands</Note>
+<Note>
+  Please note that shell commands are run last in the build process which means
+  it happens after dependancy installation. If you would like to install a pip
+  package after some shell commands, then run 'pip install transformers' in your
+  shell commands
+</Note>
 
 In order to run shell commands you define a list of strings in the [cerebrium.build] section of your **cerebrium.toml**:
 
