@@ -34,19 +34,13 @@ If you are running a cortex deployment, and would like to pass in data to your p
 cerebrium run --data '{"key": "value"}'
 ```
 
-## Persistent Storage
-
-Utilizing the `cerebrium run` command, you can perform a variety of operations such as creating embeddings, training models, and more.
-Once these operations are completed, you have the option to save the resulting data, including model weights, embeddings, logs, or any other relevant information, directly to your project's persistent storage.
-This feature is particularly beneficial for preserving important data across different runs.
-
-The persistent storage acts as a shared resource across all deployments within your project, enabling seamless data sharing and access.
-To leverage this, simply direct your data to be saved in a path prefixed with `/persistent-storage`.
-This data can then be effortlessly accessed or loaded from the same path in any of your project's deployments, facilitating a highly efficient and collaborative environment for managing and utilizing your machine learning assets.
-
-## Retrieving Results
+## Using Results
 
 When your run is complete, the returned results will be displayed alongside any prints or logs from your run in the terminal.
+
+Alternatively, your persistent storage serves as a common resource for all deployments within a project, allowing for easy data sharing and access. 
+To use your data with a normal cortex deployment, save your data to a path that starts with `/persistent-storage`.  
+This data is then accessible from the same path across any deployment in the project, streamlining the use of machine learning assets.
 
 
 ## Example
