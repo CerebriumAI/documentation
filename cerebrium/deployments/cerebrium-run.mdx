@@ -1,18 +1,18 @@
 ---
 title: Running Once-off workloads
-description: "Cerebrium Run is a command-line tool that allows you to run once-off GPU workloads on the Cerebrium platform"
+description: "Cerebrium Run is a command-line tool that allows you to run once-off workloads on the Cerebrium platform"
 ---
 
 ## Introduction
 
 <Note>
-  This feature is in the alpha stages of development and is being actively
+  This feature is in the beta stages of development and is being actively
   worked on. If you have any feedback or suggestions, please reach out to us on
   our communities on Slack or Discord!
 </Note>
 
-Executing Python code on the Cerebrium platform is straightforward and efficient, requiring just a single command.  
-The `cerbrium run` is designed with flexibility in mind, making it suitable not only for those using **cortex** deployments but also for any Python-based project.
+The `cerbrium run` is a command-line tool that allows you to run once-off workloads on the Cerebrium platform. This feature is particularly useful for executing tasks such as creating embeddings, training models, and more, without the need to set up a full deployment.
+
 To get started, ensure your project includes a `main.py` file. This is the entry point that the `cerebrium run` command will execute and is vital for your code to execute.
 
 If you're new to Cerebrium or need a refresher on setting up the Cerebrium Command Line Interface (CLI), start by checking out our easy-to-follow [installation guide](/cerebrium/getting-started/installation).
@@ -22,18 +22,17 @@ Once you have the CLI setup, navigate to the folder containing your deployment's
 cerebrium run
 ```
 
-By executing the above command, you initiate a process on the Cerebrium platform that builds an environment to the specifications of your requirements in your config.
-Once initiated, you'll receive a unique run ID for tracking, and the platform will stream the execution logs directly to your terminal. This feature ensures you can monitor the progress of your task in real-time.
-
-<Note>
-  Please do not use a `if __name__ == "__main__":` block in your `main.py` file.
-  This is because we will be running your `main.py` file directly.
-</Note>
+### Optional Arguments
+The `cerebrium run` command supports a variety of optional arguments to customize your run.  
+These arguments are the same as the ones you would use with the `cerebrium deploy` command, and are detailed in the [config-files](/cerebrium/environments/config-files) section.
 
 ### Using `run`` with cortex deployments
 
-If you are running a cortex deployment, and would like to pass in data to your predict function, you can add the data to the `cerebrium.toml` file under the `predict_data` key in the `build` section.
-Alternatively, you can hard code the data into your `main.py` file.
+If you are running a cortex deployment, and would like to pass in data to your predict function, you can do so by using the `--data` flag. This flag takes in a JSON string, similar to the body of your inference request to a `cortex` deployment. This data will be passed to your predict function as a dictionary.
+
+```bash
+cerebrium run --data '{"key": "value"}'
+```
 
 
 ## Persistent Storage
@@ -51,8 +50,31 @@ This data can then be effortlessly accessed or loaded from the same path in any 
 
 When your run is complete, the returned results will be displayed alongside any prints or logs from your run in the terminal.
 
-While this feature is still in development, we are working on a system that will allow you to retrieve large files from your run.  
-However, for now, you can save your files to a cloud storage service, such as S3, and retrieve them from there.
+
+## Example
+
+Here's an example of a simple `main.py` file that you can use to test the `cerebrium run` command:
+
+```python
+# main.py
+import pyfiglet
+
+ascii_banner = pyfiglet.figlet_format("Hello World!!")
+print(ascii_banner)
+print("\nDONE!\n")
+```
+
+In our `cerebrium.toml` file, we add **pyfiglet** to the `pip` requirements section as follows:
+
+```toml
+[cerebrium.dependencies.pip]
+pyfiglet = "latest"
+```
+
+Now, when we run the `cerebrium run` command, we should see the following output:
+
+![Demo of the runner functionality](/images/runner/runner-basic-demo.png)
+
 
 
 ## Roadmap
