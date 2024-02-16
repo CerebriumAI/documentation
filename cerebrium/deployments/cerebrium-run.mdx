@@ -35,7 +35,6 @@ Once initiated, you'll receive a unique run ID for tracking, and the platform wi
 If you are running a cortex deployment, and would like to pass in data to your predict function, you can add the data to the `cerebrium.toml` file under the `predict_data` key in the `build` section.
 Alternatively, you can hard code the data into your `main.py` file.
 
-
 ## Persistent Storage
 
 Utilizing the `cerebrium run` command, you can perform a variety of operations such as creating embeddings, training models, and more.
@@ -46,14 +45,12 @@ The persistent storage acts as a shared resource across all deployments within y
 To leverage this, simply direct your data to be saved in a path prefixed with `/persistent-storage`.
 This data can then be effortlessly accessed or loaded from the same path in any of your project's deployments, facilitating a highly efficient and collaborative environment for managing and utilizing your machine learning assets.
 
-
 ## Retrieving Results
 
 When your run is complete, the returned results will be displayed alongside any prints or logs from your run in the terminal.
 
 While this feature is still in development, we are working on a system that will allow you to retrieve large files from your run.  
 However, for now, you can save your files to a cloud storage service, such as S3, and retrieve them from there.
-
 
 ## Roadmap
 
