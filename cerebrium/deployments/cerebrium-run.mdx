@@ -1,0 +1,65 @@
+---
+title: Running Once-off workloads
+description: "Cerebrium Run is a command-line tool that allows you to run once-off GPU workloads on the Cerebrium platform"
+---
+
+## Introduction
+
+<Note>
+  This feature is in the alpha stages of development and is being actively
+  worked on. If you have any feedback or suggestions, please reach out to us on
+  our communities on Slack or Discord!
+</Note>
+
+Executing Python code on the Cerebrium platform is straightforward and efficient, requiring just a single command.  
+The `cerbrium run` is designed with flexibility in mind, making it suitable not only for those using **cortex** deployments but also for any Python-based project.
+To get started, ensure your project includes a `main.py` file. This is the entry point that the `cerebrium run` command will execute and is vital for your code to execute.
+
+If you're new to Cerebrium or need a refresher on setting up the Cerebrium Command Line Interface (CLI), start by checking out our easy-to-follow [installation guide](/cerebrium/getting-started/installation).
+Once you have the CLI setup, navigate to the folder containing your deployment's `main.py` and `cerebrium.toml` config file and simplyrun the following command:
+
+```bash
+cerebrium run
+```
+
+By executing the above command, you initiate a process on the Cerebrium platform that builds an environment to the specifications of your requirements in your config.
+Once initiated, you'll receive a unique run ID for tracking, and the platform will stream the execution logs directly to your terminal. This feature ensures you can monitor the progress of your task in real-time.
+
+<Note>
+  Please do not use a `if __name__ == "__main__":` block in your `main.py` file.
+  This is because we will be running your `main.py` file directly.
+</Note>
+
+### Using `run`` with cortex deployments
+
+If you are running a cortex deployment, and would like to pass in data to your predict function, you can add the data to the `cerebrium.toml` file under the `predict_data` key in the `build` section.
+Alternatively, you can hard code the data into your `main.py` file.
+
+
+## Persistent Storage
+
+Utilizing the `cerebrium run` command, you can perform a variety of operations such as creating embeddings, training models, and more.
+Once these operations are completed, you have the option to save the resulting data, including model weights, embeddings, logs, or any other relevant information, directly to your project's persistent storage.
+This feature is particularly beneficial for preserving important data across different runs.
+
+The persistent storage acts as a shared resource across all deployments within your project, enabling seamless data sharing and access.
+To leverage this, simply direct your data to be saved in a path prefixed with `/persistent-storage`.
+This data can then be effortlessly accessed or loaded from the same path in any of your project's deployments, facilitating a highly efficient and collaborative environment for managing and utilizing your machine learning assets.
+
+
+## Retrieving Results
+
+When your run is complete, the returned results will be displayed alongside any prints or logs from your run in the terminal.
+
+While this feature is still in development, we are working on a system that will allow you to retrieve large files from your run.  
+However, for now, you can save your files to a cloud storage service, such as S3, and retrieve them from there.
+
+
+## Roadmap
+
+The current features are just the beginning of what we have planned for Cerebrium Run.
+
+Here are some of the features we are working on:
+
+- Webhook endpoints for run completion or results
+- Large file retrievals from runs
