@@ -8,51 +8,61 @@ For example, you may want to specify the number of GPUs to use, the amount of me
 These settings and more are all configurable using config files.
 
 # Using Config Files
+
 Your config file is a TOML file that you can use to specify the parameters of your cortex deployment.  
 This file is used to specify the deployment parameters, build parameters, hardware parameters, scaling parameters and dependencies for your deployment.
 
-
 ## Creating a config file
+
 The fastest and simplest way to create a config file is to run the `cerebrium init` command and specify the directory in which you would like to create the config file.
 This command will create a `cerebrium.toml` file in your project root, which you can then edit to suit your needs.
 
 ```bash
 cerebrium init my-project-dir
 ```
+
 To see the full list of parameters you can specify in your config file, see the [Config File Overview](#config-file-overview) section.
 
 ## Updating from requirements files
+
 ### Automatic Integration
+
 If you have an existing **requirements.txt**, **pkglist.txt** or **conda_pkglist.txt**, files in your project, we'll prompt you to automatically integrate these into your config file when you run `cerebrium deploy`.
 
 This way, you can leverage external tools to manage your dependencies and have them automatically integrated into your deployment.  
 For example, you can use the following command to generate a `requirements.txt` file from your current environment:
+
 ```bash
 pip freeze > requirements.txt
 ```
 
 ### Manual Integration
+
 If you wish to update your `cerebrium.toml` file manually, you can use the following command:
+
 ```bash
 cerebrium config update
 ```
 
-And we'll use any existing `requirements.txt`, `pkglist.txt` or `conda_pkglist.txt` files to update your `cerebrium.toml` file.  
+And we'll use any existing `requirements.txt`, `pkglist.txt` or `conda_pkglist.txt` files to update your `cerebrium.toml` file.
 
 Optionally, you can provide manual input to specify most of the parameters in your `cerebrium.toml` file from the command line.
 For a full list of parameters you can specify, run the following command:
+
 ```bash
 cerebrium config update --help
 ```
 
-
 ## Upgrading legacy yaml config files to cerebrium.toml format
+
 If you have a legacy `config.yaml` file which you would like to convert to the new `cerebrium.toml` format, you can use the following command:
+
 ```bash
 cerebrium config upgrade-yaml
 ```
 
 # Config File Overview
+
 ## Deployment Parameters
 
 Deployment parameters govern the persistent environment in which your model is deployed.
@@ -149,13 +159,6 @@ An example of an apt dependency is shown below:
 "libgl1-mesa-glx" = "latest"
 "libglib2.0-0" = "latest"
 ```
-
-
-
-
-
-
-
 
 ## Config File Example
 
