@@ -5,6 +5,8 @@ description: Specify your versions, dependencies and packages to use
 
 By default, Cerebrium models are executed in Python 3.9 unless the Python version you specified in your **cerebrium.toml** is different (see [here](./initial-setup#config-file-format-and-parameters)). Note, Cerebrium only supports python from version 3.9 and above.
 
+## Dependancies
+
 Traditionally, when working with Python, you will need access to Apt packages, Pip packages and Conda packages. For a deployment to cerebrium, you can specify all of these in your **cerebrium.toml** file in the following locations:
 
 - **[cerebrium.dependencies.pip]** - This is where you define your Pip packages in the form `module = version_constraints`.
@@ -34,3 +36,29 @@ All the sections above are optional, however, have to contain these file names s
 
 Typically, specifying versions for packages leads to faster builds however, if you ever find you would like to change version numbers or find your library versions aren't
 updating, please add the following flag to your deploy command: `cerebrium deploy --name <<app-name>> --force-rebuild`
+
+## Shell Commands
+
+Cerebrium gives you the ability to run shell commands - this is for more complicated use cases of cloning repositories, running install scripts etc.
+
+<Note>
+  Please note that shell commands are run last in the build process which means
+  it happens after dependancy installation. If you would like to install a pip
+  package after some shell commands, then run 'pip install transformers' in your
+  shell commands
+</Note>
+
+In order to run shell commands you define a list of strings in the [cerebrium.build] section of your **cerebrium.toml**:
+
+```toml
+
+[cerebrium.build]
+force_rebuild = false
+disable_syntax_check = false
+shell_commands = [
+    "echo 'Hello, World!'",
+    "curl -LsSf https://astral.sh/uv/install.sh | sh",
+    "uv venv",
+    "uv pip install transformers"
+]
+```
