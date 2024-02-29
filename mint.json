@@ -77,7 +77,7 @@
         "cerebrium/environments/using-secrets",
         "cerebrium/environments/multi-gpu-inferencing",
         "cerebrium/environments/warm-models",
-        "cerebrium/development/serve.mdx"
+        "cerebrium/development/serve"
       ]
     },
     {

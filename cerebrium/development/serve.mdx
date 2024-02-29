@@ -1,5 +1,5 @@
 ---
-title: Testing with Hot-reload
+title: Served sandbox with hot-reload
 description: Use the `cerebrium serve` command to rapidly iterate on your code
 ---
 
@@ -30,6 +30,10 @@ Here are some additional commands that can be useful when working with `cerebriu
 
 To stop a served instance, you can simply press `Ctrl+C` in the terminal where the server is running. This will gracefully shut down the server and terminate the served instance.
 
+
+When a file changes in your served instance, we'll automatically sync the changes to the server and apply the changes!
+![Example changing code with serve](/images/serve/ModifyingServeCode.gif)
+
 ### Testing inference on the served instance
 
 #### Using the local REST server
@@ -44,6 +48,8 @@ Here is an example curl command:
 ```bash
 curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" --data '{"prompt": "this is my input data"}'
 ```
+
+![Sending a prediction request to a serve instance using a curl](/images/serve/ServeCurl.gif)
 
 Since we are using a local api server, you don't need to worry about providing an api key or any other authentication details.
 Otherwise, you can interact with this endpoint as you would with a normal Cerebrium endpoint.
