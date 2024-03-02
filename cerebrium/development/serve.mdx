@@ -11,7 +11,8 @@ This allows you to run your deployment on a dedicated server, and see the result
   This feature is currently in beta and is available to all users. As such, you
   may encounter bugs or limitations. We are actively working on improving the
   experience and adding more features. If you have any feedback or suggestions,
-  we'd love to hear from you on [Discord](https://discord.gg/ATj6USmeE2) or [Slack](https://join.slack.com/t/cerebriumworkspace/shared_invite/zt-1qojg3eac-q4xyu5O~MeniNIg2jNeadg)!
+  we'd love to hear from you on [Discord](https://discord.gg/ATj6USmeE2) or
+  [Slack](https://join.slack.com/t/cerebriumworkspace/shared_invite/zt-1qojg3eac-q4xyu5O~MeniNIg2jNeadg)!
 </Note>
 
 **Limitations:**
@@ -46,13 +47,14 @@ Info:   Session dev-p-f94734f3-8-cpu-only-a296 started successfully
 Info:   Local API server started successfully on port 7900
 Send a POST request to: http://localhost:7900/predict
 ```
+
 ### Local API Server
 
 Since we are using a local API server, you don't need to worry about providing an API key in the Authorization header.
 Your served instance will be running on port 7900 by default, however, you can change this by using the `--port` flag when you start a served instance
 
-
 You can make a request to your local endpoint using:
+
 ```bash
 curl -X POST http://localhost:7900/predict -H "Content-Type: application/json" --data '{"prompt": "this is my input data"}'
 ```
@@ -69,9 +71,13 @@ If you would like to make changes to the environment, ie: hardware, pip/apt pack
 
 ![Example changing code with serve](/images/serve/ModifyingServeCode.gif)
 
-<Note>Please note that you are charged for your compute as long as serve is running. ie: If you are running serve for
-8 minutes, you will be charged for 8 minutes of compute based on the hardware requirements you specified. It is very important
-to end your sesssion when done. We will automatically end the session after 10 minutes of inactivity.</Note>
+<Note>
+  Please note that you are charged for your compute as long as serve is running.
+  ie: If you are running serve for 8 minutes, you will be charged for 8 minutes
+  of compute based on the hardware requirements you specified. It is very
+  important to end your sesssion when done. We will automatically end the
+  session after 10 minutes of inactivity.
+</Note>
 
 ## How it works
 

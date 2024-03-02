@@ -77,14 +77,11 @@
         "cerebrium/environments/using-secrets",
         "cerebrium/environments/multi-gpu-inferencing",
         "cerebrium/environments/warm-models"
-       
       ]
     },
     {
       "group": "Development",
-      "pages": [
-        "cerebrium/development/serve"
-      ]
+      "pages": ["cerebrium/development/serve"]
     },
     {
       "group": "Data Storage",
