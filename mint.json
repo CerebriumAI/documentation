@@ -76,7 +76,13 @@
         "cerebrium/environments/custom-images",
         "cerebrium/environments/using-secrets",
         "cerebrium/environments/multi-gpu-inferencing",
-        "cerebrium/environments/warm-models",
+        "cerebrium/environments/warm-models"
+       
+      ]
+    },
+    {
+      "group": "Development",
+      "pages": [
         "cerebrium/development/serve"
       ]
     },
