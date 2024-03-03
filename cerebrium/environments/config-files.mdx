@@ -36,14 +36,14 @@ The available deployment parameters are:
 Build parameters are used during the build phase of your deployment.
 They give you control over how your deployment is built and how it is tested. These parameters are specified under the `cerebrium.build` section of your config file.
 
-| parameter | description | type | default |
-| --- | --- | --- | --- |
-| `predict_data` | The data to use to test your predict function on build. If this fails, your build fails. | string | '\{"prompt": "Here is some example predict data for your cerebrium.toml which will be used to test your predict function on build."\}' |
-| `disable_predict` | Disable running your predict function at the end of a build. | boolean | false |
-| `force_rebuild` | Whether to force a rebuild of your deployment, clearing all caches and starting from scratch. | boolean | false |
-| `disable_animation` | Whether to disable the animation in the logs. | boolean | false |
-| `log_level` | Log level for the build step of your deployment | string | INFO |
-| `disable_confirmation` | Whether to disable all CLI confirmations before deploying. Use for CI/CD | boolean | false |
+| parameter              | description                                                                                   | type    | default                                                                                                                                |
+| ---------------------- | --------------------------------------------------------------------------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `predict_data`         | The data to use to test your predict function on build. If this fails, your build fails.      | string  | '\{"prompt": "Here is some example predict data for your cerebrium.toml which will be used to test your predict function on build."\}' |
+| `disable_predict`      | Disable running your predict function at the end of a build.                                  | boolean | false                                                                                                                                  |
+| `force_rebuild`        | Whether to force a rebuild of your deployment, clearing all caches and starting from scratch. | boolean | false                                                                                                                                  |
+| `disable_animation`    | Whether to disable the animation in the logs.                                                 | boolean | false                                                                                                                                  |
+| `log_level`            | Log level for the build step of your deployment                                               | string  | INFO                                                                                                                                   |
+| `disable_confirmation` | Whether to disable all CLI confirmations before deploying. Use for CI/CD                      | boolean | false                                                                                                                                  |
 
 ## Hardware Parameters
 
@@ -59,35 +59,34 @@ The available hardware parameters in your config are:
 | `gpu_count` | The number of GPUs to specify. | int | 1 |
 | `provider` | The provider you would like your deployment to be on. This is automatically selected from the GPU type if not specified | string | aws |
 
-### Available Hardware 
+### Available Hardware
 
 The following is the hardware available on Cerebrium
 
-| name | provider |
-| --- | --- |
-| `CPU` | [coreweave, aws] |
-| `TURING_4000` |  [coreweave] |
-| `TURING_5000` |  [coreweave] |
-| `AMPERE_A4000` |  [coreweave] |
-| `AMPERE_A5000` |  [coreweave] |
-| `AMPERE_A6000` |  [coreweave] |
-| `T4` |  [aws] |
-| `A10` |  [aws] |
-| `AMPERE_A100` | [coreweave, aws] |
-| `AMPERE_A100_40GB` |  [coreweave, aws] |
-
+| name               | provider         |
+| ------------------ | ---------------- |
+| `CPU`              | [coreweave, aws] |
+| `TURING_4000`      | [coreweave]      |
+| `TURING_5000`      | [coreweave]      |
+| `AMPERE_A4000`     | [coreweave]      |
+| `AMPERE_A5000`     | [coreweave]      |
+| `AMPERE_A6000`     | [coreweave]      |
+| `T4`               | [aws]            |
+| `A10`              | [aws]            |
+| `AMPERE_A100`      | [coreweave, aws] |
+| `AMPERE_A100_40GB` | [coreweave, aws] |
 
 ## Scaling Parameters
 
-This section lets you configure how you would like your deployment to scale. You can use these parameters to control the minimum and maximum number of replicas to run, as well as the cooldown period between requests. For example, you could increase your cooldown time or even set a minimum number of replicas to run, increasing availability and avoiding cold starts.  
+This section lets you configure how you would like your deployment to scale. You can use these parameters to control the minimum and maximum number of replicas to run, as well as the cooldown period between requests. For example, you could increase your cooldown time or even set a minimum number of replicas to run, increasing availability and avoiding cold starts.
 
 These parameters are specified under the `cerebrium.scaling` section of your config file.
 
-| parameter | description | type | default |
-| --- | --- | --- | --- |
-| `min_replicas` | The minimum number of replicas to run at all times. | int | 0 |
-| `max_replicas` | The maximum number of replicas to scale to. | int | plan limit |
-| `cooldown` | The number of seconds to keep your model warm after each request. It resets after every request ends. | int | 60 |
+| parameter      | description                                                                                           | type | default    |
+| -------------- | ----------------------------------------------------------------------------------------------------- | ---- | ---------- |
+| `min_replicas` | The minimum number of replicas to run at all times.                                                   | int  | 0          |
+| `max_replicas` | The maximum number of replicas to scale to.                                                           | int  | plan limit |
+| `cooldown`     | The number of seconds to keep your model warm after each request. It resets after every request ends. | int  | 60         |
 
 ## Adding Dependencies
 
