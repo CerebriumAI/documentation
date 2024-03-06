@@ -6,16 +6,19 @@ authMethod: "bearer"
 ---
 
 #### Authorization Parameters
+
 <ParamField header="Authorization" type="string" required>
   The private API key which you can find on your Cerebrium Dashboard
 </ParamField>
 
 #### Path Parameters
+
 <ParamField path="id" type="string">
   The unique identifier of your run
 </ParamField>
 
 #### Response Parameters
+
 <ResponseField name="id" type="string" required>
   A response field example
 </ResponseField>
@@ -36,7 +39,6 @@ authMethod: "bearer"
 
 ```json 200
 { "message": "Success" }
-
 ```
 
 ```json 401

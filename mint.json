@@ -143,10 +143,7 @@
       "pages": [
         {
           "group": "Runs",
-          "pages": [
-            "rest-api/getRun",
-            "rest-api/cancelRun"
-          ]
+          "pages": ["rest-api/getRun", "rest-api/cancelRun"]
         }
       ]
     }

@@ -5,27 +5,28 @@ api: "DELETE /runs/{id}"
 authMethod: "bearer"
 ---
 
-
 #### Authorization Parameters
+
 <ParamField header="Authorization" type="string" required>
   The private API key which you can find on your Cerebrium Dashboard
 </ParamField>
 
 #### Path Parameters
+
 <ParamField path="id" type="string">
   The unique identifier of your run
 </ParamField>
 
 #### Response Parameters
+
 <ResponseField name="message" type="string" required>
   A message that your run has been successfully deleted
 </ResponseField>
 
-
 <ResponseExample>
 
 ```json 200
-{ 
+{
   "id": "12345",
   "status": "success",
   "statusCode": 200,
@@ -43,4 +44,3 @@ authMethod: "bearer"
 ```
 
 </ResponseExample>
-
