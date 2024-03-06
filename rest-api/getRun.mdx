@@ -1,0 +1,50 @@
+---
+title: "Run"
+description: "Get information about your runs"
+api: "GET /runs/{id}"
+authMethod: "bearer"
+---
+
+#### Authorization Parameters
+<ParamField header="Authorization" type="string" required>
+  The private API key which you can find on your Cerebrium Dashboard
+</ParamField>
+
+#### Path Parameters
+<ParamField path="id" type="string">
+  The unique identifier of your run
+</ParamField>
+
+#### Response Parameters
+<ResponseField name="id" type="string" required>
+  A response field example
+</ResponseField>
+<ResponseField name="status" type="string" required>
+  The status of the run. This can be either
+</ResponseField>
+<ResponseField name="statusCode" type="int">
+  If the run is completed, it will have a normal HTTP status code.
+</ResponseField>
+<ResponseField name="responseTimeMs" type="int">
+  If the run is completed, it will have a total execution time in milliseconds
+</ResponseField>
+<ResponseField name="createdAt" type="string" required>
+  The timestamp the run was created
+</ResponseField>
+
+<ResponseExample>
+
+```json 200
+{ "message": "Success" }
+
+```
+
+```json 401
+{ "message": "Unauthorized" }
+```
+
+```json 404
+{ "message": "Specific run not found" }
+```
+
+</ResponseExample>

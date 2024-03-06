@@ -15,7 +15,9 @@
       "dark": "#121212"
     }
   },
-  "api": {},
+  "api": {
+    "baseUrl": "https://rest-api.cerebrium.ai"
+  },
   "topbarCtaButton": {
     "name": "Sign Up",
     "url": "https://dashboard.cerebrium.ai/login"
@@ -30,6 +32,10 @@
     {
       "name": "Examples",
       "url": "examples"
+    },
+    {
+      "name": "Rest API",
+      "url": "rest-api"
     }
   ],
   "anchors": [
@@ -130,6 +136,18 @@
         "examples/streaming-falcon-7B",
         "examples/langchain",
         "examples/transcribe-whisper"
+      ]
+    },
+    {
+      "group": "Rest API",
+      "pages": [
+        {
+          "group": "Runs",
+          "pages": [
+            "rest-api/getRun",
+            "rest-api/cancelRun"
+          ]
+        }
       ]
     }
   ],
