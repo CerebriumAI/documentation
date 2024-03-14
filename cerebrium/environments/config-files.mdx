@@ -71,8 +71,7 @@ The following is the hardware available on Cerebrium
 | `AMPERE_A4000`     | [coreweave]      |
 | `AMPERE_A5000`     | [coreweave]      |
 | `AMPERE_A6000`     | [coreweave]      |
-| `T4`               | [aws]            |
-| `A10`              | [aws]            |
+| `AMPERE_A10`       | [aws]            |
 | `AMPERE_A100`      | [coreweave, aws] |
 | `AMPERE_A100_40GB` | [coreweave, aws] |
 
@@ -164,7 +163,7 @@ gpu = "AMPERE_A5000"
 cpu = 2
 memory = 16.0
 gpu_count = 1
-provider = "coreweave"
+provider = "aws"
 
 [cerebrium.scaling]
 min_replicas = 0
