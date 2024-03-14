@@ -7,10 +7,7 @@ After you've created your Cortex project, you may find that you need more contro
 For example, you may want to specify the number of GPUs to use, the amount of memory to use or even the version of Python for your environment.
 These settings and more are all configurable using config files.
 
-# Using Config Files
-
-Your config file is a TOML file that you can use to specify the parameters of your cortex deployment.  
-This file is used to specify the deployment parameters, build parameters, hardware parameters, scaling parameters and dependencies for your deployment.
+Your config file is a TOML file that you can use to specify the parameters of your cortex deployment. This file is used to specify the deployment parameters, build parameters, hardware parameters, scaling parameters and dependencies for your deployment.
 
 ## Creating a config file
 
@@ -20,48 +17,6 @@ This command will create a `cerebrium.toml` file in your project root, which you
 ```bash
 cerebrium init my-project-dir
 ```
-
-To see the full list of parameters you can specify in your config file, see the [Config File Overview](#config-file-overview) section.
-
-## Updating from requirements files
-
-### Automatic Integration
-
-If you have an existing **requirements.txt**, **pkglist.txt** or **conda_pkglist.txt**, files in your project, we'll prompt you to automatically integrate these into your config file when you run `cerebrium deploy`.
-
-This way, you can leverage external tools to manage your dependencies and have them automatically integrated into your deployment.  
-For example, you can use the following command to generate a `requirements.txt` file from your current environment:
-
-```bash
-pip freeze > requirements.txt
-```
-
-### Manual Integration
-
-If you wish to update your `cerebrium.toml` file manually, you can use the following command:
-
-```bash
-cerebrium config update
-```
-
-And we'll use any existing `requirements.txt`, `pkglist.txt` or `conda_pkglist.txt` files to update your `cerebrium.toml` file.
-
-Optionally, you can provide manual input to specify most of the parameters in your `cerebrium.toml` file from the command line.
-For a full list of parameters you can specify, run the following command:
-
-```bash
-cerebrium config update --help
-```
-
-## Upgrading legacy yaml config files to cerebrium.toml format
-
-If you have a legacy `config.yaml` file which you would like to convert to the new `cerebrium.toml` format, you can use the following command:
-
-```bash
-cerebrium config upgrade-yaml
-```
-
-# Config File Overview
 
 ## Deployment Parameters
 
@@ -79,17 +34,16 @@ The available deployment parameters are:
 ## Build Parameters
 
 Build parameters are used during the build phase of your deployment.
-They give you control over how your deployment is built and how it is tested.  
-These parameters are specified under the `cerebrium.build` section of your config file.
+They give you control over how your deployment is built and how it is tested. These parameters are specified under the `cerebrium.build` section of your config file.
 
-The available build parameters are:
-| parameter | description | type | default |
-| --- | --- | --- | --- |
-| `predict_data` | The data to use to test your predict function on build. This is the same as the payload in a inference call | string | '\{"prompt": "Here is some example predict data for your cerebrium.toml which will be used to test your predict function on build."\}' |
-| `force_rebuild` | Whether to force a rebuild of your deployment, clearing all caches and starting from scratch. | boolean | false |
-| `disable_animation` | Whether to disable the animation in the logs. | boolean | false |
-| `log_level` | Log level for the build step of your deployment | string | INFO |
-| `disable_confirmation` | Whether to disable all CLI confirmations before deploying. Use for CI/CD | boolean | false |
+| parameter              | description                                                                                   | type    | default                                                                                                                                |
+| ---------------------- | --------------------------------------------------------------------------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `predict_data`         | The data to use to test your predict function on build. If this fails, your build fails.      | string  | '\{"prompt": "Here is some example predict data for your cerebrium.toml which will be used to test your predict function on build."\}' |
+| `disable_predict`      | Disable running your predict function at the end of a build.                                  | boolean | false                                                                                                                                  |
+| `force_rebuild`        | Whether to force a rebuild of your deployment, clearing all caches and starting from scratch. | boolean | false                                                                                                                                  |
+| `disable_animation`    | Whether to disable the animation in the logs.                                                 | boolean | false                                                                                                                                  |
+| `log_level`            | Log level for the build step of your deployment                                               | string  | INFO                                                                                                                                   |
+| `disable_confirmation` | Whether to disable all CLI confirmations before deploying. Use for CI/CD                      | boolean | false                                                                                                                                  |
 
 ## Hardware Parameters
 
@@ -103,24 +57,39 @@ The available hardware parameters in your config are:
 | `cpu` | The number of CPU cores to use. | int | 2 |
 | `memory` | The amount of Memory to use in GB. | float | 14.5 |
 | `gpu_count` | The number of GPUs to specify. | int | 1 |
+| `provider` | The provider you would like your deployment to be on. This is automatically selected from the GPU type if not specified | string | aws |
+
+### Available Hardware
+
+The following is the hardware available on Cerebrium
+
+| name               | provider         |
+| ------------------ | ---------------- |
+| `CPU`              | [coreweave, aws] |
+| `TURING_4000`      | [coreweave]      |
+| `TURING_5000`      | [coreweave]      |
+| `AMPERE_A4000`     | [coreweave]      |
+| `AMPERE_A5000`     | [coreweave]      |
+| `AMPERE_A6000`     | [coreweave]      |
+| `AMPERE_A10`       | [aws]            |
+| `AMPERE_A100`      | [coreweave, aws] |
+| `AMPERE_A100_40GB` | [coreweave, aws] |
 
 ## Scaling Parameters
 
-This section lets you configure how you would like your deployment to scale.  
-You can use these parameters to control the minimum and maximum number of replicas to run, as well as the cooldown period between requests. For example, you could increase your cooldown time or even set a minimum number of replicas to run, increasing availability and avoiding cold starts.  
-Or, if you are looking to reduce your costs, you could decrease your cooldown time or set a maximum number of replicas to run, reducing the amount of time your deployment is running.  
+This section lets you configure how you would like your deployment to scale. You can use these parameters to control the minimum and maximum number of replicas to run, as well as the cooldown period between requests. For example, you could increase your cooldown time or even set a minimum number of replicas to run, increasing availability and avoiding cold starts.
+
 These parameters are specified under the `cerebrium.scaling` section of your config file.
 
-The available scaling parameters in your config are:
-| parameter | description | type | default |
-| --- | --- | --- | --- |
-| `min_replicas` | The minimum number of replicas to run at all times. | int | 0 |
-| `max_replicas` | The maximum number of replicas to scale to. | int | plan limit |
-| `cooldown` | The number of seconds to keep your model warm after each request. It resets after every request ends. | int | 60 |
+| parameter      | description                                                                                           | type | default    |
+| -------------- | ----------------------------------------------------------------------------------------------------- | ---- | ---------- |
+| `min_replicas` | The minimum number of replicas to run at all times.                                                   | int  | 0          |
+| `max_replicas` | The maximum number of replicas to scale to.                                                           | int  | plan limit |
+| `cooldown`     | The number of seconds to keep your model warm after each request. It resets after every request ends. | int  | 60         |
 
 ## Adding Dependencies
 
-The dependencies section of your config file is where you can specify any dependencies you would like to install in your deployment. We support pip, conda and apt dependencies and you can specify each of these in their relevant subsection of the dependencies section.
+The dependencies section of your config file is where you can specify any dependencies you would like to install in your deployment. We support **pip**, **conda** and **apt** dependencies and you can specify each of these in their relevant subsection of the dependencies section.
 
 For each dependency type, you can specify the name of the package you would like to install and the version constraints. If you do not want to specify any version constraints, you can use the `latest` keyword to install the latest version of the package.
 
@@ -160,6 +129,13 @@ An example of an apt dependency is shown below:
 "libglib2.0-0" = "latest"
 ```
 
+### Integrate existing requirements files
+
+If you have an existing **requirements.txt**, **pkglist.txt** or **conda_pkglist.txt**, files in your project, we'll prompt you to automatically integrate these into your config file when you run `cerebrium deploy`.
+
+This way, you can leverage external tools to manage your dependencies and have them automatically integrated into your deployment.  
+For example, you can use the following command to generate a `requirements.txt` file from your current environment:
+
 ## Config File Example
 
 That was a lot of information!  
@@ -187,6 +163,7 @@ gpu = "AMPERE_A5000"
 cpu = 2
 memory = 16.0
 gpu_count = 1
+provider = "aws"
 
 [cerebrium.scaling]
 min_replicas = 0
