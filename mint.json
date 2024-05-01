@@ -124,6 +124,8 @@
     {
       "group": "Examples",
       "pages": [
+        "examples/tensorRT",
+        "examples/comfyUI",
         "examples/sdxl",
         "examples/logo-controlnet",
         "examples/mistral-vllm",
