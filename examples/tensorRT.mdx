@@ -17,7 +17,7 @@ You are required to convert and build the model using very specific arguments th
 
 If you don’t have a Cerebrium account, you can create one by signing up here and following the documentation [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation) to get setup
 
-In your IDE, run the following command to create our Cerebrium starter project: ```cerebrium init llama-3b-tensorrt```. This creates two files:
+In your IDE, run the following command to create our Cerebrium starter project: `cerebrium init llama-3b-tensorrt`. This creates two files:
 
 - main.py - Our entrypoint file where our code lives
 - cerebrium.toml - A configuration file that contains all our build and environment settings
@@ -138,7 +138,7 @@ import torch
 
 MAX_INPUT_LEN, MAX_OUTPUT_LEN = 256, 256
 MAX_BATCH_SIZE = (
-    128 
+    128
 )
 
 if not os.path.exists(ENGINE_DIR):
@@ -146,14 +146,14 @@ if not os.path.exists(ENGINE_DIR):
 	      MODEL_ID,
  				...
   )
-  
+
  # Build the TRT engine
 	convert_checkpoint = f"""
 	python convert_checkpoint.py --model_dir {MODEL_DIR} \\
 	                            --output_dir ./model_ckpt \\
 	                            --dtype float16
 	"""
-	
+
 	SIZE_ARGS = f"--max_batch_size={MAX_BATCH_SIZE} --max_input_len={MAX_INPUT_LEN} --max_output_len={MAX_OUTPUT_LEN}"
 	build_engine = f"""
 	trtllm-build --checkpoint_dir ./model_ckpt --output_dir {ENGINE_DIR} \\
@@ -161,7 +161,7 @@ if not os.path.exists(ENGINE_DIR):
 	          --max_batch_size={MAX_BATCH_SIZE} --max_input_len={MAX_INPUT_LEN} --max_output_len={MAX_OUTPUT_LEN} \\
 	          --gemm_plugin=float16 --gpt_attention_plugin=float16
 	"""
-	
+
 	print("Building engine...")
 	subprocess.run(convert_checkpoint, shell=True, check=True)
 	subprocess.run(build_engine, shell=True, check=True)
@@ -254,7 +254,7 @@ Lastly, let us bring this all together with our predict function
 ```python
 def predict(item, run_id, logger):
     item = Item(**item)
-    
+
     stop_words_list = None
     bad_words_list = None
 
