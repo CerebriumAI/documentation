@@ -1,0 +1,210 @@
+---
+title: "Comfy UI application at Scale"
+description: "Deploy a ComfyUI application behing "
+---
+
+### Introduction
+
+ComyUI is a popular no-code interface for building complex stable diffusion workflows. Due to its ease of use, modular setup as well as its intuitive flowchart interface, the community of ComfyUI users have built a pretty phenomenal collection of workflows! There are even websites dedicated to the sharing of workflows built to help get you started:
+
+- https://comfyworkflows.com/
+- https://openart.ai/workflows/home‍
+
+While it is currently easy to experiment with ComfyUI workflows, there isn’t a lot of guidance or tutorials on how to productionise these workflows at scale. In this tutorial, I am going to show you how you can use Cerebrium to deploy your pipelines to an API endpoint so they can autoscale based on demand and that you only pay for the compute you use. You can find the full example code [here](https://github.com/CerebriumAI/examples/tree/master/12-comfyui).
+
+### Creating your Comfy UI workflow locally
+
+We first need to create our workflow which you can do locally on your machine or by renting a GPU from [Lambda Labs](https://lambdalabs.com/).
+
+Before we get started, make sure ComfyUI is [installed properly on your local environment](https://github.com/comfyanonymous/ComfyUI#installing).
+
+For our use case we are going to use Stable Diffusion XL and ControlNet to create a cool QR code. If you have a existing workflow setup, you can simply skip to the step “Export ComfyUI Workflow”
+
+1. Let us first create our Cerebrium project with: cerebrium init comfyUI
+2. Inside your project, lets copy the ComfyUI GitHub project: git clone https://github.com/comfyanonymous/ComfyUI
+3. Download the following models and install them in the appropriate folders within the ComfyUI folder:
+    - SDXL base in models/checkpoints.
+    - ControlNet in models/ControlNet.
+4. In order to run ComfyUI locally, run the command: python main.py --force-fp16 on MacOS. Make sure you run this inside the ComfyUI folder you just cloned.
+5. A server should be loaded locally at http://127.0.0.1:8188/‍
+‍
+
+In this view, you should be able to see the default user interface for a ComfyUI workflow. You can use this locally running instance to create your image generation pipeline.
+
+### Export ComfyUI Workflow
+
+In our example Github repository, we have a worklow.json file. You can click the “Load” button on the right in order to load in our workflow. You then should see the workflow populated
+
+![ComfyUI Workflow](/images/examples/comfyui1.png)
+
+Don’t worry about the pre-filled values and prompts, we will edit these values on inference when we run our workflow.
+
+In order to export this workflow to work with Cerebrium, we need to export this to an API format. In the top right over that hovering box on the right. Click the gear icon (settings). You must then make sure that “Enable dev mode” is selected and then can close the popup.
+
+![Save ComfyUI API format](/images/examples/comfyui2.png)
+
+You should then see that a button appear on the right hover box that reads “Save (API format)”. Use that to save your workflow with the name “workflow_api.json”
+
+### ComfyUI Application
+
+Our main application code lives in main.py so we now use the exported ComfyUI API workflow file above in order to create an API endpoint for our workflow. In the code below we initialize the ComfyUI server and load in our workflow API template. In our predict function, we then send in the various values we would like to alter in our workflow ie: prompt, image and run the workflow. Our function then users the inputs to alter the ComfyUI workflow values and then generates the output which in this case is base64 encoded images.
+
+In Cerebrium, the code outside the predict function runs only on initialisation (ie: startup) where as subsequent requests will only run the predict function.
+
+We need to alter our workflow_api.json file to have placeholders so that we can replace user values on inference. You can alter the file as follows.
+
+- Replace line 4, the seed input, with: "\{\{seed\}\}"
+- Replace line 45, the input text of node 6 with: "\{\{positive_prompt\}\}"
+- Replace line 58, the input text of node 7 with: "\{\{negative_prompt\}\}"
+- Replace line 108, the image of node 11 with: "\{\{controlnet_image\}\}"
+
+We created a file that contains utility functions to make it easier to work with ComfyUI. You can find the code here. Create a file named helpers.py and copy the code into there.
+
+```python
+from typing import Optional
+from pydantic import BaseModel
+
+import copy
+import json
+import os
+import time
+import uuid
+from multiprocessing import Process
+from typing import Dict
+
+import websocket
+from helpers import (
+    convert_outputs_to_base64,
+    convert_request_file_url_to_path,
+    fill_template,
+    get_images,
+    setup_comfyui,
+)
+
+server_address = "127.0.0.1:8188"
+client_id = str(uuid.uuid4())
+original_working_directory = os.getcwd()
+global json_workflow
+json_workflow = None
+
+global side_process
+side_process = None
+if side_process is None:
+    side_process = Process(
+        target=setup_comfyui,
+        kwargs=dict(
+            original_working_directory=original_working_directory,
+            data_dir="",
+        ),
+    )
+    side_process.start()
+
+# Load the workflow file as a python dictionary
+with open(
+    os.path.join("./", "workflow_api.json"), "r"
+) as json_file:
+    json_workflow = json.load(json_file)
+
+# Connect to the ComfyUI server via websockets
+socket_connected = False
+while not socket_connected:
+    try:
+        ws = websocket.WebSocket()
+        ws.connect(
+            "ws://{}/ws?clientId={}".format(server_address, client_id)
+        )
+        socket_connected = True
+    except Exception as e:
+        print("Could not connect to comfyUI server. Trying again...")
+        time.sleep(5)
+
+print("Successfully connected to the ComfyUI server!")
+
+class Item(BaseModel):
+    workflow_values: Optional[Dict] = None
+
+def predict(item, run_id, logger):
+    item = Item(**item)
+
+    template_values = item.workflow_values
+
+    template_values, tempfiles = convert_request_file_url_to_path(template_values)
+    json_workflow_copy = copy.deepcopy(json_workflow)
+    json_workflow_copy = fill_template(json_workflow_copy, template_values)
+    outputs = {}  # Initialize outputs to an empty dictionary
+
+    try:
+        outputs = get_images(
+            ws, json_workflow_copy, client_id, server_address
+        )
+
+    except Exception as e:
+        print('did it get here')
+        print("Error occurred while running Comfy workflow: ", e)
+
+    for file in tempfiles:
+        file.close()
+
+    result = []
+    for node_id in outputs:
+        for unit in outputs[node_id]:
+            file_name = unit.get("filename")
+            file_data = unit.get("data")
+            output = convert_outputs_to_base64(
+                node_id=node_id, file_name=file_name, file_data=file_data
+            )
+            result.append(output)
+
+    return {"result": result}
+```
+
+### Deploy ComfyUI Application
+
+If we run cerebrium deploy it will upload the ComfyUI directory and our ~10GB of model weights so if you have a slow internet connection this can be a pain. However, in our repo we have a helper file that will download the models weights for us and put it in the appropriate folder. Create a file called model.json with the following contents:
+
+```
+[
+    {
+        "url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/main/sd_xl_base_1.0.safetensors",
+        "path": "models/checkpoints/sd_xl_base_1.0.safetensors"
+    },
+    {
+        "url": "https://huggingface.co/diffusers/controlnet-canny-sdxl-1.0/resolve/main/diffusion_pytorch_model.fp16.safetensors",
+        "path": "models/controlnet/diffusers_xl_canny_full.safetensors"
+    }
+]
+```
+
+This file is basically telling our helper function the url to download the model from and the directory to save the file in. It will only download the file on first deploy. On subsequent deploys, we wrote the logic to skip downloading the model if the file already exists.
+
+This is what your file folder structure should look like:
+
+![ComfyUI folder structure](/images/examples/comfyui3.png)
+
+You can now deploy your application by running: cerebrium deploy
+
+Once your ComfyUI application has been deployed successfully, you should be able to make a request to the endpoint using the following JSON payload:
+
+```curl
+curl --location 'https://run.cerebrium.ai/v3/p-xxxx/comfyui/predict' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: ' \
+--data '{"workflow_values": {
+  "positive_prompt": "A top down view of a mountain with large trees and green plants",
+  "negative_prompt": "blurry, text, low quality",
+  "controlnet_image": "https://cerebrium-assets.s3.eu-west-1.amazonaws.com/qr-code.png",
+  "seed": 1000
+}
+}'
+```
+
+You will get two responses from the output:
+
+- The base64 encoded image of the outline of your original ControlNet image. This is what it uses as a input in your flow.
+- A base64 encoded image of the final result.
+
+![ComfyUI generated QR code](/images/examples/comfyui4.png)
+
+### Conclusion
+
+With Cerebrium, companies can implement productionised instances of their ComfyUI workflows to create unique user experiences. Users can have peace of mine that their workloads will autoscale with demand and will only charge based on the compute used. We are excited to see what you build and please tag @cerebriumai so we can share your work
