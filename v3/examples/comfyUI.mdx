@@ -194,7 +194,7 @@ Once your ComfyUI application has been deployed successfully, you should be able
 ```curl
 curl --location 'https://run.cerebrium.ai/v3/p-xxxx/comfyui/predict' \
 --header 'Content-Type: application/json' \
---header 'Authorization: ' \
+--header 'Authorization: <JWT_TOKEN>' \
 --data '{"workflow_values": {
   "positive_prompt": "A top down view of a mountain with large trees and green plants",
   "negative_prompt": "blurry, text, low quality",

@@ -192,7 +192,7 @@ You can now deploy your application by running: cerebrium deploy
 Once your ComfyUI application has been deployed successfully, you should be able to make a request to the endpoint using the following JSON payload:
 
 ```curl
-curl --location 'https://run.cerebrium.ai/v3/p-xxxx/comfyui/predict' \
+curl --location 'https://api.cortex.cerebrium.ai/v4/p-xxxx/comfyui/predict' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer <YOUR TOKEN HERE>' \
 --data '{"workflow_values": {

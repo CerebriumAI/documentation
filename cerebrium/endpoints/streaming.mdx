@@ -13,7 +13,7 @@ iterator protocol which is anything that essentially uses the 'yield' command in
 Let us see how we can implement a simple example below:
 
 ```python
-def predict(item, run_id, logger):
+def predict():
     for i in range(10):
         yield f"Number {i} "
         time.sleep(1)

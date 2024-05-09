@@ -82,8 +82,8 @@ def store_segments(segments):
     return texts, start_times
 
 
-def predict(item, run_id, logger):
-    item = Item(**item)
+def predict(url, question, run_id):
+    item = Item(url=url, question=question)
 
     video = pytube.YouTube(item.url)
     video.streams.get_highest_resolution().filesize
@@ -200,8 +200,8 @@ cerebrium deploy
 Once deployed, we can make the following request:
 
 ```curl
-curl --location --request POST 'https://run.cerebrium.ai/v3/p-xxxxxx/langchain/predict' \
---header 'Authorization: <JWT-TOKEN>' \
+curl --location --request POST 'https://api.cortex.cerebrium.ai/v4/p-xxxxxx/langchain/predict' \
+--header 'Authorization: Bearer <YOUR TOKEN HERE>' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "url": "https://www.youtube.com/watch?v=UF8uR6Z6KLc&ab_channel=Stanford",

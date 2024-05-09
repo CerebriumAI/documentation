@@ -321,7 +321,7 @@ Now that our code is deployed, we can deploy the application with the command: c
 On initial deploy, it will take about 15-20 minutes since besides installing all your packages and dependancies, it will download the model and convert it to the TensorRT-LLM format. Once completed, it should output a curl which you can copy and paste to test your inference endpoint.
 
 ```
-curl --location '' \\
+curl --location 'https://api.cortex.cerebrium.ai/v4/p-xxxxxx/predict' \\
 --header 'Content-Type: application/json' \\
 --header 'Authorization: Bearer <YOUR TOKEN HERE>' \\
 --data '{"prompt": "Tell me about yourself?"}'

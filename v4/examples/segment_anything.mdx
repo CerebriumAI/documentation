@@ -165,8 +165,8 @@ def download_image(url):
     return Image.open(BytesIO(r.content))
 
 
-def predict(item, run_id, logger):
-    if (not item.image and not item.file_url): return ""
+def predict(image, file_url, coordinates, run_id):
+    if (not image and not file_url): return ""
 
     if item.image:
         image = v2.cvtColor(Image.open(BytesIO(base64.b64decode(item.image))), cv2.COLOR_BGR2RGB)
@@ -200,8 +200,8 @@ cerebrium deploy --name segment-anything --gpu AMPERE_A5000
 After a few minutes, your model should be deployed and an endpoint should be returned. Let us create a CURL request to see the response
 
 ```
-curl --location --request POST 'https://run.cerebrium.ai/v2/p-xxxxxx/segment-anything/predict' \
---header 'Authorization: public-XXXXXXXXXXXX' \
+curl --location --request POST 'https://api.cortex.cerebrium.ai/v4/p-xxxxxx/segment-anything/predict' \
+--header 'Authorization: Bearer <YOUR TOKEN HERE>' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "file_url": "https://cdn-www.thefashionspot.com/assets/uploads/gallery/the-off-duty-male-models-of-milan-mens-fashion-week/milano-m-moc-rf14-8533.jpg",

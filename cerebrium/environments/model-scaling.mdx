@@ -30,7 +30,7 @@ You may want to update your model using a rest endpoint. To do so, you can use t
 
 ```bash
 curl --location 'https://rest-api.cerebrium.ai/update-model-scaling' \
---header 'Authorization: YOUR-PRIVATE-API-KEY' \
+--header 'Authorization: Bearer <JWT_TOKEN>' \
 --header 'Content-Type: application/json' \
 --data '{
     "name": "your-models-unique-name-here",

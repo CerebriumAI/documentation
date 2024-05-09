@@ -102,8 +102,8 @@ from util import download_file_from_url, save_base64_string_to_file
 distil_large_v2 = hf_hub_download(repo_id="distil-whisper/distil-large-v2", filename="original-model.bin")
 model = load_model(distil_large_v2)
 
-def predict(item, run_id, logger):
-    item = Item(**item)
+def predict(audio, file_url, webhook_endpoint, run_id):
+    item = Item(audio=audio, file_url=file_url, webhook_endpoint=webhook_endpoint)
     input_filename = f"{run_id}.mp3"
 
     if item.audio is not None:
@@ -168,9 +168,9 @@ cerebrium deploy distill-whisper
 Once deployed, we can make the following request:
 
 ```curl
-curl --location 'https://run.cerebrium.ai/v3/p-xxxxx/distill-whisper/predict' \
+curl --location 'https://api.cortex.cerebrium.ai/v4/p-xxxxx/distill-whisper/predict' \
 --header 'Content-Type: application/json' \
---header 'Authorization: <JWT_TOKEN>' \
+--header 'Authorization: Bearer <YOUR TOKEN HERE>' \
 --data '{"file_url": "https://your-public-url.com/test.mp3"}''
 ```
 

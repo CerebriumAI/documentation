@@ -13,18 +13,21 @@ This page lists the hardware that is currently available on the platform. If you
 ## GPU's
 
 We have the following graphics cards available on the platform:
-| Name | Cerebrium Name | VRAM | Minimum Plan | Max fp32 Model Params | Max fp16 Model Params
-| --------------------------------------------------------------------------------------------------- | :------: |------ | :-------------------: | :-------------------: | :------------------: |
-| [NVIDIA H100](https://www.nvidia.com/en-us/data-center/h100/) | Special Request | 80GB | Enterprise | 18B | 36B
-| [NVIDIA A100](https://www.nvidia.com/en-us/data-center/a100/) | Special Request | 80GB | Standard | 18B | 36B
-| [NVIDIA A100](https://www.nvidia.com/en-us/data-center/a100/) | AMPERE_A100 | 40GB | Standard | 9B | 18B
-| [NVIDIA RTX A6000](https://www.nvidia.com/en-us/design-visualization/rtx-a6000/) | AMPERE_A6000 | 48GB | Hobby | 10B | 21B
-| [NVIDIA RTX A5000](https://www.nvidia.com/en-us/design-visualization/rtx-a5000/) | AMPERE_A5000 | 24GB | Hobby | 5B | 10B
-| [NVIDIA RTX A4000](https://www.nvidia.com/en-us/design-visualization/rtx-a4000/) | AMPERE_A4000 | 16GB | Hobby | 3B | 7B
-| [NVIDIA Quadro RTX 5000](https://www.nvidia.com/content/dam/en-zz/Solutions/design-visualization/quadro-product-literature/quadro-rtx-5000-data-sheet-us-nvidia-704120-r4-web.pdf) | TURING_5000 | 16GB | Hobby | 3B | 7B
-| [NVIDIA Quadro RTX 4000](https://www.nvidia.com/content/dam/en-zz/Solutions/design-visualization/quadro-product-literature/quadro-rtx-4000-datasheet-us-nvidia-1060942-r2-web.pdf) | TURING_4000 | 8GB | Hobby | 1B | 3B
+| Name | Cerebrium Name | VRAM | Minimum Plan | Provider
+| --------------------------------------------------------------------------------------------------- | :------: |------ | :-------------------: | :-------------------: |
+| [NVIDIA H100](https://www.nvidia.com/en-us/data-center/h100/) | Special Request | 80GB | Enterprise | [Coreweave, AWS]
+| [NVIDIA A100](https://www.nvidia.com/en-us/data-center/a100/) | Special Request | 80GB | Standard | [Coreweave, AWS]
+| [NVIDIA A100_40GB](https://www.nvidia.com/en-us/data-center/a100/) | AMPERE_A100 | 40GB | Standard | [Coreweave, AWS]
+| [NVIDIA A10](https://www.nvidia.com/en-us/data-center/a100/) | AMPERE_A10 | 24GB | Standard | [AWS]
+| [NVIDIA L4](https://www.nvidia.com/en-us/data-center/a100/) | AMPERE_L4 | 24GB | Standard | [AWS]
+| [NVIDIA RTX A6000](https://www.nvidia.com/en-us/design-visualization/rtx-a6000/) | AMPERE_A6000 | 48GB | Hobby | [Coreweave]
+| [NVIDIA RTX A5000](https://www.nvidia.com/en-us/design-visualization/rtx-a5000/) | AMPERE_A5000 | 24GB | Hobby | [Coreweave]
+| [NVIDIA RTX A4000](https://www.nvidia.com/en-us/design-visualization/rtx-a4000/) | AMPERE_A4000 | 16GB | Hobby | [Coreweave]
+| [NVIDIA Quadro RTX 5000](https://www.nvidia.com/content/dam/en-zz/Solutions/design-visualization/quadro-product-literature/quadro-rtx-5000-data-sheet-us-nvidia-704120-r4-web.pdf) | TURING_5000 | 16GB | Hobby | [Coreweave]
+| [NVIDIA Quadro RTX 4000](https://www.nvidia.com/content/dam/en-zz/Solutions/design-visualization/quadro-product-literature/quadro-rtx-4000-datasheet-us-nvidia-1060942-r2-web.pdf) | TURING_4000 | 8GB | Hobby | [Coreweave]
+| [AWS INFERENTIA](https://www.nvidia.com/en-us/data-center/a100/) | INF2 | 32GB | Hobby | [AWS]
+| [AWS TRANIUM](https://www.nvidia.com/en-us/data-center/a100/) | TRN1 | 32GB | Hobby | [AWS]
 
-_NOTE: The maximum model sizes are calculated as a guideline, assuming that the model is the only thing loaded into VRAM. Longer inputs will result in a smaller maximum model size. Your mileage may vary._
 
 These GPUs can be selected using the `--gpu` flag when deploying your model on Cortex or can be specified in your `cerebrium.toml`.
 For more help with deciding which GPU you require, see this section [here](#choosing-a-gpu).

@@ -57,8 +57,8 @@ from vllm import LLM, SamplingParams
 
 llm = LLM(model="mistralai/Mistral-7B-Instruct-v0.1", dtype="bfloat16")
 
-def predict(item, run_id, logger):
-    item = Item(**item)
+def predict(prompt, temperature, top_p, top_k, max_tokens, frequency_penalty, run_id):
+    item = Item(prompt=prompt, temperature=temperature, top_p=top_p, top_k=top_k, max_tokens=max_tokens, frequency_penalty=frequency_penalty)
 
     # Now just setup your sampling parameters for inference:
     sampling_params = SamplingParams(temperature=item.temperature, top_p=item.top_p, top_k=item.top_k, max_tokens=item.max_tokens, frequency_penalty=item.frequency_penalty)
@@ -134,8 +134,8 @@ cerebrium deploy
 Once deployed, we can make the following request:
 
 ```curl
-curl --location --request POST 'https://run.cerebrium.ai/v3/p-xxxxxx/mistral-vllm/predict' \
---header 'Authorization: <JWT-TOKEN>' \
+curl --location --request POST 'https://api.cortex.cerebrium.ai/v4/p-xxxxxx/mistral-vllm/predict' \
+--header 'Authorization: Bearer <YOUR TOKEN HERE>' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "prompt: "What is the capital city of France?"

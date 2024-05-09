@@ -83,8 +83,8 @@ onto the GPU with every request but rather only on model startup.
 Below, we define our predict function, which will be responsible for our logic to stream results back from our endpoint.
 
 ```python
-def predict(item, run_id, logger):
-    item = Item(**item)
+def predict(prompt, cutoff_len, temperature, top_p, top_k, max_new_tokens, run_id):
+    item = Item(prompt=prompt, cutoff_len=cutoff_len, temperature=temperature, top_p=top_p, top_k=top_k, max_new_tokens=max_new_tokens)
     inputs = tokenizer(
       item.prompt, return_tensors="pt", max_length=512, truncation=True, padding=True
     )
@@ -171,8 +171,8 @@ Once deployed, we can make the following request:
 </Note>
 
 ```curl
-curl --location --request POST 'https://run.cerebrium.ai/v3/p-xxxxxx/streaming-falcon/stream' \
---header 'Authorization: public-XXXXXXXXXXXX' \
+curl --location --request POST 'https://api.cortex.cerebrium.ai/v4/p-xxxxxx/streaming-falcon/stream' \
+--header 'Authorization: Bearer <YOUR TOKEN HERE>' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "url": "https://www.youtube.com/watch?v=UF8uR6Z6KLc&ab_channel=Stanford",
