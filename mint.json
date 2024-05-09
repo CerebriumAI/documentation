@@ -4,7 +4,7 @@
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
   },
-  "versions": ["v4","v3"],
+  "versions": ["v4", "v3"],
   "favicon": "/favicon.png",
   "colors": {
     "primary": "#EB3A6F",
