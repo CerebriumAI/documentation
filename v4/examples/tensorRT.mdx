@@ -3,6 +3,10 @@ title: "Llama 3B on TensorRT-LLM"
 description: "Achieve high throughput with the TensorRT-LLM framework"
 ---
 
+<Note>
+    This example is only compatible with CLI v1.20 and later. Should you be making use of an older version of the CLI, please run `pip install --upgrade cerebrium` to upgrade it to the latest version.
+</Note>
+
 In this tutorial blog post, we will guide you through the process of implementing the TensorRT-LLM framework to serve Llama 3 8B model on the Cerebrium platform. TensorRT-LLM is a powerful framework that can be used to optimise machine learning models for inference. It can lead to significant improvements in performance, especially in terms of inference speed and throughput.
 
 We will achieve ~1700 output tokens per second on a single Nvidia A10 instance however you can go up to ~4500 output tokens per second on a single Nvidia A100 40GB instance or even ~19,000 tokens on a H100. For further improvements, you can use speculative sampling or FP8 quantisation to increase latency and throughput. You can view the official benchmarks across different GPU types, model sizes and input/output token lengths [here](https://github.com/NVIDIA/TensorRT-LLM/blob/71d8d4d3dc655671f32535d6d2b60cab87f36e87/docs/source/performance.md).
@@ -252,8 +256,16 @@ class Item(BaseModel):
 Lastly, let us bring this all together with our predict function
 
 ```python
-def predict(item, run_id, logger):
-    item = Item(**item)
+def predict(prompt, temperature, top_k, top_p, repetition_penalty, num_tokens, prompt_template, run_id, logger):
+    item = Item(
+        prompt=prompt,
+        temperature=temperature,
+        top_k=top_k,
+        top_p=top_p,
+        repetition_penalty=repetition_penalty,
+        num_tokens=num_tokens,
+        prompt_template=prompt_template
+    )
 
     stop_words_list = None
     bad_words_list = None
@@ -309,7 +321,7 @@ On initial deploy, it will take about 15-20 minutes since besides installing all
 ```
 curl --location '' \\
 --header 'Content-Type: application/json' \\
---header 'Authorization: XXXXX' \\
+--header 'Authorization: Bearer <YOUR TOKEN HERE>' \\
 --data '{"prompt": "Tell me about yourself?"}'
 ```
 
