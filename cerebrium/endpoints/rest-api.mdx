@@ -6,11 +6,11 @@ description: ""
 By default, all deployments on Cerebrium are a REST API that are accessible through an authenticated POST request. Authentication is done using your JWT token from
 your API Keys section on your dashboard.
 
-Typically, a POST requests take the form:
+Typically, a POST requests take the form below where the final word is the name of your function you would like to call. ie: in this case, the function in our main.py we are calling is predict()
 
 ```bash
 curl --location --request POST 'https://run.cerebrium.ai/v3/p-xxxxx/test-model/predict' \
---header 'Authorization: <JWT_TOKEN>' \
+--header 'Authorization: Bearer <JWT_TOKEN>' \
 --header 'Content-Type: application/json' \
 --data '{
     "prompt": "Hello world!"

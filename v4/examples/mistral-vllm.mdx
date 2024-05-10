@@ -1,0 +1,186 @@
+---
+title: "Mistral 7B with vLLM"
+description: "Deploy Mistral 7B with vLLM"
+---
+
+<Note>
+  This example is only compatible with CLI v1.20 and later. Should you be making
+  use of an older version of the CLI, please run `pip install --upgrade
+  cerebrium` to upgrade it to the latest version.
+</Note>
+
+In this tutorial, we will show you how to deploy Mistral 7B using the popular vLLM inference framework.
+
+To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/4-faster-inference-with-vllm)
+
+## Basic Setup
+
+It is important to think of the way you develop models using Cerebrium should be identical to developing on a virtual machine or Google Colab - so converting this should be very easy!
+Please make sure you have the Cerebrium package installed and have logged in. If not, please take a look at our docs [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation)
+
+First we create our project:
+
+```
+cerebrium init mistral-vllm
+```
+
+We need certain Python packages to implement this project. Lets add those to our **[cerebrium.dependencies.pip]** in our `cerebrium.toml` file:
+
+```
+[cerebrium.dependencies.pip]
+sentencepiece = "latest"
+torch = ">=2.0.0"
+vllm = "latest"
+transformers = ">=4.35.0"
+accelerate = "latest"
+xformers = "latest"
+```
+
+Our **main.py** file will contain our main Python code. This is a relatively simple implementation, so we can do everything in 1 file. We would like a user to send in a link to a YouTube video with a question and return to them the answer as well as the time segment of where we got that response.
+So let us define our request object.
+
+```python
+from pydantic import BaseModel
+
+class Item(BaseModel):
+    prompt: str
+    temperature: float
+    top_p: float
+    top_k: float
+    max_tokens: int
+    frequency_penalty: float
+```
+
+Above, we use Pydantic as our data validation library. We specify the parameters that are required as well as the parameters that are not (ie: using the Optional keyword) as well as assign defaults to some values. Prompt is the only required parameter so if it is not present in the request, the user will automatically receive an error message.
+
+## vLLM Implementation
+
+Below, we will use the Whisper model from OpenAI to convert the video audio to text. We will then split the text into its phrase segments with its respective timings, so we know the exact source of where our model got the answer from.
+
+```python
+from vllm import LLM, SamplingParams
+from huggingface_hub import login
+from cerebrium import get_secret
+
+# Your huggingface token (HF_AUTH_TOKEN) should be stored in your project secrets on your dashboard
+login(token=get_secret("HF_AUTH_TOKEN"))
+
+# Initialize the model
+llm = LLM(model="mistralai/Mistral-7B-Instruct-v0.1", dtype="bfloat16", max_model_len=20000, gpu_memory_utilization=0.9)
+
+
+def predict(prompt, temperature=0.8, top_p=0.75, top_k=40, max_tokens=256, frequency_penalty=1):
+    item = Item(
+        prompt=prompt,
+        temperature=temperature,
+        top_p=top_p,
+        top_k=top_k,
+        max_tokens=max_tokens,
+        frequency_penalty=frequency_penalty
+    )
+
+    sampling_params = SamplingParams(
+        temperature=item.temperature,
+        top_p=item.top_p,
+        top_k=item.top_k,
+        max_tokens=item.max_tokens,
+        frequency_penalty=item.frequency_penalty
+    )
+
+    outputs = llm.generate([item.prompt], sampling_params)
+
+    generated_text = []
+    for output in outputs:
+        generated_text.append(output.outputs[0].text)
+
+    return {"result": generated_text}
+
+```
+
+We load the model outside the predict function. The reason for this is that the API request will run the predict function every time, and we don't want to load our model in every request as that takes time.
+The code outside the predict function will run on model startup ie: when the model is cold.
+
+The implementation in our **predict** function is pretty straight forward in that we pass input parameters from our request into the model and then generate outputs that we return to the user.
+
+## Deploy
+
+Your cerebrium.toml file is where you can set your compute/environment. Your cerebrium.toml file should look like:
+
+```toml
+
+[cerebrium.build]
+predict_data = "{\"prompt\": \"Here is some example predict data for your config.yaml which will be used to test your predict function on build.\"}"
+hide_public_endpoint = false
+disable_animation = false
+disable_build_logs = false
+disable_syntax_check = false
+disable_predict = false
+log_level = "INFO"
+disable_confirmation = false
+
+[cerebrium.deployment]
+name = "mistral-vllm"
+python_version = "3.11"
+include = "[./*, main.py, cerebrium.toml]"
+exclude = "[./example_exclude]"
+cuda_version = "12"
+
+[cerebrium.hardware]
+region = "us-east-1"
+provider = "aws"
+gpu = "AMPERE_A10"
+cpu = 2
+memory = 16.0
+gpu_count = 1
+
+[cerebrium.scaling]
+min_replicas = 0
+max_replicas = 5
+cooldown = 60
+
+[cerebrium.dependencies.pip]
+huggingface-hub = "latest"
+sentencepiece = "latest"
+torch = ">=2.0.0"
+vllm = "latest"
+transformers = ">=4.35.0"
+accelerate = "latest"
+xformers = "latest"
+
+[cerebrium.dependencies.conda]
+
+[cerebrium.dependencies.apt]
+ffmpeg = "latest"
+
+```
+
+To deploy the model use the following command:
+
+```bash
+cerebrium deploy
+```
+
+Once deployed, we can make the following request:
+
+```curl
+curl --location --request POST 'https://api.cortex.cerebrium.ai/v4/p-<YOUR PROJECT ID>/mistral-vllm/predict' \
+--header 'Authorization: Bearer <YOUR TOKEN HERE>' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "prompt: "What is the capital city of France?"
+}'
+```
+
+We then get the following results:
+
+```json
+{
+  "run_id": "nZL6mD8q66u4lHTXcqmPCc6pxxFwn95IfqQvEix0gHaOH4gkHUdz1w==",
+  "message": "Finished inference request with run_id: `nZL6mD8q66u4lHTXcqmPCc6pxxFwn95IfqQvEix0gHaOH4gkHUdz1w==`",
+  "result": {
+    "result": ["\nA: Paris"]
+  },
+  "status_code": 200,
+  "run_time_ms": 151.24988555908203
+}
+```

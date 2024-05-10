@@ -12,7 +12,7 @@ We send the following request to our endpoint on Cerebrium that runs a LLama 2 7
 
 ```bash
 curl --location --request POST 'https://run.cerebrium.ai/v3/xxxxxx/predict' \
---header 'Authorization: <JWT_TOKEN>' \
+--header 'Authorization: Bearer <JWT_TOKEN>' \
 --header 'Content-Type: application/json' \
 --data '{"prompt": "Give me a detailed plan of how I can drill to the center of the Earth.", "webhook_endpoint": "https://webhook.site/0dc4773b-5e5b-4ef1-8a72-87065852a80e"}'
 ```

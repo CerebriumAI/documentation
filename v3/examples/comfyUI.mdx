@@ -3,6 +3,12 @@ title: "Comfy UI application at Scale"
 description: "Deploy a ComfyUI application behing "
 ---
 
+<Note>
+  This example is only compatible with CLI v1.19 and earlier. Should you be
+  making use of an older version of the CLI, please see the updated version of
+  this documentation, [here](/v4/examples/comfyUI).
+</Note>
+
 ### Introduction
 
 ComyUI is a popular no-code interface for building complex stable diffusion workflows. Due to its ease of use, modular setup as well as its intuitive flowchart interface, the community of ComfyUI users have built a pretty phenomenal collection of workflows! There are even websites dedicated to the sharing of workflows built to help get you started:
@@ -188,7 +194,7 @@ Once your ComfyUI application has been deployed successfully, you should be able
 ```curl
 curl --location 'https://run.cerebrium.ai/v3/p-xxxx/comfyui/predict' \
 --header 'Content-Type: application/json' \
---header 'Authorization: ' \
+--header 'Authorization: <JWT_TOKEN>' \
 --data '{"workflow_values": {
   "positive_prompt": "A top down view of a mountain with large trees and green plants",
   "negative_prompt": "blurry, text, low quality",
