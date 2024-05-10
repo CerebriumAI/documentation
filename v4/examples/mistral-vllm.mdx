@@ -3,6 +3,12 @@ title: "Mistral 7B with vLLM"
 description: "Deploy Mistral 7B with vLLM"
 ---
 
+<Note>
+    This example is only compatible with CLI v1.20 and later. Should you be making
+    use of an older version of the CLI, please run `pip install --upgrade
+    cerebrium` to upgrade it to the latest version.
+</Note>
+
 In this tutorial, we will show you how to deploy Mistral 7B using the popular vLLM inference framework.
 
 To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/4-faster-inference-with-vllm)
@@ -98,7 +104,7 @@ The implementation in our **predict** function is pretty straight forward in tha
 
 ## Deploy
 
-Your cerebrium.toml file is where you can set your compute/environment. Please make sure that the GPU you specify is an AMPERE_A5000, and that you have enough memory (RAM) on your instance to run the models. Your cerebrium.toml file should look like:
+Your cerebrium.toml file is where you can set your compute/environment. Your cerebrium.toml file should look like:
 
 ```toml
 
