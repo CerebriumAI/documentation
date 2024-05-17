@@ -8,15 +8,16 @@ the LangSmith platform to monitor how it is scheduling my time throughout the da
 show how it handles deploying and scaling our application seamlessly.
 
 You can find the final version of the code [here](https://github.com/CerebriumAI/examples/tree/master/13-tool-calling-langsmith)
+
 ### Concepts
+
 To create an application like this, we will need to interact with my calendar based on instructions from a user. This is a perfect use case for an agent with function (tool) calling ability. LangChain is a framework with a lot of functionality supporting agents, they are also the creators of LangSmith and so an integration should be relatively easy.
 
 When we refer to a tool, we are referring to any framework, utility, or system that has defined functionality around a use case. For example, we might have a tool to search Google, a tool to pull our credit card transactions etc.
 
 LangChain also has three concepts/functions that we need to understand:
 
-```ChatModel.bind_tools()```: This is a method for attaching tool definitions to model calls. Each model provider has a different way they expect tools to be defined however; LangChain has created a standard interface so you can switch between providers and it is versatile. You can pass in a tool definition (a dict), as well as other objects from which a tool definition can be derived: namely Pydantic classes, LangChain tools, and arbitrary functions etc. The tool definition tells the LLM what this tool does and how to interact with it.
-
+`ChatModel.bind_tools()`: This is a method for attaching tool definitions to model calls. Each model provider has a different way they expect tools to be defined however; LangChain has created a standard interface so you can switch between providers and it is versatile. You can pass in a tool definition (a dict), as well as other objects from which a tool definition can be derived: namely Pydantic classes, LangChain tools, and arbitrary functions etc. The tool definition tells the LLM what this tool does and how to interact with it.
 
 ```python
 @tool
@@ -25,7 +26,8 @@ def exponentiate(x: float, y: float) -> float:
     return x**y
 ```
 
-```AIMessage.tool_calls```: This is an attribute on the AIMessage type returned from the model for easily accessing the tool calls the model decided to make. It will specify any tool invocations in the format specified from the bind_tools call:
+`AIMessage.tool_calls`: This is an attribute on the AIMessage type returned from the model for easily accessing the tool calls the model decided to make. It will specify any tool invocations in the format specified from the bind_tools call:
+
 ```python
 # -> AIMessage(
 # 	  content=...,
@@ -36,7 +38,7 @@ def exponentiate(x: float, y: float) -> float:
 #   )
 ```
 
-```create_tool_calling_agent()```: The tool_calling_agent is just a standard way to bring the above concepts all together to work across providers that have different formats so you can easily switch out models.
+`create_tool_calling_agent()`: The tool_calling_agent is just a standard way to bring the above concepts all together to work across providers that have different formats so you can easily switch out models.
 
 ```python
 agent = create_tool_calling_agent(llm, tools, prompt)
@@ -59,7 +61,8 @@ To test that it’s working, you can do a simple CURL request. Just replace the 
 - Username
 - API key
 - Update the dateFrom and to dateTo variables
-‍
+  ‍
+
 ```curl
 curl --location 'https://api.cal.com/v1/availability?apiKey=cal_live_xxxxxxxxxxxxxx&dateFrom=2024-04-15T00%3A00%3A00.000Z&dateTo=2024-04-22T00%3A00%3A00.000Z&username=michael-louis-xxxx'
 ```
@@ -100,7 +103,7 @@ You should get a response similar to the following:
         }
     ],
     "oooExcludedDateRanges": [
-        
+
     ],
     "workingHours": [
         {
@@ -135,7 +138,7 @@ In your IDE, run the following command to create our Cerebrium starter project: 
 
 - Main.py - Our entrypoint file where our code lives
 - cerebrium.toml - A configuration file that contains all our build and environment settings
-‍
+  ‍
 
 Add the following pip packages near the bottom of your cerebrium.toml. This will be used in creating our deployment environment.
 
@@ -162,7 +165,7 @@ To start we need to write two tool functions that the agent will use to check av
 - You would have seen from the test API request we did above to Cal.com that the API returns your availability in the following way:
 - The time slots that you are already busy
 - Your working hours on each day
-‍
+  ‍
 
 Below is the code to achieve this
 
@@ -198,10 +201,9 @@ In the above snippet we are doing a few things:
 - We give our function the @tool decorator so that LangChain can tell the LLM this is a tool.
 - We write a docstring that explains to the LLM what this function does and what input it expects.The LLM will make sure it asks the user enough questions in order to collect this input data.
 - We wrote a helper function, find_available_slots, in order to take the information returned from the Cal.com API and format it so its more readable. It will show the user the time slots available on each day.
-‍
+  ‍
 
 We then follow a similar practice to write our book_slot tool. This will book a slot in my calendar based on the selected time/day.
-
 
 ```python
 @tool
@@ -243,9 +245,9 @@ from langchain.agents import create_tool_calling_agent, AgentExecutor
 from langchain_openai import ChatOpenAI
 
 prompt = ChatPromptTemplate.from_messages([
-    ("system", "you're a helpful assistant managing the calendar of Michael Louis. You need to book appointments for a user based on available capacity and their preference. You need to find out if the user is: From Michaels team, a customer of Cerebrium or a friend or entrepreneur. If the person is from his team, book a morning slot. If its a potential customer for Cerebrium, book an afternoon slot. If its a friend or entrepreneur needing help or advice, book a night time slot. If none of these are available, book the earliest slot. Do not book a slot without asking the user what their preferred time is. Find out from the user, their name and email address."), 
+    ("system", "you're a helpful assistant managing the calendar of Michael Louis. You need to book appointments for a user based on available capacity and their preference. You need to find out if the user is: From Michaels team, a customer of Cerebrium or a friend or entrepreneur. If the person is from his team, book a morning slot. If its a potential customer for Cerebrium, book an afternoon slot. If its a friend or entrepreneur needing help or advice, book a night time slot. If none of these are available, book the earliest slot. Do not book a slot without asking the user what their preferred time is. Find out from the user, their name and email address."),
     MessagesPlaceholder(variable_name="chat_history"),
-    ("human", "{input}"), 
+    ("human", "{input}"),
     MessagesPlaceholder(variable_name="agent_scratchpad"),
 ])
 
@@ -260,9 +262,9 @@ agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
 The above snippet is used to create our agent executor which consists of:
 
 - Our prompt template:
-    - This is where we can give instructions to our agent on what role it is taking on, its goal and how it should perform in certain situations etc. The more precise and concise this is, the better.
-    - Chat History is where we will inject all previous messages so that the agent has context on what was said previously.
-    - Input is new input from the end user.
+  - This is where we can give instructions to our agent on what role it is taking on, its goal and how it should perform in certain situations etc. The more precise and concise this is, the better.
+  - Chat History is where we will inject all previous messages so that the agent has context on what was said previously.
+  - Input is new input from the end user.
 - We then instantiate our GPT3.5 model that will be the LLM we will be using. You can swap this our with Antrophic or any other provider just by replacing this one line - LangChain makes this seamless.
 - Lastly, we join this all together with our tools to create an agent executor.
 
@@ -292,7 +294,7 @@ Let us run a simple local test to make sure everything is working as expected.
 class Item(BaseModel):
     prompt: str
     session_id: str
-    
+
 def predict(item, run_id, logger):
     item = Item(**item)
 
@@ -318,7 +320,7 @@ The above code does the following:
 
 - We define a Pydantic object which specifies the parameters our API expects - the user prompt and a session id to tie the conversation to.
 - The predict function in Cerebrium is the entry point for our API so we just pass the prompt and session id to our agent and print the results.
-‍
+  ‍
 
 To run this, simply run the following in your terminal: python main.py. You will need to replace your secrets with the actual values when running locally. You should then see output similar to the following:
 
