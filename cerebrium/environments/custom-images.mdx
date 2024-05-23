@@ -1,9 +1,21 @@
 ---
-title: Custom Images
+title: Customizing the Cortex Runtime
 description: Specify your versions, dependencies and packages to use
 ---
 
-By default, Cerebrium models are executed in Python 3.9 unless the Python version you specified in your **cerebrium.toml** is different (see [here](./initial-setup#config-file-format-and-parameters)). Note, Cerebrium only supports python from version 3.9 and above.
+## Python Version
+
+By default, Cerebrium configs are [initialized](./initial-setup#config-file-format-and-parameters) to the Python version of your interpreter.
+You can edit the Python version you wish to use for your app in the **[cerebrium.deployment]** section of your config.
+Note, Cerebrium only supports Python 3.10 through 3.12. Support for 3.13 will follow shortly after its release.
+
+```toml
+
+[cerebrium.deployment]
+name = "cerebrium-app"
+...
+python_version = "3.12"
+```
 
 ## Dependancies
 
@@ -40,25 +52,27 @@ updating, please add the following flag to your deploy command: `cerebrium deplo
 ## Shell Commands
 
 Cerebrium gives you the ability to run shell commands - this is for more complicated use cases of cloning repositories, running install scripts etc.
+You can also define environment variables, which will populate every time your application starts up.
 
 <Note>
   Please note that shell commands are run last in the build process which means
   it happens after dependancy installation. If you would like to install a pip
   package after some shell commands, then run 'pip install transformers' in your
-  shell commands
+  shell commands.
 </Note>
 
 In order to run shell commands you define a list of strings in the [cerebrium.build] section of your **cerebrium.toml**:
 
 ```toml
 
-[cerebrium.build]
-force_rebuild = false
-disable_syntax_check = false
+[cerebrium.deployment]
+name = "cerebrium-app"
+...
 shell_commands = [
     "echo 'Hello, World!'",
     "curl -LsSf https://astral.sh/uv/install.sh | sh",
     "uv venv",
     "uv pip install transformers"
+    "export SOME_ENV_VAR=value"
 ]
 ```
