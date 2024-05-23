@@ -13,9 +13,10 @@ Your config file is a TOML file that you can use to specify the parameters of yo
 
 The fastest and simplest way to create a config file is to run the `cerebrium init` command and specify the directory in which you would like to create the config file.
 This command will create a `cerebrium.toml` file in your project root, which you can then edit to suit your needs.
+You can specify any field you wish to be prepopulated with a specific value.
 
 ```bash
-cerebrium init my-project-dir
+cerebrium init my-project-dir --name=<your-app-name> --gpu=ADA_L4
 ```
 
 ## Deployment Parameters
@@ -27,23 +28,10 @@ The available deployment parameters are:
 | parameter | description | type | default |
 | --- | --- | --- | --- |
 | `name` | The name of your deployment | string | my-model |
-| `python_version` | The Python version available for your runtime | float | 3.10 |
+| `python_version` | The Python version available for your runtime | float | {interpretor_version}|
 | `include` | Local files to include in the deployment. | string | '[./\*, main.py]' |
-| `exclude` | Local Files to exclude from the deployment. | string | '[./.\*, ./__\*]' |
-
-## Build Parameters
-
-Build parameters are used during the build phase of your deployment.
-They give you control over how your deployment is built and how it is tested. These parameters are specified under the `cerebrium.build` section of your config file.
-
-| parameter              | description                                                                                   | type    | default                                                                                                                                |
-| ---------------------- | --------------------------------------------------------------------------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `predict_data`         | The data to use to test your predict function on build. If this fails, your build fails.      | string  | '\{"prompt": "Here is some example predict data for your cerebrium.toml which will be used to test your predict function on build."\}' |
-| `disable_predict`      | Disable running your predict function at the end of a build.                                  | boolean | false                                                                                                                                  |
-| `force_rebuild`        | Whether to force a rebuild of your deployment, clearing all caches and starting from scratch. | boolean | false                                                                                                                                  |
-| `disable_animation`    | Whether to disable the animation in the logs.                                                 | boolean | false                                                                                                                                  |
-| `log_level`            | Log level for the build step of your deployment                                               | string  | INFO                                                                                                                                   |
-| `disable_confirmation` | Whether to disable all CLI confirmations before deploying. Use for CI/CD                      | boolean | false                                                                                                                                  |
+| `exclude` | Local Files to exclude from the deployment. | string | '[./.\*]' |
+| `shell_commands` | A list of commands to run an application entrypoint script | list[string] | []
 
 ## Hardware Parameters
 
@@ -53,31 +41,32 @@ These parameters are specified under the `cerebrium.hardware` section of your co
 The available hardware parameters in your config are:
 | parameter | description | type | default |
 | --- | --- | --- | --- |
-| `gpu` | The GPU you would like to use. | string | AMPERE_A5000 |
 | `cpu` | The number of CPU cores to use. | int | 2 |
-| `memory` | The amount of Memory to use in GB. | float | 14.5 |
+| `memory` | The amount of Memory to use in GB. | float | 14 |
+| `gpu` | The GPU you would like to use. | string | AMPERE_A10 |
 | `gpu_count` | The number of GPUs to specify. | int | 1 |
-| `provider` | The provider you would like your deployment to be on. This is automatically selected from the GPU type if not specified | string | aws |
+| `provider` | The provider you would like your deployment to be on. v4 only supports `aws` | string | aws |
+| `region` | The region you would like your deployment to be on. v4 only supports `us-east-1` | string | us-east-1 |
 
 ### Available Hardware
 
 The following is the hardware available on Cerebrium
 
-| name               | provider         |
-| ------------------ | ---------------- |
-| `CPU`              | [coreweave, aws] |
-| `TURING_4000`      | [coreweave]      |
-| `TURING_5000`      | [coreweave]      |
-| `AMPERE_A4000`     | [coreweave]      |
-| `AMPERE_A5000`     | [coreweave]      |
-| `AMPERE_A6000`     | [coreweave]      |
-| `AMPERE_A10`       | [aws]            |
-| `ADA_L4`           | [aws]            |
-| `AMPERE_A100`      | [coreweave, aws] |
-| `AMPERE_A100_40GB` | [coreweave, aws] |
-| `HOPPER_H100`      | [coreweave, aws] |
-| `INF2`             | [aws]            |
-| `TRN1`             | [aws]            |
+| Name               | Provider         | API Compatibility |
+| ------------------ | ---------------- | ----------------- |
+| `CPU`              | [coreweave, aws] | [v4]              |
+| `TURING_4000`      | [coreweave]      | [v3]              |
+| `TURING_5000`      | [coreweave]      | [v3]              |
+| `AMPERE_A4000`     | [coreweave]      | [v3]              |
+| `AMPERE_A5000`     | [coreweave]      | [v3]              |
+| `AMPERE_A6000`     | [coreweave]      | [v3]              |
+| `AMPERE_A10`       | [aws]            | [v4]              |
+| `ADA_L4`           | [aws]            | [v4]              |
+| `AMPERE_A100`      | [coreweave, aws] | [v3, v4]          |
+| `AMPERE_A100_40GB` | [coreweave, aws] | [v3]              |
+| `HOPPER_H100`      | [coreweave, aws] | [v4]              |
+| `INF2`             | [aws]            | [v4]              |
+| `TRN1`             | [aws]            | [v4]              |
 
 ## Scaling Parameters
 
@@ -148,29 +137,24 @@ Let's see an example of a config file in action.
 Below is an example of a config file that takes advantage of all the features we've discussed so far.
 
 ```toml
-
-[cerebrium.build]
-predict_data = "{\"prompt\": \"Here is some example predict data for your cerebrium.toml which will be used to test your predict function on build.\"}"
-force_rebuild = false
-disable_animation = false
-log_level = "INFO"
-disable_confirmation = false
-
 [cerebrium.deployment]
 name = "my-model"
 python_version = "3.10"
 include = "[./*, main.py]"
 exclude = "[./.*, ./__*]"
+shell_commands = []
 
 [cerebrium.hardware]
-gpu = "AMPERE_A5000"
+gpu = "AMPERE_A10"
 cpu = 2
 memory = 16.0
 gpu_count = 1
 provider = "aws"
+region = "us-east-1"
 
 [cerebrium.scaling]
 min_replicas = 0
+max_replicas = 2
 cooldown = 60
 
 [cerebrium.dependencies.pip]
@@ -183,5 +167,4 @@ cudatoolkit = "11.7"
 [cerebrium.dependencies.apt]
 "libgl1-mesa-glx" = "latest"
 "libglib2.0-0" = "latest"
-
 ```

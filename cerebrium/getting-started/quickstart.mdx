@@ -6,7 +6,7 @@ description: "Get up and running with your first deployed model on Cerebrium"
 The fastest way to get started developing a Cerebrium deployment is to set up a template project using the `cerebrium init` command below. This will create a folder with all the necessary files to get you started. You can then add your code and deploy it to Cerebrium.
 
 ```bash
-cerebrium init first-project
+cerebrium init first-project --name=cerebrium-app
 ```
 
 Currently, our implementation has five components:
@@ -18,22 +18,9 @@ Below is an implementation of us using [Pydantic](https://docs.pydantic.dev/late
 Your **main.py** can follow a layout similar to below but its really up to you!
 
 ```bash
-from pydantic import BaseModel
-
-class Item(BaseModel):
-    prompt: str ##Pydantic validation
-
-def predict(prompt, run_id):
-    ##with Pydantic
-    item = Item(prompt=prompt)
-    const value = item.prompt
-
-    ##without Pydantic
-    const value = prompt
-
-    # Do something with parameters from item
-
-    return {"result": value}
+def predict(prompt: dict, run_id):
+    value = item.get("value", "default")
+    return value
 ```
 
 The Item class is where you define the parameters your model receives as well as their type. Item needs to inherit from BaseModel which uses Pydantic to validate request schemas. Make sure
@@ -52,7 +39,7 @@ As long as your **main.py** contains the above you can write any other Python co
 Then navigate to where your model code (specifically your `main.py`) is located and run the following command:
 
 ```bash
-cerebrium deploy my-first-model
+cerebrium deploy
 ```
 
 Voila! Your app should start building and you should see logs of the deployment process. It shouldn't take longer than a minute - easy peasy!

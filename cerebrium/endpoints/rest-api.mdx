@@ -9,11 +9,11 @@ your API Keys section on your dashboard.
 Typically, a POST requests take the form below where the final word is the name of your function you would like to call. ie: in this case, the function in our main.py we are calling is predict()
 
 ```bash
-curl --location --request POST 'https://run.cerebrium.ai/v3/p-xxxxx/test-model/predict' \
+curl --location --request POST 'https://api.cortex.cerebrium.ai/v4/p-xxxxx/{app-name}/{function}' \
 --header 'Authorization: Bearer <JWT_TOKEN>' \
 --header 'Content-Type: application/json' \
 --data '{
-    "prompt": "Hello world!"
+  "function_param": "data"
 }'
 ```
 
@@ -22,8 +22,8 @@ Responses then take the form:
 ```bash
 {
     "run_id": "52eda406-b81b-43f5-8deb-fcf80dfsb74b",
-    "message": "Your input said: Hello World!",
-    "runtime: 326.34
+    "run_time_ms": 326.34
+    "result": {<data>}
 }
 ```
 
