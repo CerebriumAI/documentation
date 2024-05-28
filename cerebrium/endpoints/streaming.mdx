@@ -2,24 +2,64 @@
 title: "Streaming Endpoints"
 ---
 
-Streaming allows users to stream live output from their models using server-sent event (SSE) streams. This works for Python objects which implement the
-iterator protocol which is anything that essentially uses the 'yield' command in Python. You can return any content types as long as it is returned as a string
-
-<Note>
-  This feature is currently in beta and so if you would like to stream output,
-  please replace '**predict**' in your endpoint url with '**stream**'
-</Note>
+Streaming allows users to stream live output from their models using server-sent event (SSE) streams.
+This works for Python objects which iterator or generator protocol.
+Currently, your generator/iterator is required to yield `string` data, as it will be sent downstream via the `text/event-stream` Content-Type.
+You will also need to inform the API that your application accepts `text/event-stream` content by setting the `Accept` header.
 
 Let us see how we can implement a simple example below:
 
 ```python
-def predict():
-    for i in range(10):
+immport time
+
+def run(upper_range: int):
+    for i in range(upper_range):
         yield f"Number {i} "
         time.sleep(1)
 ```
 
-Once you deploy this code snippet and hit the stream endpoint, you will see the SSE events progressively appear. The latest Postman has great functionality to show this.
+Once you deploy this code snippet and hit the stream endpoint, you will see the SSE events progressively appear every second.
+
+You can do this as follows:
+
+```bash
+curl -X POST https://api.cortex.cerebrium.ai/v4/<YOUR-PROJECT-ID>/stream-example/run \
+       -H 'Content-Type: application/json'\
+       -H 'Accept: text/event-stream\
+       -H 'Authorization: Bearer <YOUR-JWT-TOKEN>\
+       --data '{"upper_range": 4}'
+```
+
+This should output:
+
+```bash
+HTTP/1.1 200 OK
+cache-control: no-cache
+content-encoding: gzip
+content-type: text/event-stream; charset=utf-8
+date: Tue, 28 May 2024 21:12:46 GMT
+server: envoy
+transfer-encoding: chunked
+vary: Accept-Encoding
+x-envoy-upstream-service-time: 198995
+x-request-id: e6b55132-32af-96d7-a064-8915c4a42452
+
+data: Number 0
+...
+```
+
+Progressively, you will see the rest of the data stream in every second:
+
+```
+...
+data: Number 1
+
+data: Number 2
+
+event: end
+```
+
+The latest Postman also has great functionality to show this.
 
 ![Streaming](/images/cortex/streaming-postman.png)
 
