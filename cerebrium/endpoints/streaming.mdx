@@ -6,6 +6,8 @@ Streaming allows users to stream live output from their models using server-sent
 This works for Python objects which iterator or generator protocol.
 Currently, your generator/iterator is required to yield `string` data, as it will be sent downstream via the `text/event-stream` Content-Type.
 You will also need to inform the API that your application accepts `text/event-stream` content by setting the `Accept` header.
+If you do not set this header, the stream will **not** work.
+Instead the response will be delivered as if the content was `application/json` with the data concatenated together.
 
 Let us see how we can implement a simple example below:
 
