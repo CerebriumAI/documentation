@@ -98,7 +98,6 @@
       "group": "Deployments",
       "pages": [
         "cerebrium/deployments/long-running-tasks",
-        "cerebrium/deployments/async-functions",
         "cerebrium/deployments/ci-cd"
       ]
     },
