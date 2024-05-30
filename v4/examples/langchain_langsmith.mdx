@@ -200,10 +200,10 @@ In the above snippet we are doing a few things:
 
 - We give our function the @tool decorator so that LangChain can tell the LLM this is a tool.
 - We write a docstring that explains to the LLM what this function does and what input it expects.The LLM will make sure it asks the user enough questions in order to collect this input data.
-- We wrote a helper function, find_available_slots, in order to take the information returned from the Cal.com API and format it so its more readable. It will show the user the time slots available on each day.
+- We wrote a helper function, find_available_slots, in order to take the information returned from the Cal.com API and format it so its more readable. It will show the user the time slots available on each day. Make sure its in your directory!
   ‍
 
-We then follow a similar practice to write our book_slot tool. This will book a slot in my calendar based on the selected time/day.
+We then follow a similar practice to write our book_slot tool. This will book a slot in my calendar based on the selected time/day. You can get the eventTypeId from your dashboard, select an event and grab the ID in the URL.
 
 ```python
 @tool
@@ -218,11 +218,16 @@ def book_slot(datetime: str, name: str, email: str, title: str, description: str
         "responses": {
             "name": name,
             "email": email,
+            "guests": [],
             "metadata": {},
-            "location": "Cerebrium HQ"
+            "location": {
+              "value": "inPerson",
+              "optionValue": ""
+            }
         },
         "timeZone": "America/New York",
         "language": "en",
+        "status": "PENDING",
         "title": title,
         "description": description,
     }
