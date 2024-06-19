@@ -106,6 +106,10 @@
       "pages": ["cerebrium/endpoints/rest-api", "cerebrium/endpoints/streaming"]
     },
     {
+      "group": "Integrations",
+      "pages": ["cerebrium/integrations/vercel"]
+    },
+    {
       "group": "Misc",
       "pages": ["cerebrium/misc/faster-model-loading"]
     },
