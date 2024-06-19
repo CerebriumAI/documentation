@@ -13,6 +13,7 @@ This integration allows you to:
 2. Call Cerebrium Endpoints over HTTP in connected Vercel projects
 
 ### Authentication
+
 The integration will set the following environment variables against the user’s selected Vercel projects:
 
 - CEREBRIUM_JWT
@@ -26,10 +27,10 @@ The environment variables will be set in the “preview” and “production” 
 3. (If logged out) Sign into an existing Cerebrium project, or create a new Cerebrium project
 4. Select the Vercel projects that you wish to connect to your Modal workspace
 5. Click “Continue”
-6.Back in your Vercel dashboard, confirm the environment variables were added by going to your Vercel project > "Settings" > "Environment variables"
-
+   6.Back in your Vercel dashboard, confirm the environment variables were added by going to your Vercel project > "Settings" > "Environment variables"
 
 ### Uninstalling the integration
+
 The Cerebrium Vercel integration is managed under the user’s Vercel dashboard under the “Integrations” tab. From there they can remove the specific integration installation from their Vercel account.
 
 Important: removing an integration will delete the corresponding API token set by Modal in your Vercel project(s).
@@ -41,19 +42,22 @@ You can view our example [here](/v4/examples/mistral-vllm) on how to deploy Mist
 Once you have followed the example and deployed the application, you should have an output of the endpoint your application is deployed at. You can then deploy this within your vercel project as:
 
 ```javascript
-fetch('https://api.cortex.cerebrium.ai/v4/p-<YOUR PROJECT ID>/mistral-vllm/predict', {
-  method: 'POST',
-  headers: {
-    'Authorization': `Bearer ${process.env.CEREBRIUM_JWT}`,
-    'Content-Type': 'application/json'
+fetch(
+  "https://api.cortex.cerebrium.ai/v4/p-<YOUR PROJECT ID>/mistral-vllm/predict",
+  {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.CEREBRIUM_JWT}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      prompt: "What is the capital city of France?",
+    }),
   },
-  body: JSON.stringify({
-    prompt: "What is the capital city of France?"
-  })
-})
-.then(response => response.json())
-.then(data => console.log(data))
-.catch(error => console.error('Error:', error));
+)
+  .then((response) => response.json())
+  .then((data) => console.log(data))
+  .catch((error) => console.error("Error:", error));
 ```
 
 In this example, we built our application to take in a prompt as input and to return with the output of the mode.
