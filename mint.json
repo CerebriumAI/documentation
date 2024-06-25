@@ -151,7 +151,8 @@
         "v4/examples/sdxl",
         "v4/examples/mistral-vllm",
         "v4/examples/streaming-falcon-7B",
-        "v4/examples/transcribe-whisper"
+        "v4/examples/transcribe-whisper",
+        "v4/examples/aiVoiceAgents"
       ]
     }
   ],
