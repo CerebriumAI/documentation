@@ -147,12 +147,12 @@
       "pages": [
         "v4/examples/tensorRT",
         "v4/examples/comfyUI",
-        "v4/examples/langchain_langsmith",
+        "v4/examples/langchain-langsmith",
         "v4/examples/sdxl",
         "v4/examples/mistral-vllm",
         "v4/examples/streaming-falcon-7B",
         "v4/examples/transcribe-whisper",
-        "v4/examples/aiVoiceAgents"
+        "v4/examples/realtime-voice-agents"
       ]
     }
   ],
