@@ -91,7 +91,7 @@ We then need to write an initial code in our main.py that will:
 
 At the moment, Cerebrium does not have a way to run code only during the build process (work in progress) however, one easy way for us to side step this is to check if the file output from the trtllm-build step already exists meaning its been converted.
 
-To start we need to go to HuggingFace and accept the model permissions for [Lllama 7B](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct) if we haven’t already. It takes about 30 minutes or less for them to accept your request. Since HuggingFace requires you to be authenticated to download the model weights, we need to authenticate ourselves in Cerebrium before downloading the model.
+To start we need to go to HuggingFace and accept the model permissions for [Lllama 8B](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct) if we haven’t already. It takes about 30 minutes or less for them to accept your request. Since HuggingFace requires you to be authenticated to download the model weights, we need to authenticate ourselves in Cerebrium before downloading the model.
 
 In your Cerebrium dashboard you can add your HuggingFace token as a secret by navigating to “Secrets” in the sidebar. For the sake of this tutorial I called mine “HF_AUTH_TOKEN”. We can now access these values in our code at runtime without exposing them in our code.
 
