@@ -64,12 +64,14 @@ You can then add the following code to your main.py:
 from huggingface_hub import login
 import subprocess
 
+os.environ['OUTLINES_CACHE_DIR'] = '/tmp/.outlines'
+
 login(token=get_secret('HF_TOKEN'))
 # Run vllM Server in background process
 def start_server():
     while True:
         process = subprocess.Popen(
-            f"subprocess.Popen(f"python -m vllm.entrypoints.openai.api_server --port 5000 --model meta-llama/Meta-Llama-3-8B-Instruct --dtype bfloat16 --api-key {get_secret('HF_TOKEN')} --download-dir /persistent-storage/", shell=True)",
+            f"subprocess.Popen(f"python -m vllm.entrypoints.openai.api_server --port 5000 --model NousResearch/Meta-Llama-3-8B-Instruct --dtype bfloat16 --api-key {get_secret('HF_TOKEN')} --download-dir /persistent-storage/", shell=True)",
             shell=True
         )
         process.wait()  # Wait for the process to complete
@@ -77,12 +79,13 @@ def start_server():
         time.sleep(5)  # Wait before restarting
 
 # Start the server in a separate process
-server_process = Process(target=start_server)
+server_process = Process(target=start_server, daemon=True)
 server_process.start()
 ```
 
 Pipecat does not currently support locally instantiated models and requires them to follow the OpenAI compatible format. Therefore we run the vLLM server locally on our instance in a background process.
 We monitor the background process to make sure it launched successfully since there seems to be a bug with rapidly starting multiple vLLM instances. If it doesn't launch correctly, we wait 5 seconds before trying again.
+We set the environment variable for OUTLINES_CACHE_DIR, this has to do with a disk I/O bug in outlines that vLLM uses. Github issue is [here](https://github.com/vllm-project/vllm/issues/4193)
 
 Note, we are running the vLLM server on port **5000** (8000 is automatically used by Cerebrium) and we set the download directory of the model so that subsequent cold starts can be much quicker.
 
@@ -159,7 +162,7 @@ async def main(room_url: str, token: str = None):
         llm = OpenAILLMService(
             name="LLM",
             api_key=get_secret("HF_TOKEN"),
-            model="casperhansen/llama-3-8b-instruct-awq",
+            model="NousResearch/Meta-Llama-3-8B-Instruct",
             base_url="http://0.0.0.0:5000/v1"
         )
 
@@ -224,12 +227,6 @@ async def on_first_participant_joined(transport, participant):
         {"role": "system", "content": "Please introduce yourself to the user."})
     await task.queue_frame(LLMMessagesFrame(messages))
 
-# When a participant joins, start transcription for that participant so the
-# bot can "hear" and respond to them.
-@transport.event_handler("on_participant_joined")
-async def on_participant_joined(transport, participant):
-    transport.capture_participant_transcription(participant["id"])
-
 # When the participant leaves, we exit the bot.
 @transport.event_handler("on_participant_left")
 async def on_participant_left(transport, participant, reason):
@@ -260,7 +257,7 @@ you can read more [here](https://docs.pipecat.ai/docs/understanding-bots/dailyai
 ### Starting Bot
 
 We can run our instance with a minimum number of instances by settings the "min_replicas" in our cerebrium.toml for the optimal user experience however we do also want to handle autoscaling use cases.
-We want to make sure both the Deepgram model as well as the locally running vLLM server are live before the bot joins the meeting and so we make a local GET request to make sure these models are live.
+We want to make sure the vLLM server is live before the bot joins the meeting and so we make a local GET request to check this.
 These models take about 40s to load into VRAM from disk.
 
 Additionally, we need to run the above code in a separate execution environment so PipeCat does not get instantiate multiple instances. In order to do this, we need to run the above code as a
@@ -276,16 +273,6 @@ We therefore create the following function:
 </NOTE>
 
 ```python
-def check_deepgram_model_status():
-    url = "http://127.0.0.1:8082/v2/models"
-    max_retries = 8
-    for _ in range(max_retries):
-        response = requests.get(url)
-        if response.status_code == 200:
-            return True
-        time.sleep(8)
-    return False
-
 def check_vllm_model_status():
     url = "http://0.0.0.0:5000/v1/models"
     headers = {
@@ -296,7 +283,7 @@ def check_vllm_model_status():
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
             return True
-        time.sleep(8)
+        time.sleep(15)
     return False
 
 def start_bot(room_url: str, token: str = None):
@@ -304,7 +291,6 @@ def start_bot(room_url: str, token: str = None):
     def target():
         asyncio.run(main(room_url, token))
 
-    check_deepgram_model_status()
     check_vllm_model_status()
     process = Process(target=target)
     process.start()
