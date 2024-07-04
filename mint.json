@@ -87,10 +87,6 @@
       ]
     },
     {
-      "group": "Development",
-      "pages": ["cerebrium/development/serve"]
-    },
-    {
       "group": "Data Storage",
       "pages": ["cerebrium/data-sharing-storage/persistent-storage"]
     },
