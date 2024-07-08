@@ -56,14 +56,10 @@ from huggingface_hub import login
 import subprocess
 
 login(token=get_secret('HF_TOKEN'))
-login(token=get_secret('HF_TOKEN'))
 # Run vllM Server in background process
 def start_server():
     while True:
-        process = subprocess.Popen(
-            f"subprocess.Popen(f"python -m vllm.entrypoints.openai.api_server --port 5000 --model meta-llama/Meta-Llama-3-8B-Instruct --dtype bfloat16 --api-key {get_secret('HF_TOKEN')} --download-dir /persistent-storage/", shell=True)",
-            shell=True
-        )
+        process = subprocess.Popen(f"python -m vllm.entrypoints.openai.api_server --port 5000 --model meta-llama/Meta-Llama-3-8B-Instruct --dtype bfloat16 --api-key {get_secret('HF_TOKEN')} --download-dir /persistent-storage/", shell=True)
         process.wait()  # Wait for the process to complete
         logger.error("Server process ended unexpectedly. Restarting in 5 seconds...")
         time.sleep(5)  # Wait before restarting
@@ -193,7 +189,8 @@ we would like to join as well as a token to authenticate us programatically join
 example we set it to 200 milliseconds.
 
 Next we connect to our locally running Deepgram models that come part of our Docker base image we specified in our cerebrium.toml - these are running on port 8082. This is where the Pipecat framework helps convert audio data to text
-and vice versa. We then follow the same patten to connect our locally running LLM model from our vLLM server.
+and vice versa. We then follow the same patten to connect our locally running LLM model from our vLLM server. Please make sure to set the Deepgram API key to **None** in order to work with the locally running instance otherwise it will
+not work.
 
 Lastly, we then put this all together as a PipelineTask which is what Pipecat runs all together. The make up of a task is completely customisable and has support for Image and Vision use cases. You can read more [here](https://docs.pipecat.ai/docs/category/services).
 Pipeline tasks come with a structure and parameters that make it easy to handle interruptions out the box and we are able to swap models to our preference only changing a few lines of code.
