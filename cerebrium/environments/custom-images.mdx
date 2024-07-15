@@ -17,6 +17,13 @@ name = "cerebrium-app"
 python_version = "3.12"
 ```
 
+## Docker Base Image
+
+Cerebrium supports the ability to define the base docker image you would like to use. At the moment, this feature is currently in **beta** and so we only have three options available:
+- debian:bookworm-slim (default)
+- nvidia/cuda:12.1.1-runtime-ubuntu22.04
+- nvidia/cuda:11.8.0-runtime-ubuntu22.04
+
 ## Dependancies
 
 Traditionally, when working with Python, you will need access to Apt packages, Pip packages and Conda packages. For a deployment to cerebrium, you can specify all of these in your **cerebrium.toml** file in the following locations:
