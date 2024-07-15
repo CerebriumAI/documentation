@@ -92,10 +92,7 @@
     },
     {
       "group": "Deployments",
-      "pages": [
-        "cerebrium/deployments/long-running-tasks",
-        "cerebrium/deployments/ci-cd"
-      ]
+      "pages": ["cerebrium/deployments/ci-cd"]
     },
     {
       "group": "Endpoints",
