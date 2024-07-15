@@ -44,7 +44,7 @@ The available hardware parameters in your config are:
 | --- | --- | --- | --- |
 | `cpu` | The number of CPU cores to use. | int | 2 |
 | `memory` | The amount of Memory to use in GB. | float | 14 |
-| `compute` | The GPU you would like to use. | string | AMPERE_A10 |
+| `compute` | The GPU you would like to use. | string | CPU |
 | `gpu_count` | The number of GPUs to specify. | int | 1 |
 | `provider` | The provider you would like your deployment to be on. v4 only supports `aws` | string | aws |
 | `region` | The region you would like your deployment to be on. v4 only supports `us-east-1` | string | us-east-1 |
@@ -58,8 +58,8 @@ The following is the hardware available on Cerebrium
 | `CPU`              | [aws]            | [v4]              |
 | `AMPERE_A10`       | [aws]            | [v4]              |
 | `ADA_L4`           | [aws]            | [v4]              |
-| `AMPERE_A100`      | [aws]            | [v3, v4]          |
-| `AMPERE_A100_40GB` | [aws]            | [v3]              |
+| `AMPERE_A100`      | [aws]            | [v4]              |
+| `AMPERE_A100_40GB` | [aws]            | [v4]              |
 | `HOPPER_H100`      | [aws]            | [v4]              |
 | `INF2`             | [aws]            | [v4]              |
 | `TRN1`             | [aws]            | [v4]              |
