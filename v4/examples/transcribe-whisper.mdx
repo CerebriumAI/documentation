@@ -140,12 +140,12 @@ name = "distil-whisper"
 python_version = "3.11"
 include = "[./*, main.py, cerebrium.toml]"
 exclude = "[./example_exclude]"
-cuda_version = "12"
+docker_base_image_url = "nvidia/cuda:12.1.1-runtime-ubuntu22.04"
 
 [cerebrium.hardware]
 region = "us-east-1"
 provider = "aws"
-gpu = "AMPERE_A10"
+compute = "AMPERE_A10"
 cpu = 3
 memory = 12.0
 gpu_count = 1
