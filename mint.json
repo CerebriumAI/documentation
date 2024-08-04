@@ -37,6 +37,10 @@
       "name": "Examples",
       "url": "v4/examples",
       "version": "v4"
+    },
+    {
+      "name": "Migrations",
+      "url": "migrations"
     }
   ],
   "anchors": [
@@ -146,6 +150,12 @@
         "v4/examples/streaming-falcon-7B",
         "v4/examples/transcribe-whisper",
         "v4/examples/realtime-voice-agents"
+      ]
+    },
+    {
+      "group": "Migrations",
+      "pages": [
+        "migrations/replicate"
       ]
     }
   ],
