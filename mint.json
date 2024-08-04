@@ -154,9 +154,7 @@
     },
     {
       "group": "Migrations",
-      "pages": [
-        "migrations/replicate"
-      ]
+      "pages": ["migrations/replicate"]
     }
   ],
   "analytics": {

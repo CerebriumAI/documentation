@@ -3,12 +3,11 @@ title: "Migrating from Replicate"
 description: "Deploy a Model from Replicate on Cerebrium"
 ---
 
-
 ### Introduction
 
 In this tutorial I will show you how you can migrate your workloads from Replicate to Cerebrium in less than 5 minutes!
 
-As an example, we will be migrating the model SDXL-Lightning-4step from ByteDance. You can find the link to it on replicate [here](https://replicate.com/bytedance/sdxl-lightning-4step): 
+As an example, we will be migrating the model SDXL-Lightning-4step from ByteDance. You can find the link to it on replicate [here](https://replicate.com/bytedance/sdxl-lightning-4step):
 
 It is best look at the code in the [Github repo](https://github.com/lucataco/cog-sdxl-lightning-4step) and follow along as we migrate it.
 
@@ -18,7 +17,7 @@ To start, let us create our cerebrium project
 cerebrium init cog-migration-sdxl
 ```
 
-Now Cerebrium and Replicate have a common setup in that they both have a setup file. **cog.yaml** and **cerebrium.toml** for Replicate and Cerebrium respectively. 
+Now Cerebrium and Replicate have a common setup in that they both have a setup file. **cog.yaml** and **cerebrium.toml** for Replicate and Cerebrium respectively.
 
 Looking at the cog.yaml, we need to add/change the following in our cerebrium.toml
 
@@ -94,7 +93,7 @@ MODEL_BASE = "stabilityai/stable-diffusion-xl-base-1.0"
 UNET_CACHE = "unet-cache"
 BASE_CACHE = "checkpoints"
 SAFETY_CACHE = "safety-cache"
-FEATURE_EXTRACTOR = "feature-extractor" 
+FEATURE_EXTRACTOR = "feature-extractor"
 MODEL_URL = "https://weights.replicate.delivery/default/sdxl-lightning/sdxl-1.0-base-lightning.tar"
 SAFETY_URL = "https://weights.replicate.delivery/default/sdxl/safety-1.0.tar"
 UNET_URL = "https://weights.replicate.delivery/default/comfy-ui/unet/sdxl_lightning_4step_unet.pth.tar"
@@ -249,7 +248,7 @@ def predict(
 The above returns a path to the generated images but we would like to return it as a base64 encoded image so that users can render the image instantly. You are welcome to upload the images to a storage bucket to reference directly - its up to you.
 
 ```python
-from io import BytesIO 
+from io import BytesIO
 import base64
 
 encoded_images = []
@@ -271,7 +270,7 @@ encoded_images = []
     return encoded_images
 ```
 
-Now we can run ```cerebrium deploy```. You should see your application build in under 90 seconds.
+Now we can run `cerebrium deploy`. You should see your application build in under 90 seconds.
 
 It should output the curl statement to run your application:
 
