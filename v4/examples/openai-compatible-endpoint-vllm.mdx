@@ -4,7 +4,7 @@ description: "Create a OpenAI compatible endpoint using the vLLM framework"
 ---
 
 In this tutorial, we will create a OpenAI compatible endpoint that can be used with any open-source mode. This allows you to use the same code as your OpenAI commands but swap
-in Cerebrium serverless functions with a 2 line code change. 
+in Cerebrium serverless functions with a 2 line code change.
 
 To see the final code implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/29-openai-compatible-endpoint)
 
@@ -17,7 +17,7 @@ In your IDE, run the following command to create our Cerebrium starter project: 
 - **Main.py** - Our entrypoint file where our code lives
 - **cerebrium.toml** - A configuration file that contains all our build and environment settings
   ‍
-Add the following pip packages and hardware requirements near the bottom of your cerebrium.toml. This will be used in creating our deployment environment.
+  Add the following pip packages and hardware requirements near the bottom of your cerebrium.toml. This will be used in creating our deployment environment.
 
 ```
 [cerebrium.hardware]
@@ -39,7 +39,7 @@ from vllm.engine.arg_utils import AsyncEngineArgs
 from pydantic import BaseModel
 from typing import List, Dict, Any
 import time
-import json 
+import json
 from huggingface_hub import login
 from cerebrium import get_secret
 
@@ -113,6 +113,7 @@ async def run(messages: List[Message], model: str, run_id: str, stream: bool = T
 ```
 
 Above the following is happening:
+
 - We specify all the parameters we send in our function signature. You can set optional or default values. The run_id parameter we automatically add to your function with a unique identifier for every request.
 - We put the entire prompt through the model and loop through the generated results.
 - If stream=True, we yield a result. Since we are using a async function and yield, this is how we achieve streaming functionality on Cerebrium else we return the entire result at the end.
@@ -160,7 +161,7 @@ for chunk in chat_completion:
 print("Finished receiving chunks.")
 ```
 
-Above we set our base url to the one returned by our deploy command - it ends in /run since thats the function we are calling. Lastly, we use our JWT token which is returned in the 
+Above we set our base url to the one returned by our deploy command - it ends in /run since thats the function we are calling. Lastly, we use our JWT token which is returned in the
 CURL command when you deploy or can be found in your Cerebrium dashboard under the section API Keys.
 
 Voila! You now have a OpenAI compatible endpoint that you can customize to your liking!
