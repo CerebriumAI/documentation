@@ -122,12 +122,12 @@
       "pages": [
         "examples/tensorRT",
         "examples/comfyUI",
+        "examples/langchain-langsmith",
         "examples/sdxl",
-        "examples/logo-controlnet",
         "examples/mistral-vllm",
         "examples/streaming-falcon-7B",
-        "examples/langchain",
-        "examples/transcribe-whisper"
+        "examples/transcribe-whisper",
+        "examples/realtime-voice-agents"
       ]
     },
     {
