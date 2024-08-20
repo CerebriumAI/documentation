@@ -4,7 +4,6 @@
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
   },
-  "versions": ["v4", "v3"],
   "favicon": "/favicon.png",
   "colors": {
     "primary": "#EB3A6F",
@@ -30,13 +29,7 @@
   "tabs": [
     {
       "name": "Examples",
-      "url": "v3/examples",
-      "version": "v3"
-    },
-    {
-      "name": "Examples",
-      "url": "v4/examples",
-      "version": "v4"
+      "url": "examples"
     },
     {
       "name": "Migrations",
@@ -126,30 +119,15 @@
     },
     {
       "group": "Examples",
-      "version": "v3",
       "pages": [
-        "v3/examples/tensorRT",
-        "v3/examples/comfyUI",
-        "v3/examples/sdxl",
-        "v3/examples/logo-controlnet",
-        "v3/examples/mistral-vllm",
-        "v3/examples/streaming-falcon-7B",
-        "v3/examples/langchain",
-        "v3/examples/transcribe-whisper"
-      ]
-    },
-    {
-      "group": "Examples",
-      "version": "v4",
-      "pages": [
-        "v4/examples/tensorRT",
-        "v4/examples/comfyUI",
-        "v4/examples/langchain-langsmith",
-        "v4/examples/sdxl",
-        "v4/examples/mistral-vllm",
-        "v4/examples/streaming-falcon-7B",
-        "v4/examples/transcribe-whisper",
-        "v4/examples/realtime-voice-agents"
+        "examples/tensorRT",
+        "examples/comfyUI",
+        "examples/sdxl",
+        "examples/logo-controlnet",
+        "examples/mistral-vllm",
+        "examples/streaming-falcon-7B",
+        "examples/langchain",
+        "examples/transcribe-whisper"
       ]
     },
     {
