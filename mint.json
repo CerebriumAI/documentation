@@ -95,7 +95,11 @@
     },
     {
       "group": "Endpoints",
-      "pages": ["cerebrium/endpoints/rest-api", "cerebrium/endpoints/streaming", "cerebrium/endpoints/openai-compatible-endpoints"]
+      "pages": [
+        "cerebrium/endpoints/rest-api",
+        "cerebrium/endpoints/streaming",
+        "cerebrium/endpoints/openai-compatible-endpoints"
+      ]
     },
     {
       "group": "Integrations",
