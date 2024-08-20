@@ -4,7 +4,7 @@
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
   },
-  "versions": ["v4", "v3"],
+  "versions": ["v4"],
   "favicon": "/favicon.png",
   "colors": {
     "primary": "#EB3A6F",
@@ -28,11 +28,6 @@
     }
   ],
   "tabs": [
-    {
-      "name": "Examples",
-      "url": "v3/examples",
-      "version": "v3"
-    },
     {
       "name": "Examples",
       "url": "v4/examples",
@@ -122,20 +117,6 @@
         "available-hardware",
         "calculating-cost",
         "cerebrium/faqs-and-help/fast-deployments-dos-and-donts"
-      ]
-    },
-    {
-      "group": "Examples",
-      "version": "v3",
-      "pages": [
-        "v3/examples/tensorRT",
-        "v3/examples/comfyUI",
-        "v3/examples/sdxl",
-        "v3/examples/logo-controlnet",
-        "v3/examples/mistral-vllm",
-        "v3/examples/streaming-falcon-7B",
-        "v3/examples/langchain",
-        "v3/examples/transcribe-whisper"
       ]
     },
     {
