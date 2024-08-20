@@ -1,0 +1,84 @@
+---
+title: "OpenAI Compatible Endpoints"
+description: ""
+---
+
+By default, all functions deployed on Cerebrium are a REST API that are accessible through an authenticated POST request. We have made all these endpoints OpenAI compatible whether it
+be <b>/chat/completions</b> or <b>/embedding</b>. Below we show you a very basic implementation of implementing a streaming OpenAI compatible endpoint.
+
+We recommend you checkout a full example of how to deploy a OpenAI compatible endpoint using vLLM [here](https://github.com/CerebriumAI/examples/tree/master/29-openai-compatible-endpoint)
+
+In order to create a streaming compatible endpoint, we need to make sure our cerebrium function:
+
+- Specifies all the parameters that OpenAI sends in the function signature
+- We return `yield data`. Where yield signifies we are streaming and data is the json serializable
+  object which we are returning to our user.
+
+Here is a small snippet from the example listed above:
+
+```python
+
+def run(messages: List[Message], model: str,...):
+  ##existing code
+
+  async for output in results_generator:
+    prompt = output.outputs
+    new_text = prompt[0].text[len(previous_text):]
+    previous_text = prompt[0].text
+    full_text += new_text
+
+    response = ChatCompletionResponse(
+        id=run_id,
+        object="chat.completion",
+        created=int(time.time()),
+        model=model,
+        choices=[{
+            "text": new_text,
+            "index": 0,
+            "logprobs": None,
+            "finish_reason": prompt[0].finish_reason or "stop"
+        }]
+    )
+    yield json.dumps(response.model_dump())
+```
+
+Once deployed, we can set the base url to the desired function we wish to call and use our Cerebrium JWT (accessible on your dashboard) as the API key.
+
+Our client code will then look something like this:
+
+```python
+import os
+from openai import OpenAI
+
+client = OpenAI(
+    # This is the default and can be omitted
+    base_url="https://api.cortex.cerebrium.ai/v4/dev-p-xxxxx/openai-compatible-endpoint/run", ##This is the name of the function you are calling
+    api_key="<CEREBRIUM_JWT_TOKEN>",
+)
+
+chat_completion = client.chat.completions.create(
+    messages=[
+   {"role": "user", "content": "What is a mistral?"},
+   {"role": "assistant", "content": "A mistral is a type of cold, dry wind that blows across the southern slopes of the Alps from the Valais region of Switzerland into the Ligurian Sea near Genoa. It is known for its strong and steady gusts, sometimes reaching up to 60 miles per hour."},
+   {"role": "user", "content": "How does the mistral wind form?"}
+ ],
+    model="meta-llama/Meta-Llama-3.1-8B-Instruct",
+    stream=True
+)
+print("Starting to receive chunks...")
+for chunk in chat_completion:
+    print(chunk)
+print("Finished receiving chunks.")
+```
+
+The output then looks like this
+
+```
+Starting to receive chunks...
+ChatCompletionChunk(id='412f0e25-61c4-93b8-a00f-09a5076cd9fa', choices=[Choice(delta=None, finish_reason='stop', index=0, logprobs=None, text=' The')], created=1724166657, model='gpt-3.5-turbo', object='chat.completion', service_tier=None, system_fingerprint=None, usage=None)
+ChatCompletionChunk(id='412f0e25-61c4-93b8-a00f-09a5076cd9fa', choices=[Choice(delta=None, finish_reason='stop', index=0, logprobs=None, text=' formation')], created=1724166657, model='gpt-3.5-turbo', object='chat.completion', service_tier=None, system_fingerprint=None, usage=None)
+ChatCompletionChunk(id='412f0e25-61c4-93b8-a00f-09a5076cd9fa', choices=[Choice(delta=None, finish_reason='stop', index=0, logprobs=None, text=' of')], created=1724166657, model='gpt-3.5-turbo', object='chat.completion', service_tier=None, system_fingerprint=None, usage=None)
+ChatCompletionChunk(id='412f0e25-61c4-93b8-a00f-09a5076cd9fa', choices=[Choice(delta=None, finish_reason='stop', index=0, logprobs=None, text=' the')], created=1724166657, model='gpt-3.5-turbo', object='chat.completion', service_tier=None, system_fingerprint=None, usage=None)
+ChatCompletionChunk(id='412f0e25-61c4-93b8-a00f-09a5076cd9fa', choices=[Choice(delta=None, finish_reason='stop', index=0, logprobs=None, text=' mist')], created=1724166657, model='gpt-3.5-turbo', object='chat.completion', service_tier=None, system_fingerprint=None, usage=None)
+...
+```

@@ -1,0 +1,151 @@
+---
+title: "OpenAI compatible vLLM endpoint"
+description: "Create a OpenAI compatible endpoint using the vLLM framework"
+---
+
+In this tutorial, we will create a OpenAI compatible endpoint that can be used with any open-source mode. This allows you to use the same code as your OpenAI commands but swap
+in Cerebrium serverless functions with a 2 line code change.
+
+To see the final code implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/29-openai-compatible-endpoint)
+
+### Cerebrium setup
+
+If you don’t have a Cerebrium account, you can create one by signing up [here](https://dashboard.cerebrium.ai/register) and following the documentation [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation) to get setup
+
+In your IDE, run the following command to create our Cerebrium starter project: `cerebrium init voice-agent`. This creates two files:
+
+- **Main.py** - Our entrypoint file where our code lives
+- **cerebrium.toml** - A configuration file that contains all our build and environment settings
+  ‍
+  Add the following pip packages and hardware requirements near the bottom of your cerebrium.toml. This will be used in creating our deployment environment.
+
+```
+[cerebrium.hardware]
+cpu = 2
+memory = 12.0
+compute = "AMPERE_A10"
+
+[cerebrium.dependencies.pip]
+vllm = "latest"
+pydantic = "latest"
+```
+
+To start, let us define our imports and initialize our model. In this tutorial, we will use the Llama 3.1 model by Meta which requires authorization on Hugging Face. <b>Add your HF token
+to your secrets section in the Cerebrium dashboard</b>. Add the following to your main.py
+
+```python
+from vllm import  SamplingParams. AsyncLLMEngine
+from vllm.engine.arg_utils import AsyncEngineArgs
+from pydantic import BaseModel
+from typing import List, Dict, Any
+import time
+import json
+from huggingface_hub import login
+from cerebrium import get_secret
+
+# Your huggingface token (HF_AUTH_TOKEN) should be stored in your project secrets on your dashboard
+login(token=get_secret("HF_AUTH_TOKEN"))
+
+engine_args = AsyncEngineArgs(
+    model="meta-llama/Meta-Llama-3.1-8B-Instruct",
+    gpu_memory_utilization=0.9,  # Increase GPU memory utilization
+    max_model_len=8192  # Decrease max model length
+)
+engine = AsyncLLMEngine.from_engine_args(engine_args)
+```
+
+We now define the require output format OpenAI endpoints expect using Pydantic and specify our endpoint
+
+```python
+class Message(BaseModel):
+    role: str
+    content: str
+
+class ChatCompletionResponse(BaseModel):
+    id: str
+    object: str
+    created: int
+    model: str
+    choices: List[Dict[str, Any]]
+
+async def run(messages: List[Message], model: str, run_id: str, stream: bool = True, temperature: float = 0.8, top_p: float = 0.95):
+    prompt = " ".join([f"{msg['role']}: {msg['content']}" for msg in messages])
+    sampling_params = SamplingParams(temperature=temperature, top_p=top_p)
+    results_generator = engine.generate(prompt, sampling_params, run_id)
+    previous_text = ""
+    full_text = ""  # Collect all generated text here
+
+    async for output in results_generator:
+        prompt = output.outputs
+        new_text = prompt[0].text[len(previous_text):]
+        previous_text = prompt[0].text
+        full_text += new_text  # Append new text to full_text
+
+        response = ChatCompletionResponse(
+            id=run_id,
+            object="chat.completion",
+            created=int(time.time()),
+            model=model,
+            choices=[{
+                "text": new_text,
+                "index": 0,
+                "logprobs": None,
+                "finish_reason": prompt[0].finish_reason or "stop"
+            }]
+        )
+        yield json.dumps(response.model_dump())
+```
+
+Above the following is happening:
+
+- We specify all the parameters we send in our function signature. You can set optional or default values. The run_id parameter we automatically add to your function with a unique identifier for every request.
+- We put the entire prompt through the model and loop through the generated results.
+- If stream=True, we yield a result. Since we are using a async function and yield, this is how we achieve streaming functionality on Cerebrium else we return the entire result at the end.
+
+## Deploy & Inference
+
+To deploy the model use the following command:
+
+```bash
+cerebrium deploy
+```
+
+Once deployed, you will see we generate a curl for this application that looks something like:
+
+```curl
+curl --location 'https://api.cortex.cerebrium.ai/v4/p-<YOUR PROJECT ID>/openai-compatible-endpoint/{function}' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer <YOUR TOKEN HERE>' \
+--data '{"..."}''
+```
+
+In Cerebrium, every function name is now and endpoint so to call this endpoint we would end the url with /run. However, OpenAI compatible endpoints need to end with /chat/completions.
+We have made all endpoints OpenAI compatible so in order to call the endpoint you can do the following in another file:
+
+```python
+import os
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://api.cortex.cerebrium.ai/v4/dev-p-xxxxxxx/openai-compatible-endpoint/run",
+    api_key="<CEREBRIUM_JWT_TOKEN>",
+)
+
+chat_completion = client.chat.completions.create(
+    messages=[
+   {"role": "user", "content": "What is a mistral?"},
+   {"role": "assistant", "content": "A mistral is a type of cold, dry wind that blows across the southern slopes of the Alps from the Valais region of Switzerland into the Ligurian Sea near Genoa. It is known for its strong and steady gusts, sometimes reaching up to 60 miles per hour."},
+   {"role": "user", "content": "How does the mistral wind form?"}
+ ],
+    model="meta-llama/Meta-Llama-3.1-8B-Instruct",
+    stream=True
+)
+for chunk in chat_completion:
+    print(chunk)
+print("Finished receiving chunks.")
+```
+
+Above we set our base url to the one returned by our deploy command - it ends in /run since thats the function we are calling. Lastly, we use our JWT token which is returned in the
+CURL command when you deploy or can be found in your Cerebrium dashboard under the section API Keys.
+
+Voila! You now have a OpenAI compatible endpoint that you can customize to your liking!

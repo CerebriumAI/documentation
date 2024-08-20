@@ -3,11 +3,10 @@ title: "Streaming Endpoints"
 ---
 
 Streaming allows users to stream live output from their models using server-sent event (SSE) streams.
-This works for Python objects which iterator or generator protocol.
-Currently, your generator/iterator is required to yield `string` data, as it will be sent downstream via the `text/event-stream` Content-Type.
-You will also need to inform the API that your application accepts `text/event-stream` content by setting the `Accept` header.
-If you do not set this header, the stream will **not** work.
-Instead the response will be delivered as if the content was `application/json` with the data concatenated together.
+This works for Python objects which use the iterator or generator protocol.
+
+Currently, your generator/iterator is required to <b>yield</b> data, as it will be sent downstream via the `text/event-stream` Content-Type.
+You may still send data in JSON format and then can decode it appropriately.
 
 Let us see how we can implement a simple example below:
 
@@ -57,8 +56,6 @@ Progressively, you will see the rest of the data stream in every second:
 data: Number 1
 
 data: Number 2
-
-event: end
 ```
 
 The latest Postman also has great functionality to show this.
