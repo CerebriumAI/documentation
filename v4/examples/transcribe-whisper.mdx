@@ -3,8 +3,8 @@ title: "Transcribe 1 hour podcast"
 description: "Using Distill Whisper to transcribe an audio file"
 ---
 
-In this tutorial, we will transcribe an hour audio file using Distil Whisper - an optimised version of Whisper-large-v2 but 60% faster and within 1% of the error rate. We
-will accept either a base64 encode string of the audio file or a url from which we can download the audio file from.
+In this tutorial, we will transcribe an hour audio file using Distill Whisper - an optimized version of Whisper-large-v2 but 60% faster and within 1% of the error rate. We
+will accept either a base64 encode string of the audio file or an URL from which we can download the audio file from.
 
 To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/11-whisper-transcription)
 
@@ -31,7 +31,7 @@ openai-whisper = "latest"
 pydantic = "latest"
 ```
 
-To start let us create a util.py file for our utility functions - downloading a file from a url or converting a base64 string to a file. Our **util.py** would look something like below:
+To start let us create a util.py file for our utility functions - downloading a file from a URL or converting a base64 string to a file. Our **util.py** would look something like below:
 
 ```python
 import base64
@@ -90,7 +90,7 @@ Currently, Cerebrium has a max timeout of 3 minutes for each inference request. 
 
 ## Setup Model and inference
 
-Below, we import the required packages and load in our Whisper model. This will download during your deployment however in subsequent deploys or inference requests it will be automatically cached in your persistent storage for subsequent use. You can read more about persistent storage [here]()
+Below, we import the required packages and load in our Whisper model. This will be downloaded during your deployment, however, in subsequent deploys or inference requests it will be automatically cached in your persistent storage for subsequent use. You can read more about persistent storage [here]()
 We do this outside our **predict** function since we only want this code to run on a cold start (ie: on startup). If the container is already warm, we just want it to do inference and it will execute just the **predict** function.
 
 ```python

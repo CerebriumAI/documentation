@@ -199,8 +199,8 @@ def get_availability(fromDate: str, toDate: str) -> float:
 In the above snippet we are doing a few things:
 
 - We give our function the @tool decorator so that LangChain can tell the LLM this is a tool.
-- We write a docstring that explains to the LLM what this function does and what input it expects.The LLM will make sure it asks the user enough questions in order to collect this input data.
-- We wrote a helper function, find_available_slots, in order to take the information returned from the Cal.com API and format it so its more readable. It will show the user the time slots available on each day. Make sure its in your directory!
+- We write a docstring that explains to the LLM what this function does and what input it expects.The LLM will make sure it asks the user enough questions to collect this input data.
+- We wrote a helper function, find_available_slots, to take the information returned from the Cal.com API and format it so its more readable. It will show the user the time slots available on each day. Make sure its in your directory!
   ‍
 
 We then follow a similar practice to write our book_slot tool. This will book a slot in my calendar based on the selected time/day. You can get the eventTypeId from your dashboard, select an event and grab the ID in the URL.
@@ -275,9 +275,9 @@ The above snippet is used to create our agent executor which consists of:
 
 ### Setup Chatbot
 
-The above code is static in that it will only reply to our first question but we might need to have a conversation in order to find a time that suits both the user and my schedule. We therefore need to create a chatbot with tool calling capabilities and the ability to remember past messages. LangChain supports this with RunnableWithMessageHistory().
+The above code is static in that it will only reply to our first question but we might need to have a conversation to find a time that suits both the user and my schedule. We therefore need to create a chatbot with tool calling capabilities and the ability to remember past messages. LangChain supports this with RunnableWithMessageHistory().
 
-It essentially allows us to store the previous replies of our conversation in a chat_history variable (mentioned above in our prompt template) and tie this all to a session identifier so your API can remember information pertaining to a specific user/session. Below is our code in order to implement this:
+It essentially allows us to store the previous replies of our conversation in a chat_history variable (mentioned above in our prompt template) and tie this all to a session identifier so your API can remember information pertaining to a specific user/session. Below is our code to implement this:
 
 ```python
 from langchain.memory import ChatMessageHistory
@@ -337,7 +337,7 @@ If you keep talking and answering, you will see it will eventually book a slot.
 
 When releasing an application to production, its vital to know how it is performing, how users are interacting with it, where is it going wrong etc. This is especially true for agent applications since they have indeterministic workflows based on how a user interacts with the application and so we want to make sure we handle any and all edge cases. LangSmith is a logging, debugging and monitoring tool from LangChain that we will use. Your can read more about LangSmith [here](https://docs.smith.langchain.com/monitoring).
 
-Lets setup LangSmith in order to monitor and debug our application. First, add LangSmith as a pip dependancy to our cerebrium.toml file.
+Lets setup LangSmith to monitor and debug our application. First, add LangSmith as a pip dependency to our cerebrium.toml file.
 
 Next, we need to create an account on LangSmith and generate and API key - its free 🙂. You can sign up for an account [here](https://smith.langchain.com/) and can generate an API key by clicking the settings (gear icon) bottom left.
 
@@ -349,7 +349,7 @@ os.environ['LANGCHAIN_TRACING_V2']="true"
 os.environ['LANGCHAIN_API_KEY']=get_secret("LANGCHAIN_API_KEY")
 ```
 
-In order to integrate tracing into your applications it is as easy as adding the @traceable decorator to your function(s). LangSmith automatically traverses our functions and subsequent calls so we need to only put it above the predict function and we will see all the tool invocations and OpenAI responses automatically. If there is a function, that predict doesn’t call for example, but you instantiate another way, then make sure to decorate it with traceable. Edit main.py to have the following:
+To integrate tracing into your applications it is as easy as adding the @traceable decorator to your function(s). LangSmith automatically traverses our functions and subsequent calls so we need to only put it above the predict function and we will see all the tool invocations and OpenAI responses automatically. If there is a function, that predict doesn’t call for example, but you instantiate another way, then make sure to decorate it with traceable. Edit main.py to have the following:
 
 ```
 from langsmith import traceable

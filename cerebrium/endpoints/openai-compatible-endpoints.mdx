@@ -8,13 +8,13 @@ be <b>/chat/completions</b> or <b>/embedding</b>. Below we show you a very basic
 
 We recommend you checkout a full example of how to deploy a OpenAI compatible endpoint using vLLM [here](https://github.com/CerebriumAI/examples/tree/master/29-openai-compatible-endpoint)
 
-In order to create a streaming compatible endpoint, we need to make sure our cerebrium function:
+To create a streaming compatible endpoint, we need to make sure our cerebrium function:
 
 - Specifies all the parameters that OpenAI sends in the function signature
 - We return `yield data`. Where yield signifies we are streaming and data is the json serializable
   object which we are returning to our user.
 
-Here is a small snippet from the example listed above:
+Here's a small snippet from the example listed above:
 
 ```python
 
@@ -42,7 +42,7 @@ def run(messages: List[Message], model: str,...):
     yield json.dumps(response.model_dump())
 ```
 
-Once deployed, we can set the base url to the desired function we wish to call and use our Cerebrium JWT (accessible on your dashboard) as the API key.
+Once deployed, we can set the base URL to the desired function we wish to call and use our Cerebrium JWT (accessible on your dashboard) as the API key.
 
 Our client code will then look something like this:
 

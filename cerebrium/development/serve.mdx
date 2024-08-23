@@ -20,8 +20,8 @@ This allows you to run your deployment on a dedicated server, and see the result
 **Limitations:**
 
 - Build process (packages, apt, etc.) changes require a full restart of the served instance
-- Serve sessions are not cached meaning a full build process is done even when environments have not changed between sessions
-- Reponses are not returned via the Local API server
+- Serve sessions are not cached, meaning a full build process is done even when environments have not changed between sessions
+- Responses are not returned via the Local API server
 
 ## Usage
 
@@ -33,9 +33,9 @@ Then, simply run the following command in your terminal:
 cerebrium serve start
 ```
 
-After running the `cerebrium serve start` command, it will start up an instance and create your environment. ie: install all your requested packages and dependancies.
+After running the `cerebrium serve start` command, it will start up an instance and create your environment. ie: install all your requested packages and dependencies.
 
-Once completed, it will output a URL that you can use to query your instance locally - mimicing a production endpoint.
+Once completed, it will output a URL that you can use to query your instance locally: mimicking a production endpoint.
 
 ```bash
 Info:   🏗️  Starting served session...
@@ -53,7 +53,7 @@ Send a POST request to: http://localhost:7900/predict
 ### Local API Server
 
 Since we are using a local API server, you don't need to worry about providing an API key in the Authorization header.
-Your served instance will be running on port 7900 by default, however, you can change this by using the `--port` flag when you start a served instance
+Your served instance will be running on port 7900 by default, you can change this by using the `--port` flag when you start a served instance
 
 You can make a request to your local endpoint using:
 
@@ -61,7 +61,7 @@ You can make a request to your local endpoint using:
 curl -X POST http://localhost:7900/predict -H "Content-Type: application/json" --data '{"prompt": "this is my input data"}'
 ```
 
-For the Beta, we don't return the reponse back through the local API server but rather send the data to your instance. Please use the logs
+For the Beta, we don't return the response back through the local API server but rather send the data to your instance. Please use the logs
 as a source of reference on output.
 
 ### File Changes
@@ -69,7 +69,7 @@ as a source of reference on output.
 As you save changes to your **main.py** or add/delete files in your directory, the instance will automatically update in a few seconds (unless some files you add are in the GB's)
 and new changes will be live that you can inference.
 
-If you would like to make changes to the environment, ie: hardware, pip/apt packages etc then you will need to restart the serve instance which you can do by pressing `Ctrl+C` and running the `start` command again.
+If you would like to make changes to the environment, ie: hardware, pip/apt packages, etc then you will need to restart the serve instance which you can do by pressing `Ctrl+C` and running the `start` command again.
 
 ![Example changing code with serve](/images/serve/ModifyingServeCode.gif)
 
@@ -77,7 +77,7 @@ If you would like to make changes to the environment, ie: hardware, pip/apt pack
   Please note that you are charged for your compute as long as serve is running.
   ie: If you are running serve for 8 minutes, you will be charged for 8 minutes
   of compute based on the hardware requirements you specified. It is very
-  important to end your sesssion when done. We will automatically end the
+  important to end your session when done. We will automatically end the
   session after 10 minutes of inactivity.
 </Note>
 

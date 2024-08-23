@@ -1,6 +1,6 @@
 ---
 title: "ComfyUI application at Scale"
-description: "Deploy a ComfyUI application behing "
+description: "Deploy a ComfyUI application"
 ---
 
 <Note>
@@ -11,12 +11,12 @@ description: "Deploy a ComfyUI application behing "
 
 ### Introduction
 
-ComyUI is a popular no-code interface for building complex stable diffusion workflows. Due to its ease of use, modular setup as well as its intuitive flowchart interface, the community of ComfyUI users have built a pretty phenomenal collection of workflows! There are even websites dedicated to the sharing of workflows built to help get you started:
+ComfyUI is a popular no-code interface for building complex stable diffusion workflows. Due to its ease of use, modular setup as well as its intuitive flowchart interface, the community of ComfyUI users has built a pretty phenomenal collection of workflows! There are even websites dedicated to the sharing of workflows built to help get you started:
 
 - https://comfyworkflows.com/
 - https://openart.ai/workflows/home‍
 
-While it is currently easy to experiment with ComfyUI workflows, there isn’t a lot of guidance or tutorials on how to productionise these workflows at scale. In this tutorial, I am going to show you how you can use Cerebrium to deploy your pipelines to an API endpoint so they can autoscale based on demand and that you only pay for the compute you use. You can find the full example code [here](https://github.com/CerebriumAI/examples/tree/master/12-comfyui).
+While it is currently easy to experiment with ComfyUI workflows, there isn’t a lot of guidance or tutorials on how to productionize these workflows at scale. In this tutorial, I am going to show you how you can use Cerebrium to deploy your pipelines to an API endpoint so they can autoscale based on demand and that you only pay for the compute you use. You can find the full example code [here](https://github.com/CerebriumAI/examples/tree/master/12-comfyui).
 
 ### Creating your Comfy UI workflow locally
 
@@ -24,14 +24,14 @@ We first need to create our workflow which you can do locally on your machine or
 
 Before we get started, make sure ComfyUI is [installed properly on your local environment](https://github.com/comfyanonymous/ComfyUI#installing).
 
-For our use case we are going to use Stable Diffusion XL and ControlNet to create a cool QR code. If you have a existing workflow setup, you can simply skip to the step “Export ComfyUI Workflow”
+For our use case, we are going to use Stable Diffusion XL and ControlNet to create a cool QR code. If you have a existing workflow setup, you can simply skip to the step “Export ComfyUI Workflow”
 
 1. Let us first create our Cerebrium project with: `cerebrium init comfyUI`
 2. Inside your project, lets copy the ComfyUI GitHub project: `git clone https://github.com/comfyanonymous/ComfyUI`
 3. Download the following models and install them in the appropriate folders within the ComfyUI folder:
    - SDXL base in models/checkpoints.
    - ControlNet in models/ControlNet.
-4. In order to run ComfyUI locally, run the command: python main.py --force-fp16 on MacOS. Make sure you run this inside the ComfyUI folder you just cloned.
+4. To run ComfyUI locally, run the command: python main.py --force-fp16 on MacOS. Make sure you run this inside the ComfyUI folder you just cloned.
 5. A server should be loaded locally at http://127.0.0.1:8188/‍
    ‍
 
@@ -39,13 +39,13 @@ In this view, you should be able to see the default user interface for a ComfyUI
 
 ### Export ComfyUI Workflow
 
-In our example Github repository, we have a worklow.json file. You can click the “Load” button on the right in order to load in our workflow. You then should see the workflow populated
+In our example GitHub repository, we have a workflow.json file. You can click the “Load” button on the right to load in our workflow. You then should see the workflow populated
 
 ![ComfyUI Workflow](/images/examples/comfyui1.png)
 
 Don’t worry about the pre-filled values and prompts, we will edit these values on inference when we run our workflow.
 
-In order to export this workflow to work with Cerebrium, we need to export this to an API format. In the top right over that hovering box on the right. Click the gear icon (settings). You must then make sure that “Enable dev mode” is selected and then can close the popup.
+To export this workflow to work with Cerebrium, we need to export this to an API format. In the top right over that hovering box on the right. Click the gear icon (settings). You must then make sure that “Enable dev mode” is selected and then can close the popup.
 
 ![Save ComfyUI API format](/images/examples/comfyui2.png)
 
@@ -53,9 +53,9 @@ You should then see that a button appear on the right hover box that reads “Sa
 
 ### ComfyUI Application
 
-Our main application code lives in main.py so we now use the exported ComfyUI API workflow file above in order to create an API endpoint for our workflow. In the code below we initialize the ComfyUI server and load in our workflow API template. In our predict function, we then send in the various values we would like to alter in our workflow ie: prompt, image and run the workflow. Our function then users the inputs to alter the ComfyUI workflow values and then generates the output which in this case is base64 encoded images.
+Our main application code lives in main.py so we now use the exported ComfyUI API workflow file above to create an API endpoint for our workflow. In the code below we initialize the ComfyUI server and load in our workflow API template. In our predict function, we then send in the various values we would like to alter in our workflow ie: prompt, image and run the workflow. Our function then users the inputs to alter the ComfyUI workflow values and then generates the output which in this case is base64 encoded images.
 
-In Cerebrium, the code outside the predict function runs only on initialisation (ie: startup) where as subsequent requests will only run the predict function.
+In Cerebrium, the code outside the predict function runs only on initialization (ie: startup) whereas subsequent requests will only run the predict function.
 
 We need to alter our workflow_api.json file to have placeholders so that we can replace user values on inference. You can alter the file as follows.
 
@@ -181,7 +181,7 @@ If we run cerebrium deploy it will upload the ComfyUI directory and our ~10GB of
 ]
 ```
 
-This file is basically telling our helper function the url to download the model from and the directory to save the file in. It will only download the file on first deploy. On subsequent deploys, we wrote the logic to skip downloading the model if the file already exists.
+This file is basically telling our helper function the URL to download the model from, and the directory to save the file in. It will only download the file on first deploy. On subsequent deploys, we wrote the logic to skip downloading the model if the file already exists.
 
 This is what your file folder structure should look like:
 
@@ -213,4 +213,4 @@ You will get two responses from the output:
 
 ### Conclusion
 
-With Cerebrium, companies can implement productionised instances of their ComfyUI workflows to create unique user experiences. Users can have peace of mine that their workloads will autoscale with demand and will only charge based on the compute used. We are excited to see what you build and please tag @cerebriumai so we can share your work
+With Cerebrium, companies can implement productionized instances of their ComfyUI workflows to create unique user experiences. Users can have peace of mine that their workloads will autoscale with demand and will only charge based on the compute used. We are excited to see what you build and please tag @cerebriumai so we can share your work

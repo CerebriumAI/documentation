@@ -119,8 +119,8 @@ curl --location 'https://api.cortex.cerebrium.ai/v4/p-<YOUR PROJECT ID>/openai-c
 --data '{"..."}''
 ```
 
-In Cerebrium, every function name is now and endpoint so to call this endpoint we would end the url with /run. However, OpenAI compatible endpoints need to end with /chat/completions.
-We have made all endpoints OpenAI compatible so in order to call the endpoint you can do the following in another file:
+In Cerebrium, every function name is now and endpoint so to call this endpoint we would end the URL with /run. However, OpenAI compatible endpoints need to end with /chat/completions.
+We have made all endpoints OpenAI compatible so to call the endpoint you can do the following in another file:
 
 ```python
 import os
@@ -145,7 +145,7 @@ for chunk in chat_completion:
 print("Finished receiving chunks.")
 ```
 
-Above we set our base url to the one returned by our deploy command - it ends in /run since thats the function we are calling. Lastly, we use our JWT token which is returned in the
+Above we set our base url to the one returned by our deploy command - it ends in /run since that's the function we are calling. Lastly, we use our JWT token, which is returned in the
 CURL command when you deploy or can be found in your Cerebrium dashboard under the section API Keys.
 
-Voila! You now have a OpenAI compatible endpoint that you can customize to your liking!
+Voilà! You now have a OpenAI compatible endpoint that you can customize to your liking!

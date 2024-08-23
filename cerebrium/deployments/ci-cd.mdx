@@ -4,7 +4,7 @@ description: "Integrate Cerebrium into your CI/CD workflow for automated deploym
 ---
 
 If you would like to automatically deploy a new version of your model to production/development once you have merged into the
-respective branch you can do so using the commands below. We will be using a Github actions workflow.
+respective branch you can do so using the commands below. We will be using a GitHub actions workflow.
 
 ### 1. Get your Cerebrium OAuth credentials
 
@@ -17,21 +17,21 @@ you should see an output of 3 variables, namely:
 
 We will need these in the next step
 
-### 2. Define secrets in your github enviornment
+### 2. Define secrets in your GitHub environment
 
-Go to your Github respository -> Settings -> Enviorenments
+Go to your GitHub repository -> Settings -> Environments
 
 ![Github](/images/githubActions.png)
 
-You shoud create a new environment with a title of your choice (prod and dev). Within these environments you have two types
+You should create a new environment with a title of your choice (prod and dev). Within these environments, you have two types
 of variables you can work with:
 
-- Environment secrets: These are encrypted and do not show in your workflows logs
+- Environment secrets: These are encrypted and do not show in your workflow logs
 - Environment variables: These are not encrypted and so will show in the workflow logs.
 
-In our use case we will store all our variables (accessToken, refreshToken, projectId) as secrets to keep the values hidden
+In our use case, we will store all our variables (accessToken, refreshToken, projectId) as secrets to keep the values hidden
 
-### 3. Github Actions Workflow
+### 3. GitHub Actions Workflow
 
 In this flow, we do the following:
 

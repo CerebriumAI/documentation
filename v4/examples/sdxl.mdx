@@ -99,7 +99,7 @@ class Item(BaseModel):
     num_images_per_prompt: int
 ```
 
-Above, we import all the various Python libraries we require as well as use Pydantic as our data validation library. Due to the way that we have defined the Base Model, "prompt" and "url" are required parameters and so if they are not present in the request, the user will automatically receive an error message. Everything else is optional.
+Above, we import all the various Python libraries we require as well as use Pydantic as our data validation library. Due to the way that we have defined the Base Model, "prompt" and "URL" are required parameters and so if they are not present in the request, the user will automatically receive an error message. Everything else is optional.
 
 ## Instantiate model
 
