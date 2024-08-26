@@ -2,14 +2,82 @@
 title: "Persistent Storage"
 ---
 
-Cerebrium gives to access to persistent storage to store model weights, files and much more. This storage volume persists across your project, meaning that if
-you refer to model weights or a file created in a different deployment, you will be able to access it!
+Cerebrium gives to access to persistent storage to store model weights and files.
+This storage volume persists across your project, meaning that if
+you refer to model weights or files created in a different app but in the same project, you're able to access them.
 
-This allows you to load in model weights more efficiently as well as reduce the size of your deployment container images. Currently,
+This allows model weights to be loaded in more efficiently, as well as reduce the size of your app container images. Currently,
 the volume can be accessed through `/persistent-storage` in your container instance, should you wish to access it directly and store other artifacts.
 
-While you have full access to this drive, we recommend that you only store files in directories other than `/persistent-storage/cache`, as this and its subdirectories
-are used by Cerebrium to store your models. As a simple example, suppose you have an external SAM model that you want to use in your custom deployment. You can download it to the cache
+### Uploading files
+
+To upload files to persistent storage, you can use the `cerebrium files cp local_path dest_path` command. This command copies files from your local machine to the specified destination path in the persistent storage. The dest_path is optional; if not provided, the files will be uploaded to the root of the persistent storage.
+
+Example usage:
+
+```bash
+
+Usage: cerebrium files cp [OPTIONS] LOCAL_PATH REMOTE_PATH (Optional)
+
+  Copy contents to persistent storage.
+
+Options:
+  -h, --help          Show this message and exit.
+
+Examples:
+  # Copy a single file
+  cerebrium files cp src_file_name.txt # copies to /src_file_name.txt
+
+  cerebrium files cp src_file_name.txt dest_file_name.txt # copies to /dest_file_name.txt
+
+  # Copy a directory
+  cerebrium files cp dir_name # copies to the root directory
+  cerebrium files cp dir_name sub_folder/ # copies to sub_folder/
+```
+
+### Listing files
+
+To list the files in your persistent storage, you can use the cerebrium files ls [remote_path] command. This command lists all files and directories within the specified remote_path. If no remote_path is provided, it lists the contents of the root directory of the persistent storage.
+
+```bash
+Usage: cerebrium files ls [OPTIONS] REMOTE_PATH (Optional)
+
+  List contents of persistent storage.
+
+Options:
+  -h, --help          Show this message and exit.
+
+Examples:
+  # List all files in the root directory
+  cerebrium files ls
+
+  # List all files in a specific folder
+  cerebrium files ls sub_folder/
+```
+
+### Deleting files
+
+To delete files or directories from your persistent storage, use the cerebrium files rm remote_path command. This command removes the specified file or directory from the persistent storage. Be careful, as this operation is irreversible.
+
+```bash
+Usage: cerebrium files rm [OPTIONS] REMOTE_PATH
+
+  Remove a file or directory from persistent storage.
+
+Options:
+  -h, --help          Show this message and exit.
+
+Examples:
+  # Remove a specific file
+  cerebrium files rm /file_name.txt
+
+  # Remove a directory and all its contents
+  cerebrium files rm /sub_folder/
+```
+
+### Real world example
+
+As a simple example, suppose you have an external SAM model that you want to use in your custom deployment. You can download it to the cache
 as such:
 
 ```python
@@ -28,26 +96,6 @@ model = torch.jit.load(file_path)
 ... # Continue with your initialization
 ```
 
-Now, in subsequent deployments, the model will load from the cache rather than download it again.
+Now, in later inference requests, the model loads from the persistent storage, instead of downloading again.
 
-## Increasing your Persistent Storage Size
 
-<Note>Once increased, your persistent storage size cannot be decreased.</Note>
-
-By default, your account is given 50GB of persistent storage to start with. However, if you find you need more (for example, you get an error saying `disk quote exceeded`) then you can increase your allocation using the following steps:
-
-1. Check your current persistent storage allocation by running:
-
-```bash
-cerebrium storage get-capacity
-```
-
-This will return your current persistent storage allocation in GB.
-
-2. To increase your persistent storage allocation run:
-
-```bash
-cerebrium storage increase-capacity <number of GB to increase by>
-```
-
-This will return a confirmation message and your new persistent storage allocation in GB if successful.
