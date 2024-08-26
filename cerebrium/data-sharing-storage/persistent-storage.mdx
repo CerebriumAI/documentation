@@ -13,8 +13,6 @@ the volume can be accessed through `/persistent-storage` in your container insta
 
 To upload files to persistent storage, you can use the `cerebrium files cp local_path dest_path` command. This command copies files from your local machine to the specified destination path in the persistent storage. The dest_path is optional; if not provided, the files will be uploaded to the root of the persistent storage.
 
-Example usage:
-
 ```bash
 
 Usage: cerebrium files cp [OPTIONS] LOCAL_PATH REMOTE_PATH (Optional)
@@ -77,6 +75,11 @@ Examples:
 
 ### Real world example
 
+```bash
+wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
+cerebrium cp sam_vit_h_4b8939.pth segment-anything/sam_vit_h_4b8939.pth
+```
+
 As a simple example, suppose you have an external SAM model that you want to use in your custom deployment. You can download it to the cache
 as such:
 
@@ -84,12 +87,7 @@ as such:
 import os
 import torch
 
-file_path = "/persistent-storage/segment-anything/model.pt"
-# Check if the file already exists, if not download it
-if not os.path.exists("/persistent-storage/segment-anything/"):
-    response = requests.get("https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth")
-    with open(file_path, "wb") as f:
-        f.write(response.content)
+file_path = "/persistent-storage/segment-anything/sam_vit_h_4b8939.pth"
 
 # Load the model
 model = torch.jit.load(file_path)
