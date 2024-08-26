@@ -202,7 +202,7 @@ async def main(room_url: str, token: str = None):
 
 First, in our main function, we initialize the daily transport layer to receive/send the audio/video data from the Daily room we will connect to. You can see we pass the room_url
 we would like to join as well as a token to authenticate us programmatically joining. We also set our VAD stop seconds which is the amount of time we wait for a pause before our bot will respond - in this
- example, we set it to 200 milliseconds.
+example, we set it to 200 milliseconds.
 
 Next we connect to our locally running Deepgram models that are part of our Docker base image we specified in our cerebrium.toml - these are running on port 8082. This is where the Pipecat framework helps convert audio data to text
 and vice versa. We then follow the same patten to connect our locally running LLM model from our vLLM server.
