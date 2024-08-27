@@ -26,7 +26,7 @@ yarn installed already run `npm install --global yarn` in your terminal.
 
 ### 😎 Publishing Changes
 
-Changes will be deployed to production automatically after pushing to the default (`master`) branch.
+Changes are deployed to production automatically after pushing to the default (`master`) branch.
 
 You can also preview changes using PRs, which generates a preview link of the docs.
 
