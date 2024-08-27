@@ -14,10 +14,10 @@ Every Cerebrium Project comes with a 100GB volume by default. This volume is mou
 
 ### Uploading files
 
-To upload files to your persistent volume, you can use the `cerebrium volume cp local_path dest_path` command. This command copies files from your local machine to the specified destination path in the volume. The dest_path is optional; if not provided, the files will be uploaded to the root of the persistent volume.
+To upload files to your persistent volume, you can use the `cerebrium cp local_path dest_path` command. This command copies files from your local machine to the specified destination path in the volume. The dest_path is optional; if not provided, the files will be uploaded to the root of the persistent volume.
 
 ```bash
-Usage: cerebrium volume cp [OPTIONS] LOCAL_PATH REMOTE_PATH (Optional)
+Usage: cerebrium cp [OPTIONS] LOCAL_PATH REMOTE_PATH (Optional)
 
   Copy contents to persistent volume.
 
@@ -26,21 +26,21 @@ Options:
 
 Examples:
   # Copy a single file
-  cerebrium volume cp src_file_name.txt # copies to /src_file_name.txt
+  cerebrium cp src_file_name.txt # copies to /src_file_name.txt
 
-  cerebrium volume cp src_file_name.txt dest_file_name.txt # copies to /dest_file_name.txt
+  cerebrium cp src_file_name.txt dest_file_name.txt # copies to /dest_file_name.txt
 
   # Copy a directory
-  cerebrium volume cp dir_name # copies to the root directory
-  cerebrium volume cp dir_name sub_folder/ # copies to sub_folder/
+  cerebrium cp dir_name # copies to the root directory
+  cerebrium cp dir_name sub_folder/ # copies to sub_folder/
 ```
 
 ### Listing files
 
-To list the files on your persistent volume, you can use the cerebrium volume ls [remote_path] command. This command lists all files and directories within the specified remote_path. If no remote_path is provided, it lists the contents of the root directory of the persistent volume.
+To list the files on your persistent volume, you can use the cerebrium ls [remote_path] command. This command lists all files and directories within the specified remote_path. If no remote_path is provided, it lists the contents of the root directory of the persistent volume.
 
 ```bash
-Usage: cerebrium volume ls [OPTIONS] REMOTE_PATH (Optional)
+Usage: cerebrium ls [OPTIONS] REMOTE_PATH (Optional)
 
   List contents of persistent volume.
 
@@ -49,18 +49,18 @@ Options:
 
 Examples:
   # List all files in the root directory
-  cerebrium volume ls
+  cerebrium ls
 
   # List all files in a specific folder
-  cerebrium volume ls sub_folder/
+  cerebrium ls sub_folder/
 ```
 
 ### Deleting files
 
-To delete files or directories from your persistent volume, use the cerebrium volume rm remote_path command. This command removes the specified file or directory from the persistent volume. Be careful, as this operation is irreversible.
+To delete files or directories from your persistent volume, use the `cerebrium rm remote_path` command. This command removes the specified file or directory from the persistent volume. Be careful, as this operation is irreversible.
 
 ```bash
-Usage: cerebrium volume rm [OPTIONS] REMOTE_PATH
+Usage: cerebrium rm [OPTIONS] REMOTE_PATH
 
   Remove a file or directory from persistent volume.
 
@@ -69,10 +69,10 @@ Options:
 
 Examples:
   # Remove a specific file
-  cerebrium volume rm /file_name.txt
+  cerebrium rm /file_name.txt
 
   # Remove a directory and all its contents
-  cerebrium volume rm /sub_folder/
+  cerebrium rm /sub_folder/
 ```
 
 ### Real world example
