@@ -11,15 +11,15 @@ Your config file is a TOML file that you can use to specify the parameters of yo
 
 ## Creating a config file
 
-The fastest and simplest way to create a config file is to run the `cerebrium init` command and specify the directory in which you would like to create the config file.
-This command will create a `cerebrium.toml` file in your project root, which you can then edit to suit your needs.
+The fastest and simplest way to create a config file is to run the `cerebrium init` command and specify the directory in which you'd like to create the config file.
+This command creates a `cerebrium.toml` file in your project root, which you can then edit to suit your needs.
 You can specify any field you wish to be prepopulated with a specific value.
 
 ```bash
 cerebrium init my-project-dir --name=<your-app-name> --gpu=ADA_L4
 ```
 
-## Deployment Parameters
+## Deployment parameters
 
 Deployment parameters govern the persistent environment in which your model is deployed.
 These parameters are specified under the `cerebrium.deployment` section of your config file.
@@ -31,30 +31,32 @@ The available deployment parameters are:
 | `python_version` | The Python version available for your runtime | float | {interpreter_version}|
 | `include` | Local files to include in the deployment. | string | '[./\*, main.py]' |
 | `exclude` | Local Files to exclude from the deployment. | string | '[./.\*]' |
-| `docker_base_image_url` | The docker base image you would like to run | string | 'debian:bookworm-slim' |
-| `shell_commands` | A list of commands to run an application entrypoint script | list[string] | []
+| `docker_base_image_url` | The docker base image you'd like to run | string | 'debian:bookworm-slim' |
+| `shell_commands` | A list of commands to run an app entrypoint script | list[string] | []
 
-## Hardware Parameters
+## Hardware parameters
 
-The hardware parameters section is where you can define the specifications of the machine you would like to use for your deployment. This allows you to tailor your deployment to your specific needs, optimizing for cost or performance as you see fit.  
-These parameters are specified under the `cerebrium.hardware` section of your config file.
+The hardware parameters section defines the specifications of the machine used for deployment.
+This enables customization of the deployment to meet specific needs, optimizing for cost or performance.
+These parameters are specified under the `cerebrium.hardware` section of the config file.
 
 The available hardware parameters in your config are:
-| parameter | description | type | default |
-| --- | --- | --- | --- |
-| `cpu` | The number of CPU cores to use. | int | 2 |
-| `memory` | The amount of Memory to use in GB. | float | 14 |
-| `compute` | The GPU you would like to use. | string | CPU |
-| `gpu_count` | The number of GPUs to specify. | int | 1 |
-| `provider` | The provider you would like your deployment to be on. v4 only supports `aws` | string | aws |
-| `region` | The region you would like your deployment to be on. v4 only supports `us-east-1` | string | us-east-1 |
 
-### Available Hardware
+| parameter   | description                                                                  | type   | default   |
+|-------------|------------------------------------------------------------------------------|--------|-----------|
+| `cpu`       | The number of CPU cores to use.                                              | int    | 2         |
+| `memory`    | The amount of Memory to use in GB.                                           | float  | 14        |
+| `compute`   | The GPU you'd like to use.                                                   | string | CPU       |
+| `gpu_count` | The number of GPUs to specify.                                               | int    | 1         |
+| `provider`  | The provider you would like your deployment to be on. v4 only supports `aws` | string | aws       |
+| `region`    | The region you'd like your deployment to be on. v4 only supports `us-east-1` | string | us-east-1 |
+
+### Available hardware
 
 The following is the hardware available on Cerebrium
 
 | Name               | Provider | API Compatibility |
-| ------------------ | -------- | ----------------- |
+|--------------------|----------|-------------------|
 | `CPU`              | [aws]    | [v4]              |
 | `AMPERE_A10`       | [aws]    | [v4]              |
 | `ADA_L4`           | [aws]    | [v4]              |
@@ -66,29 +68,33 @@ The following is the hardware available on Cerebrium
 | `INF2`             | [aws]    | [v4]              |
 | `TRN1`             | [aws]    | [v4]              |
 
-## Scaling Parameters
+## Scaling parameters
 
-This section lets you configure how you would like your deployment to scale. You can use these parameters to control the minimum and maximum number of replicas to run, as well as the cooldown period between requests. For example, you could increase your cooldown time or even set a minimum number of replicas to run, increasing availability and avoiding cold starts.
+This section lets you configure how you'd like your deployment to scale. You can use these parameters to control the minimum and maximum number of replicas to run, as well as the cooldown period between requests. For example, you could increase your cooldown time or even set a minimum number of replicas to run, increasing availability and avoiding cold starts.
 
 These parameters are specified under the `cerebrium.scaling` section of your config file.
 
 | parameter      | description                                                                                           | type | default    |
-| -------------- | ----------------------------------------------------------------------------------------------------- | ---- | ---------- |
+|----------------|-------------------------------------------------------------------------------------------------------|------|------------|
 | `min_replicas` | The minimum number of replicas to run at all times.                                                   | int  | 0          |
 | `max_replicas` | The maximum number of replicas to scale to.                                                           | int  | plan limit |
 | `cooldown`     | The number of seconds to keep your model warm after each request. It resets after every request ends. | int  | 60         |
 
-## Adding Dependencies
+## Adding dependencies
 
-The dependencies section of your config file is where you can specify any dependencies you would like to install in your deployment. We support **pip**, **conda** and **apt** dependencies and you can specify each of these in their relevant subsection of the dependencies section.
+The dependencies section of the config file is where any dependencies required for deployment can be specified.
+Supported dependency types include **pip**, **conda**, and **apt**,
+each of which can be specified in the relevant subsection of the dependencies section.
 
-For each dependency type, you can specify the name of the package you would like to install and the version constraints. If you do not want to specify any version constraints, you can use the `latest` keyword to install the latest version of the package.
+For each dependency type, the name of the package and version constraints can be specified.
+If no version constraints are required, the `latest` keyword can be used to install the most recent version of the package.
 
-If you have an existing **requirements.txt**, **pkglist.txt** or **conda_pkglist.txt**, we'll prompt you to automatically integrate these into your config file when you run `cerebrium deploy`.
+If an existing **requirements.txt**, **pkglist.txt**, or **conda_pkglist.txt** is available,
+a prompt appears to automatically integrate these into the config file when running `cerebrium deploy`.
 
 ### pip
 
-Your pip dependencies are specified under the `cerebrium.dependencies.pip` section of your config file.
+Pip dependencies are specified under the `cerebrium.dependencies.pip` section of the config file.
 An example of a pip dependency is shown below:
 
 ```toml
@@ -97,9 +103,9 @@ torch = ">=2.0.0"
 numpy = "latest"
 ```
 
-### conda
+### Conda
 
-Similarly, your conda dependencies are specified under the `cerebrium.dependencies.conda` section of your config file.
+Similarly, conda dependencies are specified under the `cerebrium.dependencies.conda` section of the config file.
 An example of a conda dependency is shown below:
 
 ```toml
@@ -108,10 +114,10 @@ cuda = ">=11.7"
 cudatoolkit = "11.7"
 ```
 
-### apt
+### Apt
 
-Finally, your apt dependencies are specified under the `cerebrium.dependencies.apt` section of your config file.  
-These are any package that you would install using `apt-get install` on a Linux machine.
+Finally, apt dependencies are specified under the `cerebrium.dependencies.apt` section of the config file.
+These are any packages that'd be installed using `apt-get install` on a Linux machine.
 An example of an apt dependency is shown below:
 
 ```toml
@@ -122,17 +128,16 @@ An example of an apt dependency is shown below:
 
 ### Integrate existing requirements files
 
-If you have an existing **requirements.txt**, **pkglist.txt** or **conda_pkglist.txt**, files in your project, we'll prompt you to automatically integrate these into your config file when you run `cerebrium deploy`.
+If an existing **requirements.txt**, **pkglist.txt**, or **conda_pkglist.txt** file is present in the project,
+a prompt appears to automatically integrate these into the config file when running `cerebrium deploy`.
 
-This way, you can leverage external tools to manage your dependencies and have them automatically integrated into your deployment.  
-For example, you can use the following command to generate a `requirements.txt` file from your current environment:
+This approach allows leveraging external tools to manage dependencies, which are then automatically integrated into the deployment.
+For example, the following command can be used to generate a `requirements.txt` file from the current environment:
 
-## Config File Example
+## Config file example
 
-That was a lot of information!  
-Let's see an example of a config file in action.
-
-Below is an example of a config file that takes advantage of all the features we've discussed so far.
+That was a lot of information.
+Below is an example of a config file that demonstrates all the features discussed so far.
 
 ```toml
 [cerebrium.deployment]
