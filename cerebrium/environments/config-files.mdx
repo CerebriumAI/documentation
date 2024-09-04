@@ -43,7 +43,7 @@ These parameters are specified under the `cerebrium.hardware` section of the con
 The available hardware parameters in your config are:
 
 | parameter   | description                                                                  | type   | default   |
-|-------------|------------------------------------------------------------------------------|--------|-----------|
+| ----------- | ---------------------------------------------------------------------------- | ------ | --------- |
 | `cpu`       | The number of CPU cores to use.                                              | int    | 2         |
 | `memory`    | The amount of Memory to use in GB.                                           | float  | 14        |
 | `compute`   | The GPU you'd like to use.                                                   | string | CPU       |
@@ -56,7 +56,7 @@ The available hardware parameters in your config are:
 The following is the hardware available on Cerebrium
 
 | Name               | Provider | API Compatibility |
-|--------------------|----------|-------------------|
+| ------------------ | -------- | ----------------- |
 | `CPU`              | [aws]    | [v4]              |
 | `AMPERE_A10`       | [aws]    | [v4]              |
 | `ADA_L4`           | [aws]    | [v4]              |
@@ -75,7 +75,7 @@ This section lets you configure how you'd like your deployment to scale. You can
 These parameters are specified under the `cerebrium.scaling` section of your config file.
 
 | parameter      | description                                                                                           | type | default    |
-|----------------|-------------------------------------------------------------------------------------------------------|------|------------|
+| -------------- | ----------------------------------------------------------------------------------------------------- | ---- | ---------- |
 | `min_replicas` | The minimum number of replicas to run at all times.                                                   | int  | 0          |
 | `max_replicas` | The maximum number of replicas to scale to.                                                           | int  | plan limit |
 | `cooldown`     | The number of seconds to keep your model warm after each request. It resets after every request ends. | int  | 60         |
