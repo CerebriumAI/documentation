@@ -1,0 +1,27 @@
+---
+title: "App & Inference Lifecycles"
+description: "Understanding the Cerebrium lifecycle can help you get the most out of it."
+---
+
+## App lifecycle
+
+Builds
+
+1. create_app is called
+2. files are zipped and uploaded
+3. app image is created on a CPU machine
+4. the app is started as a basic smoke-test
+5. build succeeds or fails - ready or notReady
+
+## Inference lifecycle
+
+1. request is made
+2. if a running machine has capacity, the work is scheduled
+3. if not, a machine is started
+4. cooldown period
+5. no more requests - shutdown
+
+## What's a cold start?
+
+The time from request → user code starts
+
