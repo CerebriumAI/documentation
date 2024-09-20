@@ -1,294 +1,229 @@
 ---
-title: "Migrating from Replicate"
-description: "Deploy a Model from Replicate on Cerebrium"
+title: "Migrating from Hugging Face"
+description: "Deploy a Model from Hugging Face on Cerebrium"
 ---
 
-### Introduction
+## Introduction
 
-In this tutorial, I will show you how you can migrate your workloads from Replicate to Cerebrium in less than 5 minutes!
+This guide provides a detailed walkthrough for migrating from Hugging Face inference endpoints to Cerebrium's serverless infrastructure platform. We'll cover the key differences between the two services, the benefits of migration, and provide step-by-step instructions for setting up and deploying a Llama 3.1 8B model on Cerebrium.
 
-As an example, we will be migrating the model SDXL-Lightning-4step from ByteDance. You can find the link to it on replicate [here](https://replicate.com/bytedance/sdxl-lightning-4step):
+## Comparing Hugging Face and Cerebrium
 
-It is best to look at the code in the [GitHub repo](https://github.com/lucataco/cog-sdxl-lightning-4step) and follow along as we migrate it.
+Before diving into the migration process, let's compare the key features and performance metrics of Hugging Face inference endpoints and Cerebrium's serverless infrastructure platform.
 
-To start, let us create our cerebrium project
+| **Feature** | **Hugging Face** | **Cerebrium** |
+| --- | --- | --- |
+| **Pricing** | $0.000278 per second | $0.0004676 per second |
+| **Minimum cooldown period** | 15m | 1s |
+| **First build timed** | 9m25s | 49s |
+| **Subsequent build times** | 1m50s - 2m15s | 58s - 1m5s |
+| **Response time (From cold)** | 1m45s - 1m48s | 8s - 17s |
+| **Response time (From warm)** | 6s | 2s |
+| **Co-locating your models** | Requires a separate repository for each inference endpoint and mode | Co-locate multiple models from various sources in a single application |
+| **Response handling (From cold)** | Throws an error | Waits for infrastructure to become available and returns a response |
 
-```python
-cerebrium init cog-migration-sdxl
+## Benefits of Migrating to Cerebrium
+
+1. **Faster build times**: Cerebrium significantly reduces build times by up to 95%, especially for subsequent builds (An additional 56% reduction). This can greatly improve iteration speed and the cost of running experiments with complex ML applications.
+2. **Flexible cooldown period**: With a minimum cooldown period of just 1 second (compared to Huggingface's 15 minutes), Cerebrium allows for more efficient resource utilization and cost management.
+3. **Improved cold start handling**: When encountering a cold start, Cerebrium waits for the infrastructure to become available instead of throwing an error. This results in a better user experience and fewer failed requests.
+4. **Model colocation flexibility**: Cerebrium doesn't require a separate repository for each inference endpoint, simplifying the management of models. Each function in your application becomes an endpoint automatically, which means that you can run multiple models from the same application to save costs.
+5. **Pay-per-use model**: Cerebrium's pricing model ensures you only pay for the compute resources you actually use. This can lead to cost savings, especially for sporadic or low-volume inference needs.
+6. **Competitive performance**: Cerebrium only adds up to 50ms of latency to your inference requests. This is why we’re able to outperform our competitors in response times from a warm start. In addition, our caching mechanisms and highly optimized orchestration pipelines help your applications start from a cold state in an average of 2-5 seconds.
+7. **Customizable infrastructure**: Cerebrium allows for fine-grained control over the infrastructure specifications, enabling you to optimize for your specific use case.
+
+## Migration process
+
+Let's walk through the process of migrating a Llama 3.1 8B model from Huggingface to Cerebrium. We'll cover the entire process from setting up the configuration to deploying and using the model.
+
+### 1. Cerebrium setup and configuration
+
+To migrate to Cerebrium, we'll need to set up a few files and configure our environment. Let's go through this step-by-step.
+
+#### 1.1 Install Cerebrium CLI
+
+First, install the Cerebrium CLI:
+
+```bash
+pip install cerebrium --upgrade
 ```
 
-Now Cerebrium and Replicate have a common setup in that they both have a setup file. **cog.yaml** and **cerebrium.toml** for Replicate and Cerebrium respectively.
+#### 1.2 Update your requirements file
 
-Looking at the cog.yaml, we need to add/change the following in our cerebrium.toml
+Scaffold your application by running `cerebrium init [PROJECT_NAME]`. During the initialisation, a `cerebrium.toml`is created. This file configures the deployment, hardware, scaling, and dependencies for your Cerebrium project. Update your `cerebrium.toml` file to reflect the following:
 
-```python
+```toml
 [cerebrium.deployment]
-name = "cog-migration-sdxl"
+name = "llama-8b-vllm"
 python_version = "3.11"
+docker_base_image_url = "debian:bookworm-slim"
 include = "[./*, main.py, cerebrium.toml]"
-exclude = "[./example_exclude]"
-docker_base_image_url = "nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04"
-shell_commands = [
-    "curl -o /usr/local/bin/pget -L 'https://github.com/replicate/pget/releases/download/v0.6.2/pget_linux_x86_64' && chmod +x /usr/local/bin/pget"
-]
+exclude = "[.*]"
 
 [cerebrium.hardware]
-region = "us-east-1"
-provider = "aws"
-compute = "AMPERE_A10"
 cpu = 2
 memory = 12.0
-gpu_count = 1
+compute = "AMPERE_A10"
+
+[cerebrium.scaling]
+min_replicas = 0
+max_replicas = 5
+cooldown = 30
 
 [cerebrium.dependencies.pip]
-"accelerate" = "latest"
-"diffusers" = "latest"
-"torch" = "==2.0.1"
-"torchvision" = "==0.15.2"
-"transformers" = "latest"
+sentencepiece = "latest"
+torch = "latest"
+transformers = "latest"
+accelerate = "latest"
+xformers = "latest"
+pydantic = "latest"
+bitsandbytes = "latest"
 
-[cerebrium.dependencies.apt]
-"curl" = "latest"
 ```
 
-From the above we do the following:
+Let's break down this configuration:
 
-- Since we need a GPU, we need to use one of the base images that come from Nvidia that has the CUDA libraries installed. We use the Cuda 12 image. You can see other images [here](https://docs.cerebrium.ai/cerebrium/environments/custom-images)
-- Depending on the type of CPU/GPU you need, you can update the hardware settings to run your application. You can see the full list available [here](https://docs.cerebrium.ai/available-hardware)
-- We copy across the pip packages we need to install
-- Replicate uses pget to download model weights - we therefore need to download it to use it. We do this by installing curl and then adding the shell commands in our cerebrium.toml
+- `cerebrium.deployment`: Specifies the project name, Python version, base Docker image, and which files to include/exclude as project files.
+- `cerebrium.hardware`: Defines the CPU, memory, and GPU requirements for your deployment.
+- `cerebrium.scaling`: Configures auto-scaling behavior, including minimum and maximum replicas, and cooldown period.
+- `cerebrium.dependencies.pip`: Lists the Python packages required for your project.
 
-Great now our setup is the same in terms of our hardware and environment.
+#### 1.3 Update your code
 
-Now the cog.yaml usually indicates the file that the endpoint calls - in this case, **predict.py** so let us inspect that file.
-
-Cerebrium has a similar notion in that the main file that is called on our side is **main.py**
-
-To start, I copy across all import statements and constant variables that have nothing to do with Replicate/Cog. In this case:
+Next, Update your `main.py` file. This is where you'll define your model loading and inference logic.
 
 ```python
-import os
-import time
 import torch
-import subprocess
-import numpy as np
-from typing import List
-from transformers import CLIPImageProcessor
-from diffusers import (
-    StableDiffusionXLPipeline,
-    DDIMScheduler,
-    DPMSolverMultistepScheduler,
-    EulerAncestralDiscreteScheduler,
-    EulerDiscreteScheduler,
-    HeunDiscreteScheduler,
-    PNDMScheduler,
-    KDPM2AncestralDiscreteScheduler,
-)
-from diffusers.pipelines.stable_diffusion.safety_checker import (
-    StableDiffusionSafetyChecker,
-)
+from cerebrium import get_secret
+from huggingface_hub import login
+from pydantic import BaseModel
+from transformers import AutoModelForCausalLM, AutoTokenizer, GenerationConfig
 
-UNET = "sdxl_lightning_4step_unet.pth"
-MODEL_BASE = "stabilityai/stable-diffusion-xl-base-1.0"
-UNET_CACHE = "unet-cache"
-BASE_CACHE = "checkpoints"
-SAFETY_CACHE = "safety-cache"
-FEATURE_EXTRACTOR = "feature-extractor"
-MODEL_URL = "https://weights.replicate.delivery/default/sdxl-lightning/sdxl-1.0-base-lightning.tar"
-SAFETY_URL = "https://weights.replicate.delivery/default/sdxl/safety-1.0.tar"
-UNET_URL = "https://weights.replicate.delivery/default/comfy-ui/unet/sdxl_lightning_4step_unet.pth.tar"
+# Log into Hugging Face Hub
+login(token=get_secret("HF_AUTH_TOKEN"))
 
-class KarrasDPM:
-    def from_config(config):
-        return DPMSolverMultistepScheduler.from_config(config, use_karras_sigmas=True)
+model_path = "meta-llama/Meta-Llama-3.1-8B-Instruct"
+cache_directory = "/persistent-storage"
 
-
-SCHEDULERS = {
-    "DDIM": DDIMScheduler,
-    "DPMSolverMultistep": DPMSolverMultistepScheduler,
-    "HeunDiscrete": HeunDiscreteScheduler,
-    "KarrasDPM": KarrasDPM,
-    "K_EULER_ANCESTRAL": EulerAncestralDiscreteScheduler,
-    "K_EULER": EulerDiscreteScheduler,
-    "PNDM": PNDMScheduler,
-    "DPM++2MSDE": KDPM2AncestralDiscreteScheduler,
-}
-```
-
-Replicate makes use of classes for their syntax which we shy away from - we run whatever python code you give us and make each function an endpoint. Therefore, when you see a reference to **self.** remove it throughout the code
-
-There is a folder in the repo called “feature-extractor” which we need to have in our repository. We could git clone the repo, however, its quite small, so I would just copy the contents of the folder and put it in your cerebrium project ie:
-
-![Folder Structure](/images/migrations/replicate-folder-structure.png)
-
-The setup function on Replicate runs on each cold start (ie: each new instantiation of the application) and so we just define it as normal code that gets run at the top of our file. I put it right below my import statements above.
-
-```python
-def download_weights(url, dest):
-    start = time.time()
-    print("downloading url: ", url)
-    print("downloading to: ", dest)
-    subprocess.check_call(["pget", "-x", url, dest], close_fds=False)
-    print("downloading took: ", time.time() - start)
-
-"""Load the model into memory to make running multiple predictions efficient"""
-start = time.time()
-print("Loading safety checker...")
-if not os.path.exists(SAFETY_CACHE):
-    download_weights(SAFETY_URL, SAFETY_CACHE)
-print("Loading model")
-if not os.path.exists(BASE_CACHE):
-    download_weights(MODEL_URL, BASE_CACHE)
-print("Loading Unet")
-if not os.path.exists(UNET_CACHE):
-    download_weights(UNET_URL, UNET_CACHE)
-self.safety_checker = StableDiffusionSafetyChecker.from_pretrained(
-    SAFETY_CACHE, torch_dtype=torch.float16
-).to("cuda")
-self.feature_extractor = CLIPImageProcessor.from_pretrained(FEATURE_EXTRACTOR)
-print("Loading txt2img pipeline...")
-self.pipe = StableDiffusionXLPipeline.from_pretrained(
-    MODEL_BASE,
+# Set up tokenizer and model
+tokenizer = AutoTokenizer.from_pretrained(model_path, cache_dir=cache_directory)
+tokenizer.pad_token_id = 0
+model = AutoModelForCausalLM.from_pretrained(
+    model_path,
+    load_in_8bit=True,
     torch_dtype=torch.float16,
-    variant="fp16",
-    cache_dir=BASE_CACHE,
-    local_files_only=True,
-).to("cuda")
-unet_path = os.path.join(UNET_CACHE, UNET)
-self.pipe.unet.load_state_dict(torch.load(unet_path, map_location="cuda"))
-print("setup took: ", time.time() - start)
-```
+    device_map="auto",
+    cache_dir=cache_directory,
+)
 
-The code above downloads the model weights if they don’t exist and then instantiates the models. To persist files/data on Cerebrium, you need to store it on the path **/persistent-storage**. So we can update the following paths above:
+class Item(BaseModel):
+    prompt: str
+    temperature: float
+    top_p: float
+    top_k: int
+    max_tokens: int
+    frequency_penalty: float
 
-```python
-UNET_CACHE = "/persistent-storage/unet-cache"
-BASE_CACHE = "/persistent-storage/checkpoints"
-SAFETY_CACHE = "/persistent-storage/safety-cache"
-```
-
-We can then copy the two other functions, run_safety_checker() and predict(). In Cerebrium, the parameters of a function is the json data it expects if you make a request to it. We can then define it as follows:
-
-```python
-def run_safety_checker(image):
-    safety_checker_input = feature_extractor(image, return_tensors="pt").to(
-        "cuda"
-    )
-    np_image = [np.array(val) for val in image]
-    image, has_nsfw_concept = safety_checker(
-        images=np_image,
-        clip_input=safety_checker_input.pixel_values.to(torch.float16),
-    )
-    return image, has_nsfw_concept
-
-def predict(
-    prompt: str = "A superhero smiling",
-    negative_prompt: str = "worst quality, low quality",
-    width: int = 1024,
-    height: int = 1024,
-    num_outputs: int = 1,
-    scheduler: str = "K_EULER",
-    num_inference_steps: int = 4,
-    guidance_scale: float = 0,
-    seed: int = None,
-    disable_safety_checker: bool = False,
+def run(
+        prompt, temperature=0.6, top_p=0.9, top_k=0, max_tokens=512, frequency_penalty=1
 ):
-    """Run a single prediction on the model"""
-    global pipe
-    if seed is None:
-        seed = int.from_bytes(os.urandom(4), "big")
-    print(f"Using seed: {seed}")
-    generator = torch.Generator("cuda").manual_seed(seed)
-
-    # OOMs can leave vae in bad state
-    if pipe.vae.dtype == torch.float32:
-        pipe.vae.to(dtype=torch.float16)
-
-    sdxl_kwargs = {}
-    print(f"Prompt: {prompt}")
-    sdxl_kwargs["width"] = width
-    sdxl_kwargs["height"] = height
-
-    pipe.scheduler = SCHEDULERS[scheduler].from_config(
-        pipe.scheduler.config, timestep_spacing="trailing"
+    item = Item(
+        prompt=prompt,
+        temperature=temperature,
+        top_p=top_p,
+        top_k=top_k,
+        max_tokens=max_tokens,
+        frequency_penalty=frequency_penalty,
     )
 
-    common_args = {
-        "prompt": [prompt] * num_outputs,
-        "negative_prompt": [negative_prompt] * num_outputs,
-        "guidance_scale": guidance_scale,
-        "generator": generator,
-        "num_inference_steps": num_inference_steps,
-    }
+    # Place prompt in template
+    inputs = tokenizer(
+        item.prompt, return_tensors="pt", max_length=512, truncation=True, padding=True
+    )
+    input_ids = inputs["input_ids"].to("cuda")
 
-    output = pipe(**common_args, **sdxl_kwargs)
-
-    if not disable_safety_checker:
-        _, has_nsfw_content = run_safety_checker(output.images)
-
-
-        output_paths = []
-        for i, image in enumerate(output.images):
-            if not disable_safety_checker:
-                if has_nsfw_content[i]:
-                    print(f"NSFW content detected in image {i}")
-                    continue
-            output_path = f"/tmp/out-{i}.png"
-            image.save(output_path)
-            output_paths.append(Path(output_path))
-
-        if len(output_paths) == 0:
-            raise Exception(
-                "NSFW content detected. Try running it again, or try a different prompt."
-            )
-
-        return output_paths
-```
-
-The above returns a path to the generated images, but we would like to return it as a base64 encoded image so that users can render the image instantly. You are welcome to upload the images to a storage bucket to reference directly - its up to you.
-
-```python
-from io import BytesIO
-import base64
-
-encoded_images = []
-    for i, image in enumerate(output.images):
-        if not disable_safety_checker:
-            if has_nsfw_content[i]:
-                print(f"NSFW content detected in image {i}")
-                continue
-        buffered = BytesIO()
-        image.save(buffered, format="PNG")
-        img_b64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
-        encoded_images.append(img_b64)
-
-    if len(encoded_images) == 0:
-        raise Exception(
-            "NSFW content detected. Try running it again, or try a different prompt."
+    # Set up generation config
+    generation_config = GenerationConfig(
+        temperature=temperature,
+        top_p=top_p,
+        top_k=top_k,
+        max_tokens=max_tokens,
+    )
+    with torch.no_grad():
+        outputs = model.generate(
+            input_ids=input_ids,
+            generation_config=generation_config,
+            return_dict_in_generate=True,
+            output_scores=True,
         )
+    result = tokenizer.decode(outputs.sequences[0], skip_special_tokens=True)
 
-    return encoded_images
+    return {"result": result}
 ```
 
-Now we can run `cerebrium deploy`. You should see your application build in under 90 seconds.
+This script does the following:
 
-It should output the curl statement to run your application:
+1. Authenticates with Hugging Face using a secret token. Don’t forget to add this secret on your cerebrium dashboard.
+2. Initializes the Llama 3.1 8B model using vLLM for efficient inference.
+3. Defines an `Item` class to structure and validate (using Pydantic) the input parameters.
+4. Implements a `run` function that generates text based on the provided prompt and parameters.
 
-![Curl Request](/images/migrations/replicate-curl.png)
+### 2. Deployment
 
-Make sure to replace the end of the URL with **/predict** (since that is the function we are calling) and send it the required JSON data. This is our result
+To deploy your model to Cerebrium, use the following CLI command in your project directory:
+
+```bash
+cerebrium deploy
+```
+
+This command will use the configuration in `cerebrium.toml` to set up and deploy your model.
+
+### 3. Using the Deployed Model
+
+Once deployed, you can use your model as follows:
 
 ```python
-{
-    "run_id": "c6797f2e-333a-9e89-bafa-4dd0f4fbe22a",
-    "result": ["iVBORw0KGgoAAAANSUhEUgAABAAAAAQACAIAAADwf7zUAA...."],
-    "run_time_ms": 43623.4176158905
+import requests
+import json
+
+url = "https://api.cortex.cerebrium.ai/v4/[PROJECT_NAME]/llama-8b-vllm/run"
+
+payload = json.dumps({"prompt": "tell me about yourself"})
+
+headers = {
+  'Authorization': 'Bearer [CEREBRIUM_API_KEY]',
+  'Content-Type': 'application/json'
 }
+
+response = requests.request("POST", url, headers=headers, data=payload)
+
+print(response.text)
 ```
 
-You should be all ready to go!
+Make sure to replace `[CEREBRIUM_API_KEY]` with your Cerebrium API key, which can be found in your dashboard under API keys. This code sends a POST request to your deployed model's endpoint with a prompt, and prints the model's response.
 
-You can read further about some of the functionality Cerebrium has to offer
+## Additional Considerations
+
+When migrating from Huggingface to Cerebrium, keep the following points in mind:
+
+1. **API structure**: The Cerebrium implementation uses a different API structure compared to Huggingface. Make sure to update your client-side code accordingly.
+2. **Authentication**: Ensure you have set up the `HF_AUTH_TOKEN` secret in Cerebrium for authenticating with Hugging Face. You can do this through the Cerebrium dashboard.
+3. **Model permissions**: The example uses the Llama 3.1 8B Instruct model. Ensure you have the necessary permissions to use this model, as it may require special access.
+4. **Hardware optimization**: The `cerebrium.toml` file specifies the hardware requirements. You may need to adjust these based on your specific model and performance needs.
+5. **Dependency management**: Regularly review and update the dependencies listed in `cerebrium.toml` to ensure you're using the latest compatible versions.
+6. **Scaling configuration**: The example sets up auto-scaling with 0 to 5 replicas and a 30-second cooldown. Monitor your usage patterns and adjust these parameters as needed to balance performance and cost.
+7. **Cold starts**: While Cerebrium handles cold starts more gracefully than Huggingface, be aware that the first request after a period of inactivity may still take longer to process. Set your cooldown period accordingly, to strike a balance between cost and performance.
+8. **Monitoring and logging**: Familiarize yourself with Cerebrium's monitoring and logging capabilities to track your model's performance and usage effectively.
+9. **Cost management**: Although Cerebrium's pay-per-use model can be more cost-effective, set up proper monitoring and alerts to avoid unexpected costs, especially if you're running large models or handling high volumes of requests.
+10. **Testing**: Thoroughly test your migrated models to ensure they perform as expected on the new platform. Pay special attention to response times, output quality, and error handling.
+
+## Conclusion
+
+Migrating from Huggingface inference endpoints to Cerebrium's serverless infrastructure platform offers numerous benefits, including faster build times, more flexible resource management, and lower costs. While the migration process requires some setup and code changes, the resulting deployment can provide improved performance and scalability for your machine learning models.
+
+**Remember:** Continuously monitor and optimize your deployment as you use it in production, and don't hesitate to reach out to support or join our Slack and Discord communities if you encounter any issues or have questions during the migration process.
+
+You can read further about some of the functionality Cerebrium has to offer, here:
 
 - [Secrets](../cerebrium/environments/using-secrets)
 - [Model scaling](../cerebrium/environments/model-scaling)

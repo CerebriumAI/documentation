@@ -140,7 +140,10 @@
     },
     {
       "group": "Migrations",
-      "pages": ["migrations/replicate"]
+      "pages": [
+        "migrations/replicate",
+        "migrations/hugging-face"
+      ]
     }
   ],
   "analytics": {
