@@ -11,16 +11,16 @@ This guide provides a detailed walkthrough for migrating from Hugging Face infer
 
 Before diving into the migration process, let's compare the key features and performance metrics of Hugging Face inference endpoints and Cerebrium's serverless infrastructure platform.
 
-| **Feature** | **Hugging Face** | **Cerebrium** |
-| --- | --- | --- |
-| **Pricing** | $0.000278 per second | $0.0004676 per second |
-| **Minimum cooldown period** | 15m | 1s |
-| **First build timed** | 9m25s | 49s |
-| **Subsequent build times** | 1m50s - 2m15s | 58s - 1m5s |
-| **Response time (From cold)** | 1m45s - 1m48s | 8s - 17s |
-| **Response time (From warm)** | 6s | 2s |
-| **Co-locating your models** | Requires a separate repository for each inference endpoint and mode | Co-locate multiple models from various sources in a single application |
-| **Response handling (From cold)** | Throws an error | Waits for infrastructure to become available and returns a response |
+| **Feature**                       | **Hugging Face**                                                    | **Cerebrium**                                                          |
+| --------------------------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| **Pricing**                       | $0.000278 per second                                                | $0.0004676 per second                                                  |
+| **Minimum cooldown period**       | 15m                                                                 | 1s                                                                     |
+| **First build timed**             | 9m25s                                                               | 49s                                                                    |
+| **Subsequent build times**        | 1m50s - 2m15s                                                       | 58s - 1m5s                                                             |
+| **Response time (From cold)**     | 1m45s - 1m48s                                                       | 8s - 17s                                                               |
+| **Response time (From warm)**     | 6s                                                                  | 2s                                                                     |
+| **Co-locating your models**       | Requires a separate repository for each inference endpoint and mode | Co-locate multiple models from various sources in a single application |
+| **Response handling (From cold)** | Throws an error                                                     | Waits for infrastructure to become available and returns a response    |
 
 ## Benefits of Migrating to Cerebrium
 
