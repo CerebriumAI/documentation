@@ -30,23 +30,12 @@ To start, your cerebrium.toml file is where you can set your compute/environment
 
 ```toml
 
-[cerebrium.build]
-predict_data = "{\"prompt\": \"Here is some example predict data for your cerebrium.toml which will be used to test your predict function on build.\"}"
-force_rebuild = true
-hide_public_endpoint = false
-disable_animation = false
-disable_build_logs = false
-disable_syntax_check = false
-disable_predict = false
-log_level = "INFO"
-disable_confirmation = false
-
 [cerebrium.deployment]
 name = "sdxl"
 python_version = "3.10"
 include = "[./*, main.py, cerebrium.toml]"
 exclude = "[./.*, ./__*]"
-docker_base_image_url = "nvidia/cuda:12.1.1-runtime-ubuntu22.04"
+docker_base_image_url = "debian:bookworm-slim"
 
 [cerebrium.hardware]
 region = "us-east-1"
