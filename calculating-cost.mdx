@@ -9,17 +9,17 @@ view the pricing of various compute on our [pricing page](https://www.cerebrium.
 
 When you deploy a model, there are two processes we charge you for:
 
-1. We charge you for the build process where we set up your model environment. In this step, we set up a Python environment according to your parameters before downloading and installing the required apt packages, Conda and Python packages as well as any model files you require.  
+1. We charge you for the build process where we set up your app environment. In this step, we set up a Python environment according to your parameters before downloading and installing the required apt packages, Conda and Python packages as well as any model files you require.
    You are only charged for a build if we need to rebuild your environment, ie: you have run a `build` or `deploy` command and have changed your requirements, parameters or code. Note that we cache each of the steps in a build so subsequent builds will cost substantially less than the first.
 
-2. The model runtime. This is the amount of time it takes your code to run from start to finish on each request. There are 3 costs to consider here:
+2. The app runtime. This is the amount of time it takes your code to run from start to finish on each request. There are 3 costs to consider here:
 
 - <u>Cold start</u>: This is the amount of time it takes to spin up a server(s),
   load your environment, connect storage etc. This is part of the Cerebrium
   service and something we are working on every day to get as low as possible.
   <b>We do not charge you for this!</b>
 - <u>Model initialization</u>: This part of your code is outside of the predict
-  function and only runs when your model incurs a cold start. You are charged
+  function and only runs when your app incurs a cold start. You are charged
   for the amount of time it takes for this code to run. Typically this is
   loading a model into GPU RAM.
 - <u>Predict runtime</u>: This is the code stored in your predict function and
@@ -34,7 +34,7 @@ The model you wish to deploy requires:
 - 20GB Memory: 20 \* $0.00000659 per second
 - 10 GB persistent storage: 10 \* $0.3 per month
 
-In our situation, your model works on the first deployment and so you incur only one build process of 2 minutes. Additionally, let's say that the model has 10 cold starts a day with an average initialization of 2 seconds and lastly and average runtime (predict) of 2 seconds. Let us calculate your
+In our situation, your app works on the first deployment and so you incur only one build process of 2 minutes. Additionally, let's say that the app has 10 cold starts a day with an average initialization of 2 seconds and lastly and average runtime (predict) of 2 seconds. Let us calculate your
 expected cost at month end with you expecting to do 100 000 model inferences.
 
 ```python

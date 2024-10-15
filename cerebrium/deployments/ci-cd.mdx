@@ -3,7 +3,7 @@ title: "CI/CD Pipelines"
 description: "Integrate Cerebrium into your CI/CD workflow for automated deployments"
 ---
 
-If you would like to automatically deploy a new version of your model to production/development once you have merged into the
+If you would like to automatically deploy a new version of your app to production/development once you have merged into the
 respective branch you can do so using the commands below. We will be using a GitHub actions workflow.
 
 ### 1. Get your Cerebrium OAuth credentials
@@ -38,7 +38,7 @@ In this flow, we do the following:
 1. Install a python version of our choice (3.8 to 3.11)
 2. Pip install the cerebrium package
 3. Login to Cerebrium using our credentials
-4. Deploy our model
+4. Deploy our app
 5. Notify a Slack channel of successful deployment
 
 ```
@@ -83,14 +83,14 @@ jobs:
       - name: Add Auth keys
         run: cerebrium save-auth-config "$ACCESS_TOKEN" "$REFRESH_TOKEN" "$PROJECT_ID"
 
-      - name: Deploy Model
+      - name: Deploy App
         run: cerebrium deploy
 
       - name: Notify Slack
         uses: someimportantcompany/github-actions-slack-message@v1
         with:
           webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
-          text: "Cerebrium model deployed to production! :tada:"
+          text: "Cerebrium app deployed to production! :tada:"
         if: github.ref == 'refs/heads/master'
 
 ```

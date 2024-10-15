@@ -21,18 +21,18 @@ cerebrium init my-project-dir --name=<your-app-name> --gpu=ADA_L4
 
 ## Deployment Parameters
 
-Deployment parameters govern the persistent environment in which your model is deployed.
+Deployment parameters govern the persistent environment in which your app is deployed.
 These parameters are specified under the `cerebrium.deployment` section of your config file.
 
 The available deployment parameters are:
 | parameter | description | type | default |
 | --- | --- | --- | --- |
-| `name` | The name of your deployment | string | my-model |
+| `name` | The name of your app | string | my-app |
 | `python_version` | The Python version available for your runtime | float | {interpreter_version}|
 | `include` | Local files to include in the deployment. | string | '[./\*, main.py]' |
 | `exclude` | Local Files to exclude from the deployment. | string | '[./.\*]' |
 | `docker_base_image_url` | The docker base image you would like to run | string | 'debian:bookworm-slim' |
-| `shell_commands` | A list of commands to run an application entrypoint script | list[string] | []
+| `shell_commands` | A list of commands to run an app entrypoint script | list[string] | []
 
 ## Hardware Parameters
 
@@ -76,7 +76,7 @@ These parameters are specified under the `cerebrium.scaling` section of your con
 | -------------- | ----------------------------------------------------------------------------------------------------- | ---- | ---------- |
 | `min_replicas` | The minimum number of replicas to run at all times.                                                   | int  | 0          |
 | `max_replicas` | The maximum number of replicas to scale to.                                                           | int  | plan limit |
-| `cooldown`     | The number of seconds to keep your model warm after each request. It resets after every request ends. | int  | 60         |
+| `cooldown`     | The number of seconds to keep your app warm after each request. It resets after every request ends. | int  | 60         |
 
 ## Adding Dependencies
 
@@ -136,7 +136,7 @@ Below is an example of a config file that takes advantage of all the features we
 
 ```toml
 [cerebrium.deployment]
-name = "my-model"
+name = "my-app"
 python_version = "3.10"
 include = "[./*, main.py]"
 exclude = "[./.*, ./__*]"

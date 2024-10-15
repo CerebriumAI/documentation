@@ -3,7 +3,7 @@ title: Vercel Integration
 description: Integrate Cerebrium with Vercel to build AI applications
 ---
 
-You can use the Cerebrium + Vercel integration to access applications deployed on Cerebrium via REST Endpoints from Vercel projects. You’ll find the Cerebrium integration available to install in the Vercel AI marketplace.
+You can use the Cerebrium + Vercel integration to access apps deployed on Cerebrium via REST Endpoints from Vercel projects. You’ll find the Cerebrium integration available to install in the Vercel AI marketplace.
 
 ### What this integration does
 
@@ -39,7 +39,7 @@ Important: removing an integration will delete the corresponding API token set b
 
 You can view our example [here](/v4/examples/mistral-vllm) on how to deploy Mistral 7B with vLLM to an auto-scaling endpoint.
 
-Once you have followed the example and deployed the application, you should have an output of the endpoint your application is deployed at. You can then deploy this within your vercel project as:
+Once you have followed the example and deployed the app, you should have an output of the endpoint your app is deployed at. You can then deploy this within your vercel project as:
 
 ```javascript
 fetch(
@@ -60,10 +60,10 @@ fetch(
   .catch((error) => console.error("Error:", error));
 ```
 
-In this example, we built our application to take in a prompt as input and to return with the output of the mode.
+In this example, we built our app to take in a prompt as input and to return with the output of the mode.
 
 ## Pricing
 
-Requests to applications use usage based pricing, billed at 1ms granularity. The exact cost per millisecond is based on the underlying hardware you specify.
+Requests to apps use usage based pricing, billed at 1ms granularity. The exact cost per millisecond is based on the underlying hardware you specify.
 
 See our [pricing page](https://www.cerebrium.ai/pricing) for current GPU prices.

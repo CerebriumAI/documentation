@@ -54,7 +54,7 @@ gpu_count = 1
 From the above we do the following:
 
 - Since we need a GPU, we need to use one of the base images that come from Nvidia that has the CUDA libraries installed. We use the Cuda 12 image. You can see other images [here](https://docs.cerebrium.ai/cerebrium/environments/custom-images)
-- Depending on the type of CPU/GPU you need, you can update the hardware settings to run your application. You can see the full list available [here](https://docs.cerebrium.ai/available-hardware)
+- Depending on the type of CPU/GPU you need, you can update the hardware settings to run your app. You can see the full list available [here](https://docs.cerebrium.ai/available-hardware)
 - We copy across the pip packages we need to install
 - Replicate uses pget to download model weights - we therefore need to download it to use it. We do this by installing curl and then adding the shell commands in our cerebrium.toml
 
@@ -121,7 +121,7 @@ There is a folder in the repo called “feature-extractor” which we need to ha
 
 ![Folder Structure](/images/migrations/replicate-folder-structure.png)
 
-The setup function on Replicate runs on each cold start (ie: each new instantiation of the application) and so we just define it as normal code that gets run at the top of our file. I put it right below my import statements above.
+The setup function on Replicate runs on each cold start (ie: each new instantiation of the app) and so we just define it as normal code that gets run at the top of our file. I put it right below my import statements above.
 
 ```python
 def download_weights(url, dest):
@@ -270,9 +270,9 @@ encoded_images = []
     return encoded_images
 ```
 
-Now we can run `cerebrium deploy`. You should see your application build in under 90 seconds.
+Now we can run `cerebrium deploy`. You should see your app build in under 90 seconds.
 
-It should output the curl statement to run your application:
+It should output the curl statement to run your app:
 
 ![Curl Request](/images/migrations/replicate-curl.png)
 
