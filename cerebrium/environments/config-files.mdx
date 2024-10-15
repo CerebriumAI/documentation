@@ -72,10 +72,10 @@ This section lets you configure how you would like your deployment to scale. You
 
 These parameters are specified under the `cerebrium.scaling` section of your config file.
 
-| parameter      | description                                                                                           | type | default    |
-| -------------- | ----------------------------------------------------------------------------------------------------- | ---- | ---------- |
-| `min_replicas` | The minimum number of replicas to run at all times.                                                   | int  | 0          |
-| `max_replicas` | The maximum number of replicas to scale to.                                                           | int  | plan limit |
+| parameter      | description                                                                                         | type | default    |
+| -------------- | --------------------------------------------------------------------------------------------------- | ---- | ---------- |
+| `min_replicas` | The minimum number of replicas to run at all times.                                                 | int  | 0          |
+| `max_replicas` | The maximum number of replicas to scale to.                                                         | int  | plan limit |
 | `cooldown`     | The number of seconds to keep your app warm after each request. It resets after every request ends. | int  | 60         |
 
 ## Adding Dependencies
