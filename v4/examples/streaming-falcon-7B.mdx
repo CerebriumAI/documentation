@@ -147,8 +147,8 @@ disable_confirmation = false
 [cerebrium.deployment]
 name = "streaming-falcon"
 python_version = "3.11"
-include = "[./*, main.py, cerebrium.toml]"
-exclude = "[./example_exclude]"
+include = ["./*", "main.py", "cerebrium.toml"]
+exclude = ["./example_exclude"]
 docker_base_image_url = "nvidia/cuda:12.1.1-runtime-ubuntu22.04"
 
 [cerebrium.hardware]

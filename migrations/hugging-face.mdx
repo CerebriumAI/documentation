@@ -57,8 +57,8 @@ Scaffold your application by running `cerebrium init [PROJECT_NAME]`. During the
 name = "llama-8b-vllm"
 python_version = "3.11"
 docker_base_image_url = "debian:bookworm-slim"
-include = "[./*, main.py, cerebrium.toml]"
-exclude = "[.*]"
+include = ["./*", "main.py", "cerebrium.toml"]
+exclude = [".*"]
 
 [cerebrium.hardware]
 cpu = 2

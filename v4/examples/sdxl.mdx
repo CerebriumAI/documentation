@@ -33,8 +33,8 @@ To start, your cerebrium.toml file is where you can set your compute/environment
 [cerebrium.deployment]
 name = "sdxl"
 python_version = "3.10"
-include = "[./*, main.py, cerebrium.toml]"
-exclude = "[./.*, ./__*]"
+include = ["./*", "main.py", "cerebrium.toml"]
+exclude = ["./.*", "./__*"]
 docker_base_image_url = "debian:bookworm-slim"
 
 [cerebrium.hardware]
