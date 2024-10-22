@@ -138,8 +138,8 @@ Below is an example of a config file that takes advantage of all the features we
 [cerebrium.deployment]
 name = "my-app"
 python_version = "3.10"
-include = "[./*, main.py]"
-exclude = "[./.*, ./__*]"
+include = ["./*", "main.py"]
+exclude = ["./.*", "./__*"]
 docker_base_image_url = "debian:bookworm-slim"
 shell_commands = []
 
