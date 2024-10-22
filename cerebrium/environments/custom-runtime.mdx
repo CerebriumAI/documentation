@@ -71,26 +71,9 @@ Python code!
 
 ```toml
 ...
-
+# Note you can specify the entrypoint as a single string!
 [cerebrium.runtime.custom]
-entrypoint = [
-  'vllm',
-  'serve',
-  'meta-llama/Meta-Llama-3-8B-Instruct',
-  '--host',
-  '0.0.0.0',
-  '--port',
-  '8000',
-  '--device',
-  'cuda',
-  '--dtype',
-  'auto',
-  '--trust-remote-code',
-  '--enable-chunked-prefill',
-  '--disable-fastapi-docs',
-  '--max_num_batched_tokens',
-  '1024'
-]
+entrypoint = "vllm serve meta-llama/Meta-Llama-3-8B-Instruct --host 0.0.0.0 --port 8000 --device cuda"
 port = 8000
 healthcheck_endpoint = "/health"
 
