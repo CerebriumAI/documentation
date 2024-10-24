@@ -1,0 +1,110 @@
+---
+title: Using Custom Runtimes (Beta)
+description: Configure custom ASGI or WSGI runtimes
+---
+
+<Note>
+  This is a new feature! As such, the API is still currently subject to changes.
+
+Most applications are expected to work with the current implementation.
+However, should you encounter an issue deploying a Custom Runtime please
+reach out to us on Discord!
+
+Still on the way:
+
+- Websocket support
+- Healthcheck grace period to prevent takedown of healthy app that registers as unhealthy
+  </Note>
+
+The default Cortex runtime can be great for getting up and running and simple use cases. However, you may already have an application built, or need
+more complex functionality built into your app such as custom authentication, dynamic batching, public endpoints or websockets.
+The Cerebrium platform allows you to deploy a custom python-based runtime to achieve this. To illustrate how this works, let's
+take a straightforward example ASGI webserver written in FastAPI called `main.py`:
+
+```python
+from fastapi import FastAPI
+
+server = FastAPI()
+
+# This function would map to a request to api.cortex.cerebrium.ai/project-id/app-name/hello
+@server.get("/hello")
+async def hello():
+    return {"message": "Hello Cerebrium!"}
+
+# You must define an endpoint that can relay to Cerebrium that the app is ready to receive requests
+@server.get("/health")
+async def health():
+    return "Ok"
+```
+
+To enable us to deploy this application, we modify our `cerebrium.toml` with a 'cerebrium.runtime.custom' section.
+There are 3 parameters in this section:
+
+| parameter              | description                                                                                                                                                                                      | type       | default                                                                |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | ---------------------------------------------------------------------- |
+| `entrypoint`           | The command used to enter your application as either a list of strings or a single string. This is run from the `/cortex` directory                                                              | list\[str] | \["uvicorn", "app.main:server", "--host", "0.0.0.0", "--port", "8000"] |
+| `port`                 | The port your application runs on. You must ensure this port is the same your app exposes and expects to receive traffic on                                                                      | int        | 8000                                                                   |
+| `healthcheck_endpoint` | The endpoint the application uses to relay that it is ready to receive requests. A _200_ response is required from the endpoint in order for Cerebrium to know when the app can receive requests | string     | "/readyz"                                                              |
+
+An example of a config section for a custom runtime for our main file may look something like this:
+
+```toml
+[cerebrium.deployment]
+name = "my-app"
+python_version = "3.10"
+...
+
+[cerebrium.runtime.custom]
+entrypoint = ["uvicorn", "app.main:server", "--host", "0.0.0.0", "--port", "8080"]
+port = 8080
+healthcheck_endpoint = "/health"
+
+...
+```
+
+An important note about entrypoints. Since your source code is in `/cortex/app`, your entrypoint must be run from the `app` directory
+(e.g. if you want to run `main.py`, the entrypoint would be: `python app/main.py`). Furthermore, notice that any port used in the entrypoint
+matches the specified port.
+
+Depending on whether you deploy an ASGI application or an app with a self-container webserver, you may need to install an ASGI runtime
+to run your app just as you would usually. In this case, we are using an ASGI server (FastAPI), so we will need to install `uvicorn`.
+Specify this in your dependencies:
+
+```toml
+...
+
+[cerebrium.dependencies.pip]
+fastapi = "latest"
+uvicorn = "latest"
+
+...
+```
+
+Conversely, it is possible to run WSGI or apps with self contained servers. For example, you could deploy
+a VLLM app using only the 'cerebrium.runtime.custom' and 'cerebrium.dependencies.pip' sections and **no**
+Python code!
+
+```toml
+...
+# Note you can specify the entrypoint as a single string!
+[cerebrium.runtime.custom]
+entrypoint = "vllm serve meta-llama/Meta-Llama-3-8B-Instruct --host 0.0.0.0 --port 8000 --device cuda"
+port = 8000
+healthcheck_endpoint = "/health"
+
+[cerebrium.dependencies.pip]
+torch = "latest"
+vllm = "latest"
+
+...
+```
+
+Once you have made the necessary changes to your configuration, you are ready to deploy! You can deploy as normal
+and our system will detect you are running a custom runtime automatically.
+
+```bash
+cerebrium deploy -y
+```
+
+Your call signature is exactly the same as when you deploy a Cortex application. Every endpoint your custom server exposes will be available on
+`api.cortex.cerebrium/{project-id}/{app-name}/an/example/endpoint`
