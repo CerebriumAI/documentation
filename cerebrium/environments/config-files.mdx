@@ -29,10 +29,10 @@ The available deployment parameters are:
 | --- | --- | --- | --- |
 | `name` | The name of your app | string | my-app |
 | `python_version` | The Python version available for your runtime | float | {interpreter_version}|
-| `include` | Local files to include in the deployment. | string | '[./\*, main.py]' |
-| `exclude` | Local Files to exclude from the deployment. | string | '[./.\*]' |
+| `include` | Local files to include in the deployment. | list\[string] | \["./\*", main.py] |
+| `exclude` | Local Files to exclude from the deployment. | list\[string] | \["./.\*"] |
 | `docker_base_image_url` | The docker base image you would like to run | string | 'debian:bookworm-slim' |
-| `shell_commands` | A list of commands to run an app entrypoint script | list[string] | []
+| `shell_commands` | A list of commands to run an app entrypoint script | list\[string] | []
 
 ## Hardware Parameters
 
@@ -72,11 +72,12 @@ This section lets you configure how you would like your deployment to scale. You
 
 These parameters are specified under the `cerebrium.scaling` section of your config file.
 
-| parameter      | description                                                                                         | type | default    |
-| -------------- | --------------------------------------------------------------------------------------------------- | ---- | ---------- |
-| `min_replicas` | The minimum number of replicas to run at all times.                                                 | int  | 0          |
-| `max_replicas` | The maximum number of replicas to scale to.                                                         | int  | plan limit |
-| `cooldown`     | The number of seconds to keep your app warm after each request. It resets after every request ends. | int  | 60         |
+| parameter             | description                                                                                                                                                            | type | default    |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ---------- |
+| `min_replicas`        | The minimum number of replicas to run at all times.                                                                                                                    | int  | 0          |
+| `max_replicas`        | The maximum number of replicas to scale to.                                                                                                                            | int  | plan limit |
+| `cooldown`            | The number of seconds to keep your app warm after each request. It resets after every request ends.                                                                    | int  | 60         |
+| `replica_concurrency` | The maximum number of requests an instance of your app can handle at a time. You should ensure your deployment can handle the concurrency before setting this above 1. | int  | 1          |
 
 ## Adding Dependencies
 
@@ -120,13 +121,6 @@ An example of an apt dependency is shown below:
 "libglib2.0-0" = "latest"
 ```
 
-### Integrate existing requirements files
-
-If you have an existing **requirements.txt**, **pkglist.txt** or **conda_pkglist.txt**, files in your project, we'll prompt you to automatically integrate these into your config file when you run `cerebrium deploy`.
-
-This way, you can leverage external tools to manage your dependencies and have them automatically integrated into your deployment.  
-For example, you can use the following command to generate a `requirements.txt` file from your current environment:
-
 ## Config File Example
 
 That was a lot of information!  
@@ -155,6 +149,7 @@ region = "us-east-1"
 min_replicas = 0
 max_replicas = 2
 cooldown = 60
+replica_concurrency = 1
 
 [cerebrium.dependencies.pip]
 torch = ">=2.0.0"
