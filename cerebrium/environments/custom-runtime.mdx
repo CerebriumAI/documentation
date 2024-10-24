@@ -1,5 +1,5 @@
 ---
-title: Using Custom Runtimes (Beta)
+title: Using Custom Runtimes (Preview)
 description: Configure custom ASGI or WSGI runtimes
 ---
 
@@ -17,7 +17,7 @@ Still on the way: Websocket support, Healthcheck grace period
 The default Cortex runtime can be great for getting up and running and simple use cases. However, you may already have an application built, or need
 more complex functionality built into your app such as custom authentication, dynamic batching, public endpoints or websockets.
 The Cerebrium platform allows you to deploy a custom python-based runtime to achieve this. To illustrate how this works, let's
-take a straightforward example ASGI webserver written in FastAPI called `main.py`:
+take a straightforward example ASGI webserver written with FastAPI called `main.py`:
 
 ```python
 from fastapi import FastAPI
