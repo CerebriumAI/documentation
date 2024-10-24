@@ -3,6 +3,19 @@ title: Using Custom Runtimes (Beta)
 description: Configure custom ASGI or WSGI runtimes
 ---
 
+<Note>
+  This is a new feature! As such, the API is still currently subject to changes.
+
+Most applications are expected to work with the current implementation.
+However, should you encounter an issue deploying a Custom Runtime please
+reach out to us on Discord!
+
+Still on the way:
+
+- Websocket support
+- Healthcheck grace period to prevent takedown of healthy app that registers as unhealthy
+  </Note>
+
 The default Cortex runtime can be great for getting up and running and simple use cases. However, you may already have an application built, or need
 more complex functionality built into your app such as custom authentication, dynamic batching, public endpoints or websockets.
 The Cerebrium platform allows you to deploy a custom python-based runtime to achieve this. To illustrate how this works, let's
