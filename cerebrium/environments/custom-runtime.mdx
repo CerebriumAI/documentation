@@ -10,11 +10,9 @@ Most applications are expected to work with the current implementation.
 However, should you encounter an issue deploying a Custom Runtime please
 reach out to us on Discord!
 
-Still on the way:
+Still on the way: Websocket support, Healthcheck grace period
 
-- Websocket support
-- Healthcheck grace period to prevent takedown of healthy app that registers as unhealthy
-  </Note>
+</Note>
 
 The default Cortex runtime can be great for getting up and running and simple use cases. However, you may already have an application built, or need
 more complex functionality built into your app such as custom authentication, dynamic batching, public endpoints or websockets.
@@ -66,7 +64,7 @@ An important note about entrypoints. Since your source code is in `/cortex/app`,
 (e.g. if you want to run `main.py`, the entrypoint would be: `python app/main.py`). Furthermore, notice that any port used in the entrypoint
 matches the specified port.
 
-Depending on whether you deploy an ASGI application or an app with a self-container webserver, you may need to install an ASGI runtime
+Depending on whether you deploy an ASGI application or an app with a self-contained webserver, you may need to install an ASGI runtime
 to run your app just as you would usually. In this case, we are using an ASGI server (FastAPI), so we will need to install `uvicorn`.
 Specify this in your dependencies:
 
