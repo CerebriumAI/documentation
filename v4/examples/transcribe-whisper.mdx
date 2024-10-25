@@ -3,8 +3,8 @@ title: "Transcribe 1 hour podcast"
 description: "Using Distill Whisper to transcribe an audio file"
 ---
 
-In this tutorial, we will transcribe an hour audio file using Distil Whisper - an optimised version of Whisper-large-v2 but 60% faster and within 1% of the error rate. We
-will accept either a base64 encode string of the audio file or a url from which we can download the audio file from.
+In this tutorial, we will transcribe an hour audio file using Distill Whisper - an optimized version of Whisper-large-v2 but 60% faster and within 1% of the error rate. We
+will accept either a base64 encode string of the audio file or an URL from which we can download the audio file from.
 
 To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/11-whisper-transcription)
 
@@ -27,10 +27,11 @@ Let us add the following packages to the **[cerebrium.dependencies.pip]** sectio
 [cerebrium.dependencies.pip]
 accelerate = "latest"
 transformers = ">=4.35.0"
-openai-whisper
+openai-whisper = "latest"
+pydantic = "latest"
 ```
 
-To start let us create a util.py file for our utility functions - downloading a file from a url or converting a base64 string to a file. Our **util.py** would look something like below:
+To start let us create a util.py file for our utility functions - downloading a file from a URL or converting a base64 string to a file. Our **util.py** would look something like below:
 
 ```python
 import base64
@@ -38,14 +39,12 @@ import uuid
 
 DOWNLOAD_ROOT = "/tmp/"  # Change this to /persistent-storage/ if you want to save files to the persistent storage
 
-def download_file_from_url(logger, url: str, filename: str):
-    logger.info("Downloading file...")
-
-    import requests
+def download_file_from_url(url: str, filename: str):
+    print("Downloading file...")
 
     response = requests.get(url)
     if response.status_code == 200:
-        logger.info("Download was successful")
+        print("Download was successful")
 
         with open(filename, "wb") as f:
             f.write(response.content)
@@ -53,13 +52,13 @@ def download_file_from_url(logger, url: str, filename: str):
         return filename
 
     else:
-        logger.info(response)
+        print(response)
         raise Exception("Download failed")
 
 
 # Saves a base64 encoded file string to a local file
-def save_base64_string_to_file(logger, audio: str):
-    logger.info("Converting file...")
+def save_base64_string_to_file(audio: str):
+    print("Converting file...")
 
     decoded_data = base64.b64decode(audio)
 
@@ -68,7 +67,7 @@ def save_base64_string_to_file(logger, audio: str):
     with open(filename, "wb") as file:
         file.write(decoded_data)
 
-    logger.info("Decoding base64 to file was successful")
+    print("Decoding base64 to file was successful")
     return filename
 
 ```
@@ -81,9 +80,9 @@ from typing import Optional
 from pydantic import BaseModel, HttpUrl
 
 class Item(BaseModel):
-    audio: Optional[str] = None
-    file_url: Optional[HttpUrl] = None
-    webhook_endpoint: Optional[HttpUrl] = None
+    audio: Optional[str]
+    file_url: Optional[HttpUrl]
+    webhook_endpoint: Optional[HttpUrl]
 ```
 
 Above, we use Pydantic as our data validation library. Due to the way that we have defined the Base Model, "audio" and "file_url" are optional parameters but we must do a check to make sure we are given the one or the other. The webhook_endpoint parameter is something Cerebrium automatically includes in every request and can be used for long running requests.
@@ -91,7 +90,7 @@ Currently, Cerebrium has a max timeout of 3 minutes for each inference request. 
 
 ## Setup Model and inference
 
-Below, we import the required packages and load in our Whisper model. This will download during your deployment however in subsequent deploys or inference requests it will be automatically cached in your persistent storage for subsequent use. You can read more about persistent storage [here]()
+Below, we import the required packages and load in our Whisper model. This will be downloaded during your deployment, however, in subsequent deploys or inference requests it will be automatically cached in your persistent storage for subsequent use. You can read more about persistent storage [here]()
 We do this outside our **predict** function since we only want this code to run on a cold start (ie: on startup). If the container is already warm, we just want it to do inference and it will execute just the **predict** function.
 
 ```python
@@ -99,78 +98,78 @@ from huggingface_hub import hf_hub_download
 from whisper import load_model, transcribe
 from util import download_file_from_url, save_base64_string_to_file
 
-distil_large_v2 = hf_hub_download(repo_id="distil-whisper/distil-large-v2", filename="original-model.bin")
+distil_large_v2 = hf_hub_download(repo_id="distil-whisper/distil-large-v3", filename="original-model.bin")
 model = load_model(distil_large_v2)
 
-def predict(item, run_id, logger):
-    item = Item(**item)
+def predict(run_id, audio=None, file_url=None, webhook_endpoint=None):
+    item = Item(audio=audio, file_url=file_url, webhook_endpoint=webhook_endpoint)
     input_filename = f"{run_id}.mp3"
 
-    if item.audio is not None:
-        file = save_base64_string_to_file(logger, item.audio)
-    elif item.file_url is not None:
-        file = download_file_from_url(logger, item.file_url, input_filename)
-    logger.info("Transcribing file...")
+    if audio is None and file_url is None:
+        raise 'Either audio or file_url must be provided'
+    else:
+        if item.audio is not None:
+            file = save_base64_string_to_file(item.audio)
+        elif item.file_url is not None:
+            file = download_file_from_url(item.file_url, input_filename)
+        print("Transcribing file...")
 
-    result = transcribe(model, audio=file)
-
-    return result
+        result = transcribe(model, audio=file)
+        return result
 ```
 
 In our predict function, which only runs on inference requests, we simply create a audio file from the download URL or string given to us via the request. We then transcribe the file and return the output to a user.
 
 ## Deploy
 
-Your cerebrium.toml file is where you can set your compute/environment. Please make sure that the GPU you specify is a AMPERE_A5000 and that you have enough memory (RAM) on your instance to run the models. You cerebrium.toml file should look like:
+Your cerebrium.toml file is where you can set your compute/environment. Your cerebrium.toml file should look like:
 
 ```toml
-
-[cerebrium.build]
-predict_data = "{\"prompt\": \"Here is some example predict data for your cerebrium.toml which will be used to test your predict function on build.\"}"
-force_rebuild = false
-disable_animation = false
-log_level = "INFO"
-disable_confirmation = false
-
 [cerebrium.deployment]
-name = "controlnet-logo"
-python_version = "3.10"
-include = "[./*, main.py]"
-exclude = "[./.*, ./__*]"
+name = "distil-whisper"
+python_version = "3.11"
+include = ["./*", "main.py", "cerebrium.toml"]
+exclude = ["./example_exclude"]
+docker_base_image_url = "nvidia/cuda:12.1.1-runtime-ubuntu22.04"
 
 [cerebrium.hardware]
-gpu = "AMPERE_A5000"
-cpu = 2
-memory = 10.0
+region = "us-east-1"
+provider = "aws"
+compute = "AMPERE_A10"
+cpu = 3
+memory = 12.0
 gpu_count = 1
 
 [cerebrium.scaling]
 min_replicas = 0
+max_replicas = 5
 cooldown = 60
-
-[cerebrium.dependencies.apt]
 
 [cerebrium.dependencies.pip]
 accelerate = "latest"
 transformers = ">=4.35.0"
-openai-whisper
+openai-whisper = "latest"
+pydantic = "latest"
 
 [cerebrium.dependencies.conda]
 
+[cerebrium.dependencies.apt]
+"ffmpeg" = "latest"
+
 ```
 
-To deploy the model use the following command:
+Deploy the app use the following command:
 
 ```bash
 cerebrium deploy distill-whisper
 ```
 
-Once deployed, we can make the following request:
+Once deployed, make the following request:
 
 ```curl
-curl --location 'https://run.cerebrium.ai/v3/p-xxxxx/distill-whisper/predict' \
+curl --location 'https://api.cortex.cerebrium.ai/v4/p-<YOUR PROJECT ID>/distill-whisper/predict' \
 --header 'Content-Type: application/json' \
---header 'Authorization: <JWT_TOKEN>' \
+--header 'Authorization: Bearer <YOUR TOKEN HERE>' \
 --data '{"file_url": "https://your-public-url.com/test.mp3"}''
 ```
 

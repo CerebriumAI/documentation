@@ -2,3 +2,95 @@
 title: "CI/CD Pipelines"
 description: "Integrate Cerebrium into your CI/CD workflow for automated deployments"
 ---
+
+If you would like to automatically deploy a new version of your app to production/development once you have merged into the
+respective branch you can do so using the commands below. We will be using a GitHub actions workflow.
+
+### 1. Get your Cerebrium OAuth credentials
+
+Cerebrium stores your credentials in the directory ~/.cerebrium/config.yaml. If you run the command 'cat ~/.cerebrium/config' then
+you should see an output of 3 variables, namely:
+
+- accessToken
+- refreshToken
+- projectId
+
+We will need these in the next step
+
+### 2. Define secrets in your GitHub environment
+
+Go to your GitHub repository -> Settings -> Environments
+
+![Github](/images/githubActions.png)
+
+You should create a new environment with a title of your choice (prod and dev). Within these environments, you have two types
+of variables you can work with:
+
+- Environment secrets: These are encrypted and do not show in your workflow logs
+- Environment variables: These are not encrypted and so will show in the workflow logs.
+
+In our use case, we will store all our variables (accessToken, refreshToken, projectId) as secrets to keep the values hidden
+
+### 3. GitHub Actions Workflow
+
+In this flow, we do the following:
+
+1. Install a python version of our choice (3.8 to 3.11)
+2. Pip install the cerebrium package
+3. Login to Cerebrium using our credentials
+4. Deploy our app
+5. Notify a Slack channel of successful deployment
+
+```
+name: Cerebrium Deployment
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment"
+        type: choice
+        options:
+          - "dev"
+          - "prod"
+        required: true
+        default: "dev"
+  pull_request:
+    branches:
+      - master
+      - development
+
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || (github.ref == 'refs/heads/master' && 'prod') || 'dev' }}
+    env:
+      ENV: ${{ github.event.inputs.environment || (github.ref == 'refs/heads/master' && 'prod') || 'dev' }}
+      PROJECT_ID: ${{ secrets.ROJECT_ID }}
+      ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN}}
+      REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install Cerebrium
+        run: pip install cerebrium
+
+      - name: Add Auth keys
+        run: cerebrium save-auth-config "$ACCESS_TOKEN" "$REFRESH_TOKEN" "$PROJECT_ID"
+
+      - name: Deploy App
+        run: cerebrium deploy
+
+      - name: Notify Slack
+        uses: someimportantcompany/github-actions-slack-message@v1
+        with:
+          webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          text: "Cerebrium app deployed to production! :tada:"
+        if: github.ref == 'refs/heads/master'
+
+```

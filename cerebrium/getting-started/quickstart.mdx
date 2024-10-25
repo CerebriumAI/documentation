@@ -14,34 +14,18 @@ Currently, our implementation has five components:
 - **main.py** - This is where your Python code lives. This is mandatory to include.
 - **cerebrium.toml** - This is where you define all the configurations around your model such as the hardware you use, scaling parameters, deployment config, build parameters, etc. Check [here](../environments/initial-setup) for a full list
 
-Every main.py you deploy needs the following mandatory layout:
+Your **main.py** can follow a layout similar to below but its really up to you!
 
 ```bash
-from pydantic import BaseModel
-
-
-class Item(BaseModel):
-    parameter: value
-
-
-def predict(item, run_id, logger):
-    item = Item(**item)
-
-    # Do something with parameters from item
-
-    return {"key": "value}
+def run(param: str, run_id):
+  return {"message": f"Running {param} remotely on Cerebrium!"}
 ```
 
-The Item class is where you define the parameters your model receives as well as their type. Item needs to inherit from BaseModel which uses Pydantic to validate request schemas.
-You need to define a function with the name **predict** which receives 3 params: item, run_id and logger.
+You need to define a function and the name of the parameters you are sending in. The names in the function signature and in
+your JSON request should match exactly. Note, your URL endpoint with end with the name of your function. In this case /run.
 
-- **item**: This is the expected request object containing the parameters you defined above.
-- **run_id**: This is a unique identifier for the user request if you want to use it to track predictions through another system
-- **logger**: Cerebrium supports logging via the logger (we also support "print()" statements) however, using the logger will format your logs nicer. It contains
-  the 3 states across most loggers:
-- logger.info
-- logger.debug
-- logger.error
+You can also have the optional parameter called **run_id** in your function signature. This is the unique identifier for you request and will match that which you will see in your dashboard.
+If you send in a JSON payload, with a parameter called run_id, it will override it.
 
 As long as your **main.py** contains the above you can write any other Python code. Import classes, add other functions etc.
 
@@ -50,7 +34,7 @@ As long as your **main.py** contains the above you can write any other Python co
 Then navigate to where your model code (specifically your `main.py`) is located and run the following command:
 
 ```bash
-cerebrium deploy my-first-model
+cerebrium deploy
 ```
 
 Voila! Your app should start building and you should see logs of the deployment process. It shouldn't take longer than a minute - easy peasy!
@@ -74,5 +58,4 @@ Below are some links outlining some of the more advanced functionality that Cort
 - [Custom Images](../environments/custom-images): How to create your custom environments to run your ML Models.
 - [Secrets](../environments/using-secrets): Use secrets to authenticate with third-party platforms.
 - [Persistent Storage](../data-sharing-storage/persistent-storage): Store model weights and files locally for faster access.
-- [Long Running Tasks](../deployments/long-running-tasks): Execute long running tasks in the background.
 - [Streaming](../endpoints/streaming): Stream output live back to your endpoint

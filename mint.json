@@ -4,6 +4,7 @@
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
   },
+  "versions": ["v4"],
   "favicon": "/favicon.png",
   "colors": {
     "primary": "#EB3A6F",
@@ -29,7 +30,12 @@
   "tabs": [
     {
       "name": "Examples",
-      "url": "examples"
+      "url": "v4/examples",
+      "version": "v4"
+    },
+    {
+      "name": "Migrations",
+      "url": "migrations"
     }
   ],
   "anchors": [
@@ -72,10 +78,12 @@
       "group": "Environment Setup",
       "pages": [
         "cerebrium/environments/initial-setup",
+        "cerebrium/environments/config-files",
         "cerebrium/environments/custom-images",
         "cerebrium/environments/using-secrets",
         "cerebrium/environments/multi-gpu-inferencing",
-        "cerebrium/environments/warm-models"
+        "cerebrium/environments/warm-models",
+        "cerebrium/environments/custom-runtime"
       ]
     },
     {
@@ -84,14 +92,19 @@
     },
     {
       "group": "Deployments",
-      "pages": [
-        "cerebrium/deployments/long-running-tasks",
-        "cerebrium/deployments/async-functions"
-      ]
+      "pages": ["cerebrium/deployments/ci-cd"]
     },
     {
       "group": "Endpoints",
-      "pages": ["cerebrium/endpoints/rest-api", "cerebrium/endpoints/streaming"]
+      "pages": [
+        "cerebrium/endpoints/rest-api",
+        "cerebrium/endpoints/streaming",
+        "cerebrium/endpoints/openai-compatible-endpoints"
+      ]
+    },
+    {
+      "group": "Integrations",
+      "pages": ["cerebrium/integrations/vercel"]
     },
     {
       "group": "Misc",
@@ -100,10 +113,6 @@
     {
       "group": "Prebuilt Models",
       "pages": ["cerebrium/prebuilt-models/introduction"]
-    },
-    {
-      "group": "Legacy Docs",
-      "pages": ["cerebrium/environments/legacy-yaml-config"]
     },
     {
       "group": "FAQs and Tips",
@@ -117,14 +126,22 @@
     },
     {
       "group": "Examples",
+      "version": "v4",
       "pages": [
-        "examples/sdxl",
-        "examples/logo-controlnet",
-        "examples/mistral-vllm",
-        "examples/streaming-falcon-7B",
-        "examples/langchain",
-        "examples/transcribe-whisper"
+        "v4/examples/tensorRT",
+        "v4/examples/comfyUI",
+        "v4/examples/langchain-langsmith",
+        "v4/examples/sdxl",
+        "v4/examples/mistral-vllm",
+        "v4/examples/streaming-falcon-7B",
+        "v4/examples/transcribe-whisper",
+        "v4/examples/realtime-voice-agents",
+        "v4/examples/openai-compatible-endpoint-vllm"
       ]
+    },
+    {
+      "group": "Migrations",
+      "pages": ["migrations/replicate", "migrations/hugging-face"]
     }
   ],
   "analytics": {

@@ -10,27 +10,25 @@ This page lists the hardware that is currently available on the platform. If you
 
 # Hardware
 
-## GPU's
+## GPUs
 
 We have the following graphics cards available on the platform:
-| Name | Cerebrium Name | VRAM | Minimum Plan | Max fp32 Model Params | Max fp16 Model Params
-| --------------------------------------------------------------------------------------------------- | :------: |------ | :-------------------: | :-------------------: | :------------------: |
-| [NVIDIA H100](https://www.nvidia.com/en-us/data-center/h100/) | Special Request | 80GB | Enterprise | 18B | 36B
-| [NVIDIA A100](https://www.nvidia.com/en-us/data-center/a100/) | Special Request | 80GB | Standard | 18B | 36B
-| [NVIDIA A100](https://www.nvidia.com/en-us/data-center/a100/) | AMPERE_A100 | 40GB | Standard | 9B | 18B
-| [NVIDIA RTX A6000](https://www.nvidia.com/en-us/design-visualization/rtx-a6000/) | AMPERE_A6000 | 48GB | Hobby | 10B | 21B
-| [NVIDIA RTX A5000](https://www.nvidia.com/en-us/design-visualization/rtx-a5000/) | AMPERE_A5000 | 24GB | Hobby | 5B | 10B
-| [NVIDIA RTX A4000](https://www.nvidia.com/en-us/design-visualization/rtx-a4000/) | AMPERE_A4000 | 16GB | Hobby | 3B | 7B
-| [NVIDIA Quadro RTX 5000](https://www.nvidia.com/content/dam/en-zz/Solutions/design-visualization/quadro-product-literature/quadro-rtx-5000-data-sheet-us-nvidia-704120-r4-web.pdf) | TURING_5000 | 16GB | Hobby | 3B | 7B
-| [NVIDIA Quadro RTX 4000](https://www.nvidia.com/content/dam/en-zz/Solutions/design-visualization/quadro-product-literature/quadro-rtx-4000-datasheet-us-nvidia-1060942-r2-web.pdf) | TURING_4000 | 8GB | Hobby | 1B | 3B
+| Name | Cerebrium Name | VRAM | Minimum Plan | Provider
+| --------------------------------------------------------------------------------------------------- | :------: |------ | :-------------------: | :-------------------: |
+| [NVIDIA H100](https://www.nvidia.com/en-us/data-center/h100/) | Special Request | 80GB | Enterprise | [AWS]
+| [NVIDIA A100](https://www.nvidia.com/en-us/data-center/a100/) | Special Request | 80GB | Enterprise | [AWS]
+| [NVIDIA A100_80GB](https://www.nvidia.com/en-us/data-center/a100/) | AMPERE_A100 | 80GB | Enterprise | [AWS]
+| [NVIDIA A100_40GB](https://www.nvidia.com/en-us/data-center/a100/) | AMPERE_A100 | 40GB | Enterprise | [AWS]
+| [NVIDIA A10](https://www.nvidia.com/en-us/data-center/a100/) | AMPERE_A10 | 24GB | Hobby | [AWS]
+| [NVIDIA L4](https://www.nvidia.com/en-us/data-center/l4/) | ADA_L4 | 24GB | Hobby | [AWS]
+| [NVIDIA L40s](https://www.nvidia.com/en-us/data-center/l40s/) | ADA_L40 | 48GB | Hobby | [AWS]
+| [NVIDIA T4](https://www.nvidia.com/en-us/data-center/tesla-t4/) | TURING_T4 | 16GB | Hobby | [AWS]
+| [AWS INFERENTIA](https://aws.amazon.com/machine-learning/inferentia/) | INF2 | 32GB | Hobby | [AWS]
+| [AWS TRANIUM](https://aws.amazon.com/machine-learning/trainium/) | TRN1 | 32GB | Hobby | [AWS]
 
-_NOTE: The maximum model sizes are calculated as a guideline, assuming that the model is the only thing loaded into VRAM. Longer inputs will result in a smaller maximum model size. Your mileage may vary._
 
-These GPUs can be selected using the `--gpu` flag when deploying your model on Cortex or can be specified in your `cerebrium.toml`.
+These GPUs can be selected using the `--gpu` flag when deploying your app on Cortex or can be specified in your `cerebrium.toml`.
 For more help with deciding which GPU you require, see this section [here](#choosing-a-gpu).
-
-_Due to the global shortage of GPUs at the moment, we may not always have the Enterprise edition of your GPU available. In this case, we will deploy to the Workstation edition of the GPU._  
-_These are the same GPUs, and it will not affect the performance of your model in any way._
 
 ## CPUs
 
@@ -42,13 +40,13 @@ You can choose the number of CPU cores you require for your deployment. If you d
 
 We let you select the amount of memory you require for your deployment.  
 All the memory you request is dedicated to your deployment and is not shared with any other deployments, ensuring that you get the performance you need.
-This is the amount of memory that is available to your code when it is running and you should choose an adequate amount for your model to be loaded into VRAM if you are deploying onto a GPU.
+This is the amount of memory that is available to your code when it is running, and you should choose an adequate amount for your model to be loaded into VRAM if you are deploying onto a GPU.
 Once again, you only pay for what you need!
 
 ## Storage
 
 We provide you with a persistent storage volume attached to your deployment.
-You can use this storage volume to store any data that you need to persist between deployments. Accessing your persistent storage is covered in depth for [cortex here](./cerebrium/data-sharing-storage/persistent-storage).
+You can use this storage volume to store any data that you need to persist between deployments. Accessing your persistent storage is covered in depth for [cortex here](/cerebrium/data-sharing-storage/persistent-storage).
 
 The storage volume is backed by high-performance SSDs so that you can get the best performance possible
 Pricing for storage is based on the amount of storage you use and is charged per GB per month.
@@ -60,10 +58,10 @@ On one hand, you want the best performance possible, but on the other hand, you 
 
 ## Choosing a GPU
 
-Choosing a GPU can be a complicated task of calculating VRAM usage based on the number of parameters you have as well as the length of your inputs. Additionally, some variables are dependent on your inputs to your model which will affect the VRAM usage substantially. For example, with LLMs and transformer-based architectures, you need to factor in attention processes as well as any memory-heavy positional encoding that may be happening which can increase VRAM usage exponentially for some methods. Similarly, for CNNs, you need to look at the number of filters you are using as well as the size of your inputs.
+Choosing a GPU can be a complicated task of calculating VRAM usage based on the number of parameters you have as well as the length of your inputs. Additionally, some variables are dependent on your inputs to your app which will affect the VRAM usage substantially. For example, with LLMs and transformer-based architectures, you need to factor in attention processes as well as any memory-heavy positional encoding that may be happening which can increase VRAM usage exponentially for some methods. Similarly, for CNNs, you need to look at the number of filters you are using as well as the size of your inputs.
 
 As a rule of thumb, the easiest way is to choose the GPU that has at least 1.5x the minimum amount of VRAM that your model requires.
-This approach is conservative and will ensure that your model will fit on the GPU you choose even if you have longer inputs than you expect. However, it is just a rule of thumb and you should test the VRAM usage of your model to ensure that it will fit on the GPU you choose.
+This approach is conservative and will ensure that your model will fit on the GPU you choose even if you have longer inputs than you expect. However, it's just a rule of thumb, and you should test the VRAM usage of your model to ensure that it will fit on the GPU you choose.
 
 You can calculate the VRAM usage of your model by using the following formula:
 

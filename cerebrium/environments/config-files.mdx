@@ -1,0 +1,164 @@
+---
+title: Using Config Files
+description: Using config files to configure Cortex deployments easily and quickly
+---
+
+After you've created your Cortex project, you may find that you need more control over your deployment than the default `cerebrium deploy` command provides.
+For example, you may want to specify the number of GPUs to use, the amount of memory to use or even the version of Python for your environment.
+These settings and more are all configurable using config files.
+
+Your config file is a TOML file that you can use to specify the parameters of your cortex deployment. This file is used to specify the deployment parameters, build parameters, hardware parameters, scaling parameters and dependencies for your deployment.
+
+## Creating a config file
+
+The fastest and simplest way to create a config file is to run the `cerebrium init` command and specify the directory in which you would like to create the config file.
+This command will create a `cerebrium.toml` file in your project root, which you can then edit to suit your needs.
+You can specify any field you wish to be prepopulated with a specific value.
+
+```bash
+cerebrium init my-project-dir --name=<your-app-name> --gpu=ADA_L4
+```
+
+## Deployment Parameters
+
+Deployment parameters govern the persistent environment in which your app is deployed.
+These parameters are specified under the `cerebrium.deployment` section of your config file.
+
+The available deployment parameters are:
+| parameter | description | type | default |
+| --- | --- | --- | --- |
+| `name` | The name of your app | string | my-app |
+| `python_version` | The Python version available for your runtime | float | {interpreter_version}|
+| `include` | Local files to include in the deployment. | list\[string] | \["./\*", main.py] |
+| `exclude` | Local Files to exclude from the deployment. | list\[string] | \["./.\*"] |
+| `docker_base_image_url` | The docker base image you would like to run | string | 'debian:bookworm-slim' |
+| `shell_commands` | A list of commands to run an app entrypoint script | list\[string] | []
+
+## Hardware Parameters
+
+The hardware parameters section is where you can define the specifications of the machine you would like to use for your deployment. This allows you to tailor your deployment to your specific needs, optimizing for cost or performance as you see fit.  
+These parameters are specified under the `cerebrium.hardware` section of your config file.
+
+The available hardware parameters in your config are:
+| parameter | description | type | default |
+| --- | --- | --- | --- |
+| `cpu` | The number of CPU cores to use. | int | 2 |
+| `memory` | The amount of Memory to use in GB. | float | 14 |
+| `compute` | The GPU you would like to use. | string | CPU |
+| `gpu_count` | The number of GPUs to specify. | int | 1 |
+| `provider` | The provider you would like your deployment to be on. v4 only supports `aws` | string | aws |
+| `region` | The region you would like your deployment to be on. v4 only supports `us-east-1` | string | us-east-1 |
+
+### Available Hardware
+
+The following is the hardware available on Cerebrium
+
+| Name               | Provider | API Compatibility |
+| ------------------ | -------- | ----------------- |
+| `CPU`              | [aws]    | [v4]              |
+| `AMPERE_A10`       | [aws]    | [v4]              |
+| `ADA_L4`           | [aws]    | [v4]              |
+| `ADA_L40`          | [aws]    | [v4]              |
+| `TURING_T4`        | [aws]    | [v4]              |
+| `AMPERE_A100`      | [aws]    | [v4]              |
+| `AMPERE_A100_40GB` | [aws]    | [v4]              |
+| `HOPPER_H100`      | [aws]    | [v4]              |
+| `INF2`             | [aws]    | [v4]              |
+| `TRN1`             | [aws]    | [v4]              |
+
+## Scaling Parameters
+
+This section lets you configure how you would like your deployment to scale. You can use these parameters to control the minimum and maximum number of replicas to run, as well as the cooldown period between requests. For example, you could increase your cooldown time or even set a minimum number of replicas to run, increasing availability and avoiding cold starts.
+
+These parameters are specified under the `cerebrium.scaling` section of your config file.
+
+| parameter             | description                                                                                                                                                            | type | default    |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ---------- |
+| `min_replicas`        | The minimum number of replicas to run at all times.                                                                                                                    | int  | 0          |
+| `max_replicas`        | The maximum number of replicas to scale to.                                                                                                                            | int  | plan limit |
+| `cooldown`            | The number of seconds to keep your app warm after each request. It resets after every request ends.                                                                    | int  | 60         |
+| `replica_concurrency` | The maximum number of requests an instance of your app can handle at a time. You should ensure your deployment can handle the concurrency before setting this above 1. | int  | 1          |
+
+## Adding Dependencies
+
+The dependencies section of your config file is where you can specify any dependencies you would like to install in your deployment. We support **pip**, **conda** and **apt** dependencies and you can specify each of these in their relevant subsection of the dependencies section.
+
+For each dependency type, you can specify the name of the package you would like to install and the version constraints. If you do not want to specify any version constraints, you can use the `latest` keyword to install the latest version of the package.
+
+If you have an existing **requirements.txt**, **pkglist.txt** or **conda_pkglist.txt**, we'll prompt you to automatically integrate these into your config file when you run `cerebrium deploy`.
+
+### pip
+
+Your pip dependencies are specified under the `cerebrium.dependencies.pip` section of your config file.
+An example of a pip dependency is shown below:
+
+```toml
+[cerebrium.dependencies.pip]
+torch = ">=2.0.0"
+numpy = "latest"
+```
+
+### conda
+
+Similarly, your conda dependencies are specified under the `cerebrium.dependencies.conda` section of your config file.
+An example of a conda dependency is shown below:
+
+```toml
+[cerebrium.dependencies.conda]
+cuda = ">=11.7"
+cudatoolkit = "11.7"
+```
+
+### apt
+
+Finally, your apt dependencies are specified under the `cerebrium.dependencies.apt` section of your config file.  
+These are any package that you would install using `apt-get install` on a Linux machine.
+An example of an apt dependency is shown below:
+
+```toml
+[cerebrium.dependencies.apt]
+"libgl1-mesa-glx" = "latest"
+"libglib2.0-0" = "latest"
+```
+
+## Config File Example
+
+That was a lot of information!  
+Let's see an example of a config file in action.
+
+Below is an example of a config file that takes advantage of all the features we've discussed so far.
+
+```toml
+[cerebrium.deployment]
+name = "my-app"
+python_version = "3.10"
+include = ["./*", "main.py"]
+exclude = ["./.*", "./__*"]
+docker_base_image_url = "debian:bookworm-slim"
+shell_commands = []
+
+[cerebrium.hardware]
+compute = "AMPERE_A10"
+cpu = 2
+memory = 16.0
+gpu_count = 1
+provider = "aws"
+region = "us-east-1"
+
+[cerebrium.scaling]
+min_replicas = 0
+max_replicas = 2
+cooldown = 60
+replica_concurrency = 1
+
+[cerebrium.dependencies.pip]
+torch = ">=2.0.0"
+
+[cerebrium.dependencies.conda]
+cuda = ">=11.7"
+cudatoolkit = "11.7"
+
+[cerebrium.dependencies.apt]
+"libgl1-mesa-glx" = "latest"
+"libglib2.0-0" = "latest"
+```

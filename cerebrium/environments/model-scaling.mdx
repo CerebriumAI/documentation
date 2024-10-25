@@ -8,8 +8,8 @@ description: "Control the way your deployment scales up and down"
 Deployments on Cerebrium are scaled up and down automatically based on the number of requests your deployment is receiving. This is done to ensure that you are not paying for idle resources and that your deployment is always available to serve requests.  
 There are three parameters that regulate the scaling of your deployment:
 
-- minReplicas: The minimum number of replicas you would like to allow for your deployment. Set to 0 if you would like serverless deployments. Otherwise, latency sensitive applications, you can set this to a higher number to skip scale-up time and keep servers waiting however you will be charged for runtime. Defaults to 0.
-- maxReplicas: The maximum number of replicas you would like to allow for your deployment. Useful for cost-sensitive applications when you need to limit the number of replicas that can be created. By default this is not set and we scale your model to fit the your volume of requests.
+- minReplicas: The minimum number of replicas you would like to allow for your deployment. Set to 0 if you would like serverless deployments. Otherwise, latency sensitive apps, you can set this to a higher number to skip scale-up time and keep servers waiting however you will be charged for runtime. Defaults to 0.
+- maxReplicas: The maximum number of replicas you would like to allow for your deployment. Useful for cost-sensitive apps when you need to limit the number of replicas that can be created. By default this is not set and we scale your model to fit the your volume of requests.
 - cooldown: Cooldown period in seconds is the period of inactivity before the number of replicas for your deployment is scaled down by 1. Defaults to 60s.
 
 While these parameters are set at deployment time, you can change them at any time using the Cerebrium CLI.
@@ -30,7 +30,7 @@ You may want to update your model using a rest endpoint. To do so, you can use t
 
 ```bash
 curl --location 'https://rest-api.cerebrium.ai/update-model-scaling' \
---header 'Authorization: YOUR-PRIVATE-API-KEY' \
+--header 'Authorization: Bearer <JWT_TOKEN>' \
 --header 'Content-Type: application/json' \
 --data '{
     "name": "your-models-unique-name-here",

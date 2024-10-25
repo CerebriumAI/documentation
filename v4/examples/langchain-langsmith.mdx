@@ -1,0 +1,433 @@
+---
+title: "Langchain and Langsmith"
+description: "Deploy an executive assistant using Langsmith and Langchain"
+---
+
+In this tutorial, I am going to create an executive assistant, Cal-vin, to manage my calendar (Cal.com) with employees, customers, partners and friends. I will use the LangChain SDK to create my agent,
+the LangSmith platform to monitor how it is scheduling my time throughout the day and monitor situations in which it fails to do a correct job. Lastly, we will deploy this application on Cerebrium to
+show how it handles deploying and scaling our application seamlessly.
+
+You can find the final version of the code [here](https://github.com/CerebriumAI/examples/tree/master/13-tool-calling-langsmith)
+
+### Concepts
+
+To create an application like this, we will need to interact with my calendar based on instructions from a user. This is a perfect use case for an agent with function (tool) calling ability. LangChain is a framework with a lot of functionality supporting agents, they are also the creators of LangSmith and so an integration should be relatively easy.
+
+When we refer to a tool, we are referring to any framework, utility, or system that has defined functionality around a use case. For example, we might have a tool to search Google, a tool to pull our credit card transactions etc.
+
+LangChain also has three concepts/functions that we need to understand:
+
+`ChatModel.bind_tools()`: This is a method for attaching tool definitions to model calls. Each model provider has a different way they expect tools to be defined however; LangChain has created a standard interface so you can switch between providers and it is versatile. You can pass in a tool definition (a dict), as well as other objects from which a tool definition can be derived: namely Pydantic classes, LangChain tools, and arbitrary functions etc. The tool definition tells the LLM what this tool does and how to interact with it.
+
+```python
+@tool
+def exponentiate(x: float, y: float) -> float:
+    """Raise 'x' to the 'y'."""
+    return x**y
+```
+
+`AIMessage.tool_calls`: This is an attribute on the AIMessage type returned from the model for easily accessing the tool calls the model decided to make. It will specify any tool invocations in the format specified from the bind_tools call:
+
+```python
+# -> AIMessage(
+# 	  content=...,
+# 	  additional_kwargs={...},
+# 	  tool_calls=[{'name': 'exponentiate', 'args': {'y': 2.743, 'x': 5.0}, 'id': '54c166b2-f81a-481a-9289-eea68fc84e4f'}]
+# 	  response_metadata={...},
+# 	  id='...'
+#   )
+```
+
+`create_tool_calling_agent()`: The tool_calling_agent is just a standard way to bring the above concepts all together to work across providers that have different formats so you can easily switch out models.
+
+```python
+agent = create_tool_calling_agent(llm, tools, prompt)
+agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+
+agent_executor.invoke({"input": "what's 3 plus 5 raised to the 2.743. also what's 17.24 - 918.1241", })
+```
+
+### Setup Cal.com
+
+I am a big fan of [Cal.com](https://cal.com) and believe the team is going to keep shipping incredible features and so I wanted to build a demo using them. If you do not have an account you can create one [here](https://app.cal.com/signup).
+Cal will be our source of truth, so if you update time zones, or working hours in Cal, our assistant will reflect that.
+
+Once your account is created, click on “API keys” in the left sidebar and create an API key with no expiration date.
+
+![Cal.comAPI Keys](/images/examples/langchain_langsmith/cal_api_keys.png)
+
+To test that it’s working, you can do a simple CURL request. Just replace the following variables below:
+
+- Username
+- API key
+- Update the dateFrom and to dateTo variables
+  ‍
+
+```curl
+curl --location 'https://api.cal.com/v1/availability?apiKey=cal_live_xxxxxxxxxxxxxx&dateFrom=2024-04-15T00%3A00%3A00.000Z&dateTo=2024-04-22T00%3A00%3A00.000Z&username=michael-louis-xxxx'
+```
+
+You should get a response similar to the following:
+
+```
+{
+    "busy": [
+        {
+            "start": "2024-04-15T13:00:00.000Z",
+            "end": "2024-04-15T13:30:00.000Z"
+        },
+        {
+            "start": "2024-04-22T13:00:00.000Z",
+            "end": "2024-04-22T13:30:00.000Z"
+        },
+        {
+            "start": "2024-04-29T13:00:00.000Z",
+            "end": "2024-04-29T13:30:00.000Z"
+        },
+	   ....
+    ],
+    "timeZone": "America/New_York",
+    "dateRanges": [
+        {
+            "start": "2024-04-15T13:45:00.000Z",
+            "end": "2024-04-15T16:00:00.000Z"
+        },
+        {
+            "start": "2024-04-15T16:45:00.000Z",
+            "end": "2024-04-15T19:45:00.000Z"
+        },
+	    ....
+        {
+            "start": "2024-04-19T18:45:00.000Z",
+            "end": "2024-04-19T21:00:00.000Z"
+        }
+    ],
+    "oooExcludedDateRanges": [
+
+    ],
+    "workingHours": [
+        {
+            "days": [
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "startTime": 780,
+            "endTime": 1260,
+            "userId": xxxx
+        }
+    ],
+    "dateOverrides": [],
+    "currentSeats": null,
+    "datesOutOfOffice": {}
+}
+```
+
+Great! Now we know that our API key is working and pulling information from our calendar. The API calls we will be using later in this tutorial are:
+
+- **/availability**: Get your availability
+- **/bookings**: Book a slot
+
+### Cerebrium setup
+
+If you don’t have a Cerebrium account, you can create one by signing up [here](https://dashboard.cerebrium.ai/register) and following the documentation [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation) to get setup
+
+In your IDE, run the following command to create our Cerebrium starter project: `cerebrium init agent-tool-calling`. This creates two files:
+
+- Main.py - Our entrypoint file where our code lives
+- cerebrium.toml - A configuration file that contains all our build and environment settings
+  ‍
+
+Add the following pip packages near the bottom of your cerebrium.toml. This will be used in creating our deployment environment.
+
+```
+[cerebrium.dependencies.pip]
+pydantic = "latest"
+langchain = "latest"
+pytz = "latest" ##this is used for timezones
+openai = "latest"
+langchain_openai = "latest"
+```
+
+We will be using OpenAI GPT3.5 for our use cases and so we need an API key from them. If you don’t have an account, you can sign up [here](https://openai.com/). You can then create an API key [here](https://platform.openai.com/api-keys). The API key should be in the format: “sk_xxxxx”.
+
+In your Cerebrium dashboard you can then add your Cal.com and OpenAI API keys as secrets by navigating to “Secrets” in the sidebar. For the sake of this tutorial I called mine “CAL_API_KEY” and “OPENAI_API_KEY”. We can now access these values in our code at runtime without exposing them in our code.
+
+![Cerebrium Secrets Dashboard](/images/examples/langchain_langsmith/cerebrium_secrets.png)
+
+### Agent Setup
+
+To start we need to write two tool functions (in our `main.py` file) that the agent will use to check availability on our calendar as well as book a slot.
+
+- Get availability tool
+- You would have seen from the test API request we did above to Cal.com that the API returns your availability in the following way:
+- The time slots that you are already busy
+- Your working hours on each day
+  ‍
+
+Below is the code to achieve this:
+
+```python
+
+from langchain_core.tools import tool
+from cerebrium import get_secret
+import requests
+from cal import find_available_slots
+
+@tool
+def get_availability(fromDate: str, toDate: str) -> float:
+    """Get my calendar availability using the 'fromDate' and 'toDate' variables in the date format '%Y-%m-%dT%H:%M:%S.%fZ'"""
+
+    url = "https://api.cal.com/v1/availability"
+    params = {
+        "apiKey": get_secret("CAL_API_KEY"),
+        "username": "xxxxx",
+        "dateFrom": fromDate,
+        "dateTo": toDate
+    }
+    response = requests.get(url, params=params)
+    if response.status_code == 200:
+        availability_data = response.json()
+        available_slots = find_available_slots(availability_data, fromDate, toDate)
+        return available_slots
+    else:
+        return {}
+```
+
+In the above snippet we are doing a few things:
+
+- We give our function the @tool decorator so that LangChain can tell the LLM this is a tool.
+- We write a docstring that explains to the LLM what this function does and what input it expects.The LLM will make sure it asks the user enough questions to collect this input data.
+- We wrote a helper function, find_available_slots, to take the information returned from the Cal.com API and format it so its more readable. It will show the user the time slots available on each day. Make sure its in your directory!
+  ‍
+
+We then follow a similar practice to write our book_slot tool. This will book a slot in my calendar based on the selected time/day. You can get the eventTypeId from your dashboard, select an event and grab the ID in the URL.
+
+```python
+@tool
+def book_slot(datetime: str, name: str, email: str, title: str, description: str) -> float:
+    """Book a meeting on my calendar at the requested date and time using the 'datetime' variable. Get a description about what the meeting is about and make a title for it"""
+    url = "https://api.cal.com/v1/bookings"
+    params = {
+        "apiKey": get_secret("CAL_API_KEY"),
+        "username": "xxxx",
+        "eventTypeId": "xxx",
+        "start": datetime,
+        "responses": {
+            "name": name,
+            "email": email,
+            "guests": [],
+            "metadata": {},
+            "location": {
+              "value": "inPerson",
+              "optionValue": ""
+            }
+        },
+        "timeZone": "America/New York",
+        "language": "en",
+        "status": "PENDING",
+        "title": title,
+        "description": description,
+    }
+    response = requests.post(url, params=params)
+    if response.status_code == 200:
+        booking_data = response.json()
+        return booking_data
+    else:
+        print('error')
+        print(response)
+        return {}
+```
+
+Now that we have created our two tools let us create our agent in our `main.py` file too:
+
+```python
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.tools import tool
+from langchain.agents import create_tool_calling_agent, AgentExecutor
+from langchain_openai import ChatOpenAI
+
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "you're a helpful assistant managing the calendar of Michael Louis. You need to book appointments for a user based on available capacity and their preference. You need to find out if the user is: From Michaels team, a customer of Cerebrium or a friend or entrepreneur. If the person is from his team, book a morning slot. If its a potential customer for Cerebrium, book an afternoon slot. If its a friend or entrepreneur needing help or advice, book a night time slot. If none of these are available, book the earliest slot. Do not book a slot without asking the user what their preferred time is. Find out from the user, their name and email address."),
+    MessagesPlaceholder(variable_name="chat_history"),
+    ("human", "{input}"),
+    MessagesPlaceholder(variable_name="agent_scratchpad"),
+])
+
+tools = [get_availability, book_slot]
+
+
+llm = ChatOpenAI(model="gpt-3.5-turbo-0125", temperature=0, api_key=get_secret("OPENAI_API_KEY"))
+agent = create_tool_calling_agent(llm, tools, prompt)
+agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+```
+
+The above snippet is used to create our agent executor which consists of:
+
+- Our prompt template:
+  - This is where we can give instructions to our agent on what role it is taking on, its goal and how it should perform in certain situations etc. The more precise and concise this is, the better.
+  - Chat History is where we will inject all previous messages so that the agent has context on what was said previously.
+  - Input is new input from the end user.
+- We then instantiate our GPT3.5 model that will be the LLM we will be using. You can swap this our with Antrophic or any other provider just by replacing this one line - LangChain makes this seamless.
+- Lastly, we join this all together with our tools to create an agent executor.
+
+### Setup Chatbot
+
+The above code is static in that it will only reply to our first question but we might need to have a conversation to find a time that suits both the user and my schedule. We therefore need to create a chatbot with tool calling capabilities and the ability to remember past messages. LangChain supports this with RunnableWithMessageHistory().
+
+It essentially allows us to store the previous replies of our conversation in a chat_history variable (mentioned above in our prompt template) and tie this all to a session identifier so your API can remember information pertaining to a specific user/session. Below is our code to implement this:
+
+```python
+from langchain.memory import ChatMessageHistory
+from langchain_core.runnables.history import RunnableWithMessageHistory
+
+demo_ephemeral_chat_history_for_chain = ChatMessageHistory()
+conversational_agent_executor = RunnableWithMessageHistory(
+    agent_executor,
+    lambda session_id: demo_ephemeral_chat_history_for_chain,
+    input_messages_key="input",
+    output_messages_key="output",
+    history_messages_key="chat_history",
+)
+```
+
+Let us run a simple local test to make sure everything is working as expected.
+
+```python
+class Item(BaseModel):
+    prompt: str
+    session_id: str
+
+def predict(item, run_id, logger):
+    item = Item(**item)
+
+    output = conversational_agent_executor.invoke(
+        {
+            "input": user_input,
+        },
+        {"configurable": {"session_id": item.session_id}},
+    )
+
+    return {"result": output} # return your results
+
+if __name__ == "__main__":
+    while True:
+        user_input = input("Enter the input (or type 'exit' to stop): ")
+        if user_input.lower() == 'exit':
+            break
+        result = predict({"prompt": user_input, "session_id": "12345"}, "test", logger=None)
+        print(result)
+```
+
+The above code does the following:
+
+- We define a Pydantic object which specifies the parameters our API expects - the user prompt and a session id to tie the conversation to.
+- The predict function in Cerebrium is the entry point for our API so we just pass the prompt and session id to our agent and print the results.
+  ‍
+
+To run this, simply install the pip dependencies manually by typing the following into your terminal `pip install pydantic langchain pytz openai langchain_openai langchain-community` and then run `python main.py` to execute your main python file. You will need to replace your secrets with the actual values when running locally. You should then see output similar to the following:
+
+![Langchain Agent](/images/examples/langchain_langsmith/langchain_agent.png)
+
+If you keep talking and answering, you will see it will eventually book a slot.
+
+### Integrate Langsmith
+
+When releasing an application to production, its vital to know how it is performing, how users are interacting with it, where is it going wrong etc. This is especially true for agent applications since they have indeterministic workflows based on how a user interacts with the application and so we want to make sure we handle any and all edge cases. LangSmith is a logging, debugging and monitoring tool from LangChain that we will use. Your can read more about LangSmith [here](https://docs.smith.langchain.com/monitoring).
+
+Lets setup LangSmith to monitor and debug our application. First, add LangSmith as a pip dependency to our cerebrium.toml file.
+
+Next, we need to create an account on LangSmith and generate and API key - its free 🙂. You can sign up for an account [here](https://smith.langchain.com/) and can generate an API key by clicking the settings (gear icon) bottom left.
+
+Next we need to set the following environment variables. You can add the following code at the top of your main.py. You can add the API key to your secrets in Cerebrium
+
+```python
+import os
+os.environ['LANGCHAIN_TRACING_V2']="true"
+os.environ['LANGCHAIN_API_KEY']=get_secret("LANGCHAIN_API_KEY")
+```
+
+To integrate tracing into your applications it is as easy as adding the @traceable decorator to your function(s). LangSmith automatically traverses our functions and subsequent calls so we need to only put it above the predict function and we will see all the tool invocations and OpenAI responses automatically. If there is a function, that predict doesn’t call for example, but you instantiate another way, then make sure to decorate it with traceable. Edit main.py to have the following:
+
+```
+from langsmith import traceable
+
+@traceable
+def predict(item, run_id, logger):
+```
+
+Easy! Now LangSmith is set up. Run python main.py to run your file and test booking an appointment with yourself.
+
+After you have completed a successful test run you should see data populating in LangSmith. You should see the following:
+
+![LangSmith Runs Dashboard](/images/examples/langchain_langsmith/langsmith_runs.png)
+
+In the Runs tab, you can see all your runs (ie: invocations/API requests).
+
+In 1 above, it takes the name of our function, input is set to the Cerebrium RunID which in this case we set to “test”. Lastly, you can see the input as well as the total latency of your run.
+
+LangSmith wants you to create various automations based on your data. These can be:
+
+- Sending data to annotation queues that your team needs to label for positive and negative use cases
+- Sending to datasets that you can eventually train a model on
+- Online evaluation is a new feature that allows you to use a LLM to evaluate data for rudeness, topic etc.
+- Triggering webhook endpoints
+- and much more…
+
+You can set these automations by clicking the “Add rule” button above (2) and specifying under what conditions you would like the above to occur. The options to create a rule on are a filter, a sampling rate, and an action.
+
+Lastly, in 3 you can see overall metrics about your project such as number of runs, error rate, latency etc.
+
+Since our interface is conversational, there are many use cases where you would like to follow the conversation between your agent and a user without all the bloat. Threads in LangSmith does exactly this. I can see how a conversation evolved over time and if something seems out of the ordinary, I can open the trace to dive deeper. Note that threads are associated with the session id we gave to it.
+
+![LangSmith Threads](/images/examples/langchain_langsmith/langsmith_threads.png)
+
+Lastly, you can monitor performance metrics regarding your agent in the Monitor tab. It shows metrics such as trace count, LLM call success rate, First time for token and much more.
+
+![LangSmith Performance Monitoring](/images/examples/langchain_langsmith/langsmith_performance.png)
+
+LangSmith is a great choice of tool for those building agents and one that’s extremely simple to integrate. There is so much more functionality that we didn’t explore but its covers a lot of functionality in the application feedback loop of , collecting/annotating data → monitoring and then repeating
+
+### Deploy to Cerebrium
+
+To deploy this application to Cerebrium you can simply run the command: cerebrium deploy in your terminal. Just make sure to delete the name == “main” code since that was just to run locally.
+
+If it deployed successfully, you should see something like this:
+
+![Cerebrium Deployment](/images/examples/langchain_langsmith/cerebrium_deploy.png)
+
+You can now call this via an API endpoint and our agent will remember the conversation as long as the session id is the same. Cerebrium will automatically scale up your application based on demand and only pay for the compute you use.
+
+```
+{
+    "run_id": "UHCJ_GkTKh451R_nKUd3bDxp8UJrcNoPWfEZ3AYiqdY85UQkZ6S1vg==",
+    "status_code": 200,
+    "result": {
+        "result": {
+            "input": "Hi! I would like to book a time with Michael the 18th of April 2024.",
+            "chat_history": [],
+            "output": "Michael is available on the 18th of April 2024 at the following times:\n1. 13:00 - 13:30\n2. 14:45 - 17:00\n3. 17:45 - 19:00\n\nPlease let me know your preferred time slot. Are you from Michael's team, a potential customer of Cerebrium, or a friend/entrepreneur seeking advice?"
+        }
+    },
+    "run_time_ms": 6728.828907012939,
+    "process_time_ms": 6730.178117752075
+}
+```
+
+You can find the final version of the code [here](https://github.com/CerebriumAI/examples/tree/master/13-tool-calling-langsmith).
+
+### Further improvements
+
+In this tutorial I didn’t get to the following but I think it would be interesting to implement:
+
+- You can stream back the responses to the user to make the experience more seamless. LangChain makes it easy to do this.
+- Integrate with my email, that if I tag Claire in a thread, it can go through the conversation and get context to schedule the meeting.
+- Add voice capabilities so that someone can phone me and book a time and Claire can respond.
+
+### Conclusion
+
+The integration of LangChain, LangSmith and Cerebrium make it extremely easy to deploy agents at scale! LangChain is a great frameworks for the orchestration of LLMs, tooling, memory as well as LangSmith for monitoring this in production and using it to identify and iterate on edge cases. Cerebrium makes this agent scalable across across 100’s or 1000’s or CPU/GPUs while only allowing you to pay for compute as its used.
+
+Tag us as **@cerebriumai** in extensions you make to the code repository so we can share it with our community.

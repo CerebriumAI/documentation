@@ -1,7 +1,7 @@
 [
   {
     "prompt": "What is Cerebrium?",
-    "completion": "Cerebrium is an AWS Sagemaker alternative providing all the features you need to quickly build an ML product.",
+    "completion": "Cerebrium is an AWS SageMaker alternative providing all the features you need to quickly build an ML product.",
     "source": "https://docs.cerebrium.ai/introduction"
   },
   {

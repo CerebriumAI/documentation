@@ -3,6 +3,12 @@ title: "Generate Images using SDXL"
 description: "Generate high quality images using SDXL with refiner"
 ---
 
+<Note>
+  This example is only compatible with CLI v1.20 and later. Should you be making
+  use of an older version of the CLI, please run `pip install --upgrade
+  cerebrium` to upgrade it to the latest version.
+</Note>
+
 This is a simple tutorial on how to generate a high quality image using the SDXL refiner model located on [Huggingface](https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0) from Stability AI.
 
 To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/10-sdxl-refiner)
@@ -20,18 +26,45 @@ cerebrium init sdxl-refiner
 
 It is important to think of the way you develop models using Cerebrium should be identical to developing on a virtual machine or Google Colab - so converting this should be very easy!
 
-Let us add the following packages to the **[cerebrium.dependencies.pip]** section of our `cerebrium.toml` file:
+To start, your cerebrium.toml file is where you can set your compute/environment. You cerebrium.toml file should look like:
 
 ```toml
+
+[cerebrium.deployment]
+name = "sdxl"
+python_version = "3.10"
+include = ["./*", "main.py", "cerebrium.toml"]
+exclude = ["./.*", "./__*"]
+docker_base_image_url = "debian:bookworm-slim"
+
+[cerebrium.hardware]
+region = "us-east-1"
+provider = "aws"
+compute = "AMPERE_A10"
+cpu = 2
+memory = 16.0
+gpu_count = 1
+
+[cerebrium.scaling]
+min_replicas = 0
+max_replicas = 5
+cooldown = 60
+
 [cerebrium.dependencies.pip]
-invisible_watermark = "latest"
-transformers = ">=4.35.0"
 accelerate = "latest"
+transformers = ">=4.35.0"
 safetensors = "latest"
+opencv-python = "latest"
 diffusers = "latest"
+
+[cerebrium.dependencies.conda]
+
+[cerebrium.dependencies.apt]
+ffmpeg = "latest"
+
 ```
 
-To start, we need to create a **main.py** file which will contain our main Python code. This is a relatively simple implementation, so we can do everything in 1 file. We would like a user to send in a link to a YouTube video with a question and return to them the answer as well as the time segment of where we got that response.
+We now need to create a **main.py** file which will contain our main Python code. This is a relatively simple implementation, so we can do everything in 1 file. We would like a user to send in a link to a YouTube video with a question and return to them the answer as well as the time segment of where we got that response.
 So let us define our request object.
 
 ```python
@@ -46,16 +79,16 @@ import base64
 class Item(BaseModel):
     prompt: str
     url: str
-    negative_prompt: Optional[str] = None
-    conditioning_scale: Optional[float] = 0.5
-    height: Optional[int] = 512
-    width: Optional[int] = 512
-    num_inference_steps: Optional[int] = 20
-    guidance_scale: Optional[float] = 7.5
-    num_images_per_prompt: Optional[int] = 1
+    negative_prompt: Optional[str]
+    conditioning_scale: float
+    height: int
+    width: int
+    num_inference_steps: int
+    guidance_scale: float
+    num_images_per_prompt: int
 ```
 
-Above, we import all the various Python libraries we require as well as use Pydantic as our data validation library. Due to the way that we have defined the Base Model, "prompt" and "url" are required parameters and so if they are not present in the request, the user will automatically receive an error message. Everything else is optional.
+Above, we import all the various Python libraries we require as well as use Pydantic as our data validation library. Due to the way that we have defined the Base Model, "prompt" and "URL" are required parameters and so if they are not present in the request, the user will automatically receive an error message. Everything else is optional.
 
 ## Instantiate model
 
@@ -74,8 +107,19 @@ pipe = pipe.to("cuda")
 Below we simply get the parameters from our request and pass it to the SDXL model to generate the image(s). You will notice we convert the images to base64, this is so we can return it directly instead of writing the files to an S3 bucket - the return of the predict function needs to be JSON serializable.
 
 ```python
-def predict(item, run_id, logger):
-    item = Item(**item)
+def predict(prompt, url, negative_prompt=None, conditioning_scale=0.5, height=512, width=512, num_inference_steps=20,
+            guidance_scale=7.5, num_images_per_prompt=1):
+    item = Item(
+        prompt=prompt,
+        url=url,
+        negative_prompt=negative_prompt,
+        conditioning_scale=conditioning_scale,
+        height=height,
+        width=width,
+        num_inference_steps=num_inference_steps,
+        guidance_scale=guidance_scale,
+        num_images_per_prompt=num_images_per_prompt
+    )
 
     init_image = load_image(item.url).convert("RGB")
     images = pipe(
@@ -102,47 +146,6 @@ def predict(item, run_id, logger):
 
 ## Deploy
 
-Your cerebrium.toml file is where you can set your compute/environment. Please make sure that the GPU you specify is a AMPERE_A5000 and that you have enough memory (RAM) on your instance to run the models. You cerebrium.toml file should look like:
-
-```toml
-
-[cerebrium.build]
-predict_data = "{\"prompt\": \"Here is some example predict data for your cerebrium.toml which will be used to test your predict function on build.\"}"
-force_rebuild = false
-disable_animation = false
-log_level = "INFO"
-disable_confirmation = false
-
-[cerebrium.deployment]
-name = "sdxl"
-python_version = "3.10"
-include = "[./*, main.py]"
-exclude = "[./.*, ./__*]"
-
-[cerebrium.hardware]
-gpu = "AMPERE_A5000"
-cpu = 2
-memory = 16.0
-gpu_count = 1
-
-[cerebrium.scaling]
-min_replicas = 0
-cooldown = 60
-
-[cerebrium.dependencies.apt]
-ffmpeg = "latest"
-
-[cerebrium.dependencies.pip]
-accelerate = "latest"
-transformers = ">=4.35.0"
-safetensors = "latest"
-opencv-python = "latest"
-diffusers = "latest"
-
-[cerebrium.dependencies.conda]
-
-```
-
 To deploy the model use the following command:
 
 ```bash
@@ -152,9 +155,9 @@ cerebrium deploy sdxl-refiner
 Once deployed, we can make the following request:
 
 ```curl
-curl --location 'https://run.cerebrium.ai/v3/p-xxxxx/sdxl-refiner/predict' \
+curl --location 'https://api.cortex.cerebrium.ai/v4/p-<YOUR PROJECT ID>/sdxl-refiner/predict' \
 --header 'Content-Type: application/json' \
---header 'Authorization: <JWT_TOKEN>' \
+--header 'Authorization: Bearer <YOUR TOKEN HERE>' \
 --data '{
     "url": "https://huggingface.co/datasets/patrickvonplaten/images/resolve/main/aa_xl/000000009.png",
     "prompt": "a photo of an astronaut riding a horse on mars"

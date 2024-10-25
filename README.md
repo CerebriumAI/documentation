@@ -2,7 +2,7 @@
 
 Welcome to Cerebrium's documentation hub currently available at [docs.cerebrium.ai](https://docs.cerebrium.ai)
 
-Cerebrium is an AWS Sagemaker alternative providing all the features you need to quickly build an ML product.
+Cerebrium is an AWS SageMaker alternative providing all the features you need to quickly build an ML product.
 
 ### 🚀 Setup
 
@@ -26,7 +26,7 @@ yarn installed already run `npm install --global yarn` in your terminal.
 
 ### 😎 Publishing Changes
 
-Changes will be deployed to production automatically after pushing to the default (`master`) branch.
+Changes are deployed to production automatically after pushing to the default (`master`) branch.
 
 You can also preview changes using PRs, which generates a preview link of the docs.
 
