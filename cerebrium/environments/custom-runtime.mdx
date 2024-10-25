@@ -29,7 +29,7 @@ server = FastAPI()
 async def hello():
     return {"message": "Hello Cerebrium!"}
 
-# You must define an endpoint that can relay to Cerebrium that the app is ready to receive requests
+# You can define an endpoint that can relay to Cerebrium that the app is ready to receive requests
 @server.get("/health")
 async def health():
     return "Ok"
@@ -38,11 +38,11 @@ async def health():
 To enable us to deploy this application, we modify our `cerebrium.toml` with a 'cerebrium.runtime.custom' section.
 There are 3 parameters in this section:
 
-| parameter              | description                                                                                                                                                                                      | type       | default                                                                |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | ---------------------------------------------------------------------- |
-| `entrypoint`           | The command used to enter your application as either a list of strings or a single string. This is run from the `/cortex` directory                                                              | list\[str] | \["uvicorn", "app.main:server", "--host", "0.0.0.0", "--port", "8000"] |
-| `port`                 | The port your application runs on. You must ensure this port is the same your app exposes and expects to receive traffic on                                                                      | int        | 8000                                                                   |
-| `healthcheck_endpoint` | The endpoint the application uses to relay that it is ready to receive requests. A _200_ response is required from the endpoint in order for Cerebrium to know when the app can receive requests | string     | "/readyz"                                                              |
+| parameter              | description                                                                                                                                                                                                                                                           | type       | default                                                                |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------- |
+| `entrypoint`           | The command used to enter your application as either a list of strings or a single string. This is run from the `/cortex` directory                                                                                                                                   | list\[str] | \["uvicorn", "app.main:server", "--host", "0.0.0.0", "--port", "8000"] |
+| `port`                 | The port your application runs on. You must ensure this port is the same your app exposes and expects to receive traffic on                                                                                                                                           | int        | 8000                                                                   |
+| `healthcheck_endpoint` | The endpoint the application uses to relay that it is ready to receive requests. If set, a _200_ response is required from the endpoint before the app can receive requests. If this is an empty string, we will check replica health with TCP to your specified port | string     | ""                                                                     |
 
 An example of a config section for a custom runtime for our main file may look something like this:
 
@@ -55,7 +55,7 @@ python_version = "3.10"
 [cerebrium.runtime.custom]
 entrypoint = ["uvicorn", "app.main:server", "--host", "0.0.0.0", "--port", "8080"]
 port = 8080
-healthcheck_endpoint = "/health"
+healthcheck_endpoint = ""  # An empty string here means health will be checked with TCP on your specified `port`
 
 ...
 ```
@@ -88,7 +88,7 @@ Python code!
 [cerebrium.runtime.custom]
 entrypoint = "vllm serve meta-llama/Meta-Llama-3-8B-Instruct --host 0.0.0.0 --port 8000 --device cuda"
 port = 8000
-healthcheck_endpoint = "/health"
+healthcheck_endpoint = "/health"  # Replica health will be checked with a GET request to /health
 
 [cerebrium.dependencies.pip]
 torch = "latest"
