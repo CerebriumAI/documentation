@@ -5,7 +5,7 @@ title: "Websocket Endpoints"
 Using a WebSocket endpoint allows responses to be streamed to the client, enabling real-time communication and efficient data transfer.
 
 <Note>
-    Warning: This functionality is in beta and may change in the future.
+  Warning: This functionality is in beta and may change in the future.
 </Note>
 
 ## Required changes
@@ -25,7 +25,6 @@ Explanation:
 - port: The port your app will listen on inside the container.
 - entrypoint: The command to start your app. In this example, we’re using Uvicorn to run a FastAPI app located in app/main.py.
 - healthcheck_endpoint: The endpoint used by Cerebrium to verify that your app is running.
-
 
 ## Things to note
 
@@ -64,21 +63,23 @@ Client-Side Implementation: When connecting from a client app, ensure you handle
 
 ```javascript
 // Example using JavaScript in a browser
-const socket = new WebSocket("wss://dev-api.cortex.cerebrium.ai/v4/<your-project-id>/<your-app-name>/<your-websocket-function-name>");
+const socket = new WebSocket(
+  "wss://dev-api.cortex.cerebrium.ai/v4/<your-project-id>/<your-app-name>/<your-websocket-function-name>",
+);
 
 socket.onopen = function (event) {
-    console.log("WebSocket is open now.");
+  console.log("WebSocket is open now.");
 };
 
 socket.onmessage = function (event) {
-    console.log("Received data: " + event.data);
+  console.log("Received data: " + event.data);
 };
 
 socket.onclose = function (event) {
-    console.log("WebSocket is closed now.");
+  console.log("WebSocket is closed now.");
 };
 
 socket.onerror = function (error) {
-    console.error("WebSocket error observed:", error);
+  console.error("WebSocket error observed:", error);
 };
 ```
