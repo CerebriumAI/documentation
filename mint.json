@@ -138,7 +138,8 @@
         "v4/examples/transcribe-whisper",
         "v4/examples/realtime-voice-agents",
         "v4/examples/twilio-voice-agent",
-        "v4/examples/openai-compatible-endpoint-vllm"
+        "v4/examples/openai-compatible-endpoint-vllm",
+        "v4/examples/asgi-gradio-interface"
       ]
     },
     {
