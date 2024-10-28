@@ -97,9 +97,10 @@
     {
       "group": "Endpoints",
       "pages": [
+        "cerebrium/endpoints/openai-compatible-endpoints",
         "cerebrium/endpoints/rest-api",
         "cerebrium/endpoints/streaming",
-        "cerebrium/endpoints/openai-compatible-endpoints"
+        "cerebrium/endpoints/websockets"
       ]
     },
     {
