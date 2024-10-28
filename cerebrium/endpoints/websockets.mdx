@@ -1,0 +1,85 @@
+---
+title: "Websocket Endpoints"
+---
+
+Using a WebSocket endpoint allows responses to be streamed to the client, enabling real-time communication and efficient data transfer.
+
+<Note>
+  Warning: This functionality is in beta and may change in the future.
+</Note>
+
+## Required changes
+
+To set up a WebSocket endpoint, you need to configure your app to use a custom runtime.
+Below is an example of the required changes in your `cerebrium.toml` configuration file:
+
+```toml
+[cerebrium.runtime.custom]
+port = 5000
+entrypoint = "uvicorn app.main:app --host 0.0.0.0 --port 5000"
+healthcheck_endpoint = "/health"
+```
+
+Explanation:
+
+- port: The port your app will listen on inside the container.
+- entrypoint: The command to start your app. In this example, we’re using Uvicorn to run a FastAPI app located in app/main.py.
+- healthcheck_endpoint: The endpoint used by Cerebrium to verify that your app is running.
+
+## Things to note
+
+- Custom Runtime Required: A custom runtime is necessary to set up a WebSocket endpoint because it allows you to define how your application is run inside the container.
+
+- WebSocket URL: Requests need to be made to a WebSocket URL starting with wss://. Ensure that your client supports secure WebSocket connections.
+
+## Making a request
+
+You can test your WebSocket endpoint using websocat, a command-line utility for connecting to WebSocket servers:
+
+```bash
+websocat wss://api.cortex.cerebrium.ai/v4/<your-project-id>/<your-app-name>/<your-websocket-function-name>
+```
+
+## Implementing the WebSocket Endpoint
+
+Here’s an example of how you can implement a WebSocket endpoint using FastAPI:
+
+```python
+# main.py
+from fastapi import FastAPI, WebSocket
+
+app = FastAPI()
+
+@app.websocket("/your-websocket-function-name")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    await websocket.send_text("Hello, WebSocket!")
+    await websocket.close()
+```
+
+## Additional Info
+
+Client-Side Implementation: When connecting from a client app, ensure you handle the WebSocket connection properly, including error handling and reconnection logic if necessary.
+
+```javascript
+// Example using JavaScript in a browser
+const socket = new WebSocket(
+  "wss://api.cortex.cerebrium.ai/v4/<your-project-id>/<your-app-name>/<your-websocket-function-name>",
+);
+
+socket.onopen = function (event) {
+  console.log("WebSocket is open now.");
+};
+
+socket.onmessage = function (event) {
+  console.log("Received data: " + event.data);
+};
+
+socket.onclose = function (event) {
+  console.log("WebSocket is closed now.");
+};
+
+socket.onerror = function (error) {
+  console.error("WebSocket error observed:", error);
+};
+```
