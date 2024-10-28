@@ -19,7 +19,7 @@ In your IDE, run the following command to create our Cerebrium starter project: 
 - **Main.py** - Our entrypoint file where our code lives
 - **cerebrium.toml** - A configuration file that contains all our build and environment settings
   ‍
-Add the following pip packages near the bottom of your cerebrium.toml. This will be used in creating our deployment environment.
+  Add the following pip packages near the bottom of your cerebrium.toml. This will be used in creating our deployment environment.
 
 ```
 [cerebrium.dependencies.pip]
@@ -78,7 +78,7 @@ async def websocket_endpoint(websocket: WebSocket):
     await main(websocket, stream_sid)
 ```
 
-Don't worry about the line ```from .bot import main``` - we will add this later. In your current directory, create a folder called 'templates' and inside it a file called 'stream.xml'.
+Don't worry about the line `from .bot import main` - we will add this later. In your current directory, create a folder called 'templates' and inside it a file called 'stream.xml'.
 We need to send back a xml response to Twilio in order to upgrade the connection to the websocket connection. Add the following code to the streams.xml file:
 
 ```xml
@@ -96,8 +96,8 @@ Before we continue with our implementation, let us setup our Twilio number.
 
 ### Twilio setup
 
-Twilio is a cloud communications platform that enables businesses to integrate messaging, voice, video, and authentication capabilities into their applications through APIs. We will use them for this demo, but you can use any alternative provider. 
-If you don't have an account you can sign up [here](https://www.twilio.com/try-twilio) - they have a generous free tier. 
+Twilio is a cloud communications platform that enables businesses to integrate messaging, voice, video, and authentication capabilities into their applications through APIs. We will use them for this demo, but you can use any alternative provider.
+If you don't have an account you can sign up [here](https://www.twilio.com/try-twilio) - they have a generous free tier.
 
 Once you have an account, you can navigate to the page in order to buy a [number](https://console.twilio.com/us1/develop/phone-numbers/manage/search?isoCountry=US&types[]=Local&capabilities[]=Sms&capabilities[]=Mms&capabilities[]=Voice&capabilities[]=Fax&searchTerm=&searchFilter=left&searchType=number).
 When you buy a number please make sure its not a toll-free number - this won't work. We then setup a webhook that hits our endpoint in order to connect to the agent.
@@ -165,12 +165,12 @@ async def main(websocket_client, stream_sid):
         api_key=os.environ.get("OPENAI_API_KEY"),
         model="gpt-4",
     )
-    
+
 
     tts = CartesiaTTSService(
         api_key=os.getenv("CARTESIA_API_KEY"),
         voice_id="79a125e8-cd45-4c13-8a67-188112f4dd22",  # British Lady
-    )   
+    )
 
     messages = [
         {
@@ -212,6 +212,7 @@ async def main(websocket_client, stream_sid):
 ```
 
 The code above does the following:
+
 - We connect our agent to our websocket transport layer that will send/receive audio.
 - We setup our LLM, TTS and STT services using [Deepgram](https://deepgram.com/), [OpenAI](https://openai.com/) and [Cartesia](https://www.cartesia.ai/). You can select any provider you like - Pipecat supports a wide variety.
 - In order to authenticate all these services, we use [Secrets](https://docs.cerebrium.ai/cerebrium/environments/using-secrets). Add them to your Cerebrium dashboard.
