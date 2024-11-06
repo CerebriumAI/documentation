@@ -11,7 +11,7 @@ description: "Generate high quality images using SDXL with refiner"
 
 This is a simple tutorial on how to generate a high quality image using the SDXL refiner model located on [Huggingface](https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0) from Stability AI.
 
-To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/10-sdxl-refiner)
+To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/5-image-and-video/2-sdxl-refiner)
 
 ## Basic Setup
 
@@ -21,7 +21,7 @@ Please make sure you have the Cerebrium package installed and have logged in. If
 First we create our project:
 
 ```
-cerebrium init sdxl-refiner
+cerebrium init 2-sdxl-refiner
 ```
 
 It is important to think of the way you develop models using Cerebrium should be identical to developing on a virtual machine or Google Colab - so converting this should be very easy!
@@ -31,11 +31,10 @@ To start, your cerebrium.toml file is where you can set your compute/environment
 ```toml
 
 [cerebrium.deployment]
-name = "sdxl"
+name = "2-sdxl-refiner"
 python_version = "3.10"
 include = ["./*", "main.py", "cerebrium.toml"]
 exclude = ["./.*", "./__*"]
-docker_base_image_url = "debian:bookworm-slim"
 
 [cerebrium.hardware]
 region = "us-east-1"
@@ -149,13 +148,13 @@ def predict(prompt, url, negative_prompt=None, conditioning_scale=0.5, height=51
 To deploy the model use the following command:
 
 ```bash
-cerebrium deploy sdxl-refiner
+cerebrium deploy
 ```
 
 Once deployed, we can make the following request:
 
 ```curl
-curl --location 'https://api.cortex.cerebrium.ai/v4/p-<YOUR PROJECT ID>/sdxl-refiner/predict' \
+curl --location 'https://api.cortex.cerebrium.ai/v4/p-<YOUR PROJECT ID>/2-sdxl-refiner/predict' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer <YOUR TOKEN HERE>' \
 --data '{

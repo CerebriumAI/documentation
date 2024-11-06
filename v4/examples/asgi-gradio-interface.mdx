@@ -5,7 +5,7 @@ description: "Using FastAPI, Gradio and Cerebrium to deploy an LLM chat interfac
 
 In this tutorial, we'll create and deploy a Gradio chat interface that connects to a Llama 8B language model using Cerebrium's custom ASGI runtime. We'll build a scalable architecture where the frontend runs on CPU instances while the model can be deployed separately on GPU instances for optimal resource utilization.
 
-You can find the full codebase for deploying your gradio frontend, [here](https://github.com/CerebriumAI/examples/tree/master/34-asgi-gradio-interface).
+You can find the full codebase for deploying your gradio frontend, [here](https://github.com/CerebriumAI/examples/tree/master/6-python-apps/2-asgi-gradio-interface).
 
 ## Architecture Overview
 
@@ -33,14 +33,14 @@ Before starting, you'll need:
 First, create a new directory for your project and initialize it:
 
 ```
-cerebrium init 34-gradio-interface
+cerebrium init 2-gradio-interface
 ```
 
 Next, let us add the following configuration to our `cerebrium.toml` file:
 
 ```toml
 [cerebrium.deployment]
-name = "33-gradio-interface"
+name = "2-gradio-interface"
 python_version = "3.12"
 disable_auth = true
 include = ['./*', 'main.py', 'cerebrium.toml']
@@ -450,7 +450,7 @@ cerebrium deploy -y
 Once deployed, make the following, navigate to the following URL in your browser:
 
 ```
-'https://api.cortex.cerebrium.ai/v4/p-<YOUR PROJECT ID>/34-gradio-interface/'
+'https://api.cortex.cerebrium.ai/v4/p-<YOUR PROJECT ID>/2-gradio-interface/'
 ```
 
 You should see the Gradio chat interface.

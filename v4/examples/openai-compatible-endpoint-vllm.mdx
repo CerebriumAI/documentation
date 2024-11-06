@@ -6,13 +6,13 @@ description: "Create a OpenAI compatible endpoint using the vLLM framework"
 In this tutorial, we will create a OpenAI compatible endpoint that can be used with any open-source mode. This allows you to use the same code as your OpenAI commands but swap
 in Cerebrium serverless functions with a 2 line code change.
 
-To see the final code implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/29-openai-compatible-endpoint)
+To see the final code implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/4-large-language-models/5-openai-compatible-endpoint)
 
 ### Cerebrium setup
 
 If you don’t have a Cerebrium account, you can create one by signing up [here](https://dashboard.cerebrium.ai/register) and following the documentation [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation) to get setup
 
-In your IDE, run the following command to create our Cerebrium starter project: `cerebrium init voice-agent`. This creates two files:
+In your IDE, run the following command to create our Cerebrium starter project: `cerebrium init 5-openai-compatible-endpoint`. This creates two files:
 
 - **Main.py** - Our entrypoint file where our code lives
 - **cerebrium.toml** - A configuration file that contains all our build and environment settings
@@ -113,7 +113,7 @@ cerebrium deploy
 Once deployed, you will see we generate a curl for this application that looks something like:
 
 ```curl
-curl --location 'https://api.cortex.cerebrium.ai/v4/p-<YOUR PROJECT ID>/openai-compatible-endpoint/{function}' \
+curl --location 'https://api.cortex.cerebrium.ai/v4/p-<YOUR PROJECT ID>/5-openai-compatible-endpoint/{function}' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer <YOUR TOKEN HERE>' \
 --data '{"..."}''
@@ -127,7 +127,7 @@ import os
 from openai import OpenAI
 
 client = OpenAI(
-    base_url="https://api.cortex.cerebrium.ai/v4/p-xxxxxxx/openai-compatible-endpoint/run",
+    base_url="https://api.cortex.cerebrium.ai/v4/p-xxxxxxx/5-openai-compatible-endpoint/run",
     api_key="<CEREBRIUM_JWT_TOKEN>",
 )
 
