@@ -16,7 +16,7 @@ ComfyUI is a popular no-code interface for building complex stable diffusion wor
 - https://comfyworkflows.com/
 - https://openart.ai/workflows/home‍
 
-While it is currently easy to experiment with ComfyUI workflows, there isn’t a lot of guidance or tutorials on how to productionize these workflows at scale. In this tutorial, I am going to show you how you can use Cerebrium to deploy your pipelines to an API endpoint so they can autoscale based on demand and that you only pay for the compute you use. You can find the full example code [here](https://github.com/CerebriumAI/examples/tree/master/12-comfyui).
+While it is currently easy to experiment with ComfyUI workflows, there isn’t a lot of guidance or tutorials on how to productionize these workflows at scale. In this tutorial, I am going to show you how you can use Cerebrium to deploy your pipelines to an API endpoint so they can autoscale based on demand and that you only pay for the compute you use. You can find the full example code [here](https://github.com/CerebriumAI/examples/tree/master/6-image-and-video/1-comfyui).
 
 ### Creating your Comfy UI workflow locally
 
@@ -26,7 +26,7 @@ Before we get started, make sure ComfyUI is [installed properly on your local en
 
 For our use case, we are going to use Stable Diffusion XL and ControlNet to create a cool QR code. If you have a existing workflow setup, you can simply skip to the step “Export ComfyUI Workflow”
 
-1. Let us first create our Cerebrium project with: `cerebrium init comfyUI`
+1. Let us first create our Cerebrium project with: `cerebrium init 1-comfyui`
 2. Inside your project, lets copy the ComfyUI GitHub project: `git clone https://github.com/comfyanonymous/ComfyUI`
 3. Download the following models and install them in the appropriate folders within the ComfyUI folder:
    - SDXL base in models/checkpoints.
@@ -192,7 +192,7 @@ You can now deploy your application by running: cerebrium deploy
 Once your ComfyUI application has been deployed successfully, you should be able to make a request to the endpoint using the following JSON payload:
 
 ```curl
-curl --location 'https://api.cortex.cerebrium.ai/v4/p-xxxx/comfyui/predict' \
+curl --location 'https://api.cortex.cerebrium.ai/v4/p-xxxx/1-comfyui/predict' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer <YOUR TOKEN HERE>' \
 --data '{"workflow_values": {

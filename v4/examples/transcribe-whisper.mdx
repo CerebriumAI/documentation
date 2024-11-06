@@ -6,7 +6,7 @@ description: "Using Distill Whisper to transcribe an audio file"
 In this tutorial, we will transcribe an hour audio file using Distill Whisper - an optimized version of Whisper-large-v2 but 60% faster and within 1% of the error rate. We
 will accept either a base64 encode string of the audio file or an URL from which we can download the audio file from.
 
-To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/11-whisper-transcription)
+To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/5-voice/1-whisper-transcription)
 
 ## Basic Setup
 
@@ -16,7 +16,7 @@ Please make sure you have the Cerebrium package installed and have logged in. If
 First we create our project:
 
 ```
-cerebrium init distil-whisper
+cerebrium init 1-whisper-transcription
 ```
 
 It is important to think of the way you develop models using Cerebrium should be identical to developing on a virtual machine or Google Colab - so converting this should be very easy!
@@ -126,7 +126,7 @@ Your cerebrium.toml file is where you can set your compute/environment. Your cer
 
 ```toml
 [cerebrium.deployment]
-name = "distil-whisper"
+name = "1-whisper-transcription"
 python_version = "3.11"
 include = ["./*", "main.py", "cerebrium.toml"]
 exclude = ["./example_exclude"]
@@ -161,13 +161,13 @@ pydantic = "latest"
 Deploy the app use the following command:
 
 ```bash
-cerebrium deploy distill-whisper
+cerebrium deploy
 ```
 
 Once deployed, make the following request:
 
 ```curl
-curl --location 'https://api.cortex.cerebrium.ai/v4/p-<YOUR PROJECT ID>/distill-whisper/predict' \
+curl --location 'https://api.cortex.cerebrium.ai/v4/p-<YOUR PROJECT ID>/1-whisper-transcription/predict' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer <YOUR TOKEN HERE>' \
 --data '{"file_url": "https://your-public-url.com/test.mp3"}''
