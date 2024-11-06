@@ -11,7 +11,7 @@ description: "Deploy Mistral 7B with vLLM"
 
 In this tutorial, we will show you how to deploy Mistral 7B using the popular vLLM inference framework.
 
-To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/2-advanced-concepts/2-faster-inference-with-vllm)
+To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/3-advanced-concepts/1-faster-inference-with-vllm)
 
 ## Basic Setup
 
@@ -21,7 +21,7 @@ Please make sure you have the Cerebrium package installed and have logged in. If
 First we create our project:
 
 ```
-cerebrium init 2-faster-inference-with-vllm
+cerebrium init 1-faster-inference-with-vllm
 ```
 
 We need certain Python packages to implement this project. Lets add those to our **[cerebrium.dependencies.pip]** in our `cerebrium.toml` file:
@@ -119,7 +119,7 @@ log_level = "INFO"
 disable_confirmation = false
 
 [cerebrium.deployment]
-name = "mistral-vllm"
+name = "1-faster-inference-with-vllm"
 python_version = "3.11"
 include = ["./*", "main.py", "cerebrium.toml"]
 exclude = ["./example_exclude"]
@@ -163,7 +163,7 @@ cerebrium deploy
 Once deployed, we can make the following request:
 
 ```curl
-curl --location --request POST 'https://api.cortex.cerebrium.ai/v4/p-<YOUR PROJECT ID>/2-faster-inference-with-vllm/predict' \
+curl --location --request POST 'https://api.cortex.cerebrium.ai/v4/p-<YOUR PROJECT ID>/1-faster-inference-with-vllm/predict' \
 --header 'Authorization: Bearer <YOUR TOKEN HERE>' \
 --header 'Content-Type: application/json' \
 --data-raw '{

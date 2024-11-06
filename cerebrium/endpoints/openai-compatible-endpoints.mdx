@@ -6,7 +6,7 @@ description: ""
 By default, all functions deployed on Cerebrium are a REST API that are accessible through an authenticated POST request. We have made all these endpoints OpenAI compatible whether it
 be <b>/chat/completions</b> or <b>/embedding</b>. Below we show you a very basic implementation of implementing a streaming OpenAI compatible endpoint.
 
-We recommend you checkout a full example of how to deploy a OpenAI compatible endpoint using vLLM [here](https://github.com/CerebriumAI/examples/tree/master/4-large-language-models/5-openai-compatible-endpoint)
+We recommend you checkout a full example of how to deploy a OpenAI compatible endpoint using vLLM [here](https://github.com/CerebriumAI/examples/tree/master/2-endpoints/1-openai-compatible-endpoint)
 
 To create a streaming compatible endpoint, we need to make sure our cerebrium function:
 
@@ -52,7 +52,7 @@ from openai import OpenAI
 
 client = OpenAI(
     # This is the default and can be omitted
-    base_url="https://api.cortex.cerebrium.ai/v4/p-xxxxx/5-openai-compatible-endpoint/run", ##This is the name of the function you are calling
+    base_url="https://api.cortex.cerebrium.ai/v4/p-xxxxx/1-openai-compatible-endpoint/run", ##This is the name of the function you are calling
     api_key="<CEREBRIUM_JWT_TOKEN>",
 )
 

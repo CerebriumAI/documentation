@@ -129,7 +129,6 @@
       "group": "Examples",
       "version": "v4",
       "pages": [
-        "v4/examples/tensorRT",
         "v4/examples/comfyUI",
         "v4/examples/langchain-langsmith",
         "v4/examples/sdxl",
