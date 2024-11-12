@@ -100,7 +100,9 @@
         "cerebrium/endpoints/openai-compatible-endpoints",
         "cerebrium/endpoints/rest-api",
         "cerebrium/endpoints/streaming",
-        "cerebrium/endpoints/websockets"
+        "cerebrium/endpoints/websockets",
+        "cerebrium/endpoints/async",
+        "cerebrium/endpoints/webhook"
       ]
     },
     {
