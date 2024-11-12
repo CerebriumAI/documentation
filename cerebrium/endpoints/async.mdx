@@ -1,0 +1,67 @@
+---
+title: "Asynchronous Execution (Preview)"
+description: "Execute calls to a Cerebrium app to be run asynchroously"
+---
+
+<Note>
+This is a new feature! As such, the API is still currently subject to changes.
+
+However, should you encounter an issue please reach out to us on Discord!
+
+</Note>
+
+Many applications require asynchronous execution of functions in a "fire-and-forget" fashion
+in order to work optimally. In this scenario, you hand off execution of a function to be Cerebrium's
+responsibility, while you as the developer are responsible for ensuring that data is able leave the function.
+
+You can enable your function to execute asynchronously by adding the `async` query parameter to your request
+, and setting it to `true`. This would look something like this:
+
+```bash
+curl -X POST https://api.cortex.cerebrium.ai/v4/<YOUR-PROJECT-ID>/<YOUR-APP>/run?async=true'\
+       -H 'Content-Type: application/json'\
+       -H 'Authorization: Bearer <YOUR-JWT-TOKEN>\
+       --data '{"param": "hello world"}'
+```
+
+This would _immediately_ return a response akin to the following, with a body that only specifies a `run_id`:
+
+```bash
+HTTP/1.1 202 Accepted
+Connection: close
+Content-Length: 50
+Content-Type: application/json
+Date: Tue, 12 Nov 2024 03:13:25 GMT
+Server: envoy
+Vary: Origin
+X-Envoy-Upstream-Service-Time: 2
+X-Request-Id: 21eb3b98-4b10-9ad6-8681-a47172828024
+
+{"run_id":"21eb3b98-4b10-9ad6-8681-a47172828024"}
+```
+
+In the background, Cerebrium will now run this HTTP request for you.
+Your function is still expected to behave in a **synchronous** manner. That is, it must open a connection, keep
+it open while it is doing work, then return a response once it is done. This effectively allows you
+to treat a synchronous request-responses as asynchronous, and you can do anything within the scope
+of your function call with a _12 hour timeout_. This does **not** mean your actual Python function cannot be `async`.
+Rather, this means that the lifetime of the function is still tied to lifetime of the request made to your app.
+If you terminate your function early and return a response while the application is still doing work, the Cerebrium
+system will begin to terminate the application. Therefore, you should only return a response once the container
+has finished processing the task, and not earlier.
+
+In order to use async execution effectively, you must ensure that your function exports any relevant data you
+need, since you will no longer be able to receive a request. An easy way to achieve this would be to combine
+async execution with a specified `webhookEndpoint`, to have Cerebrium automatically forward the body of
+the function response once it has returned:
+
+```bash
+curl -X POST <https://api.cortex.cerebrium.ai/v4/><YOUR-PROJECT-ID>/<YOUR-APP>/run?async=true&webhookEndpoint=https%3A%2F%2Fwebhook.site%2F'\
+ -H 'Content-Type: application/json'\
+ -H 'Authorization: Bearer <YOUR-JWT-TOKEN>\
+ --data '{"param": "hello world"}'
+```
+
+As with webhooks, this a feature of our proxy, and you will not need to modify any part of your code in order to use the webhook
+functionality. In your dashboard, your function will be marked as **async**, but will still show the status of the internal synchronous call
+that was made (in other words, if the call to your function failed, the state of your async request would be `failure` etc.)
