@@ -129,16 +129,47 @@
       "group": "Examples",
       "version": "v4",
       "pages": [
-        "v4/examples/comfyUI",
-        "v4/examples/langchain-langsmith",
-        "v4/examples/sdxl",
-        "v4/examples/mistral-vllm",
-        "v4/examples/streaming-falcon-7B",
-        "v4/examples/transcribe-whisper",
-        "v4/examples/realtime-voice-agents",
-        "v4/examples/twilio-voice-agent",
-        "v4/examples/openai-compatible-endpoint-vllm",
-        "v4/examples/asgi-gradio-interface"
+        "v4/examples/featured",
+        {
+          "group":  "Advanced concepts",
+          "pages": [
+            "v4/examples/mistral-vllm",
+            "v4/examples/streaming-falcon-7B"
+          ]
+        },
+        {
+          "group":  "Endpoints",
+          "pages": [
+            "v4/examples/openai-compatible-endpoint-vllm"
+          ]
+        },
+        {
+          "group":  "Integrations",
+          "pages": [
+            "v4/examples/langchain-langsmith"
+          ]
+        },
+        {
+          "group":  "Voice",
+          "pages": [
+            "v4/examples/transcribe-whisper",
+            "v4/examples/twilio-voice-agent",
+            "v4/examples/realtime-voice-agents"
+          ]
+        },
+        {
+          "group": "Image & Video",
+          "pages": [
+            "v4/examples/comfyUI",
+            "v4/examples/sdxl"
+          ]
+        },
+        {
+          "group": "Python Apps",
+          "pages": [
+            "v4/examples/asgi-gradio-interface"
+          ]
+        }
       ]
     },
     {
