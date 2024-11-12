@@ -1,0 +1,27 @@
+---
+title: "Webhook Forwarding (Preview)"
+description: "Forward responses to a specified webhook"
+---
+
+<Note>
+This is a new feature! As such, the API is still currently subject to changes.
+
+However, should you encounter an issue please reach out to us on Discord!
+
+</Note>
+
+An HTTP request to the Cerebrium API can be parameterised to forward data from a response to a specified endpoint via a POST.
+This allows you to utilize webhooks in your architecture! To achieve this, we can simply add the `webhookEndpoint`
+query parameter to any API call:
+
+```bash
+curl -X POST https://api.cortex.cerebrium.ai/v4/<YOUR-PROJECT-ID>/<YOUR-APP>/run?webhookEndpoint=https%3A%2F%2Fwebhook.site%2F'\
+       -H 'Content-Type: application/json'\
+       -H 'Authorization: Bearer <YOUR-JWT-TOKEN>\
+       --data '{"param": "hello world"}'
+```
+
+This will then forward the body by sending a POST request to your specified webhook. Since this is
+a feature of our proxy, you will not need to modify any part of your code in order to use the webhook
+functionality. You should however ensure that your endpoint is able to receive POST requests. While
+this will work for both Cortex and Custom runtimes, it will only work for HTTP requests, and not websockets.
