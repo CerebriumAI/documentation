@@ -10,7 +10,7 @@ However, should you encounter an issue please reach out to us on Discord!
 
 </Note>
 
-An HTTP request to the Cerebrium API can be parameterised to forward data from a response to a specified endpoint via a POST.
+An HTTP request to the Cerebrium API can be parameterised to forward data from your function/application to a specified endpoint via a POST.
 This allows you to utilize webhooks in your architecture! To achieve this, we can simply add the `webhookEndpoint`
 query parameter to any API call:
 
@@ -25,3 +25,17 @@ This will then forward the body by sending a POST request to your specified webh
 a feature of our proxy, you will not need to modify any part of your code in order to use the webhook
 functionality. You should however ensure that your endpoint is able to receive POST requests. While
 this will work for both Cortex and Custom runtimes, it will only work for HTTP requests, and not websockets.
+
+To illustrate this, suppose your function returns `{"smile": "wave"}`. We would then make a POST call from
+our proxy that would look like this to your webhook:
+
+<Note>
+  We do not actually use `curl`. This is used as an example to show what a
+  webhook may expect.
+</Note>
+
+```bash
+curl -X POST https://webhook.site/'\
+       -H 'Content-Type: application/json'\
+       --data '{"smile": "wave"}'
+```

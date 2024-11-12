@@ -14,8 +14,8 @@ Many applications require asynchronous execution of functions in a "fire-and-for
 in order to work optimally. In this scenario, you hand off execution of a function to be Cerebrium's
 responsibility, while you as the developer are responsible for ensuring that data is able leave the function.
 
-Through parameterizing your request to the Cerebrium API, you can enable your function to executed asynchronously
-by setting the `async` query parameter of your request to `true`. This would look something like this:
+You can enable your function to execute asynchronously by adding the `async` query parameter to your request
+, and setting it to `true`. This would look something like this:
 
 ```bash
 curl -X POST https://api.cortex.cerebrium.ai/v4/<YOUR-PROJECT-ID>/<YOUR-APP>/run?async=true'\
@@ -40,12 +40,15 @@ X-Request-Id: 21eb3b98-4b10-9ad6-8681-a47172828024
 {"run_id":"21eb3b98-4b10-9ad6-8681-a47172828024"}
 ```
 
-In the background, Cerebrium will now run this synchronous function for you. Note the term synchronous.
-Your function is still expected to behave **synchronously**. That is, it must open a connection, keep
+In the background, Cerebrium will now run this HTTP request for you.
+Your function is still expected to behave in a **synchronous** manner. That is, it must open a connection, keep
 it open while it is doing work, then return a response once it is done. This effectively allows you
-to treat synchronous request-responses you write as asynchronous, and you can do anything within the scope
-of your call to the function. Functions executed asynchronously are also subject to a timeout of _12 hours_
-as opposed to the standard 15 minutes.
+to treat a synchronous request-responses as asynchronous, and you can do anything within the scope
+of your function call with a _12 hour timeout_. This does **not** mean your actual Python function cannot be `async`.
+Rather, this means that the lifetime of the function is still tied to lifetime of the request made to your app.
+If you terminate your function early and return a response while the application is still doing work, the Cerebrium
+system will begin to terminate the application. Therefore, you should only return a response once the container
+has finished processing the task, and not earlier.
 
 In order to use async execution effectively, you must ensure that your function exports any relevant data you
 need, since you will no longer be able to receive a request. An easy way to achieve this would be to combine
