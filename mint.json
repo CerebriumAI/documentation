@@ -133,15 +133,15 @@
       "pages": [
         "v4/examples/featured",
         {
-          "group": "Advanced concepts",
-          "pages": [
-            "v4/examples/mistral-vllm",
-            "v4/examples/streaming-falcon-7B"
-          ]
+          "group": "Advanced Concepts",
+          "pages": ["v4/examples/mistral-vllm"]
         },
         {
-          "group": "Endpoints",
-          "pages": ["v4/examples/openai-compatible-endpoint-vllm"]
+          "group": "large Language models",
+          "pages": [
+            "v4/examples/openai-compatible-endpoint-vllm",
+            "v4/examples/streaming-falcon-7B"
+          ]
         },
         {
           "group": "Integrations",
