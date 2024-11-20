@@ -134,9 +134,7 @@
         "v4/examples/featured",
         {
           "group": "Advanced Concepts",
-          "pages": [
-            "v4/examples/mistral-vllm"
-          ]
+          "pages": ["v4/examples/mistral-vllm"]
         },
         {
           "group": "large Language models",
