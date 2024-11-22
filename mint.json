@@ -36,6 +36,12 @@
     {
       "name": "Migrations",
       "url": "migrations"
+    },
+    {
+      "name": "API Reference",
+      "openapi": "/openapi_spec.json",
+      "url": "api-reference",
+      "icon": "square-terminal"
     }
   ],
   "anchors": [
