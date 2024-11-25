@@ -4,9 +4,7 @@
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
   },
-  "versions": [
-    "v4"
-  ],
+  "versions": ["v4"],
   "favicon": "/favicon.png",
   "colors": {
     "primary": "#EB3A6F",
@@ -96,15 +94,11 @@
     },
     {
       "group": "Data Storage",
-      "pages": [
-        "cerebrium/data-sharing-storage/persistent-storage"
-      ]
+      "pages": ["cerebrium/data-sharing-storage/persistent-storage"]
     },
     {
       "group": "Deployments",
-      "pages": [
-        "cerebrium/deployments/ci-cd"
-      ]
+      "pages": ["cerebrium/deployments/ci-cd"]
     },
     {
       "group": "Endpoints",
@@ -119,21 +113,15 @@
     },
     {
       "group": "Integrations",
-      "pages": [
-        "cerebrium/integrations/vercel"
-      ]
+      "pages": ["cerebrium/integrations/vercel"]
     },
     {
       "group": "Misc",
-      "pages": [
-        "cerebrium/misc/faster-model-loading"
-      ]
+      "pages": ["cerebrium/misc/faster-model-loading"]
     },
     {
       "group": "Prebuilt Models",
-      "pages": [
-        "cerebrium/prebuilt-models/introduction"
-      ]
+      "pages": ["cerebrium/prebuilt-models/introduction"]
     },
     {
       "group": "FAQs and Tips",
@@ -152,9 +140,7 @@
         "v4/examples/featured",
         {
           "group": "Advanced Concepts",
-          "pages": [
-            "v4/examples/mistral-vllm"
-          ]
+          "pages": ["v4/examples/mistral-vllm"]
         },
         {
           "group": "large Language models",
@@ -165,9 +151,7 @@
         },
         {
           "group": "Integrations",
-          "pages": [
-            "v4/examples/langchain-langsmith"
-          ]
+          "pages": ["v4/examples/langchain-langsmith"]
         },
         {
           "group": "Voice",
@@ -179,25 +163,17 @@
         },
         {
           "group": "Image & Video",
-          "pages": [
-            "v4/examples/comfyUI",
-            "v4/examples/sdxl"
-          ]
+          "pages": ["v4/examples/comfyUI", "v4/examples/sdxl"]
         },
         {
           "group": "Python Apps",
-          "pages": [
-            "v4/examples/asgi-gradio-interface"
-          ]
+          "pages": ["v4/examples/asgi-gradio-interface"]
         }
       ]
     },
     {
       "group": "Migrations",
-      "pages": [
-        "migrations/replicate",
-        "migrations/hugging-face"
-      ]
+      "pages": ["migrations/replicate", "migrations/hugging-face"]
     }
   ],
   "analytics": {
