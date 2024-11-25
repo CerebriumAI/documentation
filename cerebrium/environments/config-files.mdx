@@ -56,23 +56,23 @@ The available hardware parameters are:
 
 The following is the hardware available on the Cerebrium. We use a unique identifier for each GPU model:
 
-| GPU Model                                                                  | Cerebrium Identifier | VRAM |
-| -------------------------------------------------------------------------- | -------------------- | ---- |
-| [`NVIDIA A10`](https://www.nvidia.com/en-us/data-center/products/a10-gpu/) | AMPERE_A10           | 24GB |
-| [`NVIDIA L40s`](https://www.nvidia.com/en-us/data-center/l40s/)            | ADA_L40              | 48GB |
-| [`NVIDIA L4`](https://www.nvidia.com/en-us/data-center/l4/)                | ADA_L4               | 24GB |
-| [`NVIDIA T4`](https://www.nvidia.com/en-us/data-center/tesla-t4/)          | TURING_T4            | 16GB |
-| [`AWS INFERENTIA 2`](https://aws.amazon.com/machine-learning/inferentia/)  | INF2                 | 32GB |
-| [`AWS TRANIUM 1`](https://aws.amazon.com/machine-learning/trainium/)       | TRN1                 | 32GB |
+| GPU Model                                                                | Cerebrium Identifier | VRAM |
+| ------------------------------------------------------------------------ | -------------------- | ---- |
+| [NVIDIA A10](https://www.nvidia.com/en-us/data-center/products/a10-gpu/) | `AMPERE_A10`         | 24GB |
+| [NVIDIA L40s](https://www.nvidia.com/en-us/data-center/l40s/)            | `ADA_L40`            | 48GB |
+| [NVIDIA L4](https://www.nvidia.com/en-us/data-center/l4/)                | `ADA_L4`             | 24GB |
+| [NVIDIA T4](https://www.nvidia.com/en-us/data-center/tesla-t4/)          | `TURING_T4`          | 16GB |
+| [AWS INFERENTIA 2](https://aws.amazon.com/machine-learning/inferentia/)  | `INF2`               | 32GB |
+| [AWS TRANIUM 1](https://aws.amazon.com/machine-learning/trainium/)       | `TRN1`               | 32GB |
 
 There are more models available through the _Enterprise Plan_. If you would like to use any of the following,
 please contact us!
 
-| GPU Model                                                            | Cerebrium Identifier | VRAM |
-| -------------------------------------------------------------------- | -------------------- | ---- |
-| [`NVIDIA H100`](https://www.nvidia.com/en-us/data-center/h100/)      | HOPPER_H100          | 80GB |
-| [`NVIDIA A100_80GB`](https://www.nvidia.com/en-us/data-center/a100/) | AMPERE_A100          | 80GB |
-| [`NVIDIA A100_40GB`](https://www.nvidia.com/en-us/data-center/a100/) | AMPERE_A100_40GB     | 40GB |
+| GPU Model                                                          | Cerebrium Identifier | VRAM |
+| ------------------------------------------------------------------ | -------------------- | ---- |
+| [NVIDIA H100](https://www.nvidia.com/en-us/data-center/h100/)      | `HOPPER_H100`        | 80GB |
+| [NVIDIA A100_80GB](https://www.nvidia.com/en-us/data-center/a100/) | `AMPERE_A100`        | 80GB |
+| [NVIDIA A100_40GB](https://www.nvidia.com/en-us/data-center/a100/) | `AMPERE_A100_40GB`   | 40GB |
 
 If you would like to deploy an app with no GPU requirement, you can use the `CPU` Cerebrium Identifier for
 your `compute`.
@@ -85,13 +85,13 @@ This section provides configuration options for deployment scaling. These parame
 
 These parameters are specified under the `cerebrium.scaling` section of your config file.
 
-| parameter               | description                                                                                                                                                                                                                                                       | type | default    |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ---------- |
-| `min_replicas`          | The minimum number of app instances to run at all times.                                                                                                                                                                                                          | int  | 0          |
-| `max_replicas`          | The maximum number of instances your app can scale to.                                                                                                                                                                                                            | int  | plan limit |
-| `cooldown`              | The number of seconds your app is kept warm after each request, before scaling down back to cold. The cooldown for a replica resets on receiving a new request. Once your cooldown period is reached, Cerebrium will issue a `SIGTERM` to your instance.          | int  | 60         |
-| `replica_concurrency`   | The maximum number of requests an instance of your app can handle at a time. You should ensure your deployment can handle the concurrency before setting this above 1.                                                                                            | int  | 1          |
-| `response_grace_period` | The maximum amount of time in seconds Cerebrium should wait to issue a `SIGKILL` command to your instance after issuing a `SIGTERM` command for a scale down. This is to allow you to gracefully exit your application, or to force the instance to exit quickly. | int  | 900        |
+| parameter               | description                                                                                                                                                                                                                                                | type | default    |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ---------- |
+| `min_replicas`          | The minimum number of app instances to run at all times.                                                                                                                                                                                                   | int  | 0          |
+| `max_replicas`          | The maximum number of instances your app can scale to.                                                                                                                                                                                                     | int  | plan limit |
+| `cooldown`              | The number of seconds your app is kept warm after each request, before scaling down back to cold. The cooldown for a replica resets on receiving a new request. Once your cooldown period is reached, Cerebrium will issue a `SIGTERM` to your instance.   | int  | 60         |
+| `replica_concurrency`   | The maximum number of requests an instance of your app can handle at a time. You should ensure your deployment can handle the concurrency before setting this above 1.                                                                                     | int  | 1          |
+| `response_grace_period` | The maximum number of seconds Cerebrium should wait to issue a `SIGKILL` command to your instance, after issuing a `SIGTERM` command for a scale down. This is to allow you to gracefully exit your application, or to force the instance to exit quickly. | int  | 900        |
 
 ## Adding Dependencies
 
