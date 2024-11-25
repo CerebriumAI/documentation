@@ -19,13 +19,12 @@ python_version = "3.12"
 
 ## Docker Base Image
 
-Cerebrium supports the ability to define the base docker image you would like to use. At the moment, this feature is currently in **beta** and so we only have three options available:
+Cerebrium supports the ability to define the base docker image you would like to use. At this stage we support any image from
+the following DockerHub repositories:
 
-- debian:bookworm-slim (default)
-- nvidia/cuda:12.1.1-runtime-ubuntu22.04
-- nvidia/cuda:11.8.0-runtime-ubuntu22.04
-
-We will add support for bringing your own in the future.
+- `debian` (default: `debian:bookworm-slim`)
+- Ubuntu based `nvidia/cuda` (example: `nvidia/cuda:12.6.2-cudnn-runtime-ubuntu22.04`)
+- Ubuntu & Debian based `python` (example: `python:3.12-bookworm`)
 
 ## Dependencies
 
@@ -56,13 +55,10 @@ ffmpeg = "latest"
 
 All the sections above are optional, however, have to contain these file names specifically.
 
-Typically, specifying versions for packages leads to faster builds however, if you ever find you would like to change version numbers or find your library versions aren't
-updating, please add the following flag to your deploy command: `cerebrium deploy --name <<app-name>> --force-rebuild`
-
 ## Shell Commands
 
 Cerebrium gives you the ability to run shell commands - this is for more complicated use cases of cloning repositories, running install scripts etc.
-You can also define environment variables, which will populate every time your app starts up.
+The commands will be run in the context of your Python virtual environment, so you may use tools like `pip` to install dependencies.
 
 <Note>
   Please note that shell commands are run last in the build process which means
