@@ -47,27 +47,37 @@ The available hardware parameters are:
 | ----------- | ----------------------------------------------------- | ------ | --------- |
 | `cpu`       | The number of CPU cores to use.                       | int    | 2         |
 | `memory`    | The amount of Memory to use in GB.                    | float  | 14        |
-| `compute`   | The GPU type.                                         | string | CPU       |
+| `compute`   | The Cerebrium Identifier for your specified hardware. | string | CPU       |
 | `gpu_count` | The number of GPUs.                                   | int    | 1         |
 | `provider`  | The provider to run on. v4 only supports `aws`        | string | aws       |
 | `region`    | The region to deploy to. v4 only supports `us-east-1` | string | us-east-1 |
 
-### Available Hardware
+### Available Hardware for `compute`
 
-The following is the hardware available on Cerebrium
+The following is the hardware available on the Cerebrium, specified through a specific identfier:
 
-| Name               | Provider | API Compatibility |
-| ------------------ | -------- | ----------------- |
-| `CPU`              | [aws]    | [v4]              |
-| `AMPERE_A10`       | [aws]    | [v4]              |
-| `ADA_L4`           | [aws]    | [v4]              |
-| `ADA_L40`          | [aws]    | [v4]              |
-| `TURING_T4`        | [aws]    | [v4]              |
-| `AMPERE_A100`      | [aws]    | [v4]              |
-| `AMPERE_A100_40GB` | [aws]    | [v4]              |
-| `HOPPER_H100`      | [aws]    | [v4]              |
-| `INF2`             | [aws]    | [v4]              |
-| `TRN1`             | [aws]    | [v4]              |
+| GPU Model                                                                  | Cerebrium Identifier | VRAM |
+| -------------------------------------------------------------------------- | -------------------- | ---- |
+| [`NVIDIA A10`](https://www.nvidia.com/en-us/data-center/products/a10-gpu/) | AMPERE_A10           | 24GB |
+| [`NVIDIA L40s`](https://www.nvidia.com/en-us/data-center/l40s/)            | ADA_L40              | 48GB |
+| [`NVIDIA L4`](https://www.nvidia.com/en-us/data-center/l4/)                | ADA_L4               | 24GB |
+| [`NVIDIA T4`](https://www.nvidia.com/en-us/data-center/tesla-t4/)          | TURING_T4            | 16GB |
+| [`AWS INFERENTIA 2`](https://aws.amazon.com/machine-learning/inferentia/)  | INF2                 | 32GB |
+| [`AWS TRANIUM 1`](https://aws.amazon.com/machine-learning/trainium/)       | TRN1                 | 32GB |
+
+There are more models available through the _Enterprise Plan_. If you would like to use any of the following,
+please contact us!
+
+| GPU Model                                                            | Cerebrium Identifier | VRAM |
+| -------------------------------------------------------------------- | -------------------- | ---- |
+| [`NVIDIA H100`](https://www.nvidia.com/en-us/data-center/h100/)      | HOPPER_H100          | 80GB |
+| [`NVIDIA A100_80GB`](https://www.nvidia.com/en-us/data-center/a100/) | AMPERE_A100          | 80GB |
+| [`NVIDIA A100_40GB`](https://www.nvidia.com/en-us/data-center/a100/) | AMPERE_A100_40GB     | 40GB |
+
+If you would like to deploy an app with no GPU requirement, you can use the `CPU` Cerebrium Identifier for
+your `compute`.
+
+For more details on hardware choice, consult the [Available Hardware page](available-hardware)
 
 ## Scaling Parameters
 

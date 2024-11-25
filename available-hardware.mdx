@@ -12,20 +12,20 @@ This page lists the hardware that is currently available on the platform. If you
 
 ## GPUs
 
-We have the following graphics cards available on the platform:
-| Name | Cerebrium Name | VRAM | Minimum Plan | Provider
+We have the following graphics cards available on the platform. The Cerebrium identifier (used in your config file),
+is usually a combination of the *GPU generation* and *model name* to avoid ambiguity:
+
+| GPU Model | Cerebrium Identifier | VRAM | Minimum Plan | Provider
 | --------------------------------------------------------------------------------------------------- | :------: |------ | :-------------------: | :-------------------: |
-| [NVIDIA H100](https://www.nvidia.com/en-us/data-center/h100/) | Special Request | 80GB | Enterprise | [AWS]
-| [NVIDIA A100](https://www.nvidia.com/en-us/data-center/a100/) | Special Request | 80GB | Enterprise | [AWS]
+| [NVIDIA H100](https://www.nvidia.com/en-us/data-center/h100/) | HOPPER_H100 | 80GB | Enterprise | [AWS]
 | [NVIDIA A100_80GB](https://www.nvidia.com/en-us/data-center/a100/) | AMPERE_A100 | 80GB | Enterprise | [AWS]
-| [NVIDIA A100_40GB](https://www.nvidia.com/en-us/data-center/a100/) | AMPERE_A100 | 40GB | Enterprise | [AWS]
-| [NVIDIA A10](https://www.nvidia.com/en-us/data-center/a100/) | AMPERE_A10 | 24GB | Hobby | [AWS]
-| [NVIDIA L4](https://www.nvidia.com/en-us/data-center/l4/) | ADA_L4 | 24GB | Hobby | [AWS]
+| [NVIDIA A100_40GB](https://www.nvidia.com/en-us/data-center/a100/) | AMPERE_A100_40GB | 40GB | Enterprise | [AWS]
+| [NVIDIA A10](https://www.nvidia.com/en-us/data-center/products/a10-gpu/) | AMPERE_A10 | 24GB | Hobby | [AWS]
 | [NVIDIA L40s](https://www.nvidia.com/en-us/data-center/l40s/) | ADA_L40 | 48GB | Hobby | [AWS]
+| [NVIDIA L4](https://www.nvidia.com/en-us/data-center/l4/) | ADA_L4 | 24GB | Hobby | [AWS]
 | [NVIDIA T4](https://www.nvidia.com/en-us/data-center/tesla-t4/) | TURING_T4 | 16GB | Hobby | [AWS]
 | [AWS INFERENTIA](https://aws.amazon.com/machine-learning/inferentia/) | INF2 | 32GB | Hobby | [AWS]
 | [AWS TRANIUM](https://aws.amazon.com/machine-learning/trainium/) | TRN1 | 32GB | Hobby | [AWS]
-
 
 These GPUs can be selected using the `--gpu` flag when deploying your app on Cortex or can be specified in your `cerebrium.toml`.
 For more help with deciding which GPU you require, see this section [here](#choosing-a-gpu).
@@ -92,7 +92,7 @@ If you are unsure of how many CPU cores you need, it's best to start with either
 ## Calculating your required CPU Memory
 
 A guideline for calculating the amount of CPU memory that you require is to use the same amount of CPU memory as you have VRAM. This is because the model will generally be loaded into CPU memory first during initialisation. This happens while the weights are being loaded from storage and the model is being compiled. Once the model is compiled, it is loaded into VRAM and the CPU memory is freed up.  
-Certain libraries, such as _transformers_, do have methods that allow you to use less CPU memory by setting flags such as `low_cpu_mem_usage` which trade off CPU memory for longer initialisation times.
+Certain libraries, such as *transformers*, do have methods that allow you to use less CPU memory by setting flags such as `low_cpu_mem_usage` which trade off CPU memory for longer initialisation times.
 
 ## Storage Requirements
 
