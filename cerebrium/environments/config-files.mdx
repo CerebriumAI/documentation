@@ -54,7 +54,7 @@ The available hardware parameters are:
 
 ### Available Hardware for `compute`
 
-The following is the hardware available on the Cerebrium, specified through a specific identfier:
+The following is the hardware available on the Cerebrium. We use a unique identfier for each GPU model:
 
 | GPU Model                                                                  | Cerebrium Identifier | VRAM |
 | -------------------------------------------------------------------------- | -------------------- | ---- |
@@ -85,13 +85,13 @@ This section provides configuration options for deployment scaling. These parame
 
 These parameters are specified under the `cerebrium.scaling` section of your config file.
 
-| parameter               | description                                                                                                                                                                                                                                              | type | default    |
-| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ---------- |
-| `min_replicas`          | The minimum number of app instances to run at all times.                                                                                                                                                                                                 | int  | 0          |
-| `max_replicas`          | The maximum number of instances your app can scale to.                                                                                                                                                                                                   | int  | plan limit |
-| `cooldown`              | The number of seconds your app is kept warm after each request, before scaling down back to cold. The cooldown for a replica resets on receiving a new request. Once your cooldown period is reached, Cerebrium will issue a `SIGTERM` to your instance. | int  | 60         |
-| `replica_concurrency`   | The maximum number of requests an instance of your app can handle at a time. You should ensure your deployment can handle the concurrency before setting this above 1.                                                                                   | int  | 1          |
-| `response_grace_period` | The maximum amount of time Cerebrium should wait to issue a `SIGKILL` command to your instance after issuing a `SIGTERM` command for a scale down. This is to allow you to gracefully exit your application, or to force the instance to exit quickly.   | int  | 900        |
+| parameter               | description                                                                                                                                                                                                                                                       | type | default    |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ---------- |
+| `min_replicas`          | The minimum number of app instances to run at all times.                                                                                                                                                                                                          | int  | 0          |
+| `max_replicas`          | The maximum number of instances your app can scale to.                                                                                                                                                                                                            | int  | plan limit |
+| `cooldown`              | The number of seconds your app is kept warm after each request, before scaling down back to cold. The cooldown for a replica resets on receiving a new request. Once your cooldown period is reached, Cerebrium will issue a `SIGTERM` to your instance.          | int  | 60         |
+| `replica_concurrency`   | The maximum number of requests an instance of your app can handle at a time. You should ensure your deployment can handle the concurrency before setting this above 1.                                                                                            | int  | 1          |
+| `response_grace_period` | The maximum amount of time in seconds Cerebrium should wait to issue a `SIGKILL` command to your instance after issuing a `SIGTERM` command for a scale down. This is to allow you to gracefully exit your application, or to force the instance to exit quickly. | int  | 900        |
 
 ## Adding Dependencies
 
