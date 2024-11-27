@@ -170,13 +170,13 @@ This script does the following:
 
 ### 2. Deployment
 
-To deploy your model to Cerebrium, use the following CLI command in your project directory:
+To deploy your app to Cerebrium, use the following CLI command in your project directory:
 
 ```bash
 cerebrium deploy
 ```
 
-This command will use the configuration in `cerebrium.toml` to set up and deploy your model.
+This command uses the configuration in `cerebrium.toml` to set up and deploy your model.
 
 ### 3. Using the Deployed Model
 
@@ -200,7 +200,7 @@ response = requests.request("POST", url, headers=headers, data=payload)
 print(response.text)
 ```
 
-Make sure to replace `[CEREBRIUM_API_KEY]` with your Cerebrium API key, which can be found in your dashboard under API keys. This code sends a POST request to your deployed model's endpoint with a prompt, and prints the model's response.
+Make sure to replace `[CEREBRIUM_API_KEY]` with your Inference API key, which can be found in your dashboard under API keys. This code sends a POST request to your deployed model's endpoint with a prompt, and prints the model's response.
 
 ## Additional Considerations
 
