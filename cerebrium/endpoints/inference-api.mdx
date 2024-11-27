@@ -1,0 +1,31 @@
+---
+title: "Inference API"
+description: ""
+---
+
+By default, all apps on Cerebrium are accessible via authenticated POST requests. Authentication is handled using the JWT token available in the **API Keys** section of your dashboard.
+
+The POST request follows the structure below, where `{function}` is the name of the function you want to invoke. For example, in this case, the function `predict()` from `main.py` is being called.
+
+```bash
+curl --location --request POST 'https://api.cortex.cerebrium.ai/v4/p-xxxxx/{app-name}/{function}' \
+--header 'Authorization: Bearer <JWT_TOKEN>' \
+--header 'Content-Type: application/json' \
+--data '{
+  "function_param": "data"
+}'
+```
+
+Responses follow this format:
+
+```bash
+{
+    "run_id": "52eda406-b81b-43f5-8deb-fcf80dfsb74b",
+    "run_time_ms": 326.34
+    "result": {<data>}
+}
+```
+
+Successful requests return a status code of 200, while errors result in a status code of 500.
+
+To return custom status codes such as 422, 404, etc., include the status_code field in the JSON response from your `main.py`.

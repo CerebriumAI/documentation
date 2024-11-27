@@ -104,7 +104,7 @@
       "group": "Endpoints",
       "pages": [
         "cerebrium/endpoints/openai-compatible-endpoints",
-        "cerebrium/endpoints/rest-api",
+        "cerebrium/endpoints/inference-api",
         "cerebrium/endpoints/streaming",
         "cerebrium/endpoints/websockets",
         "cerebrium/endpoints/webhook",
