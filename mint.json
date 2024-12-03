@@ -173,7 +173,11 @@
     },
     {
       "group": "Migrations",
-      "pages": ["migrations/replicate", "migrations/hugging-face", "migrations/mystic"]
+      "pages": [
+        "migrations/replicate",
+        "migrations/hugging-face",
+        "migrations/mystic"
+      ]
     }
   ],
   "analytics": {
