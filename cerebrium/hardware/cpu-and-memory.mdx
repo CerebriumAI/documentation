@@ -1,0 +1,58 @@
+---
+title: CPU and Memory
+---
+
+## Overview
+
+CPU and memory resources on Cerebrium are allocated per container and billed based on actual usage. Each deployment can be configured with specific CPU and memory requirements to optimize performance and cost.
+
+## Resource Configuration
+
+### CPU Configuration
+
+CPU resources are specified as vCPU units (integer) in the `cerebrium.toml` file:
+
+```toml
+[cerebrium.hardware]
+cpu = 4    # Number of vCPU cores
+```
+
+For most applications, starting with 4 CPU cores is recommended. Additional cores can be added based on monitoring and performance requirements. CPU usage is throttled when exceeding the specified limit.
+
+### Memory Configuration
+
+Memory is specified in gigabytes as a floating point number:
+
+```toml
+[cerebrium.hardware]
+memory = 16.0    # Memory in GB
+```
+
+A general guideline is to allocate system memory equal to the GPU's VRAM capacity. This accounts for initial model loading and compilation before GPU transfer. Applications will terminate with an Out of Memory (OOM) error if they exceed the specified memory limit.
+
+<aside>
+    💡
+
+    Note: Memory and CPU is billed based on usage, which reduces costs for end-users and doesn’t require the overprovisioning of an entire instance.
+
+</aside>
+
+## Resource Limits
+
+Resource limits depend on the selected hardware configuration:
+
+| Hardware Type | Max CPU Cores | Max Memory (GB) |
+| --- | --- | --- |
+| CPU Only | 48 | 96 |
+| ADA_L4 | 48 | 192 |
+| ADA_L40 | 16 | 128 |
+| AMPERE_A100 | 12 | 140 |
+| HOPPER_H100 | 24 | 256 |
+
+## Memory Optimization
+
+The transformers library provides memory optimization through the `low_cpu_mem_usage` flag, which reduces memory footprint at the cost of longer initialization times. Implementing lazy loading for large datasets can further optimize memory usage. Regular monitoring of memory patterns through platform metrics helps identify optimization opportunities. Memory-efficient model loading techniques should be considered for large-scale deployments.
+
+## Resource Monitoring
+
+The platform monitors CPU utilization and throttling events to help identify performance bottlenecks. Memory usage and OOM events are tracked to prevent application failures. Storage consumption monitoring helps manage costs and resource allocation.

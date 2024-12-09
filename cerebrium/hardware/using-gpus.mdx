@@ -1,0 +1,114 @@
+---
+title: Using GPUs
+---
+
+
+GPUs provide specialized computing power that dramatically accelerates computational workloads. While originally designed for graphics rendering, modern GPUs excel at parallel processing tasks, making them essential for a wide range of applications.
+
+Applications deployed on Cerebrium can access GPU computing power without managing complex infrastructure. The platform supports sophisticated AI models, large-scale data processing, and GPU-accelerated applications through simple configuration.
+
+## Specifying GPUs
+
+The GPU configuration in the `cerebrium.toml` is handled through the [cerebrium.hardware] section, where you can specify both the type (Using the `compute` parameter and quantity of GPUs (`gpu_count`) for your deployment. We address additional deployment configurations and GPU scaling considerations in more detail in the sections below.
+
+## Available GPUs
+
+The platform offers a range of GPUs to match various computational needs and budgets, from cost-effective development options to high-end enterprise hardware.
+
+| GPU Model | Identifier | VRAM (GB) | Max GPUs | Plan required | Provider |
+| --- | --- | --- | --- | --- | --- |
+| NVIDIA H100 | HOPPER_H100 | 80 | 8 | Enterprise | AWS |
+| NVIDIA A100 | AMPERE_A100_80GB | 80 | 8 | Enterprise | AWS |
+| NVIDIA A100 | AMPERE_A100_40GB | 40 | 8 | Enterprise | AWS |
+| NVIDIA L40s | ADA_L40 | 48 | 8 | Hobby+ | AWS |
+| NVIDIA L4 | ADA_L4 | 24 | 8 | Hobby+ | AWS |
+| NVIDIA A10 | AMPERE_A10 | 24 | 8 | Hobby+ | AWS |
+| NVIDIA T4 | TURING_T4 | 16 | 8 | Hobby+ | AWS |
+| AWS Inferentia 2 | INF2 | 32 | 8 | Hobby+ | AWS |
+| AWS Trainium | TRN1 | 32 | 8 | Hobby+ | AWS |
+
+<Info>
+    The identifier is used in the `cerebrium.toml` file. It consists of the GPU model generation and model name to avoid ambiguity.
+</Info>
+
+<Tip>
+    GPU selection is also possible using the `--compute` and `--gpu-count` flags during application initialization.
+</Tip>
+
+## Multi-GPU Configuration
+
+Multiple GPUs can enhance application performance through parallel processing and increased memory capacity.
+
+### Use Cases
+
+Multiple GPUs become essential when:
+
+- Models exceed single GPU memory capacity
+- Workloads require parallel inference processing
+- Applications need distributed training capabilities
+- Production environments demand high availability
+
+### Configuration
+
+Multiple GPUs are configured in the `cerebrium.toml` file:
+
+```toml
+[cerebrium.hardware]
+compute = "AMPERE_A100_80GB"
+gpu_count = 4        # Number of GPUs needed
+cpu = 8
+memory = 128.0
+```
+
+## Selecting the Right GPU
+
+Selecting appropriate hardware requires balancing performance requirements with resource efficiency. GPU selection involves calculating VRAM usage based on model parameters and input requirements. This is particularly important for:
+
+- LLMs and transformer architectures: Account for attention processes and positional encoding
+- CNNs: Consider filter numbers and input sizes
+- Batch processing: Factor in concurrent processing requirements
+
+### VRAM Requirement Calculation
+
+Base VRAM requirements can be calculated using:
+
+```
+modelVRAM = numParams × numBytesPerDataType
+```
+
+Common data types:
+
+- FP32 (32-bit floating point): 4 bytes
+- FP16 (16-bit floating point): 2 bytes
+- INT8 (8-bit quantization): 1 byte
+
+Example calculations:
+
+1. 7B parameter model with FP32:
+
+```
+modelVRAM = 7B × 4 bytes = 28GB
+```
+
+1. Same model with INT8 quantization:
+
+```
+modelVRAM = 7B × 1 byte = 7GB
+```
+
+### Safety Buffer
+
+A 1.5x VRAM buffer should be added to account for runtime memory requirements, attention mechanisms, intermediate computations, and input variations:
+
+```
+recommendedVRAM = modelVRAM × 1.5
+```
+
+Using the 7B parameter example:
+
+- FP32: 28GB × 1.5 = 42GB (requires A100_40GB or higher)
+- INT8: 7GB × 1.5 = 10.5GB (T4 or higher is sufficient)
+
+The [Pricing Calculator](https://cerebrium.ai/pricing) provides detailed cost comparisons for different GPU configurations.
+
+For custom GPU configurations, contact Cerebrium support.

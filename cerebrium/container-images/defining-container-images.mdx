@@ -1,0 +1,350 @@
+---
+title: Defining Container Images
+---
+
+## Introduction
+
+Cerebrium simplifies the deployment and running of machine learning apps by abstracting infrastructure management into configuration, allowing engineering teams to focus on what matters most - delivering value to customers using application code. A single TOML file manages environment setup, deployments, and scaling - tasks that typically require dedicated teams.
+
+## Why TOML?
+
+While Python decorators offer programmatic configuration, they scatter infrastructure settings throughout code files, making changes risky and review difficult. TOML centralizes all configuration in one place, making it easier to track changes and maintain consistency. Its straightforward syntax prevents the accidental complexity that often comes with code-based configuration, while its hierarchical structure naturally maps to modern app requirements.
+
+## Understanding containers on Cerebrium
+
+Cerebrium handles containers differently from traditional Docker or Kubernetes setups. Instead of managing multiple configuration files and orchestration rules, developers declare their requirements in `cerebrium.toml`. The system automatically handles container lifecycle, networking, and scaling based on this configuration.
+
+### Getting Started
+
+The fastest and simplest way to create a config file is to run the **`cerebrium init`** command. This command creates a **`cerebrium.toml`** file in the project root, which can then be edited to suit specific application requirements.
+
+Check out the [Introductory Guide](/cerebrium/getting-started/introduction) for more information on how to get started.
+
+## Hardware Configuration
+
+Cerebrium provides flexible hardware options to match app requirements. The basic configuration specifies GPU type and memory allocations:
+
+```toml
+[cerebrium.hardware]
+compute = "AMPERE_A10" # GPU selection
+memory = 16.0          # Memory allocation in GB
+cpu = 4                # Number of CPU cores
+gpu_count = 1          # Number of GPUs
+```
+
+For detailed hardware specifications and performance characteristics see the [GPU and Other Resources Guide](#).
+
+## Scaling Configuration
+
+Cerebrium provides flexible scaling controls to balance performance, cost, and responsiveness. Understanding these parameters helps optimize the app for specific use cases.
+
+### Basic Configuration
+
+The fundamental scaling parameters are configured in the `cerebrium.toml` file:
+
+```toml
+[cerebrium.scaling]
+min_replicas = 0       # Minimum running instances
+max_replicas = 3       # Maximum concurrent instances
+cooldown = 60          # Keep warm period (seconds)
+```
+
+### Keeping Models Warm
+
+Cold starts can impact response times, especially for large ML models. Cerebrium offers two strategies to keep models ready for incoming requests:
+
+### Strategy 1: Minimum Replicas
+
+Setting `min_replicas` to 1 or higher ensures instances are always running:
+
+```toml
+[cerebrium.scaling]
+min_replicas = 1    # Always keep one instance ready
+```
+
+Best for:
+
+- Meeting customer SLAs
+- Handling consistent base load
+- Eliminating cold starts
+
+<Warning>
+    Note: This option incurs 24/7 charges as instances remain active continuously.
+</Warning>
+
+### Strategy 2: Cooldown Period
+
+The `cooldown` parameter keeps instances warm for the specified period, after processing requests:
+
+```toml
+[cerebrium.scaling]
+cooldown = 300    # Keep instances warm for 5 minutes after last request
+```
+
+**Best for:**
+
+- Bursty traffic patterns
+- Balancing cost and performance
+- Development and testing environments
+
+Each new request resets the cooldown timer. Charges apply during the cooldown period as instances remain active.
+
+### Scaling Limits
+
+The `max_replicas` parameter controls concurrent instance limits:
+
+```toml
+[cerebrium.scaling]
+max_replicas = 3    # Maximum of 3 instances running simultaneously
+
+```
+
+This helps:
+
+- Control costs
+- Manage resource allocation
+- Handle traffic spikes
+
+## Dependency management
+
+### Selecting a Python Version
+
+The Python runtime version forms the foundation of every Cerebrium app. We currently support versions 3.10, 3.11 and 3.12. Specify the Python version in the deployment section of the configuration:
+
+```toml
+[cerebrium.deployment]
+python_version = 3.11
+```
+
+The Python version affects the entire dependency chain. For instance, some packages may not support newer Python versions immediately after release.
+
+<Warning>
+    Changes to the Python version trigger a full rebuild since they affect both the base environment and all Python package installations.
+</Warning>
+
+### Adding Python Packages
+
+Python dependencies can be managed directly in TOML or through requirement files. The system caches packages at the node level to speed up builds:
+
+```toml
+[cerebrium.dependencies.pip]
+torch = "==2.0.0"
+transformers = "==4.30.0"
+numpy = "latest"
+```
+
+Or using an existing requirements file:
+
+```toml
+[cerebrium.dependencies.paths]
+pip = "requirements.txt"
+```
+
+<Tip>
+    For GitHub repositories, use shell commands instead of pip dependencies to ensure proper versioning.
+</Tip>
+
+The system implements an intelligent caching strategy at the node level. When an app is built, all pip packages are cached with their exact versions, including wheel files and compiled binaries. This means subsequent builds only need to install new or updated packages, significantly reducing build times.
+
+GitHub repositories require special handling - they should be installed via shell commands rather than pip dependencies to ensure proper version control and build reproducibility.
+
+### Adding APT Packages
+
+System-level packages provide the foundation for many ML apps, handling everything from image processing libraries to audio codecs. These can be added to the `cerebrium.toml` file under the `[cerebrium.dependencies.apt]` section as follows:
+
+```toml
+[cerebrium.dependencies.apt]
+ffmpeg = "latest"
+libopenblas-base = "latest"
+libomp-dev = "latest"
+```
+
+For teams with standardized system dependencies, text files can be used instead by adding the following to the  `[cerebrium.dependencies.paths]` section:
+
+```toml
+[cerebrium.dependencies.paths]
+apt = "deps_folder/pkglist.txt"
+```
+
+Since APT packages modify the system environment, any changes to these dependencies trigger a full rebuild of the container image. This ensures system-level changes are properly integrated but means builds will take longer than when modifying Python packages alone.
+
+### Conda Packages
+
+Conda excels at managing complex system-level Python dependencies, particularly for GPU support and scientific computing:
+
+```toml
+[cerebrium.dependencies.conda]
+cuda = ">=11.7"
+cudatoolkit = "11.7"
+opencv = "latest"
+```
+
+Teams using conda environments can specify their environment file:
+
+```toml
+[cerebrium.dependencies.paths]
+conda = "conda_pkglist.txt"
+```
+
+Like APT packages, Conda packages often modify system-level components. Changes to Conda dependencies will trigger a full rebuild to ensure all binary dependencies and system libraries are correctly configured. Consider batching Conda dependency updates together to minimize rebuild time.
+
+## Setup tasks
+
+Cerebrium provides two distinct types of commands for handling setup tasks. Understanding the difference helps optimize build times and ensures reliable app initialization.
+
+### Shell Commands
+
+Shell commands execute every time a new instance starts, making them ideal for runtime initialization and app startup:
+
+```toml
+shell_commands =  [
+    "echo 'Hello, World!'",
+    "curl -LsSf https://astral.sh/uv/install.sh | sh",
+    "uv venv",
+    "uv pip install transformers",
+    "export SOME_ENV_VAR=value"
+]
+```
+
+Shell commands are perfect for tasks that need fresh execution on startup, such as downloading models, warming caches, or starting an app server. Since these commands run on every instance start, they should be optimized for speed to minimize startup time.
+
+### Pre-build Commands
+
+Pre-build commands execute once during image creation, making them suitable for setup tasks that can be baked into the container (Which should also improve cold start performance):
+
+```toml
+pre_build_commands = [
+    "curl -o /usr/local/bin/pget -L 'https://github.com/replicate/pget/releases/download/v0.6.2/pget_linux_x86_64' && chmod +x /usr/local/bin/pget"
+]
+```
+
+Pre-build commands are ideal for compiling code, building assets, or installing build-time dependencies. Since these commands affect the container image, changes to pre-build commands trigger a full rebuild. Group related commands together to minimize rebuild frequency.
+
+## Custom Docker Base Images
+
+The choice of base image fundamentally shapes how an app runs in Cerebrium. While the default Debian slim image works well for most Python apps, some scenarios require specialized base images.
+
+### Selecting Base Images
+
+The base image is specified through the `docker_base_image_url` parameter:
+
+```toml
+# Default minimal image
+docker_base_image_url = "debian:bookworm-slim"
+
+# CUDA-enabled image for GPU workloads
+docker_base_image_url = "nvidia/cuda:12.0.1-runtime-ubuntu22.04"
+docker_base_image_url = "nvidia/cuda:12.0.1-devel-ubuntu22.04"
+```
+
+<Info>
+    Cerebrium supports all public docker images that are compatible with Ubuntu, Cuda, and Python
+</Info>
+
+### Impact on Builds
+
+Changing the base image has significant implications for the build process. It triggers a complete rebuild since it affects the foundation of the container environment. This means:
+
+- All dependencies reinstall from scratch
+- Build caches invalidate
+- Initial deployment takes longer
+- Subsequent builds remain cached until the base image changes again
+
+### Build-time vs Runtime Considerations
+
+When selecting a base image, consider both build and runtime impacts:
+
+Build-time:
+
+- Larger base images increase initial build time
+- More included packages mean fewer explicit installations needed
+- Some images come with pre-configured optimizations
+
+Runtime:
+
+- Image size affects cold start time
+- Included libraries can improve performance
+- GPU support enables hardware acceleration
+
+## Custom Runtimes
+
+While Cerebrium's default runtime works well for most apps, teams often need more control over their server implementation. Custom runtimes enable features like custom authentication, dynamic batching, public endpoints, or websockets.
+
+### Basic Configuration
+
+Define a custom runtime by adding the `cerebrium.runtime.custom` section to the configuration:
+
+```toml
+[cerebrium.runtime.custom]
+entrypoint = ["uvicorn", "app.main:server", "--host", "0.0.0.0", "--port", "8080"]
+port = 8080
+healthcheck_endpoint = ""  # Empty string uses TCP health check
+
+```
+
+Key parameters:
+
+- `entrypoint`: Command to start the app (string or string list)
+- `port`: Port the app listens on
+- `healthcheck_endpoint`: Path for health checks
+
+<Info>
+    Check out [this example](https://github.com/CerebriumAI/examples/tree/master/11-python-apps/1-asgi-fastapi-server)  for a detailed implementation of a FastAPI server that uses a custom runtime.
+</Info>
+
+### Running ASGI/WSGI Apps
+
+The system supports both ASGI (like FastAPI) and WSGI apps. For ASGI apps, remember to install the appropriate server package (like uvicorn). The entrypoint command should match how you would normally run the app locally.
+
+### Self-Contained Servers
+
+Custom runtimes also support apps with built-in servers. For example, deploying a VLLM server requires no Python code:
+
+```toml
+[cerebrium.runtime.custom]
+entrypoint = "vllm serve meta-llama/Meta-Llama-3-8B-Instruct --host 0.0.0.0 --port 8000 --device cuda"
+port = 8000
+healthcheck_endpoint = "/health"
+
+[cerebrium.dependencies.pip]
+torch = "latest"
+vllm = "latest"
+```
+
+### Important Notes
+
+- Code is mounted in `/cortex/app` - adjust paths accordingly
+- The port in your entrypoint must match the `port` parameter
+- Install any required server packages (uvicorn, gunicorn, etc.) via pip dependencies
+- All endpoints will be available at `https://api.cortex.cerebrium.ai/v4/{project-id}/{app-name}/your/endpoint`
+
+Deploy as normal with `cerebrium deploy -y` - the system automatically detects and handles custom runtime configuration.
+
+## Deployment process
+
+![Deployment process](/images/deployment-process.png)
+
+The build process follows a carefully orchestrated sequence that transforms source code into a production-ready container image. Let's walk through each step:
+
+### Stage 1: App Upload
+
+The process begins when code is uploaded to Cerebrium. This includes all source files, configuration, and any additional assets needed for the app.
+
+### Stage 2: Image Creation
+
+The system then creates a container image through the following steps, each building upon the previous:
+
+1. **Pre-build Commands Execute:** First, any pre-build commands run. These set up the build environment and compile necessary assets before the main installation steps begin.
+2. **APT Dependencies Install:** System-level packages install next, establishing the foundation for all other dependencies.
+3. **Conda Dependencies Install:** After APT packages are in place, Conda packages install.
+4. **Pip Dependencies Install:** Python packages install last, ensuring they have access to all necessary system libraries and binaries.
+5. **Python Code Copy:** The app's source code copies into the container, placing it in the correct directory structure.
+6. **Shell Commands Execute:** Finally, any build-time shell commands run to complete the image setup.
+
+### Stage 3: Production Image
+
+The result is a production-ready container image that contains everything needed to run the app. This image serves as a blueprint for creating individual containers when the app receives requests.
+
+### Runtime Behavior
+
+When requests arrive, Cerebrium automatically creates containers from this image. Each container runs independently, executing the runtime shell commands during startup. The system scales the number of containers up or down based on demand and specified scaling parameters, but all containers start from the most recent image.

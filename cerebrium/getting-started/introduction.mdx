@@ -1,40 +1,44 @@
 ---
-title: "Introduction"
-description: "Cerebrium is a serverless GPU infrastructure provider. We want to help you run machine learning models in the cloud efficiently and at scale."
+title: Introduction
+description: Getting started on the Cerebrium platform
 ---
 
-Our goal is to help companies create value through machine learning as quickly and as painlessly as possible by abstracting away a lot of the complexity and mundane infrastructure setup.
+Cerebrium is a cloud GPU infrastructure platform that transforms how teams deploy and scale machine learning applications. By handling the complex infrastructure – GPUs, Kubernetes, queues, monitoring, and scaling – Cerebrium lets teams focus on building applications that deliver value.
 
-We are releasing changes weekly based on your feedback so please let us know if there is something missing from our platform.
-You can send us feedback requests at [support@cerebrium.ai](mailto:support@cerebrium.ai) or let us know on our [Slack](https://join.slack.com/t/cerebriumworkspace/shared_invite/zt-1qojg3eac-q4xyu5O~MeniNIg2jNeadg) and [Discord](https://discord.gg/ATj6USmeE2) communities
+The platform achieves this through rapid cold starts (Less than 5 seconds), flexible GPU options, automated scaling (1 to 10,000+ requests), and simple deployment processes. With 99.9% uptime and continuous weekly improvements based on user feedback, Cerebrium provides the reliability needed for production ML apps.
 
-## How we do this
+## Getting Started
 
-- <b>
-    <u>Infrastructure</u>
-  </b>
-  We abstract away all of the complexity around infrastructure so you don't have
-  to worry about CPUs/GPUs, Kubernetes, queues, monitoring, scaling etc. We take
-  care of this to create a robust and seamless developer experience.
-- <b>
-    <u>Research</u>
-  </b>
-  We try to implement the latest research towards your model as best we can in
-  order for you to deliver the best experience to your users. Besides giving you
-  to the option to select the best chip for your workload, we look to see how we
-  can take maximum advantage of the GPU to get your model to run faster and
-  cheaper without sacrificing performance.
+Setting up and deploying an app on Cerebrium takes just a few steps:
 
-## Our users favorite features
+### 1. Install the CLI
 
-- \<5 second cold-start times
-- Wide variety of GPUs
-- Automatic scaling from 1 to 10k requests in seconds
-- Define pip/conda container environments in code
-- Secrets manager
-- One-click deploys
-- Persistent Storage
+ ```bash
+ pip install cerebrium
+ cerebrium login  # Redirects to your browser for authentication
+```
 
-<b>All of this in just a few lines of code!</b>
+### 2. Initialize a Project
 
-To get started, head to our [installation page](/installation)
+ ```bash
+ cerebrium init my-first-app
+```
+
+This creates a basic project with `main.py` for app code and `cerebrium.toml` for configuration.
+
+### 3. Deploy an App
+
+ ```bash
+ cerebrium deploy
+```
+
+The app now builds and deploys, typically within a few seconds.
+
+
+## How It Works
+
+Cerebrium uses containerization to ensure consistent environments and reliable scaling for apps. When code is deployed, Cerebrium packages it with all necessary dependencies into a container image. This image serves as a blueprint for creating instances that handle incoming requests. The system automatically manages scaling, creating new instances when traffic increases and removing them during quiet periods.
+
+For a detailed explanation of how Cerebrium builds and manages container images, see our [Defining Container Images Guide](/cerebrium/container-images/defining-container-images).
+
+Join our [Discord](https://discord.gg/ATj6USmeE2) community for support and updates, or reach out to [support@cerebrium.ai](mailto:support@cerebrium.ai) with any questions.
