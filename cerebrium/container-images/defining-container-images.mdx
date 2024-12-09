@@ -69,7 +69,7 @@ Best for:
 - Eliminating cold starts
 
 <Warning>
-    Note: This option incurs 24/7 charges as instances remain active continuously.
+  Note: This option incurs 24/7 charges as instances remain active continuously.
 </Warning>
 
 ### Strategy 2: Cooldown Period
@@ -119,7 +119,8 @@ python_version = 3.11
 The Python version affects the entire dependency chain. For instance, some packages may not support newer Python versions immediately after release.
 
 <Warning>
-    Changes to the Python version trigger a full rebuild since they affect both the base environment and all Python package installations.
+  Changes to the Python version trigger a full rebuild since they affect both
+  the base environment and all Python package installations.
 </Warning>
 
 ### Adding Python Packages
@@ -141,7 +142,8 @@ pip = "requirements.txt"
 ```
 
 <Tip>
-    For GitHub repositories, use shell commands instead of pip dependencies to ensure proper versioning.
+  For GitHub repositories, use shell commands instead of pip dependencies to
+  ensure proper versioning.
 </Tip>
 
 The system implements an intelligent caching strategy at the node level. When an app is built, all pip packages are cached with their exact versions, including wheel files and compiled binaries. This means subsequent builds only need to install new or updated packages, significantly reducing build times.
@@ -159,7 +161,7 @@ libopenblas-base = "latest"
 libomp-dev = "latest"
 ```
 
-For teams with standardized system dependencies, text files can be used instead by adding the following to the  `[cerebrium.dependencies.paths]` section:
+For teams with standardized system dependencies, text files can be used instead by adding the following to the `[cerebrium.dependencies.paths]` section:
 
 ```toml
 [cerebrium.dependencies.paths]
@@ -238,7 +240,8 @@ docker_base_image_url = "nvidia/cuda:12.0.1-devel-ubuntu22.04"
 ```
 
 <Info>
-    Cerebrium supports all public docker images that are compatible with Ubuntu, Cuda, and Python
+  Cerebrium supports all public docker images that are compatible with Ubuntu,
+  Cuda, and Python
 </Info>
 
 ### Impact on Builds
@@ -289,7 +292,9 @@ Key parameters:
 - `healthcheck_endpoint`: Path for health checks
 
 <Info>
-    Check out [this example](https://github.com/CerebriumAI/examples/tree/master/11-python-apps/1-asgi-fastapi-server)  for a detailed implementation of a FastAPI server that uses a custom runtime.
+  Check out [this
+  example](https://github.com/CerebriumAI/examples/tree/master/11-python-apps/1-asgi-fastapi-server)
+  for a detailed implementation of a FastAPI server that uses a custom runtime.
 </Info>
 
 ### Running ASGI/WSGI Apps
