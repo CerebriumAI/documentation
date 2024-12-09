@@ -115,7 +115,7 @@
       "group": "Other concepts",
       "pages": [
         "cerebrium/misc/faster-model-loading",
-        "cerebrium/environments/using-secrets"
+        "cerebrium/misc/using-secrets"
       ]
     },
     {
