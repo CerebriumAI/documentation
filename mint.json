@@ -115,8 +115,7 @@
       "group": "Other concepts",
       "pages": [
         "cerebrium/misc/faster-model-loading",
-        "cerebrium/environments/using-secrets",
-        "cerebrium/environments/multi-gpu-inferencing"
+        "cerebrium/environments/using-secrets"
       ]
     },
     {
