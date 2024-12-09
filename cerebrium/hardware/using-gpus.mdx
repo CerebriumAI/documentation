@@ -2,7 +2,6 @@
 title: Using GPUs
 ---
 
-
 GPUs provide specialized computing power that dramatically accelerates computational workloads. While originally designed for graphics rendering, modern GPUs excel at parallel processing tasks, making them essential for a wide range of applications.
 
 Applications deployed on Cerebrium can access GPU computing power without managing complex infrastructure. The platform supports sophisticated AI models, large-scale data processing, and GPU-accelerated applications through simple configuration.
@@ -15,24 +14,26 @@ The GPU configuration in the `cerebrium.toml` is handled through the [cerebrium.
 
 The platform offers a range of GPUs to match various computational needs and budgets, from cost-effective development options to high-end enterprise hardware.
 
-| GPU Model | Identifier | VRAM (GB) | Max GPUs | Plan required | Provider |
-| --- | --- | --- | --- | --- | --- |
-| NVIDIA H100 | HOPPER_H100 | 80 | 8 | Enterprise | AWS |
-| NVIDIA A100 | AMPERE_A100_80GB | 80 | 8 | Enterprise | AWS |
-| NVIDIA A100 | AMPERE_A100_40GB | 40 | 8 | Enterprise | AWS |
-| NVIDIA L40s | ADA_L40 | 48 | 8 | Hobby+ | AWS |
-| NVIDIA L4 | ADA_L4 | 24 | 8 | Hobby+ | AWS |
-| NVIDIA A10 | AMPERE_A10 | 24 | 8 | Hobby+ | AWS |
-| NVIDIA T4 | TURING_T4 | 16 | 8 | Hobby+ | AWS |
-| AWS Inferentia 2 | INF2 | 32 | 8 | Hobby+ | AWS |
-| AWS Trainium | TRN1 | 32 | 8 | Hobby+ | AWS |
+| GPU Model        | Identifier       | VRAM (GB) | Max GPUs | Plan required | Provider |
+| ---------------- | ---------------- | --------- | -------- | ------------- | -------- |
+| NVIDIA H100      | HOPPER_H100      | 80        | 8        | Enterprise    | AWS      |
+| NVIDIA A100      | AMPERE_A100_80GB | 80        | 8        | Enterprise    | AWS      |
+| NVIDIA A100      | AMPERE_A100_40GB | 40        | 8        | Enterprise    | AWS      |
+| NVIDIA L40s      | ADA_L40          | 48        | 8        | Hobby+        | AWS      |
+| NVIDIA L4        | ADA_L4           | 24        | 8        | Hobby+        | AWS      |
+| NVIDIA A10       | AMPERE_A10       | 24        | 8        | Hobby+        | AWS      |
+| NVIDIA T4        | TURING_T4        | 16        | 8        | Hobby+        | AWS      |
+| AWS Inferentia 2 | INF2             | 32        | 8        | Hobby+        | AWS      |
+| AWS Trainium     | TRN1             | 32        | 8        | Hobby+        | AWS      |
 
 <Info>
-    The identifier is used in the `cerebrium.toml` file. It consists of the GPU model generation and model name to avoid ambiguity.
+  The identifier is used in the `cerebrium.toml` file. It consists of the GPU
+  model generation and model name to avoid ambiguity.
 </Info>
 
 <Tip>
-    GPU selection is also possible using the `--compute` and `--gpu-count` flags during application initialization.
+  GPU selection is also possible using the `--compute` and `--gpu-count` flags
+  during application initialization.
 </Tip>
 
 ## Multi-GPU Configuration
