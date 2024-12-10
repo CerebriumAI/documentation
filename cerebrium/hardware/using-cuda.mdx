@@ -35,10 +35,6 @@ The base image can be set in the `cerebrium.toml` file:
 docker_base_image_url = "nvidia/cuda:12.1.1-runtime-ubuntu22.04"
 ```
 
-## Docker Image Selection
-
-When building GPU apps, choosing the right Docker base image is crucial for balancing functionality and performance. While the default CUDA runtime image (`nvidia/cuda:12.1.1-runtime-ubuntu22.04`) provides essential CUDA capabilities, some apps may require the expanded toolset found in the `nvidia/cuda:12.1.1-runtime-ubuntu22.04` image or other specialized configurations for the development of new apps. Through the `docker_base_image_url` setting in cerebrium.toml, it is possible to specify any public Docker image that matches the app's requirements, giving flexibility to customize the build environment.
-
 ## Cold Start Optimization
 
 Image size and complexity significantly impact cold start performance - the time needed to initialize an app from a "cold" state. While Cerebrium uses a content-addressable file system that selectively pulls only required files, larger images still affect startup times.
