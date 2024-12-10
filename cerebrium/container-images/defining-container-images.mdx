@@ -20,6 +20,10 @@ The fastest and simplest way to create a config file is to run the **`cerebrium 
 
 Check out the [Introductory Guide](/cerebrium/getting-started/introduction) for more information on how to get started.
 
+<Info>
+    It is possible to initialize an existing project by adding a `cerebrium.toml` file to the root of your codebase, defining your entrypoint (`main.py` if using the default runtime, or adding an entrypoint to the .toml file if using a custom runtime) and including the necessary files in the `deployment` section of your `cerebrium.toml` file.
+</Info>
+
 ## Hardware Configuration
 
 Cerebrium provides flexible hardware options to match app requirements. The basic configuration specifies GPU type and memory allocations:
@@ -33,77 +37,6 @@ gpu_count = 1          # Number of GPUs
 ```
 
 For detailed hardware specifications and performance characteristics see the [GPU and Other Resources Guide](#).
-
-## Scaling Configuration
-
-Cerebrium provides flexible scaling controls to balance performance, cost, and responsiveness. Understanding these parameters helps optimize the app for specific use cases.
-
-### Basic Configuration
-
-The fundamental scaling parameters are configured in the `cerebrium.toml` file:
-
-```toml
-[cerebrium.scaling]
-min_replicas = 0       # Minimum running instances
-max_replicas = 3       # Maximum concurrent instances
-cooldown = 60          # Keep warm period (seconds)
-```
-
-### Keeping Models Warm
-
-Cold starts can impact response times, especially for large ML models. Cerebrium offers two strategies to keep models ready for incoming requests:
-
-### Strategy 1: Minimum Replicas
-
-Setting `min_replicas` to 1 or higher ensures instances are always running:
-
-```toml
-[cerebrium.scaling]
-min_replicas = 1    # Always keep one instance ready
-```
-
-Best for:
-
-- Meeting customer SLAs
-- Handling consistent base load
-- Eliminating cold starts
-
-<Warning>
-  Note: This option incurs 24/7 charges as instances remain active continuously.
-</Warning>
-
-### Strategy 2: Cooldown Period
-
-The `cooldown` parameter keeps instances warm for the specified period, after processing requests:
-
-```toml
-[cerebrium.scaling]
-cooldown = 300    # Keep instances warm for 5 minutes after last request
-```
-
-**Best for:**
-
-- Bursty traffic patterns
-- Balancing cost and performance
-- Development and testing environments
-
-Each new request resets the cooldown timer. Charges apply during the cooldown period as instances remain active.
-
-### Scaling Limits
-
-The `max_replicas` parameter controls concurrent instance limits:
-
-```toml
-[cerebrium.scaling]
-max_replicas = 3    # Maximum of 3 instances running simultaneously
-
-```
-
-This helps:
-
-- Control costs
-- Manage resource allocation
-- Handle traffic spikes
 
 ## Dependency management
 
@@ -148,8 +81,6 @@ pip = "requirements.txt"
 
 The system implements an intelligent caching strategy at the node level. When an app is built, all pip packages are cached with their exact versions, including wheel files and compiled binaries. This means subsequent builds only need to install new or updated packages, significantly reducing build times.
 
-GitHub repositories require special handling - they should be installed via shell commands rather than pip dependencies to ensure proper version control and build reproducibility.
-
 ### Adding APT Packages
 
 System-level packages provide the foundation for many ML apps, handling everything from image processing libraries to audio codecs. These can be added to the `cerebrium.toml` file under the `[cerebrium.dependencies.apt]` section as follows:
@@ -190,7 +121,7 @@ conda = "conda_pkglist.txt"
 
 Like APT packages, Conda packages often modify system-level components. Changes to Conda dependencies will trigger a full rebuild to ensure all binary dependencies and system libraries are correctly configured. Consider batching Conda dependency updates together to minimize rebuild time.
 
-## Setup tasks
+## Commands
 
 Cerebrium provides two distinct types of commands for handling setup tasks. Understanding the difference helps optimize build times and ensures reliable app initialization.
 
@@ -201,9 +132,7 @@ Shell commands execute every time a new instance starts, making them ideal for r
 ```toml
 shell_commands =  [
     "echo 'Hello, World!'",
-    "curl -LsSf https://astral.sh/uv/install.sh | sh",
     "uv venv",
-    "uv pip install transformers",
     "export SOME_ENV_VAR=value"
 ]
 ```
@@ -228,46 +157,46 @@ The choice of base image fundamentally shapes how an app runs in Cerebrium. Whil
 
 ### Selecting Base Images
 
-The base image is specified through the `docker_base_image_url` parameter:
+The base image selection shapes how an app runs in Cerebrium. While the default Debian slim image works for most Python apps, other validated base images support specific requirements.
+
+### Supported Base Images
+
+Cerebrium supports several categories of base images to ensure system compatibility:
 
 ```toml
 # Default minimal image
 docker_base_image_url = "debian:bookworm-slim"
 
-# CUDA-enabled image for GPU workloads
+# CUDA-enabled images
+docker_base_image_url = "nvidia/cuda:12.0.1-runtime-ubuntu22.04"
+```
+
+The system accepts these image types:
+
+#### Ubuntu-based CUDA Images
+All `nvidia/cuda` images that include Ubuntu are supported. These provide GPU acceleration capabilities:
+```toml
 docker_base_image_url = "nvidia/cuda:12.0.1-runtime-ubuntu22.04"
 docker_base_image_url = "nvidia/cuda:12.0.1-devel-ubuntu22.04"
 ```
 
-<Info>
-  Cerebrium supports all public docker images that are compatible with Ubuntu,
-  Cuda, and Python
-</Info>
+#### Debian and Ubuntu Base Images
+Any Debian or Ubuntu base image works as a foundation:
+```toml
+docker_base_image_url = "debian:bullseye"
+docker_base_image_url = "ubuntu:22.04"
+```
 
-### Impact on Builds
+#### Python Images
+Python images based on Debian bullseye or bookworm provide pre-configured Python environments:
+```toml
+docker_base_image_url = "python:3.11-bullseye"
+docker_base_image_url = "python:3.11-bookworm"
+```
 
-Changing the base image has significant implications for the build process. It triggers a complete rebuild since it affects the foundation of the container environment. This means:
-
-- All dependencies reinstall from scratch
-- Build caches invalidate
-- Initial deployment takes longer
-- Subsequent builds remain cached until the base image changes again
-
-### Build-time vs Runtime Considerations
-
-When selecting a base image, consider both build and runtime impacts:
-
-Build-time:
-
-- Larger base images increase initial build time
-- More included packages mean fewer explicit installations needed
-- Some images come with pre-configured optimizations
-
-Runtime:
-
-- Image size affects cold start time
-- Included libraries can improve performance
-- GPU support enables hardware acceleration
+<Tip>
+    It is better to start with a debian or ubuntu image and then add more complexity as development proceeds. `nvidia/cuda` images are bloated and affect both cold start and build times.
+</Tip>
 
 ## Custom Runtimes
 
@@ -296,10 +225,6 @@ Key parameters:
   example](https://github.com/CerebriumAI/examples/tree/master/11-python-apps/1-asgi-fastapi-server)
   for a detailed implementation of a FastAPI server that uses a custom runtime.
 </Info>
-
-### Running ASGI/WSGI Apps
-
-The system supports both ASGI (like FastAPI) and WSGI apps. For ASGI apps, remember to install the appropriate server package (like uvicorn). The entrypoint command should match how you would normally run the app locally.
 
 ### Self-Contained Servers
 
@@ -349,7 +274,3 @@ The system then creates a container image through the following steps, each buil
 ### Stage 3: Production Image
 
 The result is a production-ready container image that contains everything needed to run the app. This image serves as a blueprint for creating individual containers when the app receives requests.
-
-### Runtime Behavior
-
-When requests arrive, Cerebrium automatically creates containers from this image. Each container runs independently, executing the runtime shell commands during startup. The system scales the number of containers up or down based on demand and specified scaling parameters, but all containers start from the most recent image.

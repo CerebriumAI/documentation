@@ -10,7 +10,7 @@ CUDA (Compute Unified Device Architecture) enables apps to use graphics cards (G
 
 CUDA connects apps to graphics cards, splitting large tasks into smaller pieces that can be processed at the same time. This makes operations like image processing and complex mathematical calculations much faster than using a standard processor alone.
 
-## Using CUDA with app dependencies
+## Using CUDA with App Dependencies
 
 Many python packages come with built-in CUDA support. For example, the popular machine learning package _PyTorch_ includes CUDA in its installation:
 
@@ -35,12 +35,35 @@ The base image can be set in the `cerebrium.toml` file:
 docker_base_image_url = "nvidia/cuda:12.1.1-runtime-ubuntu22.04"
 ```
 
-## Docker image selection
+## Docker Image Selection
 
 When building GPU apps, choosing the right Docker base image is crucial for balancing functionality and performance. While the default CUDA runtime image (`nvidia/cuda:12.1.1-runtime-ubuntu22.04`) provides essential CUDA capabilities, some apps may require the expanded toolset found in the `nvidia/cuda:12.1.1-runtime-ubuntu22.04` image or other specialized configurations for the development of new apps. Through the `docker_base_image_url` setting in cerebrium.toml, it is possible to specify any public Docker image that matches the app's requirements, giving flexibility to customize the build environment.
 
-## Cold start optimisation
+## Cold Start Optimization
 
-The size and complexity of your chosen Docker image directly impacts cold start performance – the time it takes to initialize your application from a “cold” state. Larger images with integrated development tools (Like the _devel_ image will take longer to download and initialize compared to minimal runtime images. For applications where a rapid startup is crucial, you might want to prioritize a leaner base image. However, if your application requires specific development tools or libraries, the tradeoff of longer cold starts might be necessary. Some applications can benefit from keeping instances "warm" to avoid cold starts entirely, though this approach comes with its own resource considerations.
+Image size and complexity significantly impact cold start performance - the time needed to initialize an app from a "cold" state. While Cerebrium uses a content-addressable file system that selectively pulls only required files, larger images still affect startup times.
 
-For working examples, see the [Stable Diffusion Example](https://github.com/CerebriumAI/examples/blob/bfb2337516b0ad37a3bd31c64c41d72872f9f428/7-image-and-video/6-regular-stable-diffusion/cerebrium.toml#L9).
+### Image Size Considerations
+
+Base image choices affect cold start times in several ways:
+- Development images (like `nvidia/cuda:*-devel`) include additional tools, increasing size
+- Runtime images provide minimal dependencies for faster initialization
+- Each additional layer or installed package increases the final image size
+
+The final image size appears in the dashboard after build completion, helping track size optimization efforts.
+
+### Balancing Tradeoffs
+
+Cold start optimization often involves balancing competing needs:
+
+```toml
+# Minimal runtime image - faster cold starts
+docker_base_image_url = "debian:bookworm-slim"
+
+# Full development image - slower cold starts, more tools
+docker_base_image_url = "nvidia/cuda:12.0.1-devel-ubuntu22.04"
+```
+
+Some apps might benefit from keeping instances "warm" to avoid cold starts entirely, though this affects resource usage.
+
+For a practical implementation, see the [Stable Diffusion Example](https://github.com/CerebriumAI/examples/blob/bfb2337516b0ad37a3bd31c64c41d72872f9f428/7-image-and-video/6-regular-stable-diffusion/cerebrium.toml#L9).

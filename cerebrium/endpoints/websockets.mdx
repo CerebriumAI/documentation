@@ -16,14 +16,14 @@ Below is an example of the required changes in your `cerebrium.toml` configurati
 ```toml
 [cerebrium.runtime.custom]
 port = 5000
-entrypoint = "uvicorn app.main:app --host 0.0.0.0 --port 5000"
+entrypoint = "uvicorn main:app --host 0.0.0.0 --port 5000"
 healthcheck_endpoint = "/health"
 ```
 
 Explanation:
 
 - port: The port your app will listen on inside the container.
-- entrypoint: The command to start your app. In this example, we’re using Uvicorn to run a FastAPI app located in app/main.py.
+- entrypoint: The command to start your app. In this example, we’re using Uvicorn to run a FastAPI app located in `main.py`.
 - healthcheck_endpoint: The endpoint used by Cerebrium to verify that your app is running.
 
 ## Things to note

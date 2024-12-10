@@ -17,7 +17,7 @@ CPU resources are specified as vCPU units (integer) in the `cerebrium.toml` file
 cpu = 4    # Number of vCPU cores
 ```
 
-For most applications, starting with 4 CPU cores is recommended. Additional cores can be added based on monitoring and performance requirements. CPU usage is throttled when exceeding the specified limit.
+For most applications, starting with 4 CPU cores is recommended. Additional cores can be added based on monitoring and performance requirements. CPU usage is throttled when exceeding the specified limit. It is also possible to request a fractional CPU (e.g `0.5`).
 
 ### Memory Configuration
 
@@ -30,12 +30,9 @@ memory = 16.0    # Memory in GB
 
 A general guideline is to allocate system memory equal to the GPU's VRAM capacity. This accounts for initial model loading and compilation before GPU transfer. Applications will terminate with an Out of Memory (OOM) error if they exceed the specified memory limit.
 
-<aside>
-    💡
-
-    Note: Memory and CPU is billed based on usage, which reduces costs for end-users and doesn’t require the overprovisioning of an entire instance.
-
-</aside>
+<Info>
+    Memory and CPU is billed based on usage, which reduces costs for end-users and doesn’t require the overprovisioning of an entire instance.
+</Info>
 
 ## Resource Limits
 
@@ -44,10 +41,14 @@ Resource limits depend on the selected hardware configuration:
 | Hardware Type | Max CPU Cores | Max Memory (GB) |
 | ------------- | ------------- | --------------- |
 | CPU Only      | 48            | 96              |
-| ADA_L4        | 48            | 192             |
 | ADA_L40       | 16            | 128             |
 | AMPERE_A100   | 12            | 140             |
+| AMPERE_A10    | 48            | 192             |
+| ADA_L4        | 48            | 192             |
+| TURING_T4     | 48            | 192             |
 | HOPPER_H100   | 24            | 256             |
+| TRN1          | 128           | 512             |
+| INF2          | 192           | 796             |
 
 ## Memory Optimization
 
@@ -55,4 +56,9 @@ The transformers library provides memory optimization through the `low_cpu_mem_u
 
 ## Resource Monitoring
 
-The platform monitors CPU utilization and throttling events to help identify performance bottlenecks. Memory usage and OOM events are tracked to prevent application failures. Storage consumption monitoring helps manage costs and resource allocation.
+The platform monitors CPU utilization and throttling events to help identify performance bottlenecks. Memory usage and OOM events are tracked to prevent application failures.
+
+## Support
+
+The Cerebrium team encounters projects of all shapes and sizes and are confident to support teams through the optimisation of app resources and architecture for cost and performance. Join our [Discord](https://discord.gg/ATj6USmeE2) community or reach out to [support@cerebrium.ai](mailto:support@cerebrium.ai) with any questions.
+

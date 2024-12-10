@@ -22,6 +22,7 @@ cerebrium login  # Redirects to your browser for authentication
 
 ```bash
 cerebrium init my-first-app
+cd my-first-app
 ```
 
 This creates a basic project with `main.py` for app code and `cerebrium.toml` for configuration.
@@ -32,7 +33,7 @@ This creates a basic project with `main.py` for app code and `cerebrium.toml` fo
 cerebrium deploy
 ```
 
-The app now builds and deploys, typically within a few seconds.
+The app now builds and deploys, typically within a few seconds. Check out a detailed description of the deployment process for more information. Once deployed, an application becomes callable through an endpoint `https://api.cortex.cerebrium.ai/v4/{project-id}/{app-name}/{function-name}`.
 
 ## How It Works
 
