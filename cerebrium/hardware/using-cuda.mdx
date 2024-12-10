@@ -42,6 +42,7 @@ Image size and complexity significantly impact cold start performance - the time
 ### Image Size Considerations
 
 Base image choices affect cold start times in several ways:
+
 - Development images (like `nvidia/cuda:*-devel`) include additional tools, increasing size
 - Runtime images provide minimal dependencies for faster initialization
 - Each additional layer or installed package increases the final image size
