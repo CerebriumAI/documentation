@@ -21,7 +21,11 @@ The fastest and simplest way to create a config file is to run the **`cerebrium 
 Check out the [Introductory Guide](/cerebrium/getting-started/introduction) for more information on how to get started.
 
 <Info>
-    It is possible to initialize an existing project by adding a `cerebrium.toml` file to the root of your codebase, defining your entrypoint (`main.py` if using the default runtime, or adding an entrypoint to the .toml file if using a custom runtime) and including the necessary files in the `deployment` section of your `cerebrium.toml` file.
+  It is possible to initialize an existing project by adding a `cerebrium.toml`
+  file to the root of your codebase, defining your entrypoint (`main.py` if
+  using the default runtime, or adding an entrypoint to the .toml file if using
+  a custom runtime) and including the necessary files in the `deployment`
+  section of your `cerebrium.toml` file.
 </Info>
 
 ## Hardware Configuration
@@ -174,28 +178,36 @@ docker_base_image_url = "nvidia/cuda:12.0.1-runtime-ubuntu22.04"
 The system accepts these image types:
 
 #### Ubuntu-based CUDA Images
+
 All `nvidia/cuda` images that include Ubuntu are supported. These provide GPU acceleration capabilities:
+
 ```toml
 docker_base_image_url = "nvidia/cuda:12.0.1-runtime-ubuntu22.04"
 docker_base_image_url = "nvidia/cuda:12.0.1-devel-ubuntu22.04"
 ```
 
 #### Debian and Ubuntu Base Images
+
 Any Debian or Ubuntu base image works as a foundation:
+
 ```toml
 docker_base_image_url = "debian:bullseye"
 docker_base_image_url = "ubuntu:22.04"
 ```
 
 #### Python Images
+
 Python images based on Debian bullseye or bookworm provide pre-configured Python environments:
+
 ```toml
 docker_base_image_url = "python:3.11-bullseye"
 docker_base_image_url = "python:3.11-bookworm"
 ```
 
 <Tip>
-    It is better to start with a debian or ubuntu image and then add more complexity as development proceeds. `nvidia/cuda` images are bloated and affect both cold start and build times.
+  It is better to start with a debian or ubuntu image and then add more
+  complexity as development proceeds. `nvidia/cuda` images are bloated and
+  affect both cold start and build times.
 </Tip>
 
 ## Custom Runtimes
