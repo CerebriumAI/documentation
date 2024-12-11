@@ -74,22 +74,18 @@
   "navigation": [
     {
       "group": "Getting Started",
-      "pages": [
-        "cerebrium/getting-started/introduction",
-        "cerebrium/getting-started/installation",
-        "cerebrium/getting-started/quickstart"
-      ]
+      "pages": ["cerebrium/getting-started/introduction"]
     },
     {
-      "group": "Environment Setup",
+      "group": "Container Images",
+      "pages": ["cerebrium/container-images/defining-container-images"]
+    },
+    {
+      "group": "GPUs and Other Resources",
       "pages": [
-        "cerebrium/environments/initial-setup",
-        "cerebrium/environments/config-files",
-        "cerebrium/environments/custom-images",
-        "cerebrium/environments/using-secrets",
-        "cerebrium/environments/multi-gpu-inferencing",
-        "cerebrium/environments/warm-models",
-        "cerebrium/environments/custom-runtime"
+        "cerebrium/hardware/using-gpus",
+        "cerebrium/hardware/using-cuda",
+        "cerebrium/hardware/cpu-and-memory"
       ]
     },
     {
@@ -116,8 +112,11 @@
       "pages": ["cerebrium/integrations/vercel"]
     },
     {
-      "group": "Misc",
-      "pages": ["cerebrium/misc/faster-model-loading"]
+      "group": "Other concepts",
+      "pages": [
+        "cerebrium/misc/faster-model-loading",
+        "cerebrium/misc/using-secrets"
+      ]
     },
     {
       "group": "Prebuilt Models",
