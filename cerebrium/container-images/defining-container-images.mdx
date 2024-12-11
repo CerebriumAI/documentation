@@ -161,10 +161,13 @@ Shell commands excel at tasks that require the fully configured environment, suc
 Any modification to either pre-build or shell commands triggers a rebuild of the corresponding section in the container image. This happens because these commands form integral parts of the final container environment. The build process and complete execution order are detailed in the Deployment Process section below.
 
 <Info>
-    Changes to either command type affect build time since they necessitate rebuilding parts of the container image. Consider batching related changes together when possible.
+  Changes to either command type affect build time since they necessitate
+  rebuilding parts of the container image. Consider batching related changes
+  together when possible.
 </Info>
 
 ## Custom Docker Base Images
+
 The base image selection shapes how an app runs in Cerebrium. While the default Debian slim image works for most Python apps, other validated base images support specific requirements.
 
 ### Supported Base Images
@@ -209,7 +212,11 @@ docker_base_image_url = "python:3.11-bookworm"
 ```
 
 <Tip>
-    Starting with a minimal Debian or Ubuntu base image is recommended, as CUDA images include many pre-installed components that increase container size. While the relationship isn't strictly linear, larger container sizes generally lead to longer cold starts and build times. Begin with a lean base image and add only essential components as needed.
+  Starting with a minimal Debian or Ubuntu base image is recommended, as CUDA
+  images include many pre-installed components that increase container size.
+  While the relationship isn't strictly linear, larger container sizes generally
+  lead to longer cold starts and build times. Begin with a lean base image and
+  add only essential components as needed.
 </Tip>
 
 ## Custom Runtimes
