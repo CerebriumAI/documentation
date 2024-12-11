@@ -6,13 +6,11 @@ title: Defining Container Images
 
 Cerebrium simplifies the deployment and running of machine learning apps by abstracting infrastructure management into configuration, allowing engineering teams to focus on what matters most - delivering value to customers using application code. A single TOML file manages environment setup, deployments, and scaling - tasks that typically require dedicated teams.
 
+Cerebrium also handles containers differently from traditional Docker or Kubernetes setups. Instead of managing multiple configuration files and orchestration rules, teams declare requirements in `cerebrium.toml`. The system automatically handles container lifecycle, networking, and scaling based on this configuration.
+
 ## Why TOML?
 
 While Python decorators offer programmatic configuration, they scatter infrastructure settings throughout code files, making changes risky and review difficult. TOML centralizes all configuration in one place, making it easier to track changes and maintain consistency. Its straightforward syntax prevents the accidental complexity that often comes with code-based configuration, while its hierarchical structure naturally maps to modern app requirements.
-
-## Understanding containers on Cerebrium
-
-Cerebrium handles containers differently from traditional Docker or Kubernetes setups. Instead of managing multiple configuration files and orchestration rules, developers declare their requirements in `cerebrium.toml`. The system automatically handles container lifecycle, networking, and scaling based on this configuration.
 
 ### Getting Started
 
@@ -125,42 +123,48 @@ conda = "conda_pkglist.txt"
 
 Like APT packages, Conda packages often modify system-level components. Changes to Conda dependencies will trigger a full rebuild to ensure all binary dependencies and system libraries are correctly configured. Consider batching Conda dependency updates together to minimize rebuild time.
 
-## Commands
+## Build Commands
 
-Cerebrium provides two distinct types of commands for handling setup tasks. Understanding the difference helps optimize build times and ensures reliable app initialization.
-
-### Shell Commands
-
-Shell commands execute every time a new instance starts, making them ideal for runtime initialization and app startup:
-
-```toml
-shell_commands =  [
-    "echo 'Hello, World!'",
-    "uv venv",
-    "export SOME_ENV_VAR=value"
-]
-```
-
-Shell commands are perfect for tasks that need fresh execution on startup, such as downloading models, warming caches, or starting an app server. Since these commands run on every instance start, they should be optimized for speed to minimize startup time.
+Cerebrium's build process includes two specialized command types that execute at different stages during container image creation. These commands help configure the environment and prepare the application for deployment.
 
 ### Pre-build Commands
 
-Pre-build commands execute once during image creation, making them suitable for setup tasks that can be baked into the container (Which should also improve cold start performance):
+Pre-build commands execute at the start of the build process, before dependency installation begins. This early execution timing makes them essential for setting up the build environment:
 
 ```toml
 pre_build_commands = [
-    "curl -o /usr/local/bin/pget -L 'https://github.com/replicate/pget/releases/download/v0.6.2/pget_linux_x86_64' && chmod +x /usr/local/bin/pget"
+    # Add specialized build tools
+    "curl -o /usr/local/bin/pget -L 'https://github.com/replicate/pget/releases/download/v0.6.2/pget_linux_x86_64'",
+    "chmod +x /usr/local/bin/pget"
 ]
 ```
 
-Pre-build commands are ideal for compiling code, building assets, or installing build-time dependencies. Since these commands affect the container image, changes to pre-build commands trigger a full rebuild. Group related commands together to minimize rebuild frequency.
+Pre-build commands typically handle tasks like installing build tools, configuring system settings, or preparing the environment for subsequent build steps.
+
+### Shell Commands
+
+Shell commands execute after all dependencies install and the application code copies into the container. This later timing ensures access to the complete environment:
+
+```toml
+shell_commands = [
+    # Initialize application resources
+    "python -m download_models",
+    "python -m compile_assets",
+    "python -m init_app"
+]
+```
+
+Shell commands excel at tasks that require the fully configured environment, such as compiling code that depends on installed libraries or downloading resources needed for the application.
+
+### Command Execution Impact
+
+Any modification to either pre-build or shell commands triggers a rebuild of the corresponding section in the container image. This happens because these commands form integral parts of the final container environment. The build process and complete execution order are detailed in the Deployment Process section below.
+
+<Info>
+    Changes to either command type affect build time since they necessitate rebuilding parts of the container image. Consider batching related changes together when possible.
+</Info>
 
 ## Custom Docker Base Images
-
-The choice of base image fundamentally shapes how an app runs in Cerebrium. While the default Debian slim image works well for most Python apps, some scenarios require specialized base images.
-
-### Selecting Base Images
-
 The base image selection shapes how an app runs in Cerebrium. While the default Debian slim image works for most Python apps, other validated base images support specific requirements.
 
 ### Supported Base Images
@@ -205,9 +209,7 @@ docker_base_image_url = "python:3.11-bookworm"
 ```
 
 <Tip>
-  It is better to start with a debian or ubuntu image and then add more
-  complexity as development proceeds. `nvidia/cuda` images are bloated and
-  affect both cold start and build times.
+    Starting with a minimal Debian or Ubuntu base image is recommended, as CUDA images include many pre-installed components that increase container size. While the relationship isn't strictly linear, larger container sizes generally lead to longer cold starts and build times. Begin with a lean base image and add only essential components as needed.
 </Tip>
 
 ## Custom Runtimes
