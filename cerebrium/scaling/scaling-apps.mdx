@@ -25,12 +25,15 @@ cooldown = 60          # Cooldown period in seconds
 ```
 
 ### Minimum Instances
+
 The `min_replicas` parameter defines how many instances remain active at all times. Setting this to 1 or higher maintains warm instances ready for immediate response, eliminating cold starts but increasing costs. This configuration suits apps that require consistent response times or need to meet specific SLA requirements.
 
 ### Maximum Instances
+
 The `max_replicas` parameter sets an upper limit on concurrent instances, controlling costs and protecting backend systems. When traffic increases, new instances start automatically up to this configured maximum.
 
 ### Cooldown Period
+
 After processing a request, instances remain available for the duration specified by `cooldown`. Each new request resets this timer. A longer cooldown period helps handle bursty traffic patterns but increases instance running time and cost.
 
 ## Processing Multiple Requests
@@ -54,6 +57,7 @@ response_grace_period = 1200   # Clean shutdown time
 The `response_grace_period` parameter provides time for instances to complete active requests during shutdown. The system first sends a SIGTERM signal, waits for the specified grace period, then issues a SIGKILL command if the instance hasn't stopped.
 
 Performance metrics available through the dashboard help monitor scaling behavior:
+
 - Request processing times
 - Active instance count
 - Cold start frequency

@@ -45,7 +45,9 @@ xformers = "latest"
 When multiple requests arrive, vLLM automatically combines them into optimal batch sizes and processes them together, maximizing GPU utilization through its internal batching functionality.
 
 <Tip>
-    Check out the complete [vLLM batching example](https://github.com/CerebriumAI/examples/tree/master/10-batching/3-vllm-batching-gpu) for more information.
+  Check out the complete [vLLM batching
+  example](https://github.com/CerebriumAI/examples/tree/master/10-batching/3-vllm-batching-gpu)
+  for more information.
 </Tip>
 
 ### Custom Batching
@@ -66,10 +68,11 @@ fastapi = "latest"
 ```
 
 <Tip>
-    Check out the complete [Litserve example](https://github.com/CerebriumAI/examples/tree/master/10-batching/2-litserve-batching-gpu) for more information.
+  Check out the complete [Litserve
+  example](https://github.com/CerebriumAI/examples/tree/master/10-batching/2-litserve-batching-gpu)
+  for more information.
 </Tip>
 
 Custom batching provides complete control over request grouping and processing, particularly valuable for frameworks without native batching support or applications with specific processing requirements. The [Container Images Guide](/cerebrium/container-images/defining-container-images#custom-runtimes) provides detailed implementation instructions.
 
 Together, batching and concurrency create an efficient request processing system. Concurrency enables parallel request handling, while batching optimizes how these concurrent requests are processed, leading to better resource utilization and application performance.
-

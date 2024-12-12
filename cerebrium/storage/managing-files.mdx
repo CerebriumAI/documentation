@@ -2,7 +2,6 @@
 title: "Managing Files"
 ---
 
-
 Cerebrium offers file management through a 50GB persistent volume that's available to all applications in a project. This storage mounts at `/persistent-storage` and helps store model weights and files efficiently across deployments.
 
 ## Including Files in Deployments
@@ -30,6 +29,7 @@ Files included in deployments must be under 2GB each, with deployments working b
 The CLI provides three commands for working with persistent storage:
 
 1. Upload files with `cerebrium cp`:
+
 ```bash
 # Upload to root directory
 cerebrium cp src_file_name.txt
@@ -42,6 +42,7 @@ cerebrium cp dir_name sub_folder/
 ```
 
 2. List files with `cerebrium ls`:
+
 ```bash
 # View root contents
 cerebrium ls
@@ -51,6 +52,7 @@ cerebrium ls sub_folder/
 ```
 
 3. Remove files with `cerebrium rm`:
+
 ```bash
 # Remove a file
 cerebrium rm file_name.txt
@@ -73,5 +75,6 @@ model = torch.jit.load(file_path)
 ```
 
 <Warning>
-    Should you require additional storage capacity, please reach out to us through [support](mailto:support@cerebrium.ai).
+  Should you require additional storage capacity, please reach out to us through
+  [support](mailto:support@cerebrium.ai).
 </Warning>
