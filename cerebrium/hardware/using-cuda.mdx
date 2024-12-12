@@ -1,0 +1,66 @@
+---
+title: Using CUDA
+---
+
+## Overview
+
+CUDA (Compute Unified Device Architecture) enables apps to use graphics cards (GPUs) to speed up calculations. Unlike standard processors (CPUs) that handle one task at a time, graphics cards can handle many tasks simultaneously.
+
+## How CUDA Works
+
+CUDA connects apps to graphics cards, splitting large tasks into smaller pieces that can be processed at the same time. This makes operations like image processing and complex mathematical calculations much faster than using a standard processor alone.
+
+## Using CUDA with App Dependencies
+
+Many python packages come with built-in CUDA support. For example, the popular machine learning package _PyTorch_ includes CUDA in its installation:
+
+```toml
+[cerebrium.dependencies.pip]
+torch = "latest" # PyTorch with graphics card support
+```
+
+## Special Requirements
+
+Some apps need direct access to CUDA system libraries and tools. The CUDA base image provides this complete CUDA toolkit environment. This is often necessary when apps:
+
+- Compile custom CUDA code
+- Access low-level CUDA features
+- Need specific CUDA driver versions
+- Require CUDA development tools
+
+The base image can be set in the `cerebrium.toml` file:
+
+```toml
+[cerebrium.deployment]
+docker_base_image_url = "nvidia/cuda:12.1.1-runtime-ubuntu22.04"
+```
+
+## Cold Start Optimization
+
+Image size and complexity significantly impact cold start performance - the time needed to initialize an app from a "cold" state. While Cerebrium uses a content-addressable file system that selectively pulls only required files, larger images still affect startup times.
+
+### Image Size Considerations
+
+Base image choices affect cold start times in several ways:
+
+- Development images (like `nvidia/cuda:*-devel`) include additional tools, increasing size
+- Runtime images provide minimal dependencies for faster initialization
+- Each additional layer or installed package increases the final image size
+
+The final image size appears in the dashboard after build completion, helping track size optimization efforts.
+
+### Balancing Tradeoffs
+
+Cold start optimization often involves balancing competing needs:
+
+```toml
+# Minimal runtime image - faster cold starts
+docker_base_image_url = "debian:bookworm-slim"
+
+# Full development image - slower cold starts, more tools
+docker_base_image_url = "nvidia/cuda:12.0.1-devel-ubuntu22.04"
+```
+
+Some apps might benefit from keeping instances "warm" to avoid cold starts entirely, though this affects resource usage.
+
+For a practical implementation, see the [Stable Diffusion Example](https://github.com/CerebriumAI/examples/blob/bfb2337516b0ad37a3bd31c64c41d72872f9f428/7-image-and-video/6-regular-stable-diffusion/cerebrium.toml#L9).
