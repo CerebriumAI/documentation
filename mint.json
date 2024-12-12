@@ -74,7 +74,10 @@
   "navigation": [
     {
       "group": "Getting Started",
-      "pages": ["cerebrium/getting-started/introduction"]
+      "pages": [
+        "cerebrium/getting-started/introduction",
+        "cerebrium/getting-started/collaborating"
+      ]
     },
     {
       "group": "Container Images",
@@ -89,8 +92,11 @@
       ]
     },
     {
-      "group": "Data Storage",
-      "pages": ["cerebrium/data-sharing-storage/persistent-storage"]
+      "group": "Scaling apps",
+      "pages": [
+        "cerebrium/scaling/scaling-apps",
+        "cerebrium/scaling/batching-concurrency"
+      ]
     },
     {
       "group": "Deployments",
@@ -104,7 +110,14 @@
         "cerebrium/endpoints/streaming",
         "cerebrium/endpoints/websockets",
         "cerebrium/endpoints/webhook",
-        "cerebrium/endpoints/async"
+        "cerebrium/endpoints/async",
+        "cerebrium/endpoints/custom-web-servers"
+      ]
+    },
+    {
+      "group": "Storage",
+      "pages": [
+        "cerebrium/storage/managing-files"
       ]
     },
     {
@@ -114,22 +127,12 @@
     {
       "group": "Other concepts",
       "pages": [
-        "cerebrium/misc/faster-model-loading",
-        "cerebrium/misc/using-secrets"
-      ]
-    },
-    {
-      "group": "Prebuilt Models",
-      "pages": ["cerebrium/prebuilt-models/introduction"]
-    },
-    {
-      "group": "FAQs and Tips",
-      "pages": [
         "security",
-        "reliability-scalability",
-        "available-hardware",
+        "cerebrium/other-topics/using-secrets",
+        "cerebrium/other-topics/faster-model-loading",
         "calculating-cost",
-        "cerebrium/faqs-and-help/fast-deployments-dos-and-donts"
+        "cerebrium/other-topics/fast-deployments-dos-and-donts",
+        "cerebrium/other-topics/prebuilt-models"
       ]
     },
     {
@@ -142,7 +145,7 @@
           "pages": ["v4/examples/mistral-vllm"]
         },
         {
-          "group": "large Language models",
+          "group": "Large Language Models",
           "pages": [
             "v4/examples/openai-compatible-endpoint-vllm",
             "v4/examples/streaming-falcon-7B"

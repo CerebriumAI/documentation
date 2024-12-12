@@ -1,0 +1,62 @@
+---
+title: "Scaling Apps"
+description: "Learn to optimise for cost and performance by scaling out apps"
+---
+
+Cerebrium's scaling system automatically manages computing resources to match app demand. The system handles everything from a few simple requests, to the processing of multiple requests simultaneously, while optimizing for both performance and cost.
+
+## How Autoscaling Works
+
+The scaling system monitors two key metrics to make scaling decisions:
+
+The **number of requests** currently waiting for processing in the queue indicates immediate demand. Additionally, the system tracks **how long each request has waited in the queue**. When either of these metrics exceeds their thresholds, new instances start within 3 seconds to handle the increased load.
+
+As traffic decreases, instances enter a cooldown period after processing their last request. When no new requests arrive during cooldown, instances terminate to optimize resource usage. This automatic cycle ensures apps remain responsive while managing costs effectively.
+
+## Scaling Configuration
+
+The `cerebrium.toml` file controls scaling behavior through several key parameters:
+
+```toml
+[cerebrium.scaling]
+min_replicas = 0       # Minimum running instances
+max_replicas = 3       # Maximum concurrent instances
+cooldown = 60          # Cooldown period in seconds
+```
+
+### Minimum Instances
+The `min_replicas` parameter defines how many instances remain active at all times. Setting this to 1 or higher maintains warm instances ready for immediate response, eliminating cold starts but increasing costs. This configuration suits apps that require consistent response times or need to meet specific SLA requirements.
+
+### Maximum Instances
+The `max_replicas` parameter sets an upper limit on concurrent instances, controlling costs and protecting backend systems. When traffic increases, new instances start automatically up to this configured maximum.
+
+### Cooldown Period
+After processing a request, instances remain available for the duration specified by `cooldown`. Each new request resets this timer. A longer cooldown period helps handle bursty traffic patterns but increases instance running time and cost.
+
+## Processing Multiple Requests
+
+Apps can process multiple requests simultaneously using Cerebrium's batching and concurrency features. The system offers native support for frameworks with built-in batching capabilities and enables custom implementations through the [custom runtime](cerebrium/container-images/defining-container-images#custom-runtimes) feature. For detailed information about handling multiple requests efficiently, see our [Batching & Concurrency Guide](/cerebrium/scaling/batching-concurrency).
+
+## Instance Management
+
+Cerebrium ensures reliability through automatic instance health management. The system restarts instances that encounter issues, quickly starts new instances to maintain processing capacity, and monitors instance health continuously.
+
+Apps requiring maximum reliability often combine several scaling features:
+
+```toml
+[cerebrium.scaling]
+min_replicas = 2              # Maintain redundant instances
+cooldown = 600                # Extended warm period
+max_replicas = 10             # Room for traffic spikes
+response_grace_period = 1200   # Clean shutdown time
+```
+
+The `response_grace_period` parameter provides time for instances to complete active requests during shutdown. The system first sends a SIGTERM signal, waits for the specified grace period, then issues a SIGKILL command if the instance hasn't stopped.
+
+Performance metrics available through the dashboard help monitor scaling behavior:
+- Request processing times
+- Active instance count
+- Cold start frequency
+- Resource usage patterns
+
+The system status and platform-wide metrics remain accessible through our [status page](https://status.cerebrium.ai), where Cerebrium maintains 99.9% uptime.

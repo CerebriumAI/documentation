@@ -1,0 +1,75 @@
+---
+title: "Batching & Concurrency"
+description: "Improve throughput and cost performance with batching & concurrency"
+---
+
+## Understanding Concurrency
+
+Concurrency in Cerebrium allows each instance to process multiple requests simultaneously. The `replica_concurrency` setting in the `cerebrium.toml` file determines how many requests each instance handles in parallel:
+
+```toml
+[cerebrium.scaling]
+replica_concurrency = 4    # Process up to 4 requests simultaneously
+```
+
+When requests arrive at an instance that hasn't reached its concurrency limit, they begin processing immediately. Once an instance reaches its maximum concurrent requests, additional requests queue until capacity becomes available. This parallel processing capability helps applications maintain consistent performance during periods of high traffic.
+
+Modern GPUs excel at parallel processing, making concurrent request handling particularly effective for workloads. For instance, when an instance processes multiple image classification requests concurrently, it utilizes GPU resources more efficiently than processing requests sequentially.
+
+## Understanding Batching
+
+Batching determines how concurrent requests are processed together within an instance. While concurrency controls the number of simultaneous requests, batching manages how these requests are grouped and executed.
+
+Cerebrium supports two approaches to request batching.
+
+### Framework-Native Batching
+
+Many frameworks include features for processing multiple requests efficiently. vLLM, for example, automatically handles batched model inference requests:
+
+```toml
+[cerebrium.scaling]
+min_replicas = 0
+max_replicas = 2
+cooldown = 10
+replica_concurrency = 4 # Each container can now handle multiple requests
+
+[cerebrium.dependencies.pip]
+sentencepiece = "latest"
+torch = "latest"
+vllm = "latest"
+transformers = "latest"
+accelerate = "latest"
+xformers = "latest"
+```
+
+When multiple requests arrive, vLLM automatically combines them into optimal batch sizes and processes them together, maximizing GPU utilization through its internal batching functionality.
+
+<Tip>
+    Check out the complete [vLLM batching example](https://github.com/CerebriumAI/examples/tree/master/10-batching/3-vllm-batching-gpu) for more information.
+</Tip>
+
+### Custom Batching
+
+Applications requiring precise control over request processing can implement custom batching through Cerebrium's [custom runtime feature](/cerebrium/container-images/defining-container-images#custom-runtimes). This approach allows for specific batching strategies and custom processing logic.
+
+As an example, implementation with LitServe requires additional configuration in the `cerebrium.toml` file:
+
+```toml
+[cerebrium.runtime.custom]
+port = 8000
+entrypoint = ["python", "app/main.py"]
+healthcheck_endpoint = "/health"
+
+[cerebrium.dependencies.pip]
+litserve = "latest"
+fastapi = "latest"
+```
+
+<Tip>
+    Check out the complete [Litserve example](https://github.com/CerebriumAI/examples/tree/master/10-batching/2-litserve-batching-gpu) for more information.
+</Tip>
+
+Custom batching provides complete control over request grouping and processing, particularly valuable for frameworks without native batching support or applications with specific processing requirements. The [Container Images Guide](/cerebrium/container-images/defining-container-images#custom-runtimes) provides detailed implementation instructions.
+
+Together, batching and concurrency create an efficient request processing system. Concurrency enables parallel request handling, while batching optimizes how these concurrent requests are processed, leading to better resource utilization and application performance.
+
