@@ -11,6 +11,10 @@ The scaling system monitors two key metrics to make scaling decisions:
 
 The **number of requests** currently waiting for processing in the queue indicates immediate demand. Additionally, the system tracks **how long each request has waited in the queue**. When either of these metrics exceeds their thresholds, new instances start within 3 seconds to handle the increased load.
 
+<Info>
+    Scaling is also configurable based on the expected traffic of an application. See below for more information.
+</Info>
+
 As traffic decreases, instances enter a cooldown period after processing their last request. When no new requests arrive during cooldown, instances terminate to optimize resource usage. This automatic cycle ensures apps remain responsive while managing costs effectively.
 
 ## Scaling Configuration

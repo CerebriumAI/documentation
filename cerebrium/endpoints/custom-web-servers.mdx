@@ -12,13 +12,13 @@ Here's a simple FastAPI server implementation that shows how custom servers work
 ```python
 from fastapi import FastAPI
 
-server = FastAPI()
+app = FastAPI()
 
-@server.post("/hello")
+@app.post("/hello")
 def hello():
     return {"message": "Hello Cerebrium!"}
 
-@server.get("/health")
+@app.get("/health")
 def health():
     return "Ok"
 ```
