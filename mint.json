@@ -116,9 +116,7 @@
     },
     {
       "group": "Storage",
-      "pages": [
-        "cerebrium/storage/managing-files"
-      ]
+      "pages": ["cerebrium/storage/managing-files"]
     },
     {
       "group": "Integrations",

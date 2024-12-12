@@ -39,12 +39,16 @@ fastapi = "latest"
 ```
 
 The configuration requires three key parameters:
+
 - `entrypoint`: The command that starts your server
 - `port`: The port your server listens on
 - `healthcheck_endpoint`: The endpoint that confirms server health
 
 <Info>
-For ASGI applications like FastAPI, include the appropriate server package (like `uvicorn`) in your dependencies. After deployment, your endpoints become available at `https://api.cortex.cerebrium.ai/v4/{project-id}/{app-name}/your/endpoint`.
+  For ASGI applications like FastAPI, include the appropriate server package
+  (like `uvicorn`) in your dependencies. After deployment, your endpoints become
+  available at `https://api.cortex.cerebrium.ai/v4/{project - id}/{app - name}
+  /your/endpoint`.
 </Info>
 
 Our [FastAPI Server Example](https://github.com/CerebriumAI/examples) provides a complete implementation.
