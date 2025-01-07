@@ -1,0 +1,166 @@
+---
+title: "Containerized Runtimes with Custom Dockerfiles"
+description: "Run generic containerized applications on Cerebrium using custom Dockerfiles."
+---
+
+For enhanced flexibility, users can bring existing containerized applications
+to Cerebrium. These can range from standard Python applications to
+compiled Rust binaries, provided a functional Dockerfile is supplied
+to build the application.
+
+There are multiple benefits to building using Dockerfiles on Cerebrium, including
+the ability to bring existing containerized apps to the platform and
+maintaining consistent deployment environments that are easily managed locally.
+
+## Building Dockerized Python applications
+
+This example demonstrates a simple FastAPI server that has been containerized:
+
+```python
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.post("/hello")
+def hello():
+    return {"message": "Hello Cerebrium!"}
+
+@app.get("/health")
+def health():
+    return "Ok"
+```
+
+The application is built using the following Dockerfile:
+
+```dockerfile
+# Python base
+FROM python:3.12-bookworm
+RUN apt-get update && apt-get install dumb-init
+RUN update-ca-certificates
+
+# Copy source
+COPY . .
+
+# Install Python deps
+RUN pip install -r requirements.txt  # contains fastapi[standard]
+
+# Runtime
+EXPOSE 8192
+CMD ["dumb-init", "--", "fastapi", "run", "main.py", "--port", "8192"]
+```
+
+This is a standard Dockerfile with a CMD clause that specifies how
+to run the container. Use this Dockerfile in Cerebrium by referencing
+it directly in the configuration file.
+
+Update cerebrium.toml to include a custom runtime section with the `dockerfile_path` parameter:
+
+```toml
+[cerebrium.runtime.custom]
+port = 8192
+healthcheck_endpoint = "/health"
+dockerfile_path = "./Dockerfile"
+```
+
+The configuration requires three key parameters:
+
+- `port`: The port the server listens on.
+- `healthcheck_endpoint`: The endpoint used to confirm server health. If unspecified, defaults to a TCP ping on the configured port.
+- `dockerfile_path`: The relative path to the Dockerfile used to build the application.
+
+If your Dockerfile does not contain a `CMD` clause, you should also specify `entrypoint` in your `cerebrium.toml`:
+
+```toml
+[cerebrium.runtime.custom]
+entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000"]
+...
+```
+
+<Warning>
+  When specifying a dockerfile_path, all dependencies and necessary commands
+  should be installed and executed within the Dockerfile. Dependencies listed
+  under `cerebrium.dependencies.*`, as well as
+  `cerebrium.deployment.shell_commands` and
+  `cerebrium.deployment.pre_build_commands`, will be ignored.
+</Warning>
+
+## Building Generic Dockerized applications
+
+Cerebrium supports applications in languages other than Python, provided
+a Dockerfile is supplied. The following example demonstrates a Rust-based
+API server using the Axum framework:
+
+```rust
+use axum::{
+    routing::{get, post},
+    Json, Router,
+};
+use serde_json::json;
+
+async fn hello() -> Json<serde_json::Value> {
+    Json(json!({ "message": "Hello Cerebrium!" }))
+}
+
+async fn health() -> &'static str {
+    "Ok"
+}
+
+#[tokio::main]
+async fn main() {
+    let app = Router::new()
+        .route("/hello", post(hello))
+        .route("/health", get(health));
+    tracing::info!("Listening on port 5000");
+
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:5000").await.unwrap();
+    axum::serve(listener, app).await.unwrap();
+}
+```
+
+In this case, a multi-stage Dockerfile is used to seperate the build step, creating a smaller and more secure image for the runtime:
+
+```dockerfile
+# Rust base
+FROM rust:bookworm as build
+RUN apt-get update && apt-get install dumb-init
+RUN update-ca-certificates
+
+# Shell project
+RUN USER=root cargo new --bin rs_server
+WORKDIR /rs_server
+
+# Copy over manifests
+COPY Cargo.lock ./Cargo.lock
+COPY Cargo.toml ./Cargo.toml
+
+# This build step will cache dependencies
+RUN cargo build --release
+RUN rm src/*.rs
+
+# Copy source
+COPY src/* src/
+
+# Build for release
+RUN rm ./target/release/deps/rs_server*
+RUN cargo build --release
+
+
+# Runtime Stage
+FROM gcr.io/distroless/base-debian12
+WORKDIR /
+COPY --from=build  /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=build /lib/x86_64-linux-gnu/libgcc_s.so.1 /lib/x86_64-linux-gnu/libgcc_s.so.1
+COPY --from=build /rs_server/target/release/rs_server /rs_server
+COPY --from=build /usr/bin/dumb-init /usr/bin/dumb-init
+EXPOSE 8192
+CMD ["dumb-init", "--", "/rs_server"]
+```
+
+Similarly to the FastAPI webserver, the application should be configured in the `cerebrium.toml` file:
+
+```toml
+[cerebrium.runtime.custom]
+port = 8192
+healthcheck_endpoint = "/health"
+dockerfile_path = "./Dockerfile"
+```
