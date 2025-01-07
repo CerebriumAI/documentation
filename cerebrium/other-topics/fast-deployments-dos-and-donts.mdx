@@ -32,11 +32,11 @@ In this brief guide, we delve into the strategies, best practices, and pitfalls 
 
 ### Downloading files and setting up models
 
-- **Do** make sure you utilise [persistent storage](/cerebrium/data-sharing-storage/persistent-storage).
+- **Do** make sure you utilise [persistent storage](/cerebrium/storage/managing-files).
 - **Do** set the Huggingface cache dir to `/persistent-storage` for your models, tokenizers and datasets.
 - **Don't** re-download models, tokenizers, etc. if possible.
 
-## For faster inference:
+## For faster inference
 
 - **Do** only use your inference calls for inference. As simple as it sounds, do all the setup outside the predict function so that it runs once during the build process and is not repeated for every inference.
 - **Do** ensure you take advantage of resources if available. Ensure that your model is running on the GPU if available with:  

@@ -81,7 +81,11 @@
     },
     {
       "group": "Container Images",
-      "pages": ["cerebrium/container-images/defining-container-images"]
+      "pages": [
+        "cerebrium/container-images/defining-container-images",
+        "cerebrium/endpoints/custom-web-servers",
+        "cerebrium/endpoints/custom-dockerfiles"
+      ]
     },
     {
       "group": "GPUs and Other Resources",
@@ -110,8 +114,7 @@
         "cerebrium/endpoints/streaming",
         "cerebrium/endpoints/websockets",
         "cerebrium/endpoints/webhook",
-        "cerebrium/endpoints/async",
-        "cerebrium/endpoints/custom-web-servers"
+        "cerebrium/endpoints/async"
       ]
     },
     {
