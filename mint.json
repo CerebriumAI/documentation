@@ -4,9 +4,7 @@
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
   },
-  "versions": [
-    "v4"
-  ],
+  "versions": ["v4"],
   "favicon": "/favicon.png",
   "colors": {
     "primary": "#EB3A6F",
@@ -90,7 +88,7 @@
       ]
     },
     {
-      "group": "GPUs and Other Resources",
+      "group": "GPUs and Compute Resources",
       "pages": [
         "cerebrium/hardware/using-gpus",
         "cerebrium/hardware/using-cuda",
@@ -106,9 +104,7 @@
     },
     {
       "group": "Deployments",
-      "pages": [
-        "cerebrium/deployments/ci-cd"
-      ]
+      "pages": ["cerebrium/deployments/ci-cd"]
     },
     {
       "group": "Endpoints",
@@ -123,15 +119,11 @@
     },
     {
       "group": "Storage",
-      "pages": [
-        "cerebrium/storage/managing-files"
-      ]
+      "pages": ["cerebrium/storage/managing-files"]
     },
     {
       "group": "Integrations",
-      "pages": [
-        "cerebrium/integrations/vercel"
-      ]
+      "pages": ["cerebrium/integrations/vercel"]
     },
     {
       "group": "Other concepts",
@@ -150,9 +142,7 @@
         "v4/examples/featured",
         {
           "group": "Advanced Concepts",
-          "pages": [
-            "v4/examples/mistral-vllm"
-          ]
+          "pages": ["v4/examples/mistral-vllm"]
         },
         {
           "group": "Large Language Models",
@@ -163,9 +153,7 @@
         },
         {
           "group": "Integrations",
-          "pages": [
-            "v4/examples/langchain-langsmith"
-          ]
+          "pages": ["v4/examples/langchain-langsmith"]
         },
         {
           "group": "Voice",
@@ -177,16 +165,11 @@
         },
         {
           "group": "Image & Video",
-          "pages": [
-            "v4/examples/comfyUI",
-            "v4/examples/sdxl"
-          ]
+          "pages": ["v4/examples/comfyUI", "v4/examples/sdxl"]
         },
         {
           "group": "Python Apps",
-          "pages": [
-            "v4/examples/asgi-gradio-interface"
-          ]
+          "pages": ["v4/examples/asgi-gradio-interface"]
         }
       ]
     },
