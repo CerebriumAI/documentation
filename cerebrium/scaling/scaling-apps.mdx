@@ -24,9 +24,10 @@ The `cerebrium.toml` file controls scaling behavior through several key paramete
 
 ```toml
 [cerebrium.scaling]
-min_replicas = 0       # Minimum running instances
-max_replicas = 3       # Maximum concurrent instances
-cooldown = 60          # Cooldown period in seconds
+min_replicas = 0           # Minimum running instances
+max_replicas = 3           # Maximum concurrent instances
+cooldown = 60              # Cooldown period in seconds
+replica_concurrency = 1    # The maximum number of requests each replica of an app can accept
 ```
 
 ### Minimum Instances
@@ -40,6 +41,20 @@ The `max_replicas` parameter sets an upper limit on concurrent instances, contro
 ### Cooldown Period
 
 After processing a request, instances remain available for the duration specified by `cooldown`. Each new request resets this timer. A longer cooldown period helps handle bursty traffic patterns but increases instance running time and cost.
+
+### Replica Concurrency
+
+The number of requests an app instance can handle concurrently is dictated by the `replica_concurrency` parameter. This is a hard limit, and an individual replica will
+not accept more than this limit at a time. By default, once this concurrency limit is reached on an instance and there are still requests to be processed in-flight,
+the system will scale out by the number of new instances required to fulfil the in-flight requests. For example, if `replica_concurrency=1` and there are
+_3_ requests in flight with no replicas currently available, Cerebrium will scale out 3 instances of the application to meet that demand.
+
+<Info>
+  Typically most GPU applications will require that `replica_concurrency` is set
+  to **1**. If the workload requires GPU but higher throughput is desired,
+  `replica_concurrency` may be increased so long as access to GPU resources is
+  controlled within the application through batching.
+</Info>
 
 ## Processing Multiple Requests
 
@@ -69,3 +84,60 @@ Performance metrics available through the dashboard help monitor scaling behavio
 - Resource usage patterns
 
 The system status and platform-wide metrics remain accessible through our [status page](https://status.cerebrium.ai), where Cerebrium maintains 99.9% uptime.
+
+## Advanced Scaling Configuration
+
+Cerebrium provides a variety of scaling criteria which may be used to scale apps according to different metrics. As mentioned above,
+by default this is determined by an application's `replica_concurrency`. However, this strategy may be insufficient for some use cases
+and so Cerebrium currently provides four scaling metrics to choose from:
+
+- `concurrency_utilization`
+- `requests_per_second`
+- `cpu_utilization`
+- `memory_utilization`
+
+These can be added to the `cerebrium.scaling` section as such, by specifying one of these metrics and a target:
+
+```toml
+[cerebrium.scaling]
+min_replicas = 0
+cooldown = 600
+max_replicas = 10
+response_grace_period = 120
+replica_concurrency = 1
+scaling_metric = "concurrency_utilization"
+scaling_target = 100
+```
+
+### Concurrency Utilization
+
+`concurrency_utilization` is the default scaling metric, and defaults to a target of _100%_ if not set explicitly.
+This scaling metric works by maintaining a maximum percentage of your `replica_concurrency` across every instance of
+the app. For example, if an application has `replica_concurrency=1` and `scaling_target=70`, Cerebrium will attempt
+to maintain _0.7_ requests per instance across your entire deployed service. This strategy would always ensure an extra
+30% capacity is provisioned.
+
+As a different example, say an app has `replica_concurrency=200` and `scaling_target=80`. In this case, Cerebrium will
+maintain _160_ requests per instance, and will begin to scale out once that target has exceeded.
+
+### Requests per Second
+
+`requests_per_second` is straightforward criterion which aims to maintain a maximum application throughput
+measured in requests per second over every application instance. This can be a more effective scale metric than `concurrency_utilization`
+if appropriate performance evaluation has been done on the application to determine the throughput. This criterion
+is not recommended for most GPU applications, since this scaling metric does not enforce concurrency limits. For example,
+if `scaling_target=5`, Cerebrium will attempt to maintain a 5 requests/s average across all app instances.
+
+### CPU Utilization
+
+`cpu_utilization` uses a maxmium CPU percentage utilization averaged over all instances of an application to scale out, relative to the
+`cerebrium.hardware.cpu` value. For example, if an application has `cpu=2` and `scaling_target=80`, Cerebrium will attempt
+to maintain _80%_ CPU utilization (1.6 CPUs) per instance across your entire deployed service. Since there is no notion of
+scaling relative to 0 CPU units, it is required that `min_replicas=1` if using this metric.
+
+### Memory Utilization
+
+`memory_utilization` uses a maxmium memory percentage utilization averaged over all instances of an application to scale out, relative to the
+`cerebrium.hardware.memory` value. Note this refers to RAM, **not** GPU VRAM utilization. For example, if an application has `memory=10` and `scaling_target=80`, Cerebrium will attempt
+to maintain _80%_ Memory utilization (8GB) per instance across your entire deployed service. Since there is no notion of
+scaling relative to 0GB of memory, it is required that `min_replicas=1` if using this metric.
