@@ -27,7 +27,7 @@ The `cerebrium.toml` file controls scaling behavior through several key paramete
 min_replicas = 0           # Minimum running instances
 max_replicas = 3           # Maximum concurrent instances
 cooldown = 60              # Cooldown period in seconds
-replica_concurrency = 1    # The maximum number of requests an instance of an app can accept
+replica_concurrency = 1    # The maximum number of requests each replica of an app can accept
 ```
 
 ### Minimum Instances
@@ -44,14 +44,16 @@ After processing a request, instances remain available for the duration specifie
 
 ### Replica Concurrency
 
-The number of requests an app instance can handle is dictated by the `replica_concurrency` parameter. This is a hard limit, and the application will
-not accept more than this limit. By default, once this concurrency limit is reached on an instance and there are still requests to be processed in-flight,
-the system will scale out by the number of new instances required to fulfil the in-flight requests.
+The number of requests an app instance can handle concurrently is dictated by the `replica_concurrency` parameter. This is a hard limit, and an individual replica will
+not accept more than this limit at a time. By default, once this concurrency limit is reached on an instance and there are still requests to be processed in-flight,
+the system will scale out by the number of new instances required to fulfil the in-flight requests. For example, if `replica_concurrency=1` and there are
+_3_ requests in flight with no replicas currently available, Cerebrium will scale out 3 instances of the application to meet that demand.
 
 <Info>
   Typically most GPU applications will require that `replica_concurrency` is set
-  to **1**. If changing this value, and the workload requires GPU, ensure that
-  access to GPU resources is controlled within the application.
+  to **1**. If the workload requires GPU but higher throughput is desired,
+  `replica_concurrency` may be increased so long as access to GPU resources is
+  controlled within the application through batching.
 </Info>
 
 ## Processing Multiple Requests
@@ -102,6 +104,7 @@ min_replicas = 0
 cooldown = 600
 max_replicas = 10
 response_grace_period = 120
+replica_concurrency = 1
 scaling_metric = "concurrency_utilization"
 scaling_target = 100
 ```
@@ -135,6 +138,6 @@ scaling relative to 0 CPU units, it is required that `min_replicas=1` if using t
 ### Memory Utilization
 
 `memory_utilization` uses a maxmium memory percentage utilization averaged over all instances of an application to scale out, relative to the
-`cerebrium.hardware.memory` value. For example, if an application has `memory=10` and `scaling_target=80`, Cerebrium will attempt
+`cerebrium.hardware.memory` value. Note this refers to RAM, **not** GPU VRAM utilization. For example, if an application has `memory=10` and `scaling_target=80`, Cerebrium will attempt
 to maintain _80%_ Memory utilization (8GB) per instance across your entire deployed service. Since there is no notion of
 scaling relative to 0GB of memory, it is required that `min_replicas=1` if using this metric.

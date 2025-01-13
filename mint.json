@@ -83,12 +83,12 @@
       "group": "Container Images",
       "pages": [
         "cerebrium/container-images/defining-container-images",
-        "cerebrium/endpoints/custom-web-servers",
-        "cerebrium/endpoints/custom-dockerfiles"
+        "cerebrium/container-images/custom-web-servers",
+        "cerebrium/container-images/custom-dockerfiles"
       ]
     },
     {
-      "group": "GPUs and Other Resources",
+      "group": "GPUs and Compute Resources",
       "pages": [
         "cerebrium/hardware/using-gpus",
         "cerebrium/hardware/using-cuda",
