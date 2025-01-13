@@ -68,11 +68,11 @@ The configuration requires three key parameters:
 - `healthcheck_endpoint`: The endpoint used to confirm server health. If unspecified, defaults to a TCP ping on the configured port.
 - `dockerfile_path`: The relative path to the Dockerfile used to build the application.
 
-If your Dockerfile does not contain a `CMD` clause, you should also specify `entrypoint` in your `cerebrium.toml`:
+If a Dockerfile does not contain a `CMD` clause, specifying the `entrypoint` parameter in the `cerebrium.toml` file is required:
 
 ```toml
 [cerebrium.runtime.custom]
-entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000"]
+entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8192"]
 ...
 ```
 
@@ -110,9 +110,9 @@ async fn main() {
     let app = Router::new()
         .route("/hello", post(hello))
         .route("/health", get(health));
-    tracing::info!("Listening on port 5000");
+    tracing::info!("Listening on port 8192");
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:5000").await.unwrap();
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:8192").await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
 ```

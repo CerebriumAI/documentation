@@ -18,7 +18,6 @@ In your IDE, run the following command to create our Cerebrium starter project: 
 
 - **main.py** - Our entrypoint file where our code lives
 - **cerebrium.toml** - A configuration file that contains all our build and environment settings
-  ‍
   Add the following pip packages near the bottom of your cerebrium.toml. This will be used in creating our deployment environment.
 
 ```
@@ -47,7 +46,7 @@ from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import HTMLResponse
 
-from .bot import main
+from bot import main
 
 app = FastAPI()
 
@@ -63,7 +62,7 @@ app.add_middleware(
 @app.post("/")
 async def start_call():
     print("POST TwiML")
-    return HTMLResponse(content=open("app/templates/streams.xml").read(), media_type="application/xml")
+    return HTMLResponse(content=open("templates/streams.xml").read(), media_type="application/xml")
 
 
 @app.websocket("/ws")
@@ -78,14 +77,15 @@ async def websocket_endpoint(websocket: WebSocket):
     await main(websocket, stream_sid)
 ```
 
-Don't worry about the line `from .bot import main` - we will add this later. In your current directory, create a folder called 'templates' and inside it a file called 'stream.xml'.
+Don't worry about the line `from bot import main` - we will add this later. In your current directory, create a folder called 'templates' and inside it a file called 'stream.xml'.
 We need to send back a xml response to Twilio in order to upgrade the connection to the websocket connection. Add the following code to the streams.xml file:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
   <Connect>
-    <Stream url="wss://api.cortex.cerebrium.ai/v4/p-xxxxxxx/twilio-agent/ws"></Stream>
+    <!--Update with your project ID below-->
+    <Stream url="wss://api.cortex.cerebrium.ai/v4/p-xxxxxxx/4-twilio-agent/ws"></Stream>
   </Connect>
   <Pause length="40"/>
 </Response>
