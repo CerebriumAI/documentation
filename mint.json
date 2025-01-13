@@ -90,7 +90,7 @@
       ]
     },
     {
-      "group": "GPUs and Other Resources",
+      "group": "GPUs and Compute Resources",
       "pages": [
         "cerebrium/hardware/using-gpus",
         "cerebrium/hardware/using-cuda",
