@@ -68,7 +68,7 @@ The configuration requires three key parameters:
 - `healthcheck_endpoint`: The endpoint used to confirm server health. If unspecified, defaults to a TCP ping on the configured port.
 - `dockerfile_path`: The relative path to the Dockerfile used to build the application.
 
-If your Dockerfile does not contain a `CMD` clause, you should also specify `entrypoint` in your `cerebrium.toml`:
+If a Dockerfile does not contain a `CMD` clause, specifying the `entrypoint` parameter in the `cerebrium.toml` file is required:
 
 ```toml
 [cerebrium.runtime.custom]
