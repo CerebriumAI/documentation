@@ -160,7 +160,8 @@
           "pages": [
             "v4/examples/transcribe-whisper",
             "v4/examples/twilio-voice-agent",
-            "v4/examples/realtime-voice-agents"
+            "v4/examples/realtime-voice-agents",
+            "v4/examples/livekit-outbound-agent"
           ]
         },
         {
