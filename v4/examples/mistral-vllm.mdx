@@ -107,17 +107,6 @@ The implementation in our **predict** function is pretty straight forward in tha
 Your cerebrium.toml file is where you can set your compute/environment. Your cerebrium.toml file should look like:
 
 ```toml
-
-[cerebrium.build]
-predict_data = "{\"prompt\": \"Here is some example predict data for your config.yaml which will be used to test your predict function on build.\"}"
-hide_public_endpoint = false
-disable_animation = false
-disable_build_logs = false
-disable_syntax_check = false
-disable_predict = false
-log_level = "INFO"
-disable_confirmation = false
-
 [cerebrium.deployment]
 name = "1-faster-inference-with-vllm"
 python_version = "3.11"
