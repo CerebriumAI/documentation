@@ -1,0 +1,438 @@
+---
+title: "Hyperparameter Sweep training Llama 3.2 with WandB"
+description: "Run a hyperparameter sweep on Llama 3.2 with WandB"
+---
+
+When training machine learning models, finding the perfect combination of hyper parameters can feel overwhelming however if you do it well, it can turn a good model into a great one! Hyper parameter sweeps help you find the best performing model for the least amount of compute or time spent training - think of them as your systematic approach to testing every variation to uncover the best result.
+
+In this tutorial, we’ll walk through training Llama 3.2, using [Wandb](https://wandb.ai/site) (Weights and Biases) to run hyper parameter sweeps to optimize its performance and we’ll leverage Cerebrium to scale our experiments across serverless GPUs, allowing us to find the best-performing model faster than ever.
+
+If you would like to see the final version of this tutorial, you can view it on Github [here](https://github.com/CerebriumAI/examples/tree/master/12-training/1-wandb-sweep).
+
+Read this section if you're unfamiliar with sweeps.
+
+### Analogy: Pizza Topping Sweep
+
+Forget about ML for a second. Imagine you’re making pizzas, and you want to discover the most delicious combination of toppings. You can change three things about your pizza:
+
+•	**Type of Cheese** (mozzarella, cheddar, parmesan)
+
+•	**Type of Sauce** (tomato, pesto)
+
+•	**Extra Topping** (pepperoni, mushrooms, olives)
+
+There are 12 possible combinations of pizzas you can make. One of them will taste the best!
+
+To find out which pizza is the tastiest, you need to try all the combinations and rate them. This process is called a **hyperparameter sweep**. Your three hyperparameters are the cheese, sauce, and extra topping.
+
+If you do it one pizza at a time, it could take hours. But if you had 12 ovens, you could bake all the pizzas at once and find the best one in just a few minutes!
+
+If a kitchen is a GPU, then you need 12 GPUs to run each experiment to see which cookie is the best. The power of Cerebrium is the ability to run sweeps like this on 12 different GPUs (or 1,000 GPUs if you'd like) to get you the best version of a model fast.
+
+### Setup Cerebrium
+
+If you don’t have a Cerebrium account, you can run the following in your cli:
+
+```bash
+pip install cerebrium --upgrade
+cerebrium login
+cerebrium init wandb-sweep
+```
+
+This creates a folder with two files:
+
+- **main.py** - Our entrypoint file where our code lives.
+- **cerebrium.toml** - A configuration file that contains all our build and environment settings Add the following pip packages near the bottom of your cerebrium.toml. This will be used in creating our deployment environment.
+
+We will return back to these files later but for now, we will continue the rest of this tutorial in this folder.
+
+### Setup Wandb
+
+**Weights & Biases (Wandb)** is a powerful tool for tracking, visualizing, and managing machine learning experiments in real-time. It helps you log hyperparameters, metrics, and results, making it easy to compare models, optimize performance, and collaborate effectively with your team.
+
+1. [Sign up](https://wandb.ai/site) for a free account and then log in to your wandb account by running the following in your CLI.
+
+```
+pip install wandb
+wandb login
+```
+
+You should see a link printed in your terminal - click it and copy the API from the webpage back into your terminal.
+
+While we have our Wandb API key, we should add it to our Cerebrium secrets in order to use in our code later. You can go to your [Cerebrium Dashboard](https://dashboard.cerebrium.ai/) and navigate to the “secrets” tab in the left side bar. Add the following:
+
+- **Key**: WANDB_API_KEY
+- **Value**: The value you copied from the Wandb website.
+
+Click the “Save All Changes” button to save the changes!
+
+![Cerebrium Secrets](/images/examples/wandb-sweep/cerebrium-secrets.png)
+
+You should then be authenticated with Wandb and ready to go!
+
+### Training Script
+
+Since we will be training the LLama 3.2 model from HuggingFace we need to make sure we have permission to access the model. You can navigate to the Model page on HuggingFace [here](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct). Make sure to accept all permissions. 
+
+You should then generate a HuggingFace token - click your circular image top right and click “Access token” at the bottom of the drop down. Create a new token if you need to and add it to your Cerebrium Secrets like we did above:
+
+- **Key**: HF_TOKEN
+- **Value**: Your Cerebrium Token
+
+Click the "Save All Changes" button to save the secret!
+
+![Hugging Face Token](/images/examples/wandb-sweep/huggingface.png)
+
+For our training script, we will adapt the notebook from Kaggle [here](https://www.kaggle.com/code/scratchpad/notebookad2fe9fab1/edit). 
+
+In your IDE in the current folder, create a **requirements.txt** file and add the following contents:
+
+```
+transformers 
+datasets 
+accelerate 
+peft 
+trl 
+bitsandbytes 
+wandb
+```
+
+These are the packages we require both locally and on Cerebrium in order to create our environment. We set our environment in our cerebrium.toml so lets add this path to it.
+Let us also set our hardware requirements ie: compute that we need for our training task.
+
+In your cerebrium.toml add the following:
+
+```
+#existing configuration
+
+[cerebrium.hardware]
+cpu = 6
+memory = 30.0
+compute = "ADA_L40"
+
+[cerebrium.dependencies.paths]
+pip = "requirements.txt"
+```
+
+Now run ```pip install -r requirements.txt``` in your CLI so we can install these package locally.
+
+Now in your **main.py**, put the following code:
+
+```python
+import os
+from typing import Dict
+import wandb
+from transformers import (
+    AutoModelForCausalLM,
+    AutoTokenizer,
+    BitsAndBytesConfig,
+    TrainingArguments,
+)
+from peft import LoraConfig, get_peft_model
+from datasets import load_dataset
+from trl import SFTTrainer, setup_chat_format
+import torch
+import bitsandbytes as bnb
+from huggingface_hub import login
+
+login(token=os.getenv("HF_TOKEN"))
+
+def find_all_linear_names(model):
+    cls = bnb.nn.Linear4bit
+    lora_module_names = set()
+    for name, module in model.named_modules():
+        if isinstance(module, cls):
+            names = name.split('.')
+            lora_module_names.add(names[0] if len(names) == 1 else names[-1])
+    if 'lm_head' in lora_module_names:
+        lora_module_names.remove('lm_head')
+    return list(lora_module_names)
+
+def train_model(params: Dict):
+    """
+    Training function that receives parameters from the Cerebrium endpoint
+    """
+    # Initialize wandb
+    wandb.login(key=os.getenv("WANDB_API_KEY"))
+    wandb.init(
+        project=params.get("wandb_project", "Llama-3.2-Customer-Support"),
+        name=params.get("run_name", None),
+        config=params,
+    )
+    
+    # Model configuration
+    base_model = params.get("base_model", "meta-llama/Llama-3.2-3B-Instruct")
+    new_model = params.get("output_model_name", f"/persistent-storage/llama-3.2-3b-it-Customer-Support-{wandb.run.id}")
+    
+    # Set torch dtype and attention implementation
+    torch_dtype = torch.bfloat16 if torch.cuda.get_device_capability()[0] >= 8 else torch.float16
+    attn_implementation = "eager"
+    
+    # QLoRA config
+    bnb_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_compute_dtype=torch_dtype,
+        bnb_4bit_use_double_quant=True,
+    )
+    
+    # Load model and tokenizer
+    model = AutoModelForCausalLM.from_pretrained(
+        base_model,
+        quantization_config=bnb_config,
+        device_map="auto",
+        attn_implementation=attn_implementation
+    )
+    tokenizer = AutoTokenizer.from_pretrained(base_model, trust_remote_code=True)
+    
+    # Find linear modules
+    modules = find_all_linear_names(model)
+    
+    # LoRA config
+    peft_config = LoraConfig(
+        r=params.get("lora_r", 16),
+        lora_alpha=params.get("lora_alpha", 32),
+        lora_dropout=params.get("lora_dropout", 0.05),
+        bias="none",
+        task_type="CAUSAL_LM",
+        target_modules=modules
+    )
+    
+    # Setup model
+    tokenizer.chat_template = None  # Clear existing chat template
+    model, tokenizer = setup_chat_format(model, tokenizer)
+    model = get_peft_model(model, peft_config)
+    
+    # Load and prepare dataset
+    dataset = load_dataset(
+        params.get("dataset_name", "bitext/Bitext-customer-support-llm-chatbot-training-dataset"), 
+        split="train"
+    )
+    dataset = dataset.shuffle(seed=params.get("seed", 65))
+    if params.get("max_samples"):
+        dataset = dataset.select(range(params.get("max_samples")))
+    
+    instruction = params.get("instruction", 
+        """You are a top-rated customer service agent named John. 
+        Be polite to customers and answer all their questions."""
+    )
+    
+    def format_chat_template(row):
+        row_json = [
+            {"role": "system", "content": instruction},
+            {"role": "user", "content": row["instruction"]},
+            {"role": "assistant", "content": row["response"]}
+        ]
+        row["text"] = tokenizer.apply_chat_template(row_json, tokenize=False)
+        return row
+    
+    dataset = dataset.map(format_chat_template, num_proc=4)
+    dataset = dataset.train_test_split(test_size=params.get("test_size", 0.1))
+    
+    # Training arguments
+    training_arguments = TrainingArguments(
+        output_dir=new_model,
+        per_device_train_batch_size=params.get("batch_size", 1),
+        per_device_eval_batch_size=params.get("batch_size", 1),
+        gradient_accumulation_steps=params.get("gradient_accumulation_steps", 2),
+        optim="paged_adamw_32bit",
+        num_train_epochs=params.get("epochs", 1),
+        eval_strategy="steps",
+        eval_steps=params.get("eval_steps", 0.2),
+        logging_steps=params.get("logging_steps", 1),
+        warmup_steps=params.get("warmup_steps", 10),
+        learning_rate=params.get("learning_rate", 2e-4),
+        fp16=params.get("fp16", False),
+        bf16=params.get("bf16", False),
+        group_by_length=params.get("group_by_length", True),
+        report_to="wandb"
+    )
+    
+    # Initialize trainer
+    trainer = SFTTrainer(
+        model=model,
+        train_dataset=dataset["train"],
+        eval_dataset=dataset["test"],
+        peft_config=peft_config,
+        args=training_arguments,
+    )
+    
+    # Train and save
+    model.config.use_cache = False
+    trainer.train()
+    model.config.use_cache = True
+    
+    # Save model
+    trainer.model.save_pretrained(new_model)
+    
+    wandb.finish()
+    return {"status": "success", "model_path": new_model}
+```
+
+You can read a deeper explanation of the training script [here](https://www.datacamp.com/tutorial/fine-tuning-llama-3-2) but here's a high-level explanation of the code in bullet points:
+
+- This code sets up a fine-tuning pipeline for a Large Language Model (specifically Llama 3.2) using several modern training techniques:
+- The function takes a dictionary of parameters for flexibility in training configurations - this is our hyper parameter sweep.
+- We load a customer support dataset from Hugging Face and format the data into a chat template format
+- We implement QLoRA (Quantized Low-Rank Adaptation) for efficient fine-tuning.
+- We use Weights & Biases (wandb) for experiment tracking logging results to our Wandb dashboard as they are available.
+- At the end, we saves the final model to our Cerebrium volume and return a “success” message to show that the training was successful.
+
+This is what we will deploy on Cerebrium and essentially the train_model() function will be the endpoint that will kick off our training job with the parameters we pass in.
+
+You can now run the following in your CLI:
+
+```
+cerebrium deploy
+```
+
+This will setup our environment by installing our Python packages and will deploy our training script to be a endpoint that should be returned at the end of the deployment process. ***Copy this POST url*** - we will need it later.  
+
+Whats nice about Cerebrium is we did this with no decorators or special syntax, just simply wrapped training code in a function that is an endpoint autoscales based on the number of requests you make to it - perfect for hyper parameter sweeps!
+
+### Hyperparameter Sweep
+
+Let us create a **run.py** file that we will use to run locally. Put the following code in there:
+
+```python
+import wandb
+import requests
+import os
+from typing import Dict, Any
+from dotenv import load_dotenv
+load_dotenv()
+
+CEREBRIUM_API_KEY = os.getenv("CEREBRIUM_API_KEY")
+ENDPOINT_URL = "https://api.cortex.cerebrium.ai/v4/p-xxxxx/wandb-sweep/train_model?async=true"
+
+def train_with_params(params: Dict[str, Any]):
+    """
+    Send training parameters to Cerebrium endpoint
+    """
+    headers = {
+        "Authorization": f"Bearer {CEREBRIUM_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    
+    response = requests.post(ENDPOINT_URL, json={"params": params}, headers=headers)
+    if response.status_code != 202:
+        raise Exception(f"Training failed: {response.text}")
+    
+    return response.json()
+
+# Define the sweep configuration
+sweep_config = {
+    "method": "bayes",  # Bayesian optimization
+    "metric": {
+        "name": "eval/loss",
+        "goal": "minimize"
+    },
+    "parameters": {
+        "learning_rate": {
+            "distribution": "log_uniform",
+            "min": -10,  # exp(-10) ≈ 4.54e-5
+            "max": -7,   # exp(-7) ≈ 9.12e-4
+        },
+        "batch_size": {
+            "values": [1, 2, 4]
+        },
+        "gradient_accumulation_steps": {
+            "values": [2, 4, 8]
+        },
+        "lora_r": {
+            "values": [8, 16, 32]
+        },
+        "lora_alpha": {
+            "values": [16, 32, 64]
+        },
+        "lora_dropout": {
+            "distribution": "uniform",
+            "min": 0.01,
+            "max": 0.1
+        },
+        "max_seq_length": {
+            "values": [512, 1024]
+        }
+    }
+}
+
+def main():
+    # Initialize the sweep
+    sweep_id = wandb.sweep(sweep_config, project="Llama-3.2-Customer-Support")
+    
+    def sweep_iteration():
+        # Initialize a new W&B run
+        with wandb.init() as run:
+            # Get the parameters for this run
+            params = wandb.config.as_dict()
+            
+            # Add any fixed parameters
+            params.update({
+                "wandb_project": "Llama-3.2-Customer-Support",
+                "base_model": "meta-llama/Llama-3.2-3B-Instruct",
+                "dataset_name": "bitext/Bitext-customer-support-llm-chatbot-training-dataset",
+                "run_name": f"sweep-{run.id}",
+                "epochs": 1,
+                "test_size": 0.1,
+            })
+            
+            # Call the Cerebrium endpoint with these parameters
+            try:
+                result = train_with_params(params)
+                print(f"Training completed: {result}")
+            except Exception as e:
+                print(f"Training failed: {str(e)}")
+                run.finish(exit_code=1)
+    
+    # Run the sweep
+    wandb.agent(sweep_id, function=sweep_iteration, count=10)  # Run 10 experiments
+
+if __name__ == "__main__":
+    main()
+```
+
+This code implements a hyperparameter sweep system using Weights & Biases (wandb) sweeps to train a Llama 3.2 model for customer support. Here's what it does:
+
+- Create a .env file and add your Inference API key from your Cerebrium Dashboard.
+
+```
+CEREBRIUM_API_KEY=eyJ....
+```
+
+- Update the Cerebrium endpoint based on your project ID and the function name your wish to call. You will see we append this url with “?async=true”. This means its a fire-and-forgot request that can run up to 12 hours. You can read more [here](https://docs.cerebrium.ai/cerebrium/endpoints/async).
+- We then define a Bayesian optimization sweep configuration that will search through different hyperparameters including:
+    - Learning rate (log uniform distribution between ~4.54e-5 and ~9.12e-4)
+    - Batch size (1, 2, or 4)
+    - Gradient accumulation steps (2, 4, or 8)
+    - LoRA parameters (r, alpha, and dropout)
+    - Maximum sequence length (512 or 1024)
+- We create this sweep in the "Llama-3.2-Customer-Support" W&B project
+- For each sweep iteration:
+    - We initialize a new W&B run
+    - Combines the sweep's hyperparameters with fixed parameters (like model name and dataset)
+    - Sends the parameters to a Cerebrium endpoint for training that happens asynchronously.
+    - Logs the results back to W&B
+- Run these combinations across 10 experiments (10 concurrent GPU’s is the limit on Cerebrium’s Hobby plan)
+
+You can then run your script by running ```python run.py``` in your CLI.
+
+![Cerebrium Runs](/images/examples/wandb-sweep/cerebrium-secrets.png)
+
+
+As the training is happening, you should see the results in your Wandb dashboard!
+
+![Hugging Face Token](/images/examples/wandb-sweep/wandb-dashboard.png)
+
+
+### Next Steps
+
+- You could copy the resulting model directly to your AWS S3 bucket using the Boto Package.
+- You could kick off your CI/CD processes in order to test the outputs of the model to make sure it adheres to your requirements. Look into the [Webhook functionality](https://docs.cerebrium.ai/cerebrium/endpoints/webhook) Cerebrium offers
+- Once all experiments are finished running, you could create a Cerebrium deployment that serves inferencing requests for the model. That application could reload the model write from your Cerebrium volume.
+- You could use the Cerebrium python package to download the model directly to your machine
+
+### Conclusion
+
+Hyperparameter optimization is a powerful tool for fine-tuning machine learning models, and with the right setup, it doesn’t have to be overwhelming. By combining WandB for tracking and Cerebrium for scaling serverless compute, this tutorial demonstrated how you can efficiently run hyperparameter sweeps for Llama 3.2, ensuring you get the best performance with minimal effort.
+
+You can look at at the final Github repository [here](https://github.com/CerebriumAI/examples/tree/master/12-training/1-wandb-sweep)
