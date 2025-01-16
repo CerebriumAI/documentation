@@ -15,11 +15,11 @@ Read this section if you're unfamiliar with sweeps.
 
 Forget about ML for a second. Imagine you’re making pizzas, and you want to discover the most delicious combination of toppings. You can change three things about your pizza:
 
-•	**Type of Cheese** (mozzarella, cheddar, parmesan)
+• **Type of Cheese** (mozzarella, cheddar, parmesan)
 
-•	**Type of Sauce** (tomato, pesto)
+• **Type of Sauce** (tomato, pesto)
 
-•	**Extra Topping** (pepperoni, mushrooms, olives)
+• **Extra Topping** (pepperoni, mushrooms, olives)
 
 There are 12 possible combinations of pizzas you can make. One of them will taste the best!
 
@@ -72,7 +72,7 @@ You should then be authenticated with Wandb and ready to go!
 
 ### Training Script
 
-Since we will be training the LLama 3.2 model from HuggingFace we need to make sure we have permission to access the model. You can navigate to the Model page on HuggingFace [here](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct). Make sure to accept all permissions. 
+Since we will be training the LLama 3.2 model from HuggingFace we need to make sure we have permission to access the model. You can navigate to the Model page on HuggingFace [here](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct). Make sure to accept all permissions.
 
 You should then generate a HuggingFace token - click your circular image top right and click “Access token” at the bottom of the drop down. Create a new token if you need to and add it to your Cerebrium Secrets like we did above:
 
@@ -83,17 +83,17 @@ Click the "Save All Changes" button to save the secret!
 
 ![Hugging Face Token](/images/examples/wandb-sweep/huggingface.png)
 
-For our training script, we will adapt the notebook from Kaggle [here](https://www.kaggle.com/code/scratchpad/notebookad2fe9fab1/edit). 
+For our training script, we will adapt the notebook from Kaggle [here](https://www.kaggle.com/code/scratchpad/notebookad2fe9fab1/edit).
 
 In your IDE in the current folder, create a **requirements.txt** file and add the following contents:
 
 ```
-transformers 
-datasets 
-accelerate 
-peft 
-trl 
-bitsandbytes 
+transformers
+datasets
+accelerate
+peft
+trl
+bitsandbytes
 wandb
 ```
 
@@ -114,7 +114,7 @@ compute = "ADA_L40"
 pip = "requirements.txt"
 ```
 
-Now run ```pip install -r requirements.txt``` in your CLI so we can install these package locally.
+Now run `pip install -r requirements.txt` in your CLI so we can install these package locally.
 
 Now in your **main.py**, put the following code:
 
@@ -159,15 +159,15 @@ def train_model(params: Dict):
         name=params.get("run_name", None),
         config=params,
     )
-    
+
     # Model configuration
     base_model = params.get("base_model", "meta-llama/Llama-3.2-3B-Instruct")
     new_model = params.get("output_model_name", f"/persistent-storage/llama-3.2-3b-it-Customer-Support-{wandb.run.id}")
-    
+
     # Set torch dtype and attention implementation
     torch_dtype = torch.bfloat16 if torch.cuda.get_device_capability()[0] >= 8 else torch.float16
     attn_implementation = "eager"
-    
+
     # QLoRA config
     bnb_config = BitsAndBytesConfig(
         load_in_4bit=True,
@@ -175,7 +175,7 @@ def train_model(params: Dict):
         bnb_4bit_compute_dtype=torch_dtype,
         bnb_4bit_use_double_quant=True,
     )
-    
+
     # Load model and tokenizer
     model = AutoModelForCausalLM.from_pretrained(
         base_model,
@@ -184,10 +184,10 @@ def train_model(params: Dict):
         attn_implementation=attn_implementation
     )
     tokenizer = AutoTokenizer.from_pretrained(base_model, trust_remote_code=True)
-    
+
     # Find linear modules
     modules = find_all_linear_names(model)
-    
+
     # LoRA config
     peft_config = LoraConfig(
         r=params.get("lora_r", 16),
@@ -197,26 +197,26 @@ def train_model(params: Dict):
         task_type="CAUSAL_LM",
         target_modules=modules
     )
-    
+
     # Setup model
     tokenizer.chat_template = None  # Clear existing chat template
     model, tokenizer = setup_chat_format(model, tokenizer)
     model = get_peft_model(model, peft_config)
-    
+
     # Load and prepare dataset
     dataset = load_dataset(
-        params.get("dataset_name", "bitext/Bitext-customer-support-llm-chatbot-training-dataset"), 
+        params.get("dataset_name", "bitext/Bitext-customer-support-llm-chatbot-training-dataset"),
         split="train"
     )
     dataset = dataset.shuffle(seed=params.get("seed", 65))
     if params.get("max_samples"):
         dataset = dataset.select(range(params.get("max_samples")))
-    
-    instruction = params.get("instruction", 
-        """You are a top-rated customer service agent named John. 
+
+    instruction = params.get("instruction",
+        """You are a top-rated customer service agent named John.
         Be polite to customers and answer all their questions."""
     )
-    
+
     def format_chat_template(row):
         row_json = [
             {"role": "system", "content": instruction},
@@ -225,10 +225,10 @@ def train_model(params: Dict):
         ]
         row["text"] = tokenizer.apply_chat_template(row_json, tokenize=False)
         return row
-    
+
     dataset = dataset.map(format_chat_template, num_proc=4)
     dataset = dataset.train_test_split(test_size=params.get("test_size", 0.1))
-    
+
     # Training arguments
     training_arguments = TrainingArguments(
         output_dir=new_model,
@@ -247,7 +247,7 @@ def train_model(params: Dict):
         group_by_length=params.get("group_by_length", True),
         report_to="wandb"
     )
-    
+
     # Initialize trainer
     trainer = SFTTrainer(
         model=model,
@@ -256,15 +256,15 @@ def train_model(params: Dict):
         peft_config=peft_config,
         args=training_arguments,
     )
-    
+
     # Train and save
     model.config.use_cache = False
     trainer.train()
     model.config.use_cache = True
-    
+
     # Save model
     trainer.model.save_pretrained(new_model)
-    
+
     wandb.finish()
     return {"status": "success", "model_path": new_model}
 ```
@@ -286,7 +286,7 @@ You can now run the following in your CLI:
 cerebrium deploy
 ```
 
-This will setup our environment by installing our Python packages and will deploy our training script to be a endpoint that should be returned at the end of the deployment process. ***Copy this POST url*** - we will need it later.  
+This will setup our environment by installing our Python packages and will deploy our training script to be a endpoint that should be returned at the end of the deployment process. **_Copy this POST url_** - we will need it later.
 
 Whats nice about Cerebrium is we did this with no decorators or special syntax, just simply wrapped training code in a function that is an endpoint autoscales based on the number of requests you make to it - perfect for hyper parameter sweeps!
 
@@ -313,11 +313,11 @@ def train_with_params(params: Dict[str, Any]):
         "Authorization": f"Bearer {CEREBRIUM_API_KEY}",
         "Content-Type": "application/json"
     }
-    
+
     response = requests.post(ENDPOINT_URL, json={"params": params}, headers=headers)
     if response.status_code != 202:
         raise Exception(f"Training failed: {response.text}")
-    
+
     return response.json()
 
 # Define the sweep configuration
@@ -359,13 +359,13 @@ sweep_config = {
 def main():
     # Initialize the sweep
     sweep_id = wandb.sweep(sweep_config, project="Llama-3.2-Customer-Support")
-    
+
     def sweep_iteration():
         # Initialize a new W&B run
         with wandb.init() as run:
             # Get the parameters for this run
             params = wandb.config.as_dict()
-            
+
             # Add any fixed parameters
             params.update({
                 "wandb_project": "Llama-3.2-Customer-Support",
@@ -375,7 +375,7 @@ def main():
                 "epochs": 1,
                 "test_size": 0.1,
             })
-            
+
             # Call the Cerebrium endpoint with these parameters
             try:
                 result = train_with_params(params)
@@ -383,7 +383,7 @@ def main():
             except Exception as e:
                 print(f"Training failed: {str(e)}")
                 run.finish(exit_code=1)
-    
+
     # Run the sweep
     wandb.agent(sweep_id, function=sweep_iteration, count=10)  # Run 10 experiments
 
@@ -401,28 +401,26 @@ CEREBRIUM_API_KEY=eyJ....
 
 - Update the Cerebrium endpoint based on your project ID and the function name your wish to call. You will see we append this url with “?async=true”. This means its a fire-and-forgot request that can run up to 12 hours. You can read more [here](https://docs.cerebrium.ai/cerebrium/endpoints/async).
 - We then define a Bayesian optimization sweep configuration that will search through different hyperparameters including:
-    - Learning rate (log uniform distribution between ~4.54e-5 and ~9.12e-4)
-    - Batch size (1, 2, or 4)
-    - Gradient accumulation steps (2, 4, or 8)
-    - LoRA parameters (r, alpha, and dropout)
-    - Maximum sequence length (512 or 1024)
+  - Learning rate (log uniform distribution between ~4.54e-5 and ~9.12e-4)
+  - Batch size (1, 2, or 4)
+  - Gradient accumulation steps (2, 4, or 8)
+  - LoRA parameters (r, alpha, and dropout)
+  - Maximum sequence length (512 or 1024)
 - We create this sweep in the "Llama-3.2-Customer-Support" W&B project
 - For each sweep iteration:
-    - We initialize a new W&B run
-    - Combines the sweep's hyperparameters with fixed parameters (like model name and dataset)
-    - Sends the parameters to a Cerebrium endpoint for training that happens asynchronously.
-    - Logs the results back to W&B
+  - We initialize a new W&B run
+  - Combines the sweep's hyperparameters with fixed parameters (like model name and dataset)
+  - Sends the parameters to a Cerebrium endpoint for training that happens asynchronously.
+  - Logs the results back to W&B
 - Run these combinations across 10 experiments (10 concurrent GPU’s is the limit on Cerebrium’s Hobby plan)
 
-You can then run your script by running ```python run.py``` in your CLI.
+You can then run your script by running `python run.py` in your CLI.
 
 ![Cerebrium Runs](/images/examples/wandb-sweep/cerebrium-secrets.png)
-
 
 As the training is happening, you should see the results in your Wandb dashboard!
 
 ![Hugging Face Token](/images/examples/wandb-sweep/wandb-dashboard.png)
-
 
 ### Next Steps
 
