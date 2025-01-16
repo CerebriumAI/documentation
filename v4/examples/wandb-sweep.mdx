@@ -98,7 +98,7 @@ wandb
 ```
 
 These are the packages we require both locally and on Cerebrium in order to create our environment. We set our environment in our cerebrium.toml so lets add this path to it.
-Let us also set our hardware requirements ie: compute that we need for our training task.
+Let us also set our hardware requirements ie: compute that we need for our training task. Lastly, we set a max timeout for our task using response_grace_period which we set to 1 hour.
 
 In your cerebrium.toml add the following:
 
@@ -109,6 +109,10 @@ In your cerebrium.toml add the following:
 cpu = 6
 memory = 30.0
 compute = "ADA_L40"
+
+[cerebrium.scaling]
+#existing configuration
+response_grace_period = 3600
 
 [cerebrium.dependencies.paths]
 pip = "requirements.txt"
