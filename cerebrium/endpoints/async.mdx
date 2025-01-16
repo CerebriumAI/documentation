@@ -40,12 +40,11 @@ X-Request-Id: 21eb3b98-4b10-9ad6-8681-a47172828024
 {"run_id":"21eb3b98-4b10-9ad6-8681-a47172828024"}
 ```
 
+Async functions will run for a maximum of **12 hours** however will obey a maximum running time of based what is set in your cerebrium.toml file as the `response_grace_period`.
+This defaults to 15 minutes so max sure to update it to the maximum time your task needs.
+
 In the background, Cerebrium will now run this HTTP request for you.
-Your function is still expected to behave in a **synchronous** manner. That is, it must open a connection, keep
-it open while it is doing work, then return a response once it is done. This effectively allows you
-to treat a synchronous request-responses as asynchronous, and you can do anything within the scope
-of your function call with a _12 hour timeout_. This does **not** mean your actual Python function cannot be `async`.
-Rather, this means that the lifetime of the function is still tied to lifetime of the request made to your app.
+Your function is still expected to behave in a **synchronous** manner. That is, it must execute a body of work and return a result once it is done.
 If you terminate your function early and return a response while the application is still doing work, the Cerebrium
 system will begin to terminate the application. Therefore, you should only return a response once the container
 has finished processing the task, and not earlier.

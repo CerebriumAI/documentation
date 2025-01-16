@@ -171,6 +171,10 @@
         {
           "group": "Python Apps",
           "pages": ["v4/examples/asgi-gradio-interface"]
+        },
+        {
+          "group": "Training",
+          "pages": ["v4/examples/wandb-sweep"]
         }
       ]
     },
