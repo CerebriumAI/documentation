@@ -77,8 +77,11 @@ response_grace_period = 1200   # Clean shutdown time
 The `response_grace_period` parameter provides time for instances to complete active requests during shutdown. The system first sends a SIGTERM signal, waits for the specified grace period, then issues a SIGKILL command if the instance hasn't stopped.
 
 <Note>
-    When using the cortex runtime (default) the SIGTERM signal is captured and the app is given a chance to complete requests before being terminated.
-    When using a custom runtime, it is the responsibility of the user to handle the SIGTERM signal and ensure that the app is given a chance to complete requests before being terminated.
+  When using the cortex runtime (default) the SIGTERM signal is captured and the
+  app is given a chance to complete requests before being terminated. When using
+  a custom runtime, it is the responsibility of the user to handle the SIGTERM
+  signal and ensure that the app is given a chance to complete requests before
+  being terminated.
 </Note>
 
 Performance metrics available through the dashboard help monitor scaling behavior:
