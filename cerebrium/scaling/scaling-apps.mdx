@@ -71,10 +71,12 @@ Apps requiring maximum reliability often combine several scaling features:
 min_replicas = 2              # Maintain redundant instances
 cooldown = 600                # Extended warm period
 max_replicas = 10             # Room for traffic spikes
-response_grace_period = 1200   # Clean shutdown time
+response_grace_period = 1200   # Maximum request lifespan to ensure graceful scale down
 ```
 
-The `response_grace_period` parameter provides time for instances to complete active requests during shutdown. The system first sends a SIGTERM signal, waits for the specified grace period, then issues a SIGKILL command if the instance hasn't stopped.
+The `response_grace_period` parameter stipulates how long in seconds a request would need at most to finish, and provides time for instances to complete active requests during normal operation and shutdown.
+During normal replica operation, this simply corresponds to a request timeout value. During replica shutdown, the Cerebrium system sends a SIGTERM signal to the replica,
+waits for the specified grace period, issues a SIGKILL command if the instance has not stopped, and kills any active requests with a GatewayTimeout error.
 
 <Note>
   When using the cortex runtime (default) the SIGTERM signal is captured and the

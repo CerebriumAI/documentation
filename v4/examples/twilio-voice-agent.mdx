@@ -250,9 +250,10 @@ The best here is to specify a large CPU instance (typically 10 CPUs and 8GB of m
 machine will handle 20 concurrent calls on a single container. You can of course make these numbers large or smaller based on your expected traffic.
 
 The second consideration is your scaling criteria - ie: when will I want to spawn up another container so subsequent calls don't incur a cold start. Here we recommend using Cerebrium's replica_concurrency
-setting which states that when a container reaches a certain utilization of the total concurrent requests it can handle, scale up a container. Again, you can specify this however you like. 
+setting which states that when a container reaches a certain utilization of the total concurrent requests it can handle, scale up a container. Again, you can specify this however you like.
 
 To make the two updates above you can update your cerebrium.toml to contain the following:
+
 ```
 [cerebrium.hardware]
 region = "us-east-1"
