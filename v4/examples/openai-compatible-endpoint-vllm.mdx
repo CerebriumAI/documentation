@@ -93,7 +93,11 @@ async def run(messages: list, model: str, run_id: str, stream: bool = True, temp
                 "finish_reason": prompt[0].finish_reason or "stop"
             }]
         )
-        yield json.dumps(response.model_dump())
+         print(response.model_dump())
+        yield f"data: {json.dumps(response.model_dump())}\n\n"
+    
+    # Send the final [DONE] message
+    yield "data: [DONE]\n\n"
 ```
 
 Above the following is happening:
