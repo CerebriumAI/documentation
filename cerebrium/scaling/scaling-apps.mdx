@@ -95,7 +95,7 @@ Performance metrics available through the dashboard help monitor scaling behavio
 
 The system status and platform-wide metrics remain accessible through our [status page](https://status.cerebrium.ai), where Cerebrium maintains 99.9% uptime.
 
-## Advanced Scaling Configuration
+## Using Scaling Metrics
 
 Cerebrium provides a variety of scaling criteria which may be used to scale apps according to different metrics. As mentioned above,
 by default this is determined by an application's `replica_concurrency`. However, this strategy may be insufficient for some use cases
@@ -122,7 +122,7 @@ scaling_target = 100
 ### Concurrency Utilization
 
 `concurrency_utilization` is the default scaling metric, and defaults to a target of _100%_ if not set explicitly.
-This scaling metric works by maintaining a maximum percentage of your `replica_concurrency` across every instance of
+This scaling metric works by maintaining a maximum percentage of your `replica_concurrency` averaged across every instance of
 the app. For example, if an application has `replica_concurrency=1` and `scaling_target=70`, Cerebrium will attempt
 to maintain _0.7_ requests per instance across your entire deployed service. This strategy would always ensure an extra
 30% capacity is provisioned.
@@ -133,7 +133,7 @@ maintain _160_ requests per instance, and will begin to scale out once that targ
 ### Requests per Second
 
 `requests_per_second` is straightforward criterion which aims to maintain a maximum application throughput
-measured in requests per second over every application instance. This can be a more effective scale metric than `concurrency_utilization`
+measured in requests per second averaged over every application instance. This can be a more effective scale metric than `concurrency_utilization`
 if appropriate performance evaluation has been done on the application to determine the throughput. This criterion
 is not recommended for most GPU applications, since this scaling metric does not enforce concurrency limits. For example,
 if `scaling_target=5`, Cerebrium will attempt to maintain a 5 requests/s average across all app instances.
@@ -151,3 +151,33 @@ scaling relative to 0 CPU units, it is required that `min_replicas=1` if using t
 `cerebrium.hardware.memory` value. Note this refers to RAM, **not** GPU VRAM utilization. For example, if an application has `memory=10` and `scaling_target=80`, Cerebrium will attempt
 to maintain _80%_ Memory utilization (8GB) per instance across your entire deployed service. Since there is no notion of
 scaling relative to 0GB of memory, it is required that `min_replicas=1` if using this metric.
+
+## Keeping a Scaling Buffer
+
+Certain use-cases, where app startup time or total request time is long and traffic is both consistent and predicatable, may require excess capacity in order to meet adequate request
+throughput. Cerebrium provides a replica buffer mechanism to cater for this, whereby the scaling system aims to keep a specific excess replica capacity
+available at all times above what the scaling metric suggests. This is done through the `scaling_buffer` option in the config. Currently, this
+is only available when using the following scaling metrics:
+
+- `concurrency_utilization`
+- `requests_per_second`
+
+The buffer can be added to the `cerebrium.scaling` section as such, by specifying `scaling_buffer`:
+
+```toml
+[cerebrium.scaling]
+min_replicas = 0
+cooldown = 600
+max_replicas = 10
+response_grace_period = 120
+replica_concurrency = 1
+scaling_metric = "concurrency_utilization"
+scaling_target = 100
+scaling_buffer = 3
+```
+
+To illustrate how this works using the above config, if this application receives no traffic, it will buffer out to **3 replicas** of capacity as a baseline.
+This is the case even though `min_replicas=0`, since `scaling_buffer` is actually modifying the suggested replica count from the autoscaler of 0, and **0+3=3**.
+Since the config has specified `100` as a target for `concurrency_utilization` and `replica_concurrency=1`, if the application now receives 1 request
+the autoscaler will suggest a value of 1 replica for scale out. Since however, we have `scale_buffer=3`, the application will actually scale one more replica to **(1+3)=4**.
+In other words, the scale buffer will simply add a static amount of replicas to the number of replicas the autoscaler suggests using the scale target.
