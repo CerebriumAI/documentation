@@ -71,7 +71,7 @@ Apps requiring maximum reliability often combine several scaling features:
 min_replicas = 2              # Maintain redundant instances
 cooldown = 600                # Extended warm period
 max_replicas = 10             # Room for traffic spikes
-response_grace_period = 1200   # Maximum request lifespan to ensure graceful scale down
+response_grace_period = 1200  # Maximum request lifespan ensuring graceful exit
 ```
 
 The `response_grace_period` parameter stipulates how long in seconds a request would need at most to finish, and provides time for instances to complete active requests during normal operation and shutdown.
