@@ -1,0 +1,160 @@
+---
+title: TOML Reference
+description: Complete reference for all Cerebrium TOML configuration options
+---
+
+# TOML Reference
+
+This page provides a comprehensive reference for all configuration options available in Cerebrium's `cerebrium.toml` files.
+
+## Deployment Configuration
+
+The `[cerebrium.deployment]` section defines core deployment settings.
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| name | string | required | Name of your deployment |
+| python_version | string | "3.12" | Python version to use (3.10, 3.11, 3.12) |
+| disable_auth | boolean | false | Disable authentication for endpoints |
+| include | string[] | ["*"] | Files/patterns to include in deployment |
+| exclude | string[] | [".*"] | Files/patterns to exclude from deployment |
+| shell_commands | string[] | [] | Commands to run during build |
+| pre_build_commands | string[] | [] | Commands to run before dependencies install |
+| docker_base_image_url | string | "debian:bookworm-slim" | Base Docker image |
+
+<Info>
+Changes to python_version or docker_base_image_url trigger full rebuilds since they affect the base environment.
+</Info>
+
+## Runtime Configuration
+
+The `[cerebrium.runtime.custom]` section configures custom web servers and runtime behavior.
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| port | integer | required | Port the application listens on |
+| entrypoint | string[] | required | Command to start the application |
+| healthcheck_endpoint | string | "" | HTTP path for health checks (empty uses TCP) |
+
+<Info>
+The port specified in entrypoint must match the port parameter. All endpoints will be available at `https://api.cortex.cerebrium.ai/v4/{project-id}/{app-name}/your/endpoint`
+</Info>
+
+## Hardware Configuration
+
+The `[cerebrium.hardware]` section defines compute resources.
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| cpu | float | required | Number of CPU cores |
+| memory | float | required | Memory allocation in GB |
+| compute | string | "CPU" | Compute type (CPU, AMPERE_A10, etc.) |
+| gpu_count | integer | 0 | Number of GPUs |
+| provider | string | "aws" | Cloud provider |
+| region | string | "us-east-1" | Deployment region |
+
+<Warning>
+Memory refers to RAM, not GPU VRAM. Ensure sufficient memory for your workload.
+</Warning>
+
+## Scaling Configuration
+
+The `[cerebrium.scaling]` section controls auto-scaling behavior.
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| min_replicas | integer | 0 | Minimum running instances |
+| max_replicas | integer | 2 | Maximum running instances |
+| replica_concurrency | integer | 10 | Concurrent requests per replica |
+| response_grace_period | integer | 3600 | Grace period in seconds |
+| cooldown | integer | 1800 | Cooldown period between scaling events |
+| scaling_metric | string | "concurrency_utilization" | Metric for scaling decisions |
+| scaling_target | integer | 100 | Target value for scaling metric |
+| scaling_buffer | integer | optional | Buffer capacity for scaling |
+
+<Info>
+Setting min_replicas > 0 maintains warm instances for immediate response but increases costs.
+</Info>
+
+## Dependencies
+
+### Pip Dependencies
+
+The `[cerebrium.dependencies.pip]` section lists Python package requirements.
+
+```toml
+[cerebrium.dependencies.pip]
+torch = "==2.0.0"      # Exact version
+numpy = "latest"       # Latest version
+pandas = ">=1.5.0"     # Minimum version
+```
+
+### APT Dependencies
+
+The `[cerebrium.dependencies.apt]` section specifies system packages.
+
+```toml
+[cerebrium.dependencies.apt]
+ffmpeg = "latest"
+libopenblas-base = "latest"
+```
+
+### Conda Dependencies
+
+The `[cerebrium.dependencies.conda]` section manages Conda packages.
+
+```toml
+[cerebrium.dependencies.conda]
+cuda = ">=11.7"
+cudatoolkit = "11.7"
+```
+
+### Dependency Files
+
+The `[cerebrium.dependencies.paths]` section allows using requirement files.
+
+```toml
+[cerebrium.dependencies.paths]
+pip = "requirements.txt"
+apt = "pkglist.txt"
+conda = "conda_pkglist.txt"
+```
+
+<Warning>
+Changes to APT or Conda dependencies trigger full rebuilds. Consider batching updates.
+</Warning>
+
+## Complete Example
+
+```toml
+[cerebrium.deployment]
+name = "llm-inference"
+python_version = "3.12"
+include = ["*"]
+exclude = [".*"]
+
+[cerebrium.runtime.custom]
+port = 8000
+entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+healthcheck_endpoint = "/health"
+
+[cerebrium.hardware]
+cpu = 4
+memory = 16.0
+compute = "AMPERE_A10"
+gpu_count = 1
+
+[cerebrium.scaling]
+min_replicas = 0
+max_replicas = 2
+replica_concurrency = 10
+cooldown = 1800
+
+[cerebrium.dependencies.pip]
+torch = "latest"
+transformers = "latest"
+uvicorn = "latest"
+
+[cerebrium.dependencies.apt]
+ffmpeg = "latest"
+```
