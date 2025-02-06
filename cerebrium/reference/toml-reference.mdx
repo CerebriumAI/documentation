@@ -11,69 +11,74 @@ This page provides a comprehensive reference for all configuration options avail
 
 The `[cerebrium.deployment]` section defines core deployment settings.
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| name | string | required | Name of your deployment |
-| python_version | string | "3.12" | Python version to use (3.10, 3.11, 3.12) |
-| disable_auth | boolean | false | Disable authentication for endpoints |
-| include | string[] | ["*"] | Files/patterns to include in deployment |
-| exclude | string[] | [".*"] | Files/patterns to exclude from deployment |
-| shell_commands | string[] | [] | Commands to run during build |
-| pre_build_commands | string[] | [] | Commands to run before dependencies install |
-| docker_base_image_url | string | "debian:bookworm-slim" | Base Docker image |
+| Option                | Type     | Default                | Description                                 |
+| --------------------- | -------- | ---------------------- | ------------------------------------------- |
+| name                  | string   | required               | Name of your deployment                     |
+| python_version        | string   | "3.12"                 | Python version to use (3.10, 3.11, 3.12)    |
+| disable_auth          | boolean  | false                  | Disable authentication for endpoints        |
+| include               | string[] | ["*"]                  | Files/patterns to include in deployment     |
+| exclude               | string[] | [".*"]                 | Files/patterns to exclude from deployment   |
+| shell_commands        | string[] | []                     | Commands to run during build                |
+| pre_build_commands    | string[] | []                     | Commands to run before dependencies install |
+| docker_base_image_url | string   | "debian:bookworm-slim" | Base Docker image                           |
 
 <Info>
-Changes to python_version or docker_base_image_url trigger full rebuilds since they affect the base environment.
+  Changes to python_version or docker_base_image_url trigger full rebuilds since
+  they affect the base environment.
 </Info>
 
 ## Runtime Configuration
 
 The `[cerebrium.runtime.custom]` section configures custom web servers and runtime behavior.
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| port | integer | required | Port the application listens on |
-| entrypoint | string[] | required | Command to start the application |
-| healthcheck_endpoint | string | "" | HTTP path for health checks (empty uses TCP) |
+| Option               | Type     | Default  | Description                                  |
+| -------------------- | -------- | -------- | -------------------------------------------- |
+| port                 | integer  | required | Port the application listens on              |
+| entrypoint           | string[] | required | Command to start the application             |
+| healthcheck_endpoint | string   | ""       | HTTP path for health checks (empty uses TCP) |
 
 <Info>
-The port specified in entrypoint must match the port parameter. All endpoints will be available at `https://api.cortex.cerebrium.ai/v4/{project-id}/{app-name}/your/endpoint`
+  The port specified in entrypoint must match the port parameter. All endpoints
+  will be available at `https://api.cortex.cerebrium.ai/v4/{project - id}/
+  {app - name}/your/endpoint`
 </Info>
 
 ## Hardware Configuration
 
 The `[cerebrium.hardware]` section defines compute resources.
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| cpu | float | required | Number of CPU cores |
-| memory | float | required | Memory allocation in GB |
-| compute | string | "CPU" | Compute type (CPU, AMPERE_A10, etc.) |
-| gpu_count | integer | 0 | Number of GPUs |
-| provider | string | "aws" | Cloud provider |
-| region | string | "us-east-1" | Deployment region |
+| Option    | Type    | Default     | Description                          |
+| --------- | ------- | ----------- | ------------------------------------ |
+| cpu       | float   | required    | Number of CPU cores                  |
+| memory    | float   | required    | Memory allocation in GB              |
+| compute   | string  | "CPU"       | Compute type (CPU, AMPERE_A10, etc.) |
+| gpu_count | integer | 0           | Number of GPUs                       |
+| provider  | string  | "aws"       | Cloud provider                       |
+| region    | string  | "us-east-1" | Deployment region                    |
 
 <Warning>
-Memory refers to RAM, not GPU VRAM. Ensure sufficient memory for your workload.
+  Memory refers to RAM, not GPU VRAM. Ensure sufficient memory for your
+  workload.
 </Warning>
 
 ## Scaling Configuration
 
 The `[cerebrium.scaling]` section controls auto-scaling behavior.
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| min_replicas | integer | 0 | Minimum running instances |
-| max_replicas | integer | 2 | Maximum running instances |
-| replica_concurrency | integer | 10 | Concurrent requests per replica |
-| response_grace_period | integer | 3600 | Grace period in seconds |
-| cooldown | integer | 1800 | Cooldown period between scaling events |
-| scaling_metric | string | "concurrency_utilization" | Metric for scaling decisions |
-| scaling_target | integer | 100 | Target value for scaling metric |
-| scaling_buffer | integer | optional | Buffer capacity for scaling |
+| Option                | Type    | Default                   | Description                            |
+| --------------------- | ------- | ------------------------- | -------------------------------------- |
+| min_replicas          | integer | 0                         | Minimum running instances              |
+| max_replicas          | integer | 2                         | Maximum running instances              |
+| replica_concurrency   | integer | 10                        | Concurrent requests per replica        |
+| response_grace_period | integer | 3600                      | Grace period in seconds                |
+| cooldown              | integer | 1800                      | Cooldown period between scaling events |
+| scaling_metric        | string  | "concurrency_utilization" | Metric for scaling decisions           |
+| scaling_target        | integer | 100                       | Target value for scaling metric        |
+| scaling_buffer        | integer | optional                  | Buffer capacity for scaling            |
 
 <Info>
-Setting min_replicas > 0 maintains warm instances for immediate response but increases costs.
+  Setting min_replicas > 0 maintains warm instances for immediate response but
+  increases costs.
 </Info>
 
 ## Dependencies
@@ -121,7 +126,8 @@ conda = "conda_pkglist.txt"
 ```
 
 <Warning>
-Changes to APT or Conda dependencies trigger full rebuilds. Consider batching updates.
+  Changes to APT or Conda dependencies trigger full rebuilds. Consider batching
+  updates.
 </Warning>
 
 ## Complete Example

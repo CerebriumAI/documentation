@@ -185,9 +185,7 @@
     },
     {
       "group": "Reference",
-      "pages": [
-        "cerebrium/reference/toml-reference"
-      ]
+      "pages": ["cerebrium/reference/toml-reference"]
     },
     {
       "group": "Migrations",
