@@ -39,8 +39,7 @@
     },
     {
       "name": "TOML Reference",
-      "url": "cerebrium/reference/toml-reference",
-      "icon": "gear"
+      "url": "toml-reference"
     },
     {
       "name": "API Reference",
@@ -185,7 +184,7 @@
     },
     {
       "group": "Reference",
-      "pages": ["cerebrium/reference/toml-reference"]
+      "pages": ["toml-reference/toml-reference"]
     },
     {
       "group": "Migrations",

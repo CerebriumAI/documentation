@@ -1,11 +1,7 @@
 ---
 title: TOML Reference
-description: Complete reference for all Cerebrium TOML configuration options
+description: Complete reference for all configuration options available in Cerebrium's `cerebrium.toml` files.
 ---
-
-# TOML Reference
-
-This page provides a comprehensive reference for all configuration options available in Cerebrium's `cerebrium.toml` files.
 
 ## Deployment Configuration
 
@@ -23,8 +19,8 @@ The `[cerebrium.deployment]` section defines core deployment settings.
 | docker_base_image_url | string   | "debian:bookworm-slim" | Base Docker image                           |
 
 <Info>
-  Changes to python_version or docker_base_image_url trigger full rebuilds since
-  they affect the base environment.
+    Changes to python_version or docker_base_image_url trigger full rebuilds since
+    they affect the base environment.
 </Info>
 
 ## Runtime Configuration
@@ -38,9 +34,9 @@ The `[cerebrium.runtime.custom]` section configures custom web servers and runti
 | healthcheck_endpoint | string   | ""       | HTTP path for health checks (empty uses TCP) |
 
 <Info>
-  The port specified in entrypoint must match the port parameter. All endpoints
-  will be available at `https://api.cortex.cerebrium.ai/v4/{project - id}/
-  {app - name}/your/endpoint`
+    The port specified in entrypoint must match the port parameter. All endpoints
+    will be available at `https://api.cortex.cerebrium.ai/v4/{project - id}/
+    {app - name}/your/endpoint`
 </Info>
 
 ## Hardware Configuration
@@ -57,8 +53,8 @@ The `[cerebrium.hardware]` section defines compute resources.
 | region    | string  | "us-east-1" | Deployment region                    |
 
 <Warning>
-  Memory refers to RAM, not GPU VRAM. Ensure sufficient memory for your
-  workload.
+    Memory refers to RAM, not GPU VRAM. Ensure sufficient memory for your
+    workload.
 </Warning>
 
 ## Scaling Configuration
@@ -77,8 +73,8 @@ The `[cerebrium.scaling]` section controls auto-scaling behavior.
 | scaling_buffer        | integer | optional                  | Buffer capacity for scaling            |
 
 <Info>
-  Setting min_replicas > 0 maintains warm instances for immediate response but
-  increases costs.
+    Setting min_replicas > 0 maintains warm instances for immediate response but
+    increases costs.
 </Info>
 
 ## Dependencies
@@ -126,8 +122,8 @@ conda = "conda_pkglist.txt"
 ```
 
 <Warning>
-  Changes to APT or Conda dependencies trigger full rebuilds. Consider batching
-  updates.
+    Changes to APT or Conda dependencies trigger full rebuilds. Consider batching
+    updates.
 </Warning>
 
 ## Complete Example
