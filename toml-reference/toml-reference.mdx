@@ -1,11 +1,11 @@
 ---
 title: TOML Reference
-description: Complete reference for all configuration options available in Cerebrium's `cerebrium.toml` files.
+description: Complete reference for all parameters available in Cerebrium's default`cerebrium.toml` configuration file.
 ---
 
 The configuration is organized into the following main sections:
 
-- **[cerebrium.deployment]** Core settings like project name, Python version, and file inclusion rules
+- **[cerebrium.deployment]** Core settings like app name, Python version, and file inclusion rules
 - **[cerebrium.runtime.custom]** Custom web server settings and app startup behavior
 - **[cerebrium.hardware]** Compute resources including CPU, memory, and GPU specifications
 - **[cerebrium.scaling]** Auto-scaling behavior and replica management
@@ -17,9 +17,9 @@ The `[cerebrium.deployment]` section defines core deployment settings.
 
 | Option                | Type     | Default                | Description                                 |
 | --------------------- | -------- | ---------------------- | ------------------------------------------- |
-| name                  | string   | required               | Name of your deployment                     |
+| name                  | string   | required               | Desired app name                   |
 | python_version        | string   | "3.12"                 | Python version to use (3.10, 3.11, 3.12)    |
-| disable_auth          | boolean  | false                  | Disable authentication for endpoints        |
+| disable_auth          | boolean  | false                  | Disable default token-based authentication on app endpoints        |
 | include               | string[] | ["*"]                  | Files/patterns to include in deployment     |
 | exclude               | string[] | [".*"]                 | Files/patterns to exclude from deployment   |
 | shell_commands        | string[] | []                     | Commands to run during build                |
@@ -80,10 +80,10 @@ The `[cerebrium.scaling]` section controls auto-scaling behavior.
 | scaling_target        | integer | 100                       | Target value for scaling metric (percentage for utilization metrics, absolute value for requests_per_second)     |
 | scaling_buffer        | integer | optional                  | Additional replica capacity above what scaling metric suggests                                                   |
 
-<Info>
+<Warning>
   Setting min_replicas > 0 maintains warm instances for immediate response but
   increases costs.
-</Info>
+</Warning>
 
 The `scaling_metric` options are:
 
