@@ -16,8 +16,8 @@ description: "We release features and fixes regularly! See some of the changes w
 
 #### Date: 20 February 2023
 
-- Added `spaCy` support! You can now use spaCy models as pipeline components.
-- Added `transformers` support! You can now use HuggingFace transformers models as pipeline components. At this time, we only support specific models. Consult the docs for more information.
+- Added `spaCy` support. You can now use spaCy models as pipeline components.
+- Added `transformers` support. You can now use HuggingFace Transformers models as pipeline components. At this time, we only support specific models. Consult the docs for more information.
 
 ## 0.4.6
 
@@ -31,24 +31,24 @@ description: "We release features and fixes regularly! See some of the changes w
 
 #### Date: 13 February 2023
 
-- Added Pre-Processing Functions! You can now specify a function to be run before the model is called.
+- Added Pre-Processing Functions. You can now specify a function to be run before the model is called.
 - Added support for the `pandas` library in processing functions (this is a beta feature for now, use with care!).
-- Added Arize integration. Now you can monitor your models using Arize
+- Added Arize integration. Now you can monitor your models using Arize.
 
 ## 0.4.4
 
 #### Date: 9 February 2023
 
-- Update from CUDA runtime from 11.3 to CUDA 11.6
-- Our minimum Python version is now 3.8. We now support Python 3.8, 3.9 and 3.10.
-- Myriad of dependency updates.
+- Updated CUDA runtime from 11.3 to CUDA 11.6.
+- Our minimum Python version is now 3.8. We now support Python 3.8, 3.9, and 3.10.
+- Myriad of dependency updates
 - ONNX Models can now be used in multi-model flows (this is an experimental feature).
 - Bug fixes:
-- PyTorch Models now detach data from the GPU correctly when running Conduits.
-- Fixed ONNX models input data being malformed.
-- Fix CUDA driver not being loaded correctly in the Conduit runtime.
-- LLM updates
-- FLAN-T5 and Stable Diffusion no longer suffer from timeouts and severe cold starts.
+  - PyTorch Models now detach data from the GPU correctly when running Conduits.
+  - Fixed ONNX models input data being malformed.
+  - Fixed CUDA driver not being loaded correctly in the Conduit runtime.
+- LLM updates:
+  - FLAN-T5 and Stable Diffusion no longer suffer from timeouts and severe cold starts.
 
 ## 0.4.1
 
@@ -60,16 +60,16 @@ description: "We release features and fixes regularly! See some of the changes w
 - We have added external monitoring tool support! You can now monitor your deployments with Censius by adding a logger to the Conduit object.
   While it is available to use for all users, this functionality is currently in active development and may change in the coming weeks based
   on feedback. We are also working on adding support for other monitoring tools, with Arize being on track to be released in Q1 2023.
-- Fixed a bug where the client was unable to deploy SKLearn models, XGB Regressor models, and ONNX models.
+- Fixed a bug where the client was unable to deploy scikit-learn models, XGBoost Regressor models, and ONNX models.
 - Reworked the response signature for a model. Now returns a JSON object with 3 fields:
 - `result`: The data returned by the deployed Conduit.
 - `run_id`: The ID of the run.
 - `prediction_ids`: The prediction IDs of each prediction made. Used to track/update the predictions logged to monitoring tools.
 - Added pre-built deployment for the following LLMs:
-- whisper-medium
-- dreambooth
+  - whisper-medium
+  - dreambooth
 - Added webhook support for the following LLMs:
-- dreambooth
+  - dreambooth
 
 ## 0.3.1
 
@@ -81,30 +81,30 @@ description: "We release features and fixes regularly! See some of the changes w
 
 #### Date: 23 November 2022
 
-- Add more models to our Prebuilt library
-- mt0-xl
-- galactica
-- flan-xl
+- Added more models to our pre-built library:
+  - mt0-xl
+  - galactica
+  - flan-xl
 
 ## 0.2.3
 
 #### Date: 11 November 2022
 
-- Added support for post-processing functions in flows!
-- Add Prebuilt models to available deployments
-- whisper-medium
+- Added support for post-processing functions in flows.
+- Added pre-built models to available deployments:
+  - whisper-medium
 
 ## 0.2.2
 
-### Date: 28 October 2022
+#### Date: 28 October 2022
 
-- Fix a bug where the internal flow would be malformed if the model was not
-  ONNX
-- Force single model ONNX flow until post-processing is supported
+- Fixed a bug where the internal flow would be malformed if the model was not
+  ONNX.
+- Forced single model ONNX flow until post-processing is supported.
 
 ## 0.2.1
 
-### Date: 26 October 2022
+#### Date: 26 October 2022
 
 - Support for ONNX models with Python 3.7-3.9 (can be used as a single model or
   as the initial model of a flow). We are working on supporting Python 3.10
@@ -112,7 +112,7 @@ description: "We release features and fixes regularly! See some of the changes w
 
 ## v0.2.0
 
-### Date: 23 October 2022
+#### Date: 23 October 2022
 
 - Model ensembles are here! You can now deploy a sequence of models to an
   endpoint and have them run in order.
@@ -121,28 +121,28 @@ description: "We release features and fixes regularly! See some of the changes w
 
 ## v0.1.9
 
-### Date: 18 October 2022
+#### Date: 18 October 2022
 
-- Reduce the minimum python version to 3.7 (and reduce dependency min versions
-  accordingly). Now compatible with Google Colab!
+- Reduced the minimum Python version to 3.7 (and reduced dependency min versions
+  accordingly). Now compatible with Google Colab.
 
 ## v0.1.5
 
-### Date: 17 October 2022
+#### Date: 17 October 2022
 
-- Update license
-- Handle usage limits on different Cerebrium packages
+- Updated license.
+- Added handling for usage limits on different Cerebrium packages.
 
 ## v0.1.4
 
-### Date: 16 October 2022
+#### Date: 16 October 2022
 
-- Release on the public PyPi!
+- Released on the public PyPI.
 - Refactor the package name to `cerebrium`
 
 ## v0.1.3
 
-### Date: 12 October 2022
+#### Date: 12 October 2022
 
 - Fixed an issue with data input shapes
 - Updated our documentation
@@ -157,19 +157,19 @@ description: "We release features and fixes regularly! See some of the changes w
 
 ## v0.1.2
 
-### Date: 7th October 2022
+#### Date: 7 October 2022
 
 - Moved architecture to serverless CPU/GPUs
-- Support Pytorch, XGBoost and SKLearn models
-- Updated monitoring metrics per model version
-- Bug fixes and performance improvements
+- Support PyTorch, XGBoost, and scikit-learn models.
+- Updated monitoring metrics per model version.
+- Added bug fixes and performance improvements.
 
-## V0.1.1
+## v0.1.1
 
-### Date: 26th September 2022
+#### Date: 26 September 2022
 
 - Released an alpha version of Neuron.
-- Users are able to deploy models from their notebooks or .py files with just 4
+- Added ability for users to deploy models from their notebooks or .py files with just 4
   lines of code.
 - Created dashboard interface for users to see deployed models, API calls, and
   errors.
