@@ -12,6 +12,7 @@ You can find the final version of the code [here](https://github.com/CerebriumAI
 ### Cerebrium setup
 
 Set up Cerebrium:
+
 1. Sign up [here](https://dashboard.cerebrium.ai/register)
 2. Follow installation docs [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation)
 3. Create a starter project:
@@ -221,6 +222,7 @@ async def main(websocket_client, stream_sid):
 ```
 
 The code:
+
 1. Connects to WebSocket transport for audio I/O
 2. Sets up services:
    - [Deepgram](https://deepgram.com/) for STT
@@ -249,6 +251,7 @@ Test the app by calling your Twilio number - the agent will respond automaticall
 ### Scaling Pipecat
 
 For scaling PipeCat on Cerebrium:
+
 1. Use large CPU instances (10 CPUs, 8GB memory) for Twilio's <1s response requirement
 2. Run concurrent PipeCat processes:
    - Each process uses ~0.5 CPUs

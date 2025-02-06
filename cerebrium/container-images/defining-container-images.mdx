@@ -19,7 +19,11 @@ The fastest and simplest way to create a config file is to run the `cerebrium in
 Check out the [Introductory Guide](/cerebrium/getting-started/introduction) for more information on how to get started.
 
 <Info>
-It is possible to initialize an existing project by adding a `cerebrium.toml` file to the root of your codebase, defining your entrypoint (`main.py` if using the default runtime, or adding an entrypoint to the .toml file if using a custom runtime) and including the necessary files in the `deployment` section of your `cerebrium.toml` file.
+  It is possible to initialize an existing project by adding a `cerebrium.toml`
+  file to the root of your codebase, defining your entrypoint (`main.py` if
+  using the default runtime, or adding an entrypoint to the .toml file if using
+  a custom runtime) and including the necessary files in the `deployment`
+  section of your `cerebrium.toml` file.
 </Info>
 
 ## Hardware Configuration
@@ -50,7 +54,8 @@ python_version = 3.11
 The Python version affects the entire dependency chain. For instance, some packages may not support newer Python versions immediately after release.
 
 <Warning>
-Changes to the Python version trigger a full rebuild since they affect both the base environment and all Python package installations.
+  Changes to the Python version trigger a full rebuild since they affect both
+  the base environment and all Python package installations.
 </Warning>
 
 ### Adding Python Packages
@@ -72,7 +77,8 @@ pip = "requirements.txt"
 ```
 
 <Tip>
-For GitHub repositories, use shell commands instead of pip dependencies to ensure proper versioning.
+  For GitHub repositories, use shell commands instead of pip dependencies to
+  ensure proper versioning.
 </Tip>
 
 The system implements an intelligent caching strategy at the node level. When an app is built, all pip packages are cached with their exact versions, including wheel files and compiled binaries. This means subsequent builds only need to install new or updated packages, significantly reducing build times.
@@ -155,7 +161,9 @@ Shell commands excel at tasks that require the fully configured environment, suc
 Any modification to either pre-build or shell commands triggers a rebuild of the corresponding section in the container image. This happens because these commands form integral parts of the final container environment. The build process and complete execution order are detailed in the Deployment Process section below.
 
 <Info>
-Changes to either command type affect build time since they necessitate rebuilding parts of the container image. Consider batching related changes together when possible.
+  Changes to either command type affect build time since they necessitate
+  rebuilding parts of the container image. Consider batching related changes
+  together when possible.
 </Info>
 
 ## Custom Docker Base Images
@@ -204,7 +212,11 @@ docker_base_image_url = "python:3.11-bookworm"
 ```
 
 <Tip>
-Starting with a minimal Debian or Ubuntu base image is recommended, as CUDA images include many pre-installed components that increase container size. While the relationship isn't strictly linear, larger container sizes generally lead to longer cold-starts and build times. Begin with a lean base image and add only essential components as needed.
+  Starting with a minimal Debian or Ubuntu base image is recommended, as CUDA
+  images include many pre-installed components that increase container size.
+  While the relationship isn't strictly linear, larger container sizes generally
+  lead to longer cold-starts and build times. Begin with a lean base image and
+  add only essential components as needed.
 </Tip>
 
 ## Custom Runtimes
@@ -230,7 +242,9 @@ Key parameters:
 - `healthcheck_endpoint`: Path for health checks
 
 <Info>
-Check out [this example](https://github.com/CerebriumAI/examples/tree/master/11-python-apps/1-asgi-fastapi-server) for a detailed implementation of a FastAPI server that uses a custom runtime.
+  Check out [this
+  example](https://github.com/CerebriumAI/examples/tree/master/11-python-apps/1-asgi-fastapi-server)
+  for a detailed implementation of a FastAPI server that uses a custom runtime.
 </Info>
 
 ### Self-Contained Servers

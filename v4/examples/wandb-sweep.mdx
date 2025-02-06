@@ -69,6 +69,7 @@ You should then be authenticated with Wandb and ready to go!
 To train with Llama 3.2, you'll need:
 
 1. Model access permission:
+
    - Visit the [Llama 3.2 model page](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct) on Hugging Face
    - Accept all permissions
 
@@ -98,6 +99,7 @@ wandb
 ```
 
 These packages are required both locally and on Cerebrium. Update your `cerebrium.toml` to include:
+
 - The requirements.txt path
 - Hardware requirements for training
 - A 1-hour max timeout using `response_grace_period`
@@ -295,6 +297,7 @@ cerebrium deploy
 ```
 
 This command:
+
 1. Sets up the environment with required packages
 2. Deploys the training script as an endpoint
 3. Returns a POST URL (save this for later)
@@ -440,10 +443,12 @@ Monitor training progress in your W&B dashboard:
 ### Next Steps
 
 1. Export model:
+
    - Copy to AWS S3 using Boto3
    - Download locally using Cerebrium Python package
 
 2. Quality assurance:
+
    - Run CI/CD tests on model outputs
    - Use Cerebrium's [webhook functionality](https://docs.cerebrium.ai/cerebrium/endpoints/webhook)
 

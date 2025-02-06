@@ -45,7 +45,10 @@ The configuration requires three key parameters:
 - `healthcheck_endpoint`: The endpoint that confirms server health. If empty, it will default to a TCP ping of your specified port.
 
 <Info>
-For ASGI applications like FastAPI, include the appropriate server package (like `uvicorn`) in your dependencies. After deployment, your endpoints become available at `https://api.cortex.cerebrium.ai/v4/{project-id}/{app-name}/your/endpoint`.
+  For ASGI applications like FastAPI, include the appropriate server package
+  (like `uvicorn`) in your dependencies. After deployment, your endpoints become
+  available at `https://api.cortex.cerebrium.ai/v4/{project - id}/{app - name}
+  /your/endpoint`.
 </Info>
 
 Our [FastAPI Server Example](https://github.com/CerebriumAI/examples) provides a complete implementation.

@@ -70,7 +70,11 @@ entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8192"]
 ```
 
 <Warning>
-When specifying a `dockerfile_path`, all dependencies and necessary commands should be installed and executed within the Dockerfile. Dependencies listed under `cerebrium.dependencies.*`, as well as `cerebrium.deployment.shell_commands` and `cerebrium.deployment.pre_build_commands`, will be ignored.
+  When specifying a `dockerfile_path`, all dependencies and necessary commands
+  should be installed and executed within the Dockerfile. Dependencies listed
+  under `cerebrium.dependencies.*`, as well as
+  `cerebrium.deployment.shell_commands` and
+  `cerebrium.deployment.pre_build_commands`, will be ignored.
 </Warning>
 
 ## Building Generic Dockerized Apps

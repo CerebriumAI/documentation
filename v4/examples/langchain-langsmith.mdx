@@ -50,6 +50,7 @@ agent_executor.invoke({"input": "what's 3 plus 5 raised to the 2.743. also what'
 [Cal.com](https://cal.com) provides our calendar management foundation. Create an account [here](https://app.cal.com/signup) if needed. Cal serves as the source of truth - any updates to time zones or working hours automatically reflect in the assistant's responses.
 
 After creating your account:
+
 1. Navigate to "API keys" in the sidebar
 2. Create an API key without expiration
 3. Test the setup with a CURL request (replace these variables):
@@ -129,6 +130,7 @@ Great! Now we know that our API key is working and pulling information from our 
 ### Cerebrium setup
 
 Set up Cerebrium:
+
 1. Sign up [here](https://dashboard.cerebrium.ai/register)
 2. Follow installation docs [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation)
 3. Create a starter project:
@@ -151,7 +153,9 @@ langchain_openai = "latest"
 ```
 
 Set up API keys:
+
 1. OpenAI GPT-3.5:
+
    - Sign up at [OpenAI](https://openai.com/)
    - Create API key [here](https://platform.openai.com/api-keys) (format: sk_xxxxx)
 
@@ -166,10 +170,12 @@ Set up API keys:
 ### Agent Setup
 
 Create two tool functions in `main.py` for calendar management:
+
 1. Get availability tool
 2. Book slot tool
 
 The Cal.com API provides:
+
 - Busy time slots
 - Working hours per day
 
@@ -203,10 +209,11 @@ def get_availability(fromDate: str, toDate: str) -> float:
 ```
 
 The code above:
+
 1. Uses `@tool` decorator to identify functions as LangChain tools
 2. Includes docstrings explaining functionality and required inputs
 3. Uses `find_available_slots` helper function to format Cal.com API responses into readable time slots
-  ‍
+   ‍
 
 We then follow a similar practice to write our book_slot tool. This will book a slot in my calendar based on the selected time/day. You can get the eventTypeId from your dashboard, select an event and grab the ID in the URL.
 
@@ -343,6 +350,7 @@ If you keep talking and answering, you will see it will eventually book a slot.
 Production monitoring is crucial, especially for agent applications with indeterministic workflows based on user interactions. LangSmith, a LangChain tool for logging, debugging, and monitoring, helps track performance and handle edge cases. Learn more about LangSmith [here](https://docs.smith.langchain.com/monitoring).
 
 Set up LangSmith monitoring:
+
 1. Add LangSmith to `cerebrium.toml` dependencies
 2. Create a free LangSmith account [here](https://smith.langchain.com/)
 3. Generate API key (click gear icon in bottom left)
@@ -375,6 +383,7 @@ In the Runs tab, you can see all your runs (ie: invocations/API requests).
 In 1 above, it takes the name of our function, input is set to the Cerebrium RunID which in this case we set to “test”. Lastly, you can see the input as well as the total latency of your run.
 
 LangSmith supports various data automations:
+
 - Data annotation for positive/negative case labeling
 - Dataset creation for model training
 - Online LLM-based evaluation (rudeness, topic analysis)
@@ -428,6 +437,7 @@ You can find the final version of the code [here](https://github.com/CerebriumAI
 ### Future Enhancements
 
 Consider implementing:
+
 1. Response streaming for seamless user experience
 2. Email integration for context-aware scheduling when Claire is tagged
 3. Voice capabilities for phone-based scheduling
