@@ -15,16 +15,16 @@ The configuration is organized into the following main sections:
 
 The `[cerebrium.deployment]` section defines core deployment settings.
 
-| Option                | Type     | Default                | Description                                 |
-| --------------------- | -------- | ---------------------- | ------------------------------------------- |
-| name                  | string   | required               | Desired app name                   |
-| python_version        | string   | "3.12"                 | Python version to use (3.10, 3.11, 3.12)    |
-| disable_auth          | boolean  | false                  | Disable default token-based authentication on app endpoints        |
-| include               | string[] | ["*"]                  | Files/patterns to include in deployment     |
-| exclude               | string[] | [".*"]                 | Files/patterns to exclude from deployment   |
-| shell_commands        | string[] | []                     | Commands to run during build                |
-| pre_build_commands    | string[] | []                     | Commands to run before dependencies install |
-| docker_base_image_url | string   | "debian:bookworm-slim" | Base Docker image                           |
+| Option                | Type     | Default                | Description                                                 |
+| --------------------- | -------- | ---------------------- | ----------------------------------------------------------- |
+| name                  | string   | required               | Desired app name                                            |
+| python_version        | string   | "3.12"                 | Python version to use (3.10, 3.11, 3.12)                    |
+| disable_auth          | boolean  | false                  | Disable default token-based authentication on app endpoints |
+| include               | string[] | ["*"]                  | Files/patterns to include in deployment                     |
+| exclude               | string[] | [".*"]                 | Files/patterns to exclude from deployment                   |
+| shell_commands        | string[] | []                     | Commands to run during build                                |
+| pre_build_commands    | string[] | []                     | Commands to run before dependencies install                 |
+| docker_base_image_url | string   | "debian:bookworm-slim" | Base Docker image                                           |
 
 <Info>
   Changes to python_version or docker_base_image_url trigger full rebuilds since
