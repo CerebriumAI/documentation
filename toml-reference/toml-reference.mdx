@@ -75,14 +75,27 @@ The `[cerebrium.scaling]` section controls auto-scaling behavior.
 | max_replicas          | integer | 2                         | Maximum running instances              |
 | replica_concurrency   | integer | 10                        | Concurrent requests per replica        |
 | response_grace_period | integer | 3600                      | Grace period in seconds                |
-| cooldown              | integer | 1800                      | Cooldown period between scaling events |
-| scaling_metric        | string  | "concurrency_utilization" | Metric for scaling decisions           |
-| scaling_target        | integer | 100                       | Target value for scaling metric        |
-| scaling_buffer        | integer | optional                  | Buffer capacity for scaling            |
+| cooldown              | integer | 1800                      | Time to wait before scaling down an idle container |
+| scaling_metric        | string  | "concurrency_utilization" | Metric for scaling decisions (concurrency_utilization, requests_per_second, cpu_utilization, memory_utilization) |
+| scaling_target        | integer | 100                       | Target value for scaling metric (percentage for utilization metrics, absolute value for requests_per_second) |
+| scaling_buffer        | integer | optional                  | Additional replica capacity above what scaling metric suggests |
 
 <Info>
   Setting min_replicas > 0 maintains warm instances for immediate response but
   increases costs.
+</Info>
+
+The `scaling_metric` options are:
+- **concurrency_utilization**: Maintains a percentage of your replica_concurrency across instances. For example, with `replica_concurrency=200` and `scaling_target=80`, maintains 160 requests per instance.
+- **requests_per_second**: Maintains a specific request rate across all instances. For example, `scaling_target=5` maintains 5 requests/s average across instances.
+- **cpu_utilization**: Maintains CPU usage as a percentage of cerebrium.hardware.cpu. For example, with `cpu=2` and `scaling_target=80`, maintains 80% CPU utilization (1.6 CPUs) per instance.
+- **memory_utilization**: Maintains RAM usage as a percentage of cerebrium.hardware.memory. For example, with `memory=10` and `scaling_target=80`, maintains 80% memory utilization (8GB) per instance.
+
+<Info>
+The scaling_buffer option is only available with concurrency_utilization and requests_per_second metrics.
+It ensures extra capacity is maintained above what the scaling metric suggests.
+
+For example, with `min_replicas=0` and `scaling_buffer=3`, the system will maintain 3 replicas as baseline capacity.
 </Info>
 
 ## Dependencies
