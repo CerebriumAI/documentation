@@ -38,6 +38,10 @@
       "url": "migrations"
     },
     {
+      "name": "TOML Reference",
+      "url": "toml-reference"
+    },
+    {
       "name": "API Reference",
       "openapi": "https://s3.eu-west-1.amazonaws.com/www.cerebrium.ai/openapi_spec.json",
       "url": "api-reference",
@@ -177,6 +181,10 @@
           "pages": ["v4/examples/wandb-sweep"]
         }
       ]
+    },
+    {
+      "group": "Reference",
+      "pages": ["toml-reference/toml-reference"]
     },
     {
       "group": "Migrations",
