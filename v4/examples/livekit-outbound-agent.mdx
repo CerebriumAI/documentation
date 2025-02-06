@@ -1,13 +1,13 @@
 ---
 title: "Outbound Agent with LiveKit"
-description: "Create a Outbound AI agent that can transfer calls to real agents"
+description: "Create an Outbound AI agent that can transfer calls to real agents"
 ---
 
-Voice agents are transforming how businesses operate introducing efficiencies and personalization for each customer interaction. While most use cases are focusing on agents receiving calls from customers, this article focusses on outbound voice AI agents and the use cases they unlock.
+Voice agents are transforming how businesses operate by introducing efficiencies and personalization for each customer interaction. While most use cases are focusing on agents receiving calls from customers, this article focuses on outbound voice AI agents and the use cases they unlock.
 
 Outbound agents can handle tasks like appointment scheduling, lead qualification, and customer follow-ups, all while maintaining a human-like, conversational tone. Businesses can enhance efficiency by replacing manual efforts with intelligent automation, improving customer engagement in scenarios such as sales, healthcare, hospitality, and collections. By reducing friction and enabling instant, personalized connections, these agents empower organizations to deliver exceptional experiences while saving time and resources.
 
-In this tutorial we will show you how you can set up an outbound calling agent that does a warm transfer - ie: can handover the call to a real person using Livekit. A fitting example scenario would be for a support center where teams would like an agent to do data collection before connecting to a real person .
+In this tutorial we will show you how you can set up an outbound calling agent that does a warm transfer - i.e.: can handover the call to a real person using Livekit. A fitting example scenario would be for a support center where teams would like an agent to do data collection before connecting to a real person.
 
 The final code implementation and complete example can be found in our examples Github repository [here](https://github.com/CerebriumAI/examples/tree/master/6-voice/7-outbound-livekit-agent).
 
@@ -46,7 +46,7 @@ Once installed, let us authenticate our CLI with our newly created account, you 
 lk cloud auth
 ```
 
-Then create a **.env** file with your LiveKit credentials. In order to get these credentials, you can go to the [LiveKit dashboard](https://cloud.livekit.io/), click on the Settings tab in order to get your project url.
+Then create a **.env** file with your LiveKit credentials. To get these credentials, you can go to the [LiveKit dashboard](https://cloud.livekit.io/), click on the Settings tab to get your project url.
 You must then go to the keys tab to create a new key and copy the API key as well as the secret. Store these three values as below:
 
 ```
@@ -61,7 +61,7 @@ Great now we have setup our LikeKit instance that acts as the transport layer fo
 
 ### Twilio Setup
 
-In order to setup a outbound calling agent, we need to setup a SIP trunk in Twilio. A SIP trunk in Twilio is like a virtual phone line that connects your app to the traditional phone network, allowing it to make outbound calls to any phone number. It ensures your calls are routed properly and reliably, acting as the bridge between your app and the global telephony system.
+To setup a outbound calling agent, we need to setup a SIP trunk in Twilio. A SIP trunk in Twilio is like a virtual phone line that connects your app to the traditional phone network, allowing it to make outbound calls to any phone number. It ensures your calls are routed properly and reliably, acting as the bridge between your app and the global telephony system.
 
 1. **Log in to your Twilio Console**:
    Go to [Twilio Console](https://console.twilio.com/) and log in with your credentials. If you don’t already have an account, create one.
@@ -117,7 +117,7 @@ The output of the command returns the trunk ID which we will need later.
 
 ### Services setup
 
-For our solution, we will use the following services in order to create our outbound AI agent:
+For our solution, we will use the following services to create our outbound AI agent:
 
 - [Deepgram](https://www.deepgram.com/) for our Speech-to-Text service
 - [OpenAI](https://openai.com/) for our LLM
@@ -270,9 +270,9 @@ The above code is a simple LiveKit setup in which we do the following:
 - We specify our initial system prompt to guide our AI agent
 - We list the services we are using to create our AI agent as well as the settings for how long it must wait until it replies.
 - We collect metrics about our call that we display throughout to track performance and when the call ends we log a summary of those metrics.
-- Lastly. we start the agent with an initial greeting to the user.
+- Lastly, we start the agent with an initial greeting to the user.
 
-In our use case, we would like to connect the customer to a real person when a specific stage has been reached or a user has asked to be connected. We can achieve this through function calling. In order to add function calling we can add the following code to our entrypoint.
+In our use case, we would like to connect the customer to a real person when a specific stage has been reached or a user has asked to be connected. We can achieve this through function calling. To add function calling we can add the following code to our entrypoint.
 
 ```
 #Add this below the initial_ctx line
@@ -291,7 +291,7 @@ async def transfer_call(
 
 The **@ai_callable decorator** tells the LLM that this is a function it has at its disposal and the docstring describes to the LLM when it should use this function. When this function is triggered, we make an outbound call to a phone number and then disconnect the agent from the room so its just the two users in the call. We will create the “create_sip_participant()” function in the next step.
 
-Lastly, in order to create an outbound call to the user we would like to add to our call, we need to add functionality in order to do this. Add the following code to your [main.py](http://main.py) - above entrypoint():
+Lastly, to create an outbound call to the user we would like to add to our call, we need to add functionality to do this. Add the following code to your [main.py](http://main.py) - above entrypoint():
 
 ```
 async def create_sip_participant(phone_number, room_name):
@@ -323,7 +323,7 @@ async def create_sip_participant(phone_number, room_name):
         return f"Error: {str(e)}"
 ```
 
-In order to test this running locally, you can create a test.py file with the following functionality:
+To test this running locally, you can create a test.py file with the following functionality:
 
 ```
 import asyncio
@@ -350,7 +350,7 @@ With this now working locally, let us deploy it on Cerebrium to make it producti
 
 ### Deploy on Cerebrium
 
-We need to specify our Cerebrium environment in order to deploy our application. In our `cerebrium.toml`, edit the values with the following contents:
+We need to specify our Cerebrium environment to deploy our app. In our `cerebrium.toml`, edit the values with the following contents:
 
 ```
 [cerebrium.deployment]
@@ -396,7 +396,7 @@ This will install all the necessary packages and deploy your application. You wi
 
 ### Further Improvements:
 
-In order to reduce latency, Cerebrium has partnerships with both Deepgram and Rime in order to run their STT and TTS models locally right next to your LiveKit worker which reduces latency by a ~400ms.
+To reduce latency, Cerebrium has partnerships with both Deepgram and Rime to run their STT and TTS models locally right next to your LiveKit worker which reduces latency by a ~400ms.
 
 In this tutorial, we demonstrated how to set up an outbound calling agent that can perform warm transfers to live agents using LiveKit. This solution not only facilitates intelligent automation but also introduces the flexibility needed to meet diverse use cases such as pre-call data collection, sales outreach, and customer follow-ups. By integrating services like LiveKit, Twilio, and AI-driven tools for STT, TTS, and LLM capabilities, you can create a robust outbound voice AI agent to transform your business operations.
 

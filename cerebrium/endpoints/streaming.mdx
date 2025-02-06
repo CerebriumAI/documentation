@@ -2,13 +2,13 @@
 title: "Streaming Endpoints"
 ---
 
-Streaming allows users to stream live output from their models using server-sent event (SSE) streams.
-This works for Python objects which use the iterator or generator protocol.
+Streaming allows users to stream live output from their models using a server-sent event (SSE) stream.
+This works for Python objects that use the iterator or generator protocol.
 
-Currently, your generator/iterator is required to <b>yield</b> data, as it will be sent downstream via the `text/event-stream` Content-Type.
+Currently, your generator/iterator is required to `yield` data, as it will be sent downstream via the `text/event-stream` Content-Type.
 You may still send data in JSON format and then can decode it appropriately.
 
-Let us see how we can implement a simple example below:
+Let's see how we can implement a simple example below:
 
 ```python
 import time
@@ -49,7 +49,7 @@ data: Number 0
 ...
 ```
 
-Progressively, you will see the rest of the data stream in every second:
+Progressively, you will see the rest of the data stream every second:
 
 ```
 ...
@@ -62,4 +62,4 @@ The latest Postman also has great functionality to show this.
 
 ![Streaming](/images/cortex/streaming-postman.png)
 
-If you want to see an example of implementing this with Falcon-7b, please check out the example [here](https://github.com/CerebriumAI/examples/tree/master/5-large-language-models/2-streaming-endpoint)
+If you want to see an example of implementing this with Falcon-7B, please check out the example [here](https://github.com/CerebriumAI/examples/tree/master/5-large-language-models/2-streaming-endpoint).

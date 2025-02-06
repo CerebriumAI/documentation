@@ -3,7 +3,7 @@ title: "Custom Python Web Servers"
 description: "Run ASGI/WSGI Python apps on Cerebrium"
 ---
 
-While Cerebrium's default runtime works well for most app needs, teams sometimes need more control over their web server implementation. Using ASGI or WSGI servers through Cerebrium's custom runtime feature enables capabilities like custom authentication, dynamic batching, frontend dashboards, public endpoints, and websockets.
+While Cerebrium's default runtime works well for most app needs, teams sometimes need more control over their web server implementation. Using ASGI or WSGI servers through Cerebrium's custom runtime feature enables capabilities like custom authentication, dynamic batching, frontend dashboards, public endpoints, and WebSocket connections.
 
 ## Setting Up Custom Servers
 
@@ -20,7 +20,7 @@ def hello():
 
 @app.get("/health")
 def health():
-    return "Ok"
+    return "OK"
 ```
 
 Configure this server in `cerebrium.toml` by adding a custom runtime section:
@@ -32,23 +32,20 @@ entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000"]
 healthcheck_endpoint = "/health"
 
 [cerebrium.dependencies.pip]
-pydantic = "latest"
-numpy = "latest"
-loguru = "latest"
-fastapi = "latest"
+pydantic = "*"
+numpy = "*"
+loguru = "*"
+fastapi = "*"
 ```
 
 The configuration requires three key parameters:
 
-- `entrypoint`: The command that starts your server
-- `port`: The port your server listens on
-- `healthcheck_endpoint`: The endpoint that confirms server health. If empty, will default to a TCP ping of your specified port
+- `entrypoint`: The command that starts your server.
+- `port`: The port your server listens on.
+- `healthcheck_endpoint`: The endpoint that confirms server health. If empty, it will default to a TCP ping of your specified port.
 
 <Info>
-  For ASGI applications like FastAPI, include the appropriate server package
-  (like `uvicorn`) in your dependencies. After deployment, your endpoints become
-  available at `https://api.cortex.cerebrium.ai/v4/{project - id}/{app - name}
-  /your/endpoint`.
+For ASGI applications like FastAPI, include the appropriate server package (like `uvicorn`) in your dependencies. After deployment, your endpoints become available at `https://api.cortex.cerebrium.ai/v4/{project-id}/{app-name}/your/endpoint`.
 </Info>
 
 Our [FastAPI Server Example](https://github.com/CerebriumAI/examples) provides a complete implementation.

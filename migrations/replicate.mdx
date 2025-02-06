@@ -5,13 +5,13 @@ description: "Deploy a Model from Replicate on Cerebrium"
 
 ### Introduction
 
-In this tutorial, I will show you how you can migrate your workloads from Replicate to Cerebrium in less than 5 minutes!
+In this tutorial, I will show you how you can migrate your workloads from Replicate to Cerebrium in less than 5 minutes.
 
-As an example, we will be migrating the model SDXL-Lightning-4step from ByteDance. You can find the link to it on replicate [here](https://replicate.com/bytedance/sdxl-lightning-4step):
+As an example, we will be migrating the model SDXL-Lightning-4step from ByteDance. You can find the link to it on Replicate [here](https://replicate.com/bytedance/sdxl-lightning-4step).
 
 It is best to look at the code in the [GitHub repo](https://github.com/lucataco/cog-sdxl-lightning-4step) and follow along as we migrate it.
 
-To start, let us create our cerebrium project
+To start, let us create our Cerebrium project.
 
 ```python
 cerebrium init cog-migration-sdxl
@@ -51,18 +51,18 @@ gpu_count = 1
 "curl" = "latest"
 ```
 
-From the above we do the following:
+From the above, we do the following:
 
-- Since we need a GPU, we need to use one of the base images that come from Nvidia that has the CUDA libraries installed. We use the Cuda 12 image. You can see other images [here](https://docs.cerebrium.ai/cerebrium/environments/custom-images)
-- Depending on the type of CPU/GPU you need, you can update the hardware settings to run your app. You can see the full list available [here](https://docs.cerebrium.ai/available-hardware)
-- We copy across the pip packages we need to install
-- Replicate uses pget to download model weights - we therefore need to download it to use it. We do this by installing curl and then adding the shell commands in our cerebrium.toml
+- Since we need a GPU, we need to use one of the base images that come from Nvidia that has the CUDA libraries installed. We use the Cuda 12 image. You can see other images [here](https://docs.cerebrium.ai/cerebrium/environments/custom-images).
+- Depending on the type of CPU/GPU you need, you can update the hardware settings to run your app. You can see the full list available [here](https://docs.cerebrium.ai/available-hardware).
+- We copy across the pip packages we need to install.
+- Replicate uses pget to download model weights - therefore, we need to download it to use it. We do this by installing curl and then adding the shell commands in our cerebrium.toml.
 
-Great now our setup is the same in terms of our hardware and environment.
+Great! Now our setup is the same in terms of our hardware and environment.
 
-Now the cog.yaml usually indicates the file that the endpoint calls - in this case, **predict.py** so let us inspect that file.
+Now the cog.yaml usually indicates the file that the endpoint calls - in this case, `predict.py` - so let us inspect that file.
 
-Cerebrium has a similar notion in that the main file that is called on our side is **main.py**
+Cerebrium has a similar notion in that the main file that is called on our side is `main.py`.
 
 To start, I copy across all import statements and constant variables that have nothing to do with Replicate/Cog. In this case:
 
@@ -115,13 +115,13 @@ SCHEDULERS = {
 }
 ```
 
-Replicate makes use of classes for their syntax which we shy away from - we run whatever python code you give us and make each function an endpoint. Therefore, when you see a reference to **self.** remove it throughout the code
+Replicate makes use of classes for their syntax which we shy away from - we run whatever Python code you give us and make each function an endpoint. Therefore, when you see a reference to `self.`, remove it throughout the code.
 
-There is a folder in the repo called “feature-extractor” which we need to have in our repository. We could git clone the repo, however, its quite small, so I would just copy the contents of the folder and put it in your cerebrium project ie:
+There is a folder in the repo called "feature-extractor" which we need to have in our repository. We could git clone the repo; however, it's quite small, so I would just copy the contents of the folder and put it in your Cerebrium project, i.e.:
 
 ![Folder Structure](/images/migrations/replicate-folder-structure.png)
 
-The setup function on Replicate runs on each cold start (ie: each new instantiation of the app) and so we just define it as normal code that gets run at the top of our file. I put it right below my import statements above.
+The setup function on Replicate runs on each cold-start (i.e., each new instantiation of the app) and so we just define it as normal code that gets run at the top of our file. I put it right below my import statements above.
 
 ```python
 def download_weights(url, dest):
@@ -245,7 +245,7 @@ def predict(
         return output_paths
 ```
 
-The above returns a path to the generated images, but we would like to return it as a base64 encoded image so that users can render the image instantly. You are welcome to upload the images to a storage bucket to reference directly - its up to you.
+The above returns a path to the generated images, but we would like to return it as a base64-encoded image so that users can render the image instantly. You are welcome to upload the images to a storage bucket to reference directly - it's up to you.
 
 ```python
 from io import BytesIO
@@ -276,7 +276,7 @@ It should output the curl statement to run your app:
 
 ![Curl Request](/images/migrations/replicate-curl.png)
 
-Make sure to replace the end of the URL with **/predict** (since that is the function we are calling) and send it the required JSON data. This is our result
+Make sure to replace the end of the URL with `/predict` (since that is the function we are calling) and send it the required JSON data. This is our result:
 
 ```python
 {
@@ -286,9 +286,9 @@ Make sure to replace the end of the URL with **/predict** (since that is the fun
 }
 ```
 
-You should be all ready to go!
+You should be all ready to go.
 
-You can read further about some of the functionality Cerebrium has to offer
+You can read further about some of the functionality Cerebrium has to offer:
 
 - [Secrets](../cerebrium/environments/using-secrets)
 - [Model scaling](../cerebrium/environments/app-scaling)

@@ -1,5 +1,5 @@
 ---
-title: "Websocket Endpoints"
+title: "WebSocket Endpoints"
 ---
 
 Using a WebSocket endpoint allows responses to be streamed to the client, enabling real-time communication and efficient data transfer.
@@ -22,19 +22,19 @@ healthcheck_endpoint = "/health"
 
 Explanation:
 
-- port: The port your app will listen on inside the container.
-- entrypoint: The command to start your app. In this example, we’re using Uvicorn to run a FastAPI app located in main.py.
-- healthcheck_endpoint: The endpoint used by Cerebrium to verify that your app is running.
+- port: The port your app will listen on inside the container
+- entrypoint: The command to start your app. In this example, we're using Uvicorn to run a FastAPI app located in `main.py`
+- healthcheck_endpoint: The endpoint used by Cerebrium to verify that your app is running
 
 ## Things to note
 
-- Custom Runtime Required: A custom runtime is necessary to set up a WebSocket endpoint because it allows you to define how your application is run inside the container.
+- Custom Runtime Required: A custom runtime is necessary to set up a WebSocket endpoint because it allows you to define how your app is run inside the container.
 
-- WebSocket URL: Requests need to be made to a WebSocket URL starting with wss://. Ensure that your client supports secure WebSocket connections.
+- WebSocket URL: Requests need to be made to a WebSocket URL starting with `wss://`. Ensure that your client supports secure WebSocket connections.
 
 ## Making a request
 
-You can test your WebSocket endpoint using websocat, a command-line utility for connecting to WebSocket servers:
+You can test your WebSocket endpoint using WebSocat, a command-line utility for connecting to WebSocket servers:
 
 ```bash
 websocat wss://api.cortex.cerebrium.ai/v4/<your-project-id>/<your-app-name>/<your-websocket-function-name>
@@ -45,7 +45,7 @@ websocat wss://api.cortex.cerebrium.ai/v4/<your-project-id>/<your-app-name>/<you
 Here’s an example of how you can implement a WebSocket endpoint using FastAPI:
 
 ```python
-# main.py
+# In main.py:
 from fastapi import FastAPI, WebSocket
 
 app = FastAPI()
@@ -59,7 +59,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
 ## Additional Info
 
-Client-Side Implementation: When connecting from a client app, ensure you handle the WebSocket connection properly, including error handling and reconnection logic if necessary.
+Client-side Implementation: When connecting from a client app, ensure you handle the WebSocket connection properly, including error handling and reconnection logic if necessary.
 
 ```javascript
 // Example using JavaScript in a browser

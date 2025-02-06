@@ -4,18 +4,18 @@ description: How to calculate the cost of your deployment on Cerebrium
 ---
 
 The cost of your deployment is based on the hardware you select and the amount of time it executes for. <b>Essentially, every time we run your code, or you specify that a
-machine should be running - we charge you</b>. GPU, CPU and Memory usage are all charged per second while persistent storage is charged per GB per month. You can
-view the pricing of various compute on our [pricing page](https://www.cerebrium.ai/pricing)
+machine should be running—we charge you</b>. GPU, CPU, and Memory usage are all charged per second while persistent storage is charged per GB per month. You can
+view the pricing of various compute on our [pricing page](https://www.cerebrium.ai/pricing).
 
 When you deploy a model, there are two processes we charge you for:
 
-1. We charge you for the build process where we set up your app environment. In this step, we set up a Python environment according to your parameters before downloading and installing the required apt packages, Conda and Python packages as well as any model files you require.
-   You are only charged for a build if we need to rebuild your environment, ie: you have run a `build` or `deploy` command and have changed your requirements, parameters or code. Note that we cache each of the steps in a build so subsequent builds will cost substantially less than the first.
+1. We charge you for the build process where we set up your app environment. In this step, we set up a Python environment according to your parameters before downloading and installing the required apt packages, Conda and Python packages, as well as any model files you require.
+   You are only charged for a build if we need to rebuild your environment, i.e., you have run a `build` or `deploy` command and have changed your requirements, parameters or code. Note that we cache each of the steps in a build so subsequent builds will cost substantially less than the first.
 
 2. The app runtime. This is the amount of time it takes your code to run from start to finish on each request. There are 3 costs to consider here:
 
-- <u>Cold start</u>: This is the amount of time it takes to spin up a server(s),
-  load your environment, connect storage etc. This is part of the Cerebrium
+- <u>Cold-start</u>: This is the amount of time it takes to spin up a server(s),
+  load your environment, connect storage, etc. This is part of the Cerebrium
   service and something we are working on every day to get as low as possible.
   <b>We do not charge you for this!</b>
 - <u>Model initialization</u>: This part of your code is outside of the predict
@@ -35,21 +35,21 @@ The model you wish to deploy requires:
 - 10 GB persistent storage: 10 \* $0.3 per month
 
 In our situation, your app works on the first deployment and so you incur only one build process of 2 minutes. Additionally, let's say that the app has 10 cold starts a day with an average initialization of 2 seconds and lastly and average runtime (predict) of 2 seconds. Let us calculate your
-expected cost at month end with you expecting to do 100 000 model inferences.
+expected cost at month-end with you expecting to do 100,000 model inferences.
 
 ```python
 # Your variables
 average_initialization_time = 2
-cold_starts_per_month = 300 #10 a day for 30 days
-average_inference_time = 2 # seconds
-number_of_inferences = 100000 # number of inferences per month
+cold_starts_per_month = 300  # 10 a day for 30 days
+average_inference_time = 2  # seconds
+number_of_inferences = 100000  # number of inferences per month
 
 # cost calculation
-total_build_compute_cost = build_seconds * (GPU_cost + CPU_cost*num_of_cpu_cores + memory_cost*gb_of_RAM )
+total_build_compute_cost = build_seconds * (GPU_cost + CPU_cost*num_of_cpu_cores + memory_cost*gb_of_RAM)
 total_initialization_time = average_initialization_time * cold_starts_per_month
 total_inference_time = average_inference_time * number_of_inferences
-inference_compute_cost = (GPU_cost + CPU_cost*num_of_cpu_cores + memory_cost*gb_of_RAM ) * total_inference_time
-storage_cost = gb_of_persistent_storage * persistant_storage_cost
+inference_compute_cost = (GPU_cost + CPU_cost*num_of_cpu_cores + memory_cost*gb_of_RAM) * total_inference_time
+storage_cost = gb_of_persistent_storage * persistent_storage_cost
 
 total_cost = inference_compute_cost + storage_cost + total_build_compute_cost + total_initialization_time
 
@@ -71,7 +71,7 @@ Storage cost: $3.00/month
 Total cost: $121.567/month
 ```
 
-Now you would expect the cost to grow linearly with the number of requests you get however, we want to help you grow your business and so we are happy to discount your computing cost as you grow.
-To see the discounts you can get for your volume, please contact us directly at [Sales](mailto:sales@cerebrium.ai)
+Now, you would expect the cost to grow linearly with the number of requests you get; however, we want to help you grow your business, and so we are happy to discount your computing cost as you grow.
+To see the discounts you can get for your volume, please contact us directly at [Sales](mailto:sales@cerebrium.ai).
 
-As you grow, don't worry about scaling your deployment with demand, sourcing new hardware or managing your infrastructure. You can focus on your code and we'll handle the rest.
+As you grow, don't worry about scaling your deployment with demand, sourcing new hardware, or managing your infrastructure. You can focus on your code and we'll handle the rest.

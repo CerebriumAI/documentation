@@ -3,16 +3,11 @@ title: "Containerized Runtimes with Custom Dockerfiles"
 description: "Run generic containerized applications on Cerebrium using custom Dockerfiles."
 ---
 
-For enhanced flexibility, users can bring existing containerized applications
-to Cerebrium. These can range from standard Python applications to
-compiled Rust binaries, provided a functional Dockerfile is supplied
-to build the application.
+For enhanced flexibility, users can bring existing containerized apps to Cerebrium. These can range from standard Python apps to compiled Rust binaries, provided a functional Dockerfile is supplied to build the app.
 
-There are multiple benefits to building using Dockerfiles on Cerebrium, including
-the ability to bring existing containerized apps to the platform and
-maintaining consistent deployment environments that are easily managed locally.
+There are multiple benefits to building using Dockerfiles on Cerebrium, including the ability to bring existing containerized apps to the platform and maintaining consistent deployment environments that are easily managed locally.
 
-## Building Dockerized Python applications
+## Building Dockerized Python Apps
 
 This example demonstrates a simple FastAPI server that has been containerized:
 
@@ -27,31 +22,29 @@ def hello():
 
 @app.get("/health")
 def health():
-    return "Ok"
+    return "OK"
 ```
 
 The application is built using the following Dockerfile:
 
 ```dockerfile
-# Python base
+# Base image
 FROM python:3.12-bookworm
 RUN apt-get update && apt-get install dumb-init
 RUN update-ca-certificates
 
-# Copy source
+# Source code
 COPY . .
 
-# Install Python deps
-RUN pip install -r requirements.txt  # contains fastapi[standard]
+# Dependencies
+RUN pip install -r requirements.txt
 
-# Runtime
+# Configuration
 EXPOSE 8192
 CMD ["dumb-init", "--", "fastapi", "run", "main.py", "--port", "8192"]
 ```
 
-This is a standard Dockerfile with a CMD clause that specifies how
-to run the container. Use this Dockerfile in Cerebrium by referencing
-it directly in the configuration file.
+This is a standard Dockerfile with a `CMD` clause that specifies how to run the container. Use this Dockerfile in Cerebrium by referencing it directly in the configuration file.
 
 Update cerebrium.toml to include a custom runtime section with the `dockerfile_path` parameter:
 
@@ -66,9 +59,9 @@ The configuration requires three key parameters:
 
 - `port`: The port the server listens on.
 - `healthcheck_endpoint`: The endpoint used to confirm server health. If unspecified, defaults to a TCP ping on the configured port.
-- `dockerfile_path`: The relative path to the Dockerfile used to build the application.
+- `dockerfile_path`: The relative path to the Dockerfile used to build the app.
 
-If a Dockerfile does not contain a `CMD` clause, specifying the `entrypoint` parameter in the `cerebrium.toml` file is required:
+If a Dockerfile does not contain a `CMD` clause, specifying the `entrypoint` parameter in the `cerebrium.toml` file is required.
 
 ```toml
 [cerebrium.runtime.custom]
@@ -77,18 +70,12 @@ entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8192"]
 ```
 
 <Warning>
-  When specifying a dockerfile_path, all dependencies and necessary commands
-  should be installed and executed within the Dockerfile. Dependencies listed
-  under `cerebrium.dependencies.*`, as well as
-  `cerebrium.deployment.shell_commands` and
-  `cerebrium.deployment.pre_build_commands`, will be ignored.
+When specifying a `dockerfile_path`, all dependencies and necessary commands should be installed and executed within the Dockerfile. Dependencies listed under `cerebrium.dependencies.*`, as well as `cerebrium.deployment.shell_commands` and `cerebrium.deployment.pre_build_commands`, will be ignored.
 </Warning>
 
-## Building Generic Dockerized applications
+## Building Generic Dockerized Apps
 
-Cerebrium supports applications in languages other than Python, provided
-a Dockerfile is supplied. The following example demonstrates a Rust-based
-API server using the Axum framework:
+Cerebrium supports apps in languages other than Python, provided a Dockerfile is supplied. The following example demonstrates a Rust-based API server using the Axum framework:
 
 ```rust
 use axum::{
@@ -102,7 +89,7 @@ async fn hello() -> Json<serde_json::Value> {
 }
 
 async fn health() -> &'static str {
-    "Ok"
+    "OK"
 }
 
 #[tokio::main]
@@ -120,32 +107,31 @@ async fn main() {
 In this case, a multi-stage Dockerfile is used to separate the build step, creating a smaller and more secure image for the runtime:
 
 ```dockerfile
-# Rust base
+# Build stage
 FROM rust:bookworm as build
 RUN apt-get update && apt-get install dumb-init
 RUN update-ca-certificates
 
-# Shell project
+# Project setup
 RUN USER=root cargo new --bin rs_server
 WORKDIR /rs_server
 
-# Copy over manifests
+# Dependencies
 COPY Cargo.lock ./Cargo.lock
 COPY Cargo.toml ./Cargo.toml
 
-# This build step will cache dependencies
+# Cache dependencies
 RUN cargo build --release
 RUN rm src/*.rs
 
-# Copy source
+# Source code
 COPY src/* src/
 
-# Build for release
+# Build
 RUN rm ./target/release/deps/rs_server*
 RUN cargo build --release
 
-
-# Runtime Stage
+# Runtime stage
 FROM gcr.io/distroless/base-debian12
 WORKDIR /
 COPY --from=build  /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/

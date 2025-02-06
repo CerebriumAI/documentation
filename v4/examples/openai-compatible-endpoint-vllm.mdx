@@ -3,23 +3,22 @@ title: "OpenAI compatible vLLM endpoint"
 description: "Create a OpenAI compatible endpoint using the vLLM framework"
 ---
 
-In this tutorial, we will create a OpenAI compatible endpoint that can be used with any open-source mode. This allows you to use the same code as your OpenAI commands but swap
-in Cerebrium serverless functions with a 2 line code change.
+In this tutorial, we'll create an OpenAI-compatible endpoint that works with any open-source model. This lets you use your existing OpenAI code with Cerebrium serverless functions by changing just two lines of code.
 
 To see the final code implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/5-large-language-models/1-openai-compatible-endpoint)
 
 ### Cerebrium setup
 
-If you don’t have a Cerebrium account, you can create one by signing up [here](https://dashboard.cerebrium.ai/register) and following the documentation [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation) to get setup
+If you don't have a Cerebrium account, you can create one by signing up [here](https://dashboard.cerebrium.ai/register) and following the documentation [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation) to get set up.
 
 In your IDE, run the following command to create our Cerebrium starter project: `cerebrium init 1-openai-compatible-endpoint`. This creates two files:
 
-- **Main.py** - Our entrypoint file where our code lives
-- **cerebrium.toml** - A configuration file that contains all our build and environment settings
-  ‍
-  Add the following pip packages and hardware requirements near the bottom of your cerebrium.toml. This will be used in creating our deployment environment.
+- `main.py`: Our entrypoint file where our code lives
+- `cerebrium.toml`: A configuration file that contains all our build and environment settings
 
-```
+Add the following pip packages and hardware requirements to your `cerebrium.toml` to create your deployment environment:
+
+```toml
 [cerebrium.hardware]
 cpu = 2
 memory = 12.0
@@ -30,11 +29,10 @@ vllm = "latest"
 pydantic = "latest"
 ```
 
-To start, let us define our imports and initialize our model. In this tutorial, we will use the Llama 3.1 model by Meta which requires authorization on Hugging Face. <b>Add your HF token
-to your secrets section in the Cerebrium dashboard</b>. Add the following to your main.py
+Let's define our imports and initialize our model. We'll use Meta's Llama 3.1 model, which requires Hugging Face authorization. Add your HF token to your secrets in the Cerebrium dashboard, then add this code to `main.py`:
 
 ```python
-from vllm import  SamplingParams. AsyncLLMEngine
+from vllm import SamplingParams, AsyncLLMEngine
 from vllm.engine.arg_utils import AsyncEngineArgs
 from pydantic import BaseModel
 from typing import Any
@@ -54,7 +52,7 @@ engine_args = AsyncEngineArgs(
 engine = AsyncLLMEngine.from_engine_args(engine_args)
 ```
 
-We now define the require output format OpenAI endpoints expect using Pydantic and specify our endpoint
+Next, define the required output format for OpenAI endpoints using Pydantic:
 
 ```python
 class Message(BaseModel):
@@ -100,11 +98,12 @@ async def run(messages: list, model: str, run_id: str, stream: bool = True, temp
     yield "data: [DONE]\n\n"
 ```
 
-Above the following is happening:
-
-- We specify all the parameters we send in our function signature. You can set optional or default values. The run_id parameter we automatically add to your function with a unique identifier for every request.
-- We put the entire prompt through the model and loop through the generated results.
-- If stream=True, we yield a result. Since we are using a async function and yield, this is how we achieve streaming functionality on Cerebrium else we return the entire result at the end.
+The function:
+- Takes parameters through its signature, with optional and default values available
+- Automatically receives a unique `run_id` for each request
+- Processes the entire prompt through the model
+- Streams results when `stream=True` using async functionality
+- Returns the complete result at the end if streaming is disabled
 
 ## Deploy & Inference
 
@@ -114,17 +113,16 @@ To deploy the model use the following command:
 cerebrium deploy
 ```
 
-Once deployed, you will see we generate a curl for this application that looks something like:
+After deployment, you'll see a curl command like this:
 
 ```curl
 curl --location 'https://api.cortex.cerebrium.ai/v4/p-<YOUR PROJECT ID>/5-openai-compatible-endpoint/{function}' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer <YOUR TOKEN HERE>' \
---data '{"..."}''
+--data '{"..."}'
 ```
 
-In Cerebrium, every function name is now and endpoint so to call this endpoint we would end the URL with /run. However, OpenAI compatible endpoints need to end with /chat/completions.
-We have made all endpoints OpenAI compatible so to call the endpoint you can do the following in another file:
+In Cerebrium, each function name becomes an endpoint (ending with `/run`). While OpenAI-compatible endpoints typically end with `/chat/completions`, we've made all endpoints OpenAI-compatible. Here's how to call the endpoint:
 
 ```python
 import os
@@ -149,7 +147,6 @@ for chunk in chat_completion:
 print("Finished receiving chunks.")
 ```
 
-Above we set our base url to the one returned by our deploy command - it ends in /run since that's the function we are calling. Lastly, we use our JWT token, which is returned in the
-CURL command when you deploy or can be found in your Cerebrium dashboard under the section API Keys.
+Set the base URL to the one from your deploy command (ending in `/run`). Use your JWT token from either the curl command or your Cerebrium dashboard's API Keys section.
 
-Voilà! You now have a OpenAI compatible endpoint that you can customize to your liking!
+Voilà! You now have an OpenAI-compatible endpoint that you can customize to your needs!

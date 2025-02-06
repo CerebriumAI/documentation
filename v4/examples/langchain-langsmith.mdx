@@ -3,21 +3,19 @@ title: "Langchain and Langsmith"
 description: "Deploy an executive assistant using Langsmith and Langchain"
 ---
 
-In this tutorial, I am going to create an executive assistant, Cal-vin, to manage my calendar (Cal.com) with employees, customers, partners and friends. I will use the LangChain SDK to create my agent,
-the LangSmith platform to monitor how it is scheduling my time throughout the day and monitor situations in which it fails to do a correct job. Lastly, we will deploy this application on Cerebrium to
-show how it handles deploying and scaling our application seamlessly.
+In this tutorial, we'll create Cal-vin, an executive assistant that manages calendar appointments (via Cal.com) with employees, customers, partners, and friends. Using the LangChain SDK for agent creation and LangSmith platform for monitoring, we'll track scheduling activities and identify failure points. Finally, we'll deploy on Cerebrium to demonstrate seamless deployment and scaling.
 
 You can find the final version of the code [here](https://github.com/CerebriumAI/examples/tree/master/4-integrations/2-tool-calling-langsmith)
 
 ### Concepts
 
-To create an application like this, we will need to interact with my calendar based on instructions from a user. This is a perfect use case for an agent with function (tool) calling ability. LangChain is a framework with a lot of functionality supporting agents, they are also the creators of LangSmith and so an integration should be relatively easy.
+This app requires calendar interaction based on user instructions - an ideal use case for an agent with function (tool) calling capabilities. LangChain, a framework with extensive agent support, created LangSmith, making integration straightforward.
 
-When we refer to a tool, we are referring to any framework, utility, or system that has defined functionality around a use case. For example, we might have a tool to search Google, a tool to pull our credit card transactions etc.
+A tool refers to any framework, utility, or system with defined functionality for specific use cases, such as searching Google or retrieving credit card transactions.
 
-LangChain also has three concepts/functions that we need to understand:
+Key LangChain concepts:
 
-`ChatModel.bind_tools()`: This is a method for attaching tool definitions to model calls. Each model provider has a different way they expect tools to be defined however; LangChain has created a standard interface so you can switch between providers and it is versatile. You can pass in a tool definition (a dict), as well as other objects from which a tool definition can be derived: namely Pydantic classes, LangChain tools, and arbitrary functions etc. The tool definition tells the LLM what this tool does and how to interact with it.
+1. `ChatModel.bind_tools()`: Attaches tool definitions to model calls. While providers have different tool definition formats, LangChain provides a standard interface for versatility. Accepts tool definitions as dictionaries, Pydantic classes, LangChain tools, or functions, telling the LLM how to use each tool.
 
 ```python
 @tool
@@ -26,7 +24,7 @@ def exponentiate(x: float, y: float) -> float:
     return x**y
 ```
 
-`AIMessage.tool_calls`: This is an attribute on the AIMessage type returned from the model for easily accessing the tool calls the model decided to make. It will specify any tool invocations in the format specified from the bind_tools call:
+2. `AIMessage.tool_calls`: An attribute on AIMessage that provides easy access to model-initiated tool calls, specifying invocations in the bind_tools format:
 
 ```python
 # -> AIMessage(
@@ -38,7 +36,7 @@ def exponentiate(x: float, y: float) -> float:
 #   )
 ```
 
-`create_tool_calling_agent()`: The tool_calling_agent is just a standard way to bring the above concepts all together to work across providers that have different formats so you can easily switch out models.
+3. `create_tool_calling_agent()`: Unifies the above concepts to work across different provider formats, enabling easy model switching.
 
 ```python
 agent = create_tool_calling_agent(llm, tools, prompt)
@@ -49,19 +47,17 @@ agent_executor.invoke({"input": "what's 3 plus 5 raised to the 2.743. also what'
 
 ### Setup Cal.com
 
-I am a big fan of [Cal.com](https://cal.com) and believe the team is going to keep shipping incredible features and so I wanted to build a demo using them. If you do not have an account you can create one [here](https://app.cal.com/signup).
-Cal will be our source of truth, so if you update time zones, or working hours in Cal, our assistant will reflect that.
+[Cal.com](https://cal.com) provides our calendar management foundation. Create an account [here](https://app.cal.com/signup) if needed. Cal serves as the source of truth - any updates to time zones or working hours automatically reflect in the assistant's responses.
 
-Once your account is created, click on “API keys” in the left sidebar and create an API key with no expiration date.
+After creating your account:
+1. Navigate to "API keys" in the sidebar
+2. Create an API key without expiration
+3. Test the setup with a CURL request (replace these variables):
+   - Username
+   - API key
+   - dateFrom and dateTo
 
-![Cal.comAPI Keys](/images/examples/langchain_langsmith/cal_api_keys.png)
-
-To test that it’s working, you can do a simple CURL request. Just replace the following variables below:
-
-- Username
-- API key
-- Update the dateFrom and to dateTo variables
-  ‍
+![Cal.com API Keys](/images/examples/langchain_langsmith/cal_api_keys.png)
 
 ```curl
 curl --location 'https://api.cal.com/v1/availability?apiKey=cal_live_xxxxxxxxxxxxxx&dateFrom=2024-04-15T00%3A00%3A00.000Z&dateTo=2024-04-22T00%3A00%3A00.000Z&username=michael-louis-xxxx'
@@ -132,15 +128,18 @@ Great! Now we know that our API key is working and pulling information from our 
 
 ### Cerebrium setup
 
-If you don’t have a Cerebrium account, you can create one by signing up [here](https://dashboard.cerebrium.ai/register) and following the documentation [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation) to get setup
+Set up Cerebrium:
+1. Sign up [here](https://dashboard.cerebrium.ai/register)
+2. Follow installation docs [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation)
+3. Create a starter project:
+   ```bash
+   cerebrium init agent-tool-calling
+   ```
+   This creates:
+   - `main.py`: Entrypoint file
+   - `cerebrium.toml`: Build and environment configuration
 
-In your IDE, run the following command to create our Cerebrium starter project: `cerebrium init agent-tool-calling`. This creates two files:
-
-- Main.py - Our entrypoint file where our code lives
-- cerebrium.toml - A configuration file that contains all our build and environment settings
-  ‍
-
-Add the following pip packages near the bottom of your cerebrium.toml. This will be used in creating our deployment environment.
+Add these pip packages to your `cerebrium.toml`:
 
 ```
 [cerebrium.dependencies.pip]
@@ -151,21 +150,28 @@ openai = "latest"
 langchain_openai = "latest"
 ```
 
-We will be using OpenAI GPT3.5 for our use cases and so we need an API key from them. If you don’t have an account, you can sign up [here](https://openai.com/). You can then create an API key [here](https://platform.openai.com/api-keys). The API key should be in the format: “sk_xxxxx”.
+Set up API keys:
+1. OpenAI GPT-3.5:
+   - Sign up at [OpenAI](https://openai.com/)
+   - Create API key [here](https://platform.openai.com/api-keys) (format: sk_xxxxx)
 
-In your Cerebrium dashboard you can then add your Cal.com and OpenAI API keys as secrets by navigating to “Secrets” in the sidebar. For the sake of this tutorial I called mine “CAL_API_KEY” and “OPENAI_API_KEY”. We can now access these values in our code at runtime without exposing them in our code.
+2. Add secrets in Cerebrium dashboard:
+   - Navigate to "Secrets"
+   - Add keys:
+     - `CAL_API_KEY`: Your Cal.com API key
+     - `OPENAI_API_KEY`: Your OpenAI API key
 
 ![Cerebrium Secrets Dashboard](/images/examples/langchain_langsmith/cerebrium_secrets.png)
 
 ### Agent Setup
 
-To start we need to write two tool functions (in our `main.py` file) that the agent will use to check availability on our calendar as well as book a slot.
+Create two tool functions in `main.py` for calendar management:
+1. Get availability tool
+2. Book slot tool
 
-- Get availability tool
-- You would have seen from the test API request we did above to Cal.com that the API returns your availability in the following way:
-- The time slots that you are already busy
-- Your working hours on each day
-  ‍
+The Cal.com API provides:
+- Busy time slots
+- Working hours per day
 
 Below is the code to achieve this:
 
@@ -196,11 +202,10 @@ def get_availability(fromDate: str, toDate: str) -> float:
         return {}
 ```
 
-In the above snippet we are doing a few things:
-
-- We give our function the @tool decorator so that LangChain can tell the LLM this is a tool.
-- We write a docstring that explains to the LLM what this function does and what input it expects.The LLM will make sure it asks the user enough questions to collect this input data.
-- We wrote a helper function, find_available_slots, to take the information returned from the Cal.com API and format it so its more readable. It will show the user the time slots available on each day. Make sure its in your directory!
+The code above:
+1. Uses `@tool` decorator to identify functions as LangChain tools
+2. Includes docstrings explaining functionality and required inputs
+3. Uses `find_available_slots` helper function to format Cal.com API responses into readable time slots
   ‍
 
 We then follow a similar practice to write our book_slot tool. This will book a slot in my calendar based on the selected time/day. You can get the eventTypeId from your dashboard, select an event and grab the ID in the URL.
@@ -335,11 +340,12 @@ If you keep talking and answering, you will see it will eventually book a slot.
 
 ### Integrate Langsmith
 
-When releasing an application to production, its vital to know how it is performing, how users are interacting with it, where is it going wrong etc. This is especially true for agent applications since they have indeterministic workflows based on how a user interacts with the application and so we want to make sure we handle any and all edge cases. LangSmith is a logging, debugging and monitoring tool from LangChain that we will use. Your can read more about LangSmith [here](https://docs.smith.langchain.com/monitoring).
+Production monitoring is crucial, especially for agent applications with indeterministic workflows based on user interactions. LangSmith, a LangChain tool for logging, debugging, and monitoring, helps track performance and handle edge cases. Learn more about LangSmith [here](https://docs.smith.langchain.com/monitoring).
 
-Lets setup LangSmith to monitor and debug our application. First, add LangSmith as a pip dependency to our cerebrium.toml file.
-
-Next, we need to create an account on LangSmith and generate and API key - its free 🙂. You can sign up for an account [here](https://smith.langchain.com/) and can generate an API key by clicking the settings (gear icon) bottom left.
+Set up LangSmith monitoring:
+1. Add LangSmith to `cerebrium.toml` dependencies
+2. Create a free LangSmith account [here](https://smith.langchain.com/)
+3. Generate API key (click gear icon in bottom left)
 
 Next we need to set the following environment variables. You can add the following code at the top of your main.py. You can add the API key to your secrets in Cerebrium
 
@@ -349,7 +355,7 @@ os.environ['LANGCHAIN_TRACING_V2']="true"
 os.environ['LANGCHAIN_API_KEY']=get_secret("LANGCHAIN_API_KEY")
 ```
 
-To integrate tracing into your applications it is as easy as adding the @traceable decorator to your function(s). LangSmith automatically traverses our functions and subsequent calls so we need to only put it above the predict function and we will see all the tool invocations and OpenAI responses automatically. If there is a function, that predict doesn’t call for example, but you instantiate another way, then make sure to decorate it with traceable. Edit main.py to have the following:
+Enable tracing by adding the `@traceable` decorator to your functions. LangSmith automatically tracks tool invocations and OpenAI responses through function traversal. Add the decorator to the `predict` function and any independently instantiated functions. Edit main.py to have the following:
 
 ```
 from langsmith import traceable
@@ -368,19 +374,18 @@ In the Runs tab, you can see all your runs (ie: invocations/API requests).
 
 In 1 above, it takes the name of our function, input is set to the Cerebrium RunID which in this case we set to “test”. Lastly, you can see the input as well as the total latency of your run.
 
-LangSmith wants you to create various automations based on your data. These can be:
-
-- Sending data to annotation queues that your team needs to label for positive and negative use cases
-- Sending to datasets that you can eventually train a model on
-- Online evaluation is a new feature that allows you to use a LLM to evaluate data for rudeness, topic etc.
-- Triggering webhook endpoints
-- and much more…
+LangSmith supports various data automations:
+- Data annotation for positive/negative case labeling
+- Dataset creation for model training
+- Online LLM-based evaluation (rudeness, topic analysis)
+- Webhook endpoint triggers
+- Additional features
 
 You can set these automations by clicking the “Add rule” button above (2) and specifying under what conditions you would like the above to occur. The options to create a rule on are a filter, a sampling rate, and an action.
 
 Lastly, in 3 you can see overall metrics about your project such as number of runs, error rate, latency etc.
 
-Since our interface is conversational, there are many use cases where you would like to follow the conversation between your agent and a user without all the bloat. Threads in LangSmith does exactly this. I can see how a conversation evolved over time and if something seems out of the ordinary, I can open the trace to dive deeper. Note that threads are associated with the session id we gave to it.
+LangSmith Threads provide clean conversation tracking between agents and users. Track conversation evolution and investigate anomalies through trace analysis. Each thread links to its associated session ID.
 
 ![LangSmith Threads](/images/examples/langchain_langsmith/langsmith_threads.png)
 
@@ -388,7 +393,7 @@ Lastly, you can monitor performance metrics regarding your agent in the Monitor 
 
 ![LangSmith Performance Monitoring](/images/examples/langchain_langsmith/langsmith_performance.png)
 
-LangSmith is a great choice of tool for those building agents and one that’s extremely simple to integrate. There is so much more functionality that we didn’t explore but its covers a lot of functionality in the application feedback loop of , collecting/annotating data → monitoring and then repeating
+LangSmith offers simple integration for agent development with extensive functionality. While we've covered the basics, it provides comprehensive support for the application feedback loop: data collection/annotation → monitoring → iteration.
 
 ### Deploy to Cerebrium
 
@@ -420,14 +425,15 @@ You can find the final version of the code [here](https://github.com/CerebriumAI
 
 ### Further improvements
 
-In this tutorial I didn’t get to the following but I think it would be interesting to implement:
+### Future Enhancements
 
-- You can stream back the responses to the user to make the experience more seamless. LangChain makes it easy to do this.
-- Integrate with my email, that if I tag Claire in a thread, it can go through the conversation and get context to schedule the meeting.
-- Add voice capabilities so that someone can phone me and book a time and Claire can respond.
+Consider implementing:
+1. Response streaming for seamless user experience
+2. Email integration for context-aware scheduling when Claire is tagged
+3. Voice capabilities for phone-based scheduling
 
 ### Conclusion
 
-The integration of LangChain, LangSmith and Cerebrium make it extremely easy to deploy agents at scale! LangChain is a great frameworks for the orchestration of LLMs, tooling, memory as well as LangSmith for monitoring this in production and using it to identify and iterate on edge cases. Cerebrium makes this agent scalable across across 100’s or 1000’s or CPU/GPUs while only allowing you to pay for compute as its used.
+The combination of LangChain, LangSmith, and Cerebrium enables scalable agent deployment. LangChain excels at LLM orchestration, tooling, and memory management, while LangSmith provides production monitoring and edge case identification. Cerebrium offers pay-as-you-go scaling across hundreds or thousands of CPU/GPUs.
 
 Tag us as **@cerebriumai** in extensions you make to the code repository so we can share it with our community.

@@ -1,6 +1,6 @@
 ---
-title: "Rest API"
-description: ""
+title: "REST API"
+description: "Make HTTP requests to your Cerebrium endpoints"
 ---
 
 By default, all apps on Cerebrium are accessible via authenticated POST requests. Authentication is handled using the JWT token available in the **API Keys** section of your dashboard.
@@ -21,11 +21,11 @@ Responses follow this format:
 ```bash
 {
     "run_id": "52eda406-b81b-43f5-8deb-fcf80dfsb74b",
-    "run_time_ms": 326.34
+    "run_time_ms": 326.34,
     "result": {<data>}
 }
 ```
 
 Successful requests return a status code of 200, while errors result in a status code of 500.
 
-To return custom status codes such as 422, 404, etc., include the status_code field in the JSON response from your `main.py`.
+To return custom status codes such as 422, 404, etc., include the `status_code` field in the JSON response from your `main.py`.
