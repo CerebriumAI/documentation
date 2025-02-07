@@ -58,9 +58,9 @@ Above, we use Pydantic as our data validation library. We specify the parameters
 Below, we will use the Whisper model from OpenAI to convert the video audio to text. We will then split the text into its phrase segments with its respective timings, so we know the exact source of where our model got the answer from.
 
 ```python
+import os
 from vllm import LLM, SamplingParams
 from huggingface_hub import login
-from cerebrium import os.environ.get
 
 # Your huggingface token (HF_AUTH_TOKEN) should be stored in your project secrets on your dashboard
 login(token=os.environ.get("HF_AUTH_TOKEN"))

@@ -98,6 +98,7 @@ In your Cerebrium dashboard, you can add your HuggingFace token as a secret by n
 You can then add the following code to your main.py to download the model:
 
 ```python
+import os
 from huggingface_hub import snapshot_download
 
 huggingface_hub.login(token=os.environ.get("HF_AUTH_TOKEN"))
