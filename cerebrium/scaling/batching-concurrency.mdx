@@ -1,6 +1,6 @@
 ---
-title: "Batching & Concurrency"
-description: "Improve throughput and cost performance with batching & concurrency"
+title: "Batching and Concurrency"
+description: "Improve throughput and cost performance with batching and concurrency"
 ---
 
 ## Understanding Concurrency
@@ -9,7 +9,7 @@ Concurrency in Cerebrium allows each instance to process multiple requests simul
 
 ```toml
 [cerebrium.scaling]
-replica_concurrency = 4    # Process up to 4 requests simultaneously
+replica_concurrency = 4    # Process up to 4 requests simultaneously.
 ```
 
 When requests arrive at an instance that hasn't reached its concurrency limit, they begin processing immediately. Once an instance reaches its maximum concurrent requests, additional requests queue until capacity becomes available. This parallel processing capability helps applications maintain consistent performance during periods of high traffic.
@@ -18,11 +18,11 @@ Modern GPUs excel at parallel processing, making concurrent request handling par
 
 ## Understanding Batching
 
-Batching determines how concurrent requests are processed together within an instance. While concurrency controls the number of simultaneous requests, batching manages how these requests are grouped and executed (The default concurrency is 1 request per container).
+Batching determines how concurrent requests are processed together within an instance. While concurrency controls the number of simultaneous requests, batching manages how these requests are grouped and executed (the default concurrency is 1 request per container).
 
 Cerebrium supports two approaches to request batching.
 
-### Framework-Native Batching
+### Framework-native Batching
 
 Many frameworks include features for processing multiple requests efficiently. vLLM, for example, automatically handles batched model inference requests:
 
@@ -31,7 +31,7 @@ Many frameworks include features for processing multiple requests efficiently. v
 min_replicas = 0
 max_replicas = 2
 cooldown = 10
-replica_concurrency = 4 # Each container can now handle multiple requests
+replica_concurrency = 4 # Each container can now handle multiple requests.
 
 [cerebrium.dependencies.pip]
 sentencepiece = "latest"

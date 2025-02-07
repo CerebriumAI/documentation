@@ -3,14 +3,14 @@ title: Vercel Integration
 description: Integrate Cerebrium with Vercel to build AI applications
 ---
 
-You can use the Cerebrium + Vercel integration to access apps deployed on Cerebrium via REST Endpoints from Vercel projects. You’ll find the Cerebrium integration available to install in the Vercel AI marketplace.
+You can use the Cerebrium + Vercel integration to access apps deployed on Cerebrium via REST endpoints from Vercel projects. You'll find the Cerebrium integration available to install in the Vercel AI marketplace.
 
 ### What this integration does
 
 This integration allows you to:
 
-1. Easily synchronize your Cerebrium API keys to one or more Vercel projects
-2. Call Cerebrium Endpoints over HTTP in connected Vercel projects
+1. Easily synchronize your Cerebrium API keys to one or more Vercel projects.
+2. Call Cerebrium endpoints over HTTP in connected Vercel projects.
 
 ### Authentication
 
@@ -22,18 +22,18 @@ The environment variables will be set in the “preview” and “production” 
 
 ### Installing the integration
 
-1. Click “Add integration” on the Vercel integrations page
-2. Select the Vercel account you want to connect with
-3. (If logged out) Sign into an existing Cerebrium project, or create a new Cerebrium project
-4. Select the Vercel projects that you wish to connect to your Modal workspace
-5. Click “Continue”
-   6.Back in your Vercel dashboard, confirm the environment variables were added by going to your Vercel project > "Settings" > "Environment variables"
+1. Click "Add Integration" on the Vercel integrations page.
+2. Select the Vercel account you want to connect with.
+3. (If logged out) Sign into an existing Cerebrium project, or create a new Cerebrium project.
+4. Select the Vercel projects that you wish to connect to your Cerebrium workspace.
+5. Click "Continue."
+6. Back in your Vercel dashboard, confirm the environment variables were added by going to your Vercel project → Settings → Environment Variables.
 
 ### Uninstalling the integration
 
 The Cerebrium Vercel integration is managed under the user’s Vercel dashboard under the “Integrations” tab. From there they can remove the specific integration installation from their Vercel account.
 
-Important: removing an integration will delete the corresponding API token set by Modal in your Vercel project(s).
+Important: Removing an integration will delete the corresponding API token set by Cerebrium in your Vercel project(s).
 
 ## Example
 
@@ -60,10 +60,10 @@ fetch(
   .catch((error) => console.error("Error:", error));
 ```
 
-In this example, we built our app to take in a prompt as input and to return with the output of the mode.
+In this example, we built our app to take a prompt as input and return the output of the model.
 
 ## Pricing
 
-Requests to apps use usage based pricing, billed at 1ms granularity. The exact cost per millisecond is based on the underlying hardware you specify.
+Requests to apps use usage-based pricing, billed at 1ms granularity. The exact cost per millisecond is based on the underlying hardware you specify.
 
 See our [pricing page](https://www.cerebrium.ai/pricing) for current GPU prices.

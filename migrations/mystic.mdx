@@ -5,17 +5,17 @@ description: "Deploy a Model from Mystic on Cerebrium"
 
 ## Introduction
 
-We are saddened by the news that Mystic AI is sunsetting their services. They were a early pioneer in the space and really pushed the industry forward. To support their users and ensure that their apps still remain functional despite the circumstances, this guide will walk you through migrating apps from Mystic to Cerebrium.
+We are saddened by the news that Mystic AI is sunsetting their services. They were an early pioneer in the space and really pushed the industry forward. This guide will walk you through migrating apps from Mystic to Cerebrium to ensure that users' apps remain functional despite the circumstances.
 
-We'll show you how to convert your existing Mystic code (Using a stable diffusion example) and configuration to work with the Cerebrium platform. You'll learn about the tools and features available to make this transition as seamless as possible, including ways to optimize your deployments for better performance and cost efficiency.
+We'll show you how to convert your existing Mystic code (using a stable diffusion example) and configuration to work with the Cerebrium platform. You'll learn about the tools and features available to make this transition as seamless as possible, including ways to optimize your deployments for better performance and cost efficiency.
 
 ## Key Differences
 
 Cerebrium helps teams deploy and run their models efficiently. Our infrastructure is designed for reliable performance:
 
-- The average model cold starts in 2-5 seconds
-- Updates to your code deploy quickly, taking only 8-14 seconds
-- 99.9 % uptime
+- The average model cold-starts in 2-5 seconds.
+- Updates to your code deploy quickly, taking only 8-14 seconds.
+- 99.9% uptime.
 
 Cerebrium gives you precise control over your computing resources. Instead of managing entire instances, which can become costly and unnecessary, you choose exactly how much CPU, memory, and GPU power you need. You pay only for the resources you use, calculated down to the second. To better understand costs for your specific needs, you can use our [pricing calculator](https://cerebrium.ai/pricing).
 
@@ -27,7 +27,7 @@ Start by installing Cerebrium's command-line tool and creating your project:
 
 ```bash
 pip install cerebrium --upgrade
-cerebrium login # You'll be redirected to the dashboard for login
+cerebrium login  # You'll be redirected to the dashboard for login
 cerebrium init stable-diffusion
 cd stable-diffusion
 
@@ -270,15 +270,15 @@ cerebrium deploy
 
 ### 4. Inference
 
-Once your app is deployed, you’re now able to successfully make requests to your model using a the below example cURL request:
+Once your app is deployed, you can make requests to your model using the example cURL request below:
 
-```toml
+```bash
 curl --location 'https://api.cortex.cerebrium.ai/v4/p-<YOUR PROJECT ID>/stable-diffusion/predict' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer <YOUR TOKEN HERE>' \
 --data '{
     "prompt": "a photo of an astronaut riding a horse on mars"
-}''
+}'
 ```
 
 Transitioning between platforms requires careful planning and execution. We're here to help make this process as smooth as possible for teams like yours. Our platform provides the tools and support you need to ensure your apps continue running with unparalleled reliability.
@@ -287,7 +287,7 @@ Transitioning between platforms requires careful planning and execution. We're h
 
 Connect with other developers and our team in our active communities for better response and issue resolution times:
 
-- Join our Discord server
-- Join our Slack workspace
+- Join our Discord server.
+- Join our Slack workspace.
 
 These communities are great places to share migration experiences, get quick answers to technical questions, learn best practices from other developers, and stay updated on new features and improvements.

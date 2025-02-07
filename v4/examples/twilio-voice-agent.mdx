@@ -3,22 +3,27 @@ title: "Twilio Voice Agent with PipeCat"
 description: "Integrate a real-time AI voice agent with Twilio"
 ---
 
-In this tutorial, I'm going to create a real-time voice agent that can respond to any query via speech, in speech that is initiated via a phone call using Twilio. This is an extremely flexible implementation where you can swap in any LLM or Text-to-speech (TTS) model of your liking. This is extremely useful for use cases involving voice such as customer support bots and receptionists.
+This tutorial demonstrates creating a real-time voice agent that responds to phone calls via Twilio. The flexible implementation supports any LLM or Text-to-Speech (TTS) model, making it ideal for voice applications like customer support bots and receptionists.
 
-To create this app, we use the [PipeCat](https://www.pipecat.ai/) framework that takes care of stringing together all the components. Pipecat handles some of the functionality we
-might need such as user interruptions and dealing with audio data etc.
+We'll use [PipeCat](https://www.pipecat.ai/) to handle component integration, user interruptions, and audio data processing.
 
 You can find the final version of the code [here](https://github.com/CerebriumAI/examples/tree/master/6-voice/4-twilio-voice-agent)
 
 ### Cerebrium setup
 
-If you don’t have a Cerebrium account, you can create one by signing up [here](https://dashboard.cerebrium.ai/register) and following the documentation [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation) to get set up
+Set up Cerebrium:
 
-In your IDE, run the following command to create our Cerebrium starter project: `cerebrium init 4-twilio-voice-agent`. This creates two files:
+1. Sign up [here](https://dashboard.cerebrium.ai/register)
+2. Follow installation docs [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation)
+3. Create a starter project:
+   ```bash
+   cerebrium init 4-twilio-voice-agent
+   ```
+   This creates:
+   - `main.py`: Entrypoint file
+   - `cerebrium.toml`: Build and environment configuration
 
-- **main.py** - Our entrypoint file where our code lives
-- **cerebrium.toml** - A configuration file that contains all our build and environment settings
-  Add the following pip packages near the bottom of your cerebrium.toml. This will be used in creating our deployment environment.
+Add these pip packages to your `cerebrium.toml`:
 
 ```
 [cerebrium.dependencies.pip]
@@ -36,8 +41,7 @@ loguru = "latest"
 
 ```
 
-We need to setup a FastAPI server that will receive the call from our Twilio number and then upgrade the connection to a websocket connection - this is for the real-time two-way communication.
-To setup a Fast API server on Cerebrium is the same as setting up FastAPI locally. You can then add the following code to your main.py:
+Set up a FastAPI server to handle Twilio calls and upgrade to WebSocket connections for real-time communication. Add this code to `main.py`:
 
 ```python
 import json
@@ -77,8 +81,7 @@ async def websocket_endpoint(websocket: WebSocket):
     await main(websocket, stream_sid)
 ```
 
-Don't worry about the line `from bot import main` - we will add this later. In your current directory, create a folder called 'templates' and inside it a file called 'stream.xml'.
-We need to send back a xml response to Twilio in order to upgrade the connection to the websocket connection. Add the following code to the streams.xml file:
+Create a `templates` folder with `stream.xml` inside. This XML response tells Twilio to upgrade to a WebSocket connection:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -91,10 +94,9 @@ We need to send back a xml response to Twilio in order to upgrade the connection
 </Response>
 ```
 
-The stream url will be the base endpoint of your deployment once our application is deployed. It should be the same in the above, you should just fill in your project id.
-Before we continue with our implementation, let us setup our Twilio number.
+Replace the stream URL with your deployment's base endpoint, using your project ID. Next, let's set up your Twilio number.
 
-In order to run our custom FastAPI server, we need to tell Cerebrium how to run it. We do this by specifying the following in our cerebrium.toml file:
+Configure Cerebrium to run the FastAPI server by adding this to `cerebrium.toml`:
 
 ```
 [cerebrium.runtime.custom]
@@ -107,11 +109,9 @@ You can read more about run custom web servers [here](https://docs.cerebrium.ai/
 
 ### Twilio setup
 
-Twilio is a cloud communications platform that enables businesses to integrate messaging, voice, video, and authentication capabilities into their applications through APIs. We will use them for this demo, but you can use any alternative provider.
-If you don't have an account you can sign up [here](https://www.twilio.com/try-twilio) - they have a generous free tier.
+Twilio provides cloud communications APIs for messaging, voice, video, and authentication. While we use Twilio for this demo, other providers work too. Sign up for a free account [here](https://www.twilio.com/try-twilio).
 
-Once you have an account, you can navigate to the page in order to buy a [number](https://console.twilio.com/us1/develop/phone-numbers/manage/search?isoCountry=US&types[]=Local&capabilities[]=Sms&capabilities[]=Mms&capabilities[]=Voice&capabilities[]=Fax&searchTerm=&searchFilter=left&searchType=number).
-When you buy a number please make sure its not a toll-free number - this won't work. We then setup a webhook that hits our endpoint in order to connect to the agent.
+Purchase a local number (not toll-free) from the [phone numbers page](https://console.twilio.com/us1/develop/phone-numbers/manage/search?isoCountry=US&types[]=Local&capabilities[]=Sms&capabilities[]=Mms&capabilities[]=Voice&capabilities[]=Fax&searchTerm=&searchFilter=left&searchType=number). Then set up a webhook to connect calls to your agent.
 
 ![Buy a number](/images/examples/twilio-agent/twilio-buy-number.png)
 
@@ -121,8 +121,7 @@ You should then save the changes above and move on to setting up our AI Agent.
 
 ### AI Agent Setup
 
-In order to create our AI agent, we will be using the [PipeCat](https://www.pipecat.ai/) framework that takes care of stringing together all the components and it handles some of the functionality we
-might need such as user interruptions, dealing with audio data etc. To setup our AI agent, let us create another file called 'bot.py' and add the following code:
+Create `bot.py` to set up the AI agent using PipeCat for component integration, interruption handling, and audio processing:
 
 ```python
 import os
@@ -222,16 +221,22 @@ async def main(websocket_client, stream_sid):
     await runner.run(task)
 ```
 
-The code above does the following:
+The code:
 
-- We connect our agent to our websocket transport layer that will send/receive audio.
-- We setup our LLM, TTS and STT services using [Deepgram](https://deepgram.com/), [OpenAI](https://openai.com/) and [Cartesia](https://www.cartesia.ai/). You can select any provider you like - Pipecat supports a wide variety.
-- In order to authenticate all these services, we use [Secrets](https://docs.cerebrium.ai/cerebrium/environments/using-secrets). Add them to your Cerebrium dashboard.
-- Lastly, we then put this all together as a PipelineTask which is what Pipecat runs all together. The makeup of a task is completely customisable and has support for Image and Vision use cases. You can read more [here](https://docs.pipecat.ai/docs/category/services). Pipeline tasks come with a structure and parameters that make it easy to handle interruptions out the box, and we are able to swap models to our preference only changing a few lines of code.
-- The Daily Python SDK comes with a lot of event webhooks where you can trigger functionality based on events occurring. So we handles certain events such as a user leaving/joining a call.
+1. Connects to WebSocket transport for audio I/O
+2. Sets up services:
+   - [Deepgram](https://deepgram.com/) for STT
+   - [OpenAI](https://openai.com/) for LLM
+   - [Cartesia](https://www.cartesia.ai/) for TTS
+   - Other providers supported via PipeCat
+3. Uses [Secrets](https://docs.cerebrium.ai/cerebrium/environments/using-secrets) for authentication
+4. Creates a customizable PipelineTask supporting:
+   - Image and Vision use cases ([docs](https://docs.pipecat.ai/docs/category/services))
+   - Built-in interruption handling
+   - Easy model swapping
+5. Handles call events (join/leave) via webhooks
 
-In order to improve the latency of the above system, you can run parts/all of the pipeline locally. This would help you achieve roughly ~500ms end-to-end latencies. You can read
-more how we did this [here](/v4/examples/realtime-voice-agents.mdx) and [here](https://www.cerebrium.ai/blog/creating-a-realtime-rag-voice-agent).
+For lower latency (~500ms end-to-end), run parts or all of the pipeline locally. Learn more in our [voice agents guide](/v4/examples/realtime-voice-agents.mdx) and [RAG voice agent blog post](https://www.cerebrium.ai/blog/creating-a-realtime-rag-voice-agent).
 
 ### Deploy to Cerebrium
 
@@ -241,16 +246,19 @@ If it deployed successfully, you should see something like this:
 
 ![Cerebrium Deployment](/images/examples/twilio-agent/twilio-deployment.png)
 
-In order to test this application you can simply call your Twilio number and the agent should start responding.
+Test the app by calling your Twilio number - the agent will respond automatically.
 
 ### Scaling Pipecat
 
-When running Pipecat at scale there are a few ways to architect your application on Cerebrium. If you are using Twilio, your container needs to respond in <1s other Twilio things there is an issue with the connection and drop the call.
-The best here is to specify a large CPU instance (typically 10 CPUs and 8GB of memory) and run many concurrent Pipecat processes. Each Pipecat process, if simply using API's will use ~0.5 CPUs and so a 10 CPU instance can run 20 concurrent Pipecat processes.
-machine will handle 20 concurrent calls on a single container. You can of course make these numbers large or smaller based on your expected traffic.
+For scaling PipeCat on Cerebrium:
 
-The second consideration is your scaling criteria - ie: when will I want to spawn up another container so subsequent calls don't incur a cold start. Here we recommend using Cerebrium's replica_concurrency
-setting which states that when a container reaches a certain utilization of the total concurrent requests it can handle, scale up a container. Again, you can specify this however you like.
+1. Use large CPU instances (10 CPUs, 8GB memory) for Twilio's <1s response requirement
+2. Run concurrent PipeCat processes:
+   - Each process uses ~0.5 CPUs
+   - 10 CPU instance handles 20 concurrent calls
+   - Adjust based on traffic needs
+
+For scaling criteria, use Cerebrium's `replica_concurrency` setting to spawn new containers based on utilization, preventing cold starts for subsequent calls.
 
 To make the two updates above you can update your cerebrium.toml to contain the following:
 
@@ -273,8 +281,6 @@ scaling_target = 80
 
 ### Conclusion
 
-Hopefully, this tutorial acts as a good starting point for you to implement voice into your application as well as extend it into image and vision capabilities. Pipecat is a
-extensible and open-source framework that makes it easy to build applications like this, and Cerebrium makes the process seamless to deploy and autoscale while only paying for the
-compute you need.
+This tutorial provides a foundation for implementing voice features and expanding into image and vision capabilities. PipeCat offers an extensible, open-source framework for building voice-enabled apps, while Cerebrium provides seamless deployment and autoscaling with pay-as-you-go compute.
 
-Tag us as **@cerebriumai** so we can see what you build and please feel free to ask questions/send feedback to us on [Slack](https://join.slack.com/t/cerebriumworkspace/shared_invite/zt-1qojg3eac-q4xyu5O~MeniNIg2jNeadg) or [Discord](https://discord.gg/ATj6USmeE2) communities
+Tag us as **@cerebriumai** to showcase your work and join our [Slack](https://join.slack.com/t/cerebriumworkspace/shared_invite/zt-1qojg3eac-q4xyu5O~MeniNIg2jNeadg) or [Discord](https://discord.gg/ATj6USmeE2) communities for questions and feedback.

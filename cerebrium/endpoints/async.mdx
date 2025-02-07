@@ -10,12 +10,11 @@ However, should you encounter an issue please reach out to us on Discord!
 
 </Note>
 
-Many applications require asynchronous execution of functions in a "fire-and-forget" fashion
-in order to work optimally. In this scenario, you hand off execution of a function to be Cerebrium's
-responsibility, while you as the developer are responsible for ensuring that data is able leave the function.
+Many apps require asynchronous execution of functions in a "fire-and-forget" fashion
+to work optimally. In this scenario, you hand off execution of a function to be Cerebrium's
+responsibility, while you as the developer are responsible for ensuring that data is able to leave the function.
 
-You can enable your function to execute asynchronously by adding the `async` query parameter to your request
-, and setting it to `true`. This would look something like this:
+You can enable your function to execute asynchronously by adding the `async` query parameter to your request and setting it to `true`. This would look something like this:
 
 ```bash
 curl -X POST https://api.cortex.cerebrium.ai/v4/<YOUR-PROJECT-ID>/<YOUR-APP>/run?async=true'\
@@ -49,7 +48,7 @@ If you terminate your function early and return a response while the application
 system will begin to terminate the application. Therefore, you should only return a response once the container
 has finished processing the task, and not earlier.
 
-In order to use async execution effectively, you must ensure that your function exports any relevant data you
+To use async execution effectively, you must ensure that your function exports any relevant data you
 need, since you will no longer be able to receive a request. An easy way to achieve this would be to combine
 async execution with a specified `webhookEndpoint`, to have Cerebrium automatically forward the body of
 the function response once it has returned:
@@ -61,6 +60,6 @@ curl -X POST <https://api.cortex.cerebrium.ai/v4/><YOUR-PROJECT-ID>/<YOUR-APP>/r
  --data '{"param": "hello world"}'
 ```
 
-As with webhooks, this a feature of our proxy, and you will not need to modify any part of your code in order to use the webhook
+As with webhooks, this a feature of our proxy, and you will not need to modify any part of your code to use the webhook
 functionality. In your dashboard, your function will be marked as **async**, but will still show the status of the internal synchronous call
 that was made (in other words, if the call to your function failed, the state of your async request would be `failure` etc.)

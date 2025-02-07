@@ -1,18 +1,17 @@
 ---
-title: "OpenAI Compatible Endpoints"
+title: "OpenAI-Compatible Endpoints"
 description: ""
 ---
 
-By default, all functions deployed on Cerebrium are a REST API that are accessible through an authenticated POST request. We have made all these endpoints OpenAI compatible whether it
-be <b>/chat/completions</b> or <b>/embedding</b>. Below we show you a very basic implementation of implementing a streaming OpenAI compatible endpoint.
+By default, all functions deployed on Cerebrium are a REST API that are accessible through an authenticated POST request. We have made all these endpoints OpenAI-compatible, whether they use `/chat/completions` or `/embedding`. Below we show you a very basic implementation of a streaming OpenAI-compatible endpoint.
 
-We recommend you checkout a full example of how to deploy a OpenAI compatible endpoint using vLLM [here](https://github.com/CerebriumAI/examples/tree/master/5-large-language-models/1-openai-compatible-endpoint)
+We recommend you check out a full example of how to deploy an OpenAI-compatible endpoint using vLLM [here](https://github.com/CerebriumAI/examples/tree/master/5-large-language-models/1-openai-compatible-endpoint).
 
-To create a streaming compatible endpoint, we need to make sure our cerebrium function:
+To create a streaming-compatible endpoint, we need to make sure our Cerebrium function:
 
-- Specifies all the parameters that OpenAI sends in the function signature
-- We return `yield data`. Where yield signifies we are streaming and data is the json serializable
-  object which we are returning to our user.
+- Specifies all the parameters that OpenAI sends in the function signature.
+- Returns `yield data`, where `yield` signifies we are streaming and `data` is the JSON-serializable
+  object that we are returning to our user.
 
 Here's a small snippet from the example listed above:
 
@@ -71,7 +70,7 @@ for chunk in chat_completion:
 print("Finished receiving chunks.")
 ```
 
-The output then looks like this
+The output then looks like this:
 
 ```
 Starting to receive chunks...

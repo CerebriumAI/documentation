@@ -1,16 +1,16 @@
 ---
-title: "Long Running Tasks"
+title: "Long-Running Tasks"
 ---
 
-<Note>This feature is currently *unavailable* in the v4 API,</Note>
+<Note>This feature is currently *unavailable* in the v4 API.</Note>
 
-There are cases where the model pipelines you are running are longer than what your clients would be willing to wait for or are longer than the 3-minute limit Cerebrium allows for on endpoints. Therefore you might want tasks to execute in the background and be alerted of them when they are completed.
+There are cases where the model pipelines you are running are longer than what your clients would be willing to wait for, or are longer than the 3-minute limit Cerebrium allows for on endpoints. Therefore, you might want tasks to execute in the background and be alerted of them when they are completed.
 
-Cerebrium automatically adds the following name parameter to every request object you send in - named **webhook_endpoint**. This means you can provide an endpoint for us to send with your model results. If we detect the parameter in your request, we will give you a response immediately with the run_id and status code 200. The results we send to your webhook_endpoint later will contain the same run_id so that you can make the link on your side. We will always alert your endpoint regardless of whether the function executes successfully or not. If the function fails, we will send you the error message.
+Cerebrium automatically adds the following name parameter to every request object you send in - named `webhook_endpoint`. This means you can provide an endpoint for us to send with your model results. If we detect the parameter in your request, we will give you a response immediately with the run_id and status code 200. The results we send to your webhook_endpoint later will contain the same run_id so that you can make the link on your side. We will always alert your endpoint regardless of whether the function executes successfully or not. If the function fails, we will send you the error message.
 
-Let us look at the example below which demonstrates how to use this feature:
+Let's look at the example below that demonstrates how to use this feature:
 
-We send the following request to our endpoint on Cerebrium that runs a LLama 2 70B:
+We send the following request to our endpoint on Cerebrium that runs a Llama 2 70B:
 
 ```bash
 curl --location --request POST 'https://run.cerebrium.ai/v3/xxxxxx/predict' \
@@ -33,7 +33,6 @@ Later response:
 
 ```bash
 {
-    {
   "run_id": "52eda406-b81b-43f5-8deb-fcf80dfsb74b",
   "message": "Finished inference request with run_id: `52eda406-b81b-43f5-8deb-fcf80d78b74b`",
   "result": {
@@ -41,6 +40,5 @@ Later response:
   },
   "status_code": 200,
   "run_time_ms": 3203.2923698425293
-}
 }
 ```
