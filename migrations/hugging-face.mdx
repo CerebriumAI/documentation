@@ -206,16 +206,16 @@ Make sure to replace `[CEREBRIUM_API_KEY]` with your Inference API key, which ca
 
 When migrating from Huggingface to Cerebrium, keep the following points in mind:
 
-1. **API structure**: The Cerebrium implementation uses a different API structure compared to Huggingface. Make sure to update your client-side code accordingly.
-2. **Authentication**: Ensure you have set up the `HF_AUTH_TOKEN` secret in Cerebrium for authenticating with Hugging Face. You can do this through the Cerebrium dashboard.
-3. **Model permissions**: The example uses the Llama 3.1 8B Instruct model. Ensure you have the necessary permissions to use this model, as it may require special access.
-4. **Hardware optimization**: The `cerebrium.toml` file specifies the hardware requirements. You may need to adjust these based on your specific model and performance needs.
-5. **Dependency management**: Regularly review and update the dependencies listed in `cerebrium.toml` to ensure you're using the latest compatible versions.
-6. **Scaling configuration**: The example sets up auto-scaling with 0 to 5 replicas and a 30-second cooldown. Monitor your usage patterns and adjust these parameters as needed to balance performance and cost.
-7. **Cold starts**: While Cerebrium handles cold starts more gracefully than Huggingface, be aware that the first request after a period of inactivity may still take longer to process. Set your cooldown period accordingly, to strike a balance between cost and performance.
-8. **Monitoring and logging**: Familiarize yourself with Cerebrium's monitoring and logging capabilities to track your model's performance and usage effectively.
-9. **Cost management**: Although Cerebrium's pay-per-use model can be more cost-effective, set up proper monitoring and alerts to avoid unexpected costs, especially if you're running large models or handling high volumes of requests.
-10. **Testing**: Thoroughly test your migrated models to ensure they perform as expected on the new platform. Pay special attention to response times, output quality, and error handling.
+1. **API structure**: The Cerebrium implementation uses a different API structure compared to Huggingface
+2. **Authentication**: Ensure you have set up the `HF_AUTH_TOKEN` secret in Cerebrium for authenticating with Hugging Face
+3. **Model permissions**: The example uses the Llama 3.1 8B Instruct model. Ensure you have the necessary permissions to use this model
+4. **Hardware optimization**: The `cerebrium.toml` file specifies the hardware requirements. Adjust these based on your specific model and performance needs
+5. **Dependency management**: Regularly review and update the dependencies listed in `cerebrium.toml` to ensure you're using the latest compatible versions
+6. **Scaling configuration**: The example sets up auto-scaling with 0 to 5 replicas and a 30-second cooldown. Monitor your usage patterns and adjust these parameters as needed
+7. **Cold starts**: While Cerebrium handles cold starts more gracefully than Huggingface, be aware that the first request after a period of inactivity may still take longer to process
+8. **Monitoring and logging**: Familiarize yourself with Cerebrium's monitoring and logging capabilities to track your model's performance and usage
+9. **Cost management**: Although Cerebrium's pay-per-use model can be more cost-effective, set up proper monitoring and alerts to avoid unexpected costs
+10. **Testing**: Thoroughly test your migrated models to ensure they perform as expected on the new platform
 
 ## Conclusion
 
@@ -223,7 +223,7 @@ Migrating from Huggingface inference endpoints to Cerebrium's serverless infrast
 
 **Remember:** Continuously monitor and optimize your deployment as you use it in production, and don't hesitate to reach out to support or join our Slack and Discord communities if you encounter any issues or have questions during the migration process.
 
-You can read further about some of the functionality Cerebrium has to offer, here:
+Read more about Cerebrium's functionality:
 
 - [Secrets](../cerebrium/environments/using-secrets)
 - [Model scaling](../cerebrium/environments/app-scaling)

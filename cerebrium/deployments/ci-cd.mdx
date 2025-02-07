@@ -11,9 +11,9 @@ respective branch, you can do so using the commands below. We will be using a Gi
 Cerebrium stores your credentials in the directory `~/.cerebrium/config.yaml`. If you run the command `cat ~/.cerebrium/config`, then
 you should see an output of three variables, namely:
 
-- accessToken.
-- refreshToken.
-- projectId.
+- accessToken
+- refreshToken
+- projectId
 
 We will need these in the next step.
 
@@ -26,8 +26,8 @@ Go to your GitHub repository → Settings → Environments
 You should create a new environment with a title of your choice ("prod" and "dev"). Within these environments, you have two types
 of variables you can work with:
 
-- Environment secrets: These are encrypted and do not show in your workflow logs.
-- Environment variables: These are not encrypted and will show in the workflow logs.
+- Environment secrets: These are encrypted and do not show in your workflow logs
+- Environment variables: These are not encrypted and will show in the workflow logs
 
 In our use case, we will store all our variables (accessToken, refreshToken, projectId) as secrets to keep the values hidden.
 

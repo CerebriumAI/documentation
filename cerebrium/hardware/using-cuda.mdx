@@ -23,10 +23,10 @@ torch = "latest" # PyTorch with graphics card support
 
 Some apps need direct access to CUDA system libraries and tools. The CUDA base image provides this complete CUDA toolkit environment. This is often necessary when apps:
 
-- Compile custom CUDA code.
-- Access low-level CUDA features.
-- Need specific CUDA driver versions.
-- Require CUDA development tools.
+- Compile custom CUDA code
+- Access low-level CUDA features
+- Need specific CUDA driver versions
+- Require CUDA development tools
 
 The base image can be set in the `cerebrium.toml` file:
 
@@ -43,9 +43,9 @@ Image size and complexity significantly impact cold-start performance - the time
 
 Base image choices affect cold-start times in several ways:
 
-- Development images (like `nvidia/cuda:*-devel`) include additional tools, increasing size.
-- Runtime images provide minimal dependencies for faster initialization.
-- Each additional layer or installed package increases the final image size.
+- Development images (like `nvidia/cuda:*-devel`) include additional tools, increasing size
+- Runtime images provide minimal dependencies for faster initialization
+- Each additional layer or installed package increases the final image size
 
 The final image size appears in the dashboard after build completion, helping track size optimization efforts.
 
