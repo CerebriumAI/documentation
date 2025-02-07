@@ -3,22 +3,22 @@ title: "Real-time Voice AI Agent"
 description: "Deploy a real-time voice AI agent"
 ---
 
-In this tutorial, I am going to create a real-time voice AI agent that can respond to any query via speech, in speech, in ~500ms. This is an extremely flexible implementation where you can swap in any Large Language model, Text-to-speech (TTS) model and Speech-to-text (STT) model of your liking. This is extremely useful for use cases involving voice such as customer service bots, receptionists and many more.
+In this tutorial, we'll create a real-time voice AI agent that responds to queries via speech in ~500ms. This flexible implementation lets you swap in any Large Language Model, Text-to-Speech (TTS) model, and Speech-to-Text (STT) model. It's ideal for voice-based use cases like customer service bots and receptionists.
 
-To create this application, we use the [PipeCat](https://www.pipecat.ai/), an open source framework for voice and multimodal conversational AI that handles some of the functionality we might need such as handling user interruptions, dealing with audio data etc. We will speak with our voice AI agent via a WebRTC transport, using [Daily](https://daily.co) (the creators of Pipecat) and will deploy this application on Cerebrium to show how it handles deploying and scaling our application seamlessly.
+To create this app, we use [PipeCat](https://www.pipecat.ai/), an open-source framework for voice and multimodal conversational AI that handles user interruptions, audio data, and other essential functions. We communicate with our voice AI agent via WebRTC transport using [Daily](https://daily.co) (PipeCat's creators) and deploy the app on Cerebrium for seamless deployment and scaling.
 
 You can find the final version of the code [here](https://github.com/CerebriumAI/examples/tree/master/6-voice/2-realtime-voice-agent)
 
 ### Cerebrium setup
 
-If you don’t have a Cerebrium account, you can create one by signing up [here](https://dashboard.cerebrium.ai/register) and following the documentation [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation) to get setup
+If you don't have a Cerebrium account, you can create one by signing up [here](https://dashboard.cerebrium.ai/register) and following the documentation [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation) to get set up.
 
 In your IDE, run the following command to create our Cerebrium starter project: `cerebrium init 2-realtime-voice-agent`. This creates two files:
 
-- **Main.py** - Our entrypoint file where our code lives
-- **cerebrium.toml** - A configuration file that contains all our build and environment settings
-  ‍
-  Add the following pip packages and hardware requirements near the bottom of your cerebrium.toml. This will be used in creating our deployment environment.
+- `main.py`: Our entrypoint file where our code lives.
+- `cerebrium.toml`: A configuration file that contains all our build and environment settings.
+
+Add the following pip packages and hardware requirements near the bottom of your `cerebrium.toml` to create your deployment environment:
 
 ```
 [cerebrium.deployment]
@@ -42,8 +42,7 @@ vllm = "latest"
 huggingface_hub = "latest"
 ```
 
-You will also see we specify a Docker base image above. The reason for this is Daily has supplied a Docker image that contains local [Deepgram](https://deepgram.com/) Speech-to-Text (STT) and Text-to-Speech (TTS) models.
-This helps us achieve our low latency since everything is running locally and not going over the network.
+We specify a Docker base image that contains local [Deepgram](https://deepgram.com/) Speech-to-Text (STT) and Text-to-Speech (TTS) models, provided by Daily. Running everything locally instead of over the network helps achieve low latency.
 
 <Note>
   Custom Docker files are not support yet but are rather in the works to be
@@ -84,9 +83,7 @@ server_process = Process(target=start_server, daemon=True)
 server_process.start()
 ```
 
-Pipecat currently doesn't support locally instantiated models and requires them to follow the OpenAI compatible format. Therefore we run the vLLM server locally on our instance in a background process.
-We monitor the background process to make sure it launched successfully since there seems to be a bug with rapidly starting multiple vLLM instances. If it doesn't launch correctly, we wait 5 seconds before trying again.
-We set the environment variable for OUTLINES_CACHE_DIR, this has to do with a disk I/O bug in outlines that vLLM uses. GitHub issue is [here](https://github.com/vllm-project/vllm/issues/4193)
+Since PipeCat requires models to follow the OpenAI-compatible format and doesn't support local instantiation, we run the vLLM server locally in a background process. We monitor the process for successful launch due to a known issue with rapidly starting multiple vLLM instances, retrying after 5 seconds if needed. We set the `OUTLINES_CACHE_DIR` environment variable to address a disk I/O bug in outlines used by vLLM (see GitHub issue [here](https://github.com/vllm-project/vllm/issues/4193)).
 
 Note, we are running the vLLM server on port **5000** (8000 is automatically used by Cerebrium) and we set the download directory of the model so that subsequent cold starts can be much quicker.
 
@@ -201,15 +198,11 @@ async def main(room_url: str, token: str = None):
             ))
 ```
 
-First, in our main function, we initialize the daily transport layer to receive/send the audio/video data from the Daily room we will connect to. You can see we pass the room_url
-we would like to join as well as a token to authenticate us programmatically joining. We also set our VAD stop seconds which is the amount of time we wait for a pause before our bot will respond - in this
-example, we set it to 200 milliseconds.
+In our main function, we initialize the Daily transport layer to handle audio/video data from the Daily room. We pass the room URL and authentication token for programmatic joining. We set the VAD stop seconds to 200 milliseconds, which defines the pause duration before the bot responds.
 
-Next we connect to our locally running Deepgram models that are part of our Docker base image we specified in our cerebrium.toml - these are running on port 8082. This is where the Pipecat framework helps convert audio data to text
-and vice versa. We then follow the same patten to connect our locally running LLM model from our vLLM server.
+Next, we connect to our locally running Deepgram models from our Docker base image on port 8082. The PipeCat framework handles audio-to-text and text-to-audio conversion. We then connect to our local LLM model from the vLLM server using the same pattern.
 
-Lastly, we then put this all together as a PipelineTask which is what Pipecat runs all together. The make up of a task is completely customizable and has support for Image and Vision use cases. You can read more [here](https://docs.pipecat.ai/docs/category/services).
-Pipeline tasks come with a parameters that make it easy to handle interruptions, swap models to our preference and much more only changing a few lines of code.
+Finally, we combine everything into a PipelineTask, which PipeCat executes. Tasks are fully customizable and support Image and Vision use cases (learn more [here](https://docs.pipecat.ai/docs/category/services)). Pipeline tasks include parameters for handling interruptions, swapping models, and other features with minimal code changes.
 
 In the code above, we are importing some helper functions at the top of our file to help with our implementation. You can copy the file from the github repository [here](https://github.com/CerebriumAI/examples/blob/master/18-realtime-voice-agent/helpers.py).
 Make sure to name the file **helpers.py**.
@@ -257,12 +250,9 @@ you can read more [here](https://docs.pipecat.ai/docs/understanding-bots/dailyai
 
 ### Starting Bot
 
-We can run our instance with a minimum number of instances by settings the "min_replicas" in our cerebrium.toml for the optimal user experience however we do also want to handle autoscaling use cases.
-We want to make sure the vLLM server is live before the bot joins the meeting and so we make a local GET request to check this.
-These models take about 40s to load into VRAM from disk.
+We set `min_replicas` in our `cerebrium.toml` to ensure optimal user experience while supporting autoscaling. Before the bot joins a meeting, we verify the vLLM server is running with a local GET request. Note that these models take about 40 seconds to load into VRAM from disk.
 
-Additionally, we need to run the above code in a separate execution environment so PipeCat does not get instantiate multiple instances. To do this, we need to run the above code as a
-background process. This will be the entry point of our REST API endpoint to start the PipeCat bot. Once the pipecat bot has returned (ie: the call has ended) then we will return a response to our API endpoint.
+We run the code in a separate execution environment to prevent multiple PipeCat instances. This background process serves as the entry point for our REST API endpoint to start the PipeCat bot. When the call ends and the bot returns, we send a response to our API endpoint.
 We therefore create the following function:
 
 <NOTE>
@@ -305,11 +295,9 @@ Let us now create a user facing UI in order for you to interface with this bot.
 
 ### Creating Meeting Room
 
-Cerebrium doesn't only have to be used to run AI heavy workloads, it can run any Python code. Therefore we define two functions for our demo that will create a room to join programmatically
-and a temporary token, both of which will only be usable for 5 minutes. To implement this, we use the Daily REST API.
+Cerebrium can run any Python code, not just AI workloads. For our demo, we define two functions that use the Daily REST API to create a room and temporary token, both valid for 5 minutes.
 
-We need to get our Daily developer token from our profile. If, you don't have an account you can sign up for one [here](https://dashboard.daily.co/u/signup) (they have a generous free tier).
-You can then go to the "developers" tab to fetch your API key - add this to your Cerebrium Secrets.
+Get your Daily developer token from your profile. If you don't have an account, sign up [here](https://dashboard.daily.co/u/signup) (they offer a generous free tier). Navigate to the "developers" tab to get your API key and add it to your Cerebrium Secrets.
 
 ![Daily API Key](/images/examples/voice_agent/daily-api-key.png)
 
@@ -388,6 +376,6 @@ You can now run yarn dev and go to the URL: http://localhost:5173/ to test your 
 
 ### Conclusion
 
-This tutorial acts as a good starting point for you to implement voice AI agents into your application as well as extend it into image and vision capabilities. Pipecat is an extensible and open-source framework that makes it easy to build applications using generative AI and Cerebrium makes the process seamless to deploy and auto scale while only paying for the compute you need.
+This tutorial provides a foundation for implementing voice AI agents in your app and extending into image and vision capabilities. PipeCat is an extensible, open-source framework for building generative AI apps, while Cerebrium provides seamless deployment and autoscaling with pay-as-you-go compute.
 
-Tag us as **@cerebriumai** so we can see what you build and please feel free to ask questions/send feedback to us on [Slack](https://join.slack.com/t/cerebriumworkspace/shared_invite/zt-1qojg3eac-q4xyu5O~MeniNIg2jNeadg) or [Discord](https://discord.gg/ATj6USmeE2) communities
+Tag us as **@cerebriumai** to showcase your work and join our [Slack](https://join.slack.com/t/cerebriumworkspace/shared_invite/zt-1qojg3eac-q4xyu5O~MeniNIg2jNeadg) or [Discord](https://discord.gg/ATj6USmeE2) communities for questions and feedback.

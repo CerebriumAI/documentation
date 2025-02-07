@@ -9,24 +9,21 @@ description: "Generate high quality images using SDXL with refiner"
   cerebrium` to upgrade it to the latest version.
 </Note>
 
-This is a simple tutorial on how to generate a high quality image using the SDXL refiner model located on [Huggingface](https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0) from Stability AI.
+This tutorial shows you how to generate high-quality images using the SDXL refiner model from Stability AI, available on [Hugging Face](https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0).
 
 To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/7-image-and-video/3-sdxl-refiner)
 
 ## Basic Setup
 
-It is important to think of the way you develop models using Cerebrium should be identical to developing on a virtual machine or Google Colab - so converting this should be very easy!
-Please make sure you have the Cerebrium package installed and have logged in. If not, please take a look at our docs [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation)
+Developing models with Cerebrium is similar to developing on a virtual machine or Google Colab, making conversion straightforward. Make sure you have the Cerebrium package installed and are logged in. If not, check our docs [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation).
 
-First we create our project:
+First, create your project:
 
 ```
 cerebrium init 2-sdxl-refiner
 ```
 
-It is important to think of the way you develop models using Cerebrium should be identical to developing on a virtual machine or Google Colab - so converting this should be very easy!
-
-To start, your cerebrium.toml file is where you can set your compute/environment. You cerebrium.toml file should look like:
+Configure your compute and environment settings in `cerebrium.toml`:
 
 ```toml
 
@@ -63,8 +60,7 @@ ffmpeg = "latest"
 
 ```
 
-We now need to create a **main.py** file which will contain our main Python code. This is a relatively simple implementation, so we can do everything in 1 file. We would like a user to send in a link to a YouTube video with a question and return to them the answer as well as the time segment of where we got that response.
-So let us define our request object.
+Create a `main.py` file for our Python code. This simple implementation can be done in a single file. First, let's define our request object:
 
 ```python
 from typing import Optional
@@ -87,12 +83,11 @@ class Item(BaseModel):
     num_images_per_prompt: int
 ```
 
-Above, we import all the various Python libraries we require as well as use Pydantic as our data validation library. Due to the way that we have defined the Base Model, "prompt" and "URL" are required parameters and so if they are not present in the request, the user will automatically receive an error message. Everything else is optional.
+We import the required Python libraries and use Pydantic for data validation. The `prompt` and `url` parameters are required, while all others are optional. Missing required parameters will trigger an automatic error message.
 
 ## Instantiate model
 
-Below, we load in our SDXL model. This will be downloaded during your deployment, however, in subsequent deploys or inference requests it will be automatically cached in your persistent storage for subsequent use. You can read more about persistent storage [here]()
-We do this outside our **predict** function since we only want this code to run on a cold start (ie: on startup). If the container is already warm, we just want it to do inference and it will execute just the **predict** function.
+We load the SDXL model outside the `predict` function since it only needs to be loaded once at startup. While the model downloads during initial deployment, it's automatically cached in persistent storage for subsequent use.
 
 ```python
 pipe = StableDiffusionXLImg2ImgPipeline.from_pretrained(
@@ -103,7 +98,7 @@ pipe = pipe.to("cuda")
 
 ## Predict Function
 
-Below we simply get the parameters from our request and pass it to the SDXL model to generate the image(s). You will notice we convert the images to base64, this is so we can return it directly instead of writing the files to an S3 bucket - the return of the predict function needs to be JSON serializable.
+The `predict` function takes parameters from the request and passes them to the SDXL model to generate images. We convert images to base64 for direct JSON-serializable responses instead of writing to S3.
 
 ```python
 def predict(prompt, url, negative_prompt=None, conditioning_scale=0.5, height=512, width=512, num_inference_steps=20,
@@ -145,13 +140,13 @@ def predict(prompt, url, negative_prompt=None, conditioning_scale=0.5, height=51
 
 ## Deploy
 
-To deploy the model use the following command:
+Deploy the model using this command:
 
 ```bash
 cerebrium deploy
 ```
 
-Once deployed, we can make the following request:
+After deployment, make this request:
 
 ```curl
 curl --location 'https://api.cortex.cerebrium.ai/v4/p-<YOUR PROJECT ID>/3-sdxl-refiner/predict' \
@@ -163,7 +158,7 @@ curl --location 'https://api.cortex.cerebrium.ai/v4/p-<YOUR PROJECT ID>/3-sdxl-r
 }''
 ```
 
-We then get the following results:
+The endpoint returns results in this format:
 
 ```json
 {
@@ -179,6 +174,6 @@ We then get the following results:
 }
 ```
 
-Our image looks like this:
+Example output:
 
 ![SDXL](/images/examples/sdxl-refiner.png)

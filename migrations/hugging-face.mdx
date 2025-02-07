@@ -9,32 +9,32 @@ This guide provides a detailed walkthrough for migrating from Hugging Face infer
 
 ## Comparing Hugging Face and Cerebrium
 
-Before diving into the migration process, let's compare the key features and performance metrics of Hugging Face inference endpoints and Cerebrium's serverless infrastructure platform.
+Before diving into the migration process, let's compare the key features and performance metrics between Hugging Face inference endpoints and Cerebrium's serverless infrastructure platform.
 
-| **Feature**                       | **Hugging Face**                                                    | **Cerebrium**                                                          |
-| --------------------------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| **Pricing**                       | $0.000278 per second                                                | $0.0004676 per second                                                  |
-| **Minimum cooldown period**       | 15m                                                                 | 1s                                                                     |
-| **First build timed**             | 9m25s                                                               | 49s                                                                    |
-| **Subsequent build times**        | 1m50s - 2m15s                                                       | 58s - 1m5s                                                             |
-| **Response time (From cold)**     | 1m45s - 1m48s                                                       | 8s - 17s                                                               |
-| **Response time (From warm)**     | 6s                                                                  | 2s                                                                     |
-| **Co-locating your models**       | Requires a separate repository for each inference endpoint and mode | Co-locate multiple models from various sources in a single application |
-| **Response handling (From cold)** | Throws an error                                                     | Waits for infrastructure to become available and returns a response    |
+| **Feature**                       | **Hugging Face**                                                    | **Cerebrium**                                                       |
+| --------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| **Pricing**                       | $0.000278 per second                                                | $0.0004676 per second                                               |
+| **Minimum cooldown period**       | 15m                                                                 | 1s                                                                  |
+| **First build timed**             | 9m25s                                                               | 49s                                                                 |
+| **Subsequent build times**        | 1m50s - 2m15s                                                       | 58s - 1m5s                                                          |
+| **Response time (From cold)**     | 1m45s - 1m48s                                                       | 8s - 17s                                                            |
+| **Response time (From warm)**     | 6s                                                                  | 2s                                                                  |
+| **Co-locating your models**       | Requires a separate repository for each inference endpoint and mode | Co-locate multiple models from various sources in a single app      |
+| **Response handling (From cold)** | Throws an error                                                     | Waits for infrastructure to become available and returns a response |
 
 ## Benefits of Migrating to Cerebrium
 
-1. **Faster build times**: Cerebrium significantly reduces build times by up to 95%, especially for subsequent builds (An additional 56% reduction). This can greatly improve iteration speed and the cost of running experiments with complex ML applications.
-2. **Flexible cooldown period**: With a minimum cooldown period of just 1 second (compared to Huggingface's 15 minutes), Cerebrium allows for more efficient resource utilization and cost management.
+1. **Faster build times**: Cerebrium significantly reduces build times by up to 95%, especially for subsequent builds (an additional 56% reduction). This can greatly improve iteration speed and the cost of running experiments with complex ML apps.
+2. **Flexible cooldown period**: With a minimum cooldown period of just 1 second (compared to Hugging Face's 15 minutes), Cerebrium allows for more efficient resource utilization and cost management.
 3. **Improved cold start handling**: When encountering a cold start, Cerebrium waits for the infrastructure to become available instead of throwing an error. This results in a better user experience and fewer failed requests.
-4. **Model colocation flexibility**: Cerebrium doesn't require a separate repository for each inference endpoint, simplifying the management of models. Each function in your application becomes an endpoint automatically, which means that you can run multiple models from the same application to save costs.
-5. **Pay-per-use model**: Cerebrium's pricing model ensures you only pay for the compute resources you actually use. This can lead to cost savings, especially for sporadic or low-volume inference needs.
-6. **Competitive performance**: Cerebrium only adds up to 50ms of latency to your inference requests. This is why we’re able to outperform our competitors in response times from a warm start. In addition, our caching mechanisms and highly optimized orchestration pipelines help your applications start from a cold state in an average of 2-5 seconds.
+4. **Model colocation flexibility**: Cerebrium doesn't require a separate repository for each inference endpoint, simplifying the management of models. Each function in your app becomes an endpoint automatically, which means that you can run multiple models from the same app to save costs.
+5. **Pay-per-use model**: Cerebrium's pricing model ensures you pay only for the compute resources you actually use. This can lead to cost savings, especially for sporadic or low-volume inference needs.
+6. **Competitive performance**: Cerebrium only adds up to 50ms of latency to your inference requests. This is why we're able to outperform our competitors in response times from a warm start. In addition, our caching mechanisms and highly optimized orchestration pipelines help your apps start from a cold state in an average of 2-5 seconds.
 7. **Customizable infrastructure**: Cerebrium allows for fine-grained control over the infrastructure specifications, enabling you to optimize for your specific use case.
 
 ## Migration process
 
-Let's walk through the process of migrating a Llama 3.1 8B model from Huggingface to Cerebrium. We'll cover the entire process from setting up the configuration to deploying and using the model.
+Let's walk through the process of migrating a Llama 3.1 8B model from Hugging Face to Cerebrium. We'll cover the entire process from setting up the configuration to deploying and using the model.
 
 ### 1. Cerebrium setup and configuration
 
@@ -50,7 +50,7 @@ pip install cerebrium --upgrade
 
 #### 1.2 Update your requirements file
 
-Scaffold your application by running `cerebrium init [PROJECT_NAME]`. During the initialisation, a `cerebrium.toml`is created. This file configures the deployment, hardware, scaling, and dependencies for your Cerebrium project. Update your `cerebrium.toml` file to reflect the following:
+Scaffold your application by running `cerebrium init [PROJECT_NAME]`. During the initialization, a `cerebrium.toml` is created. This file configures the deployment, hardware, scaling, and dependencies for your Cerebrium project. Update your `cerebrium.toml` file to reflect the following:
 
 ```toml
 [cerebrium.deployment]
@@ -206,16 +206,16 @@ Make sure to replace `[CEREBRIUM_API_KEY]` with your Inference API key, which ca
 
 When migrating from Huggingface to Cerebrium, keep the following points in mind:
 
-1. **API structure**: The Cerebrium implementation uses a different API structure compared to Huggingface. Make sure to update your client-side code accordingly.
-2. **Authentication**: Ensure you have set up the `HF_AUTH_TOKEN` secret in Cerebrium for authenticating with Hugging Face. You can do this through the Cerebrium dashboard.
-3. **Model permissions**: The example uses the Llama 3.1 8B Instruct model. Ensure you have the necessary permissions to use this model, as it may require special access.
-4. **Hardware optimization**: The `cerebrium.toml` file specifies the hardware requirements. You may need to adjust these based on your specific model and performance needs.
-5. **Dependency management**: Regularly review and update the dependencies listed in `cerebrium.toml` to ensure you're using the latest compatible versions.
-6. **Scaling configuration**: The example sets up auto-scaling with 0 to 5 replicas and a 30-second cooldown. Monitor your usage patterns and adjust these parameters as needed to balance performance and cost.
-7. **Cold starts**: While Cerebrium handles cold starts more gracefully than Huggingface, be aware that the first request after a period of inactivity may still take longer to process. Set your cooldown period accordingly, to strike a balance between cost and performance.
-8. **Monitoring and logging**: Familiarize yourself with Cerebrium's monitoring and logging capabilities to track your model's performance and usage effectively.
-9. **Cost management**: Although Cerebrium's pay-per-use model can be more cost-effective, set up proper monitoring and alerts to avoid unexpected costs, especially if you're running large models or handling high volumes of requests.
-10. **Testing**: Thoroughly test your migrated models to ensure they perform as expected on the new platform. Pay special attention to response times, output quality, and error handling.
+1. **API structure**: The Cerebrium implementation uses a different API structure compared to Huggingface
+2. **Authentication**: Ensure you have set up the `HF_AUTH_TOKEN` secret in Cerebrium for authenticating with Hugging Face
+3. **Model permissions**: The example uses the Llama 3.1 8B Instruct model. Ensure you have the necessary permissions to use this model
+4. **Hardware optimization**: The `cerebrium.toml` file specifies the hardware requirements. Adjust these based on your specific model and performance needs
+5. **Dependency management**: Regularly review and update the dependencies listed in `cerebrium.toml` to ensure you're using the latest compatible versions
+6. **Scaling configuration**: The example sets up auto-scaling with 0 to 5 replicas and a 30-second cooldown. Monitor your usage patterns and adjust these parameters as needed
+7. **Cold starts**: While Cerebrium handles cold starts more gracefully than Huggingface, be aware that the first request after a period of inactivity may still take longer to process
+8. **Monitoring and logging**: Familiarize yourself with Cerebrium's monitoring and logging capabilities to track your model's performance and usage
+9. **Cost management**: Although Cerebrium's pay-per-use model can be more cost-effective, set up proper monitoring and alerts to avoid unexpected costs
+10. **Testing**: Thoroughly test your migrated models to ensure they perform as expected on the new platform
 
 ## Conclusion
 
@@ -223,7 +223,7 @@ Migrating from Huggingface inference endpoints to Cerebrium's serverless infrast
 
 **Remember:** Continuously monitor and optimize your deployment as you use it in production, and don't hesitate to reach out to support or join our Slack and Discord communities if you encounter any issues or have questions during the migration process.
 
-You can read further about some of the functionality Cerebrium has to offer, here:
+Read more about Cerebrium's functionality:
 
 - [Secrets](../cerebrium/environments/using-secrets)
 - [Model scaling](../cerebrium/environments/app-scaling)

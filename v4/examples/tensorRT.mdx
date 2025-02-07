@@ -9,26 +9,26 @@ description: "Achieve high throughput with the TensorRT-LLM framework"
   cerebrium` to upgrade it to the latest version.
 </Note>
 
-In this tutorial blog post, we will guide you through the process of implementing the TensorRT-LLM framework to serve Llama 3 8B model on the Cerebrium platform. TensorRT-LLM is a powerful framework that can be used to optimise machine learning models for inference. It can lead to significant improvements in performance, especially in terms of inference speed and throughput.
+In this tutorial, we will guide you through implementing the TensorRT-LLM framework to serve the Llama 3 8B model on the Cerebrium platform. TensorRT-LLM is a powerful framework for optimizing machine learning models for inference, leading to significant improvements in performance, especially in inference speed and throughput.
 
-We will achieve ~1700 output tokens per second on a single Nvidia A10 instance however you can go up to ~4500 output tokens per second on a single Nvidia A100 40GB instance or even ~19,000 tokens on a H100. For further improvements, you can use speculative sampling or FP8 quantisation to increase latency and throughput. You can view the official benchmarks across different GPU types, model sizes and input/output token lengths [here](https://github.com/NVIDIA/TensorRT-LLM/blob/71d8d4d3dc655671f32535d6d2b60cab87f36e87/docs/source/performance.md).
+We will achieve approximately 1,700 output tokens per second on a single NVIDIA A10 instance. You can achieve up to 4,500 output tokens per second on a single NVIDIA A100 40GB instance or even 19,000 tokens on an H100. For further improvements, you can use speculative sampling or FP8 quantization to increase latency and throughput. View the official benchmarks across different GPU types, model sizes, and input/output token lengths [here](https://github.com/NVIDIA/TensorRT-LLM/blob/71d8d4d3dc655671f32535d6d2b60cab87f36e87/docs/source/performance.md).
 
 ### Overview
 
-TensorRT-LLM is a specialised library within NVIDIA's TensorRT, a high-performance deep learning inference platform. It is designed to accelerate large language models (LLMs) using NVIDIA GPUs. It can significantly improve the performance of your machine learning models however it comes at the expense of a very complicated setup process.
+TensorRT-LLM is a specialized library within NVIDIA's TensorRT, a high-performance deep learning inference platform. It is designed to accelerate large language models (LLMs) using NVIDIA GPUs. While it can significantly improve the performance of your machine learning models, it requires a complex setup process.
 
-You are required to convert and build the model using very specific arguments that replicate your workloads as closely as possible. If you don’t configure these steps properly, you might witness subpar performance and subsequently it will become very complicated to deploy. We will cover these concepts in depth throughout the tutorial.
+You must convert and build the model using specific arguments that replicate your workloads as closely as possible. Improper configuration can lead to subpar performance and deployment complications. We will cover these concepts in depth throughout this tutorial.
 
 ### Cerebrium Setup
 
-If you don’t have a Cerebrium account, you can create one by signing up here and following the documentation [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation) to get setup
+If you don't have a Cerebrium account, you can create one by signing up [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation) and following the documentation to get set up.
 
 In your IDE, run the following command to create our Cerebrium starter project: `cerebrium init llama-3b-tensorrt`. This creates two files:
 
-- main.py - Our entrypoint file where our code lives
-- cerebrium.toml - A configuration file that contains all our build and environment settings
+- `main.py`: Our entrypoint file where our code lives.
+- `cerebrium.toml`: A configuration file that contains all our build and environment settings.
 
-TensorRT-LLM has a demo implementation of Llama on its GitHub repo which you can look at here. The first thing you will notice is that TensorRT-LLM requires Python 3.10. Subsequently, the code that converts the model weights to the TensorRT format requires a lot of memory and so we need to set this in our configuration file. Please change your cerebrium.toml file to reflect the below:
+TensorRT-LLM has a demo implementation of Llama on its GitHub repository. TensorRT-LLM requires Python 3.10, and the code that converts model weights to the TensorRT format requires significant memory. Update your `cerebrium.toml` file with the following configuration:
 
 ```
 [cerebrium.deployment]
@@ -47,9 +47,9 @@ memory = 40.0
 gpu_count = 1
 ```
 
-The most important decision to make is to decide what GPU chip you would like to run on. Larger models, longer sequence lengths and bigger batches all require more GPU memory and so if throughput is your desired metric, we recommend using a A100/H100. In this example we went with a A10 which gives a good cost/performance trade-off. Also, there is no capacity shortages and so its more stable for low-latency enterprise workloads. However, if this is a requirement for you - please reach out.
+The most important decision is choosing your GPU chip. Larger models, longer sequence lengths, and bigger batches all require more GPU memory. If throughput is your primary metric, we recommend using an A100/H100. In this example, we use an A10, which offers a good cost-to-performance ratio and stable availability for low-latency enterprise workloads. If you have specific requirements, please reach out.
 
-Let us then install the required pip and apt requirements. You can add the following to your cerebrium.toml
+Next, install the required pip and apt requirements by adding the following to your `cerebrium.toml`:
 
 ```
 [cerebrium.dependencies.pip]
@@ -75,25 +75,25 @@ openmpi-bin = "latest"
 libopenmpi-dev = "latest"
 ```
 
-We want to install the tensorrt_llm package after the above installs and want to grab it from the Nvidia PyPI index url. To do this, we use shell commands which allows you to run command line arguments during the build process - this happens as the last step of the build process (ie: post pip, apt and conda installs).
+We need to install the `tensorrt_llm` package from the NVIDIA PyPI index URL after the above installations. We'll use shell commands to run command-line arguments during the build process (after pip, apt, and conda installations).
 
-Add the following under [cerebrium.build] in your cerebrium.toml:
+Add the following under `[cerebrium.build]` in your `cerebrium.toml`:
 
 ```
 shell_commands = [ "pip install tensorrt_llm -U --pre --extra-index-url https://pypi.nvidia.com https://pypi.nvidia.com/"]
 ```
 
-We then need to write an initial code in our main.py that will:
+We need to write initial code in our `main.py` that will:
 
-- Download Llama 3 7B from HuggingFace
-- Convert the model checkpoints
-- Build the TensorTRT-LLM inference engine.
+- Download Llama 3 7B from Hugging Face.
+- Convert the model checkpoints.
+- Build the TensorRT-LLM inference engine.
 
-At the moment, Cerebrium does not have a way to run code only during the build process (work in progress) however, one easy way for us to side step this is to check if the file output from the trtllm-build step already exists meaning its been converted.
+Currently, Cerebrium cannot run code exclusively during the build process (work in progress). However, we can check if the file output from the `trtllm-build` step exists to determine if the model has been converted.
 
-To start we need to go to HuggingFace and accept the model permissions for [Lllama 8B](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct) if we haven’t already. It takes about 30 minutes or less for them to accept your request. Since HuggingFace requires you to be authenticated to download the model weights, we need to authenticate ourselves in Cerebrium before downloading the model.
+First, go to Hugging Face and accept the model permissions for [Llama 8B](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct) if you haven't already. Approval typically takes 30 minutes or less. Since Hugging Face requires authentication to download model weights, we need to authenticate in Cerebrium before downloading the model.
 
-In your Cerebrium dashboard, you can add your HuggingFace token as a secret by navigating to “Secrets” in the sidebar. For the sake of this tutorial I called mine “HF_AUTH_TOKEN”. We can now access these values in our code at runtime without exposing them in our code.
+In your Cerebrium dashboard, add your Hugging Face token as a secret by navigating to "Secrets" in the sidebar. For this tutorial, we'll name it "HF_AUTH_TOKEN". This allows us to access the token at runtime without exposing it in our code.
 
 You can then add the following code to your main.py to download the model:
 
@@ -129,11 +129,11 @@ This downloads the specific script file to your instance. Shell commands works a
 
 ### Converting and Compiling TensorRT-LLM engine
 
-Below we convert the model into float16 format, the reason being that it results in marginally higher performance over float32. You can go even further and use the quantised model (FP8) which will give you the lowest latency.
+Below, we convert the model into float16 format for marginally higher performance compared to float32. For even lower latency, you can use the quantized model (FP8).
 
-What allows TensorRT-LLM to achieve its high throughput is that it is compiled in advance to predefined settings which you set based on your expected workloads. This therefore makes concrete choices of the CUDA kernels to execute for each operation which are then optimized for specific types and shapes of tensors for the specific hardware it runs on.
+TensorRT-LLM achieves high throughput by compiling in advance with predefined settings based on your expected workloads. This enables concrete choices of CUDA kernels for each operation, optimized for specific tensor types and shapes on your target hardware.
 
-So we need to specify the maximum input and output lengths as well as the typical batch size. The closer these values are to production, the higher our throughput will be. There are many different options you can pass to the command trtllm-build to tune the engine for your specific workload, we selected just two plugins that accelerate two core components. You can read more about the plugin options [here](https://fetch.ai/blog/advancing-llm-optimization).
+We need to specify the maximum input and output lengths and the typical batch size. The closer these values match production conditions, the higher our throughput will be. The `trtllm-build` command offers many options to tune the engine for your specific workload. Here, we've selected two plugins that accelerate core components. Learn more about plugin options [here](https://fetch.ai/blog/advancing-llm-optimization).
 
 We then need to run the convert_checkpoint script and then run the trtllm-build script to build the TensorTRT-LLM model. You can add the following code to your main.py:
 
@@ -178,8 +178,7 @@ else:
 
 You will see we run these command line arguments as a subprocess. The reason I did it like this and not as shell commands is:
 
-Currently Cerebrium doesn’t support Secrets in shell commands and I need the model to be downloaded before I can continue with the other model conversion steps.
-It seems much cleaner to reuse variables and use subprocesses than squash everything in the cerebrium.toml file.
+Currently, Cerebrium doesn't support secrets in shell commands, and we need the model downloaded before continuing with conversion steps. Using subprocesses allows cleaner variable reuse compared to putting everything in the `cerebrium.toml` file.
 Model Instantiation
 Now that our model is converted with our specifications, let us initialise the model and set it up based on our requirements. This code will run on every cold start and takes roughly ~10-15s to load the model into GPU memory. If the container is warm, it will run your predict function immediately which we talk about in the next section.
 
@@ -316,9 +315,9 @@ def predict(prompt, temperature, top_k, top_p, repetition_penalty, num_tokens, p
     }
 ```
 
-Now that our code is deployed, we can deploy the application with the command: cerebrium deploy.
+Now that our code is ready, deploy the app with the command: `cerebrium deploy`.
 
-On initial deploy, it will take about 15-20 minutes since besides installing all your packages and dependencies, it will download the model and convert it to the TensorRT-LLM format. Once completed, it should output a curl which you can copy and paste to test your inference endpoint.
+Initial deployment takes about 15-20 minutes to install packages, download the model, and convert it to the TensorRT-LLM format. Once completed, it outputs a curl command you can use to test your inference endpoint.
 
 ```
 curl --location 'https://api.cortex.cerebrium.ai/v4/p-xxxxxx/predict' \\
@@ -327,6 +326,6 @@ curl --location 'https://api.cortex.cerebrium.ai/v4/p-xxxxxx/predict' \\
 --data '{"prompt": "Tell me about yourself?"}'
 ```
 
-TensorRT-LLM is one of the top performing inference frameworks on the market and especially if you know details about your expected future workloads. You should now have a low latency endpoint with high throughput that can auto-scale to tens of thousands of inferences all while only paying for the compute you use.
+TensorRT-LLM is one of the top-performing inference frameworks, especially when you know your expected workload details. You now have a low-latency endpoint with high throughput that can auto-scale to tens of thousands of inferences while only paying for the compute you use.
 
 To view the final version of the code, you can look [here](https://github.com/CerebriumAI/examples/tree/master/15-tensor-trt).

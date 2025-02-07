@@ -11,20 +11,18 @@ description: "Deploy a ComfyUI application"
 
 ### Introduction
 
-ComfyUI is a popular no-code interface for building complex stable diffusion workflows. Due to its ease of use, modular setup as well as its intuitive flowchart interface, the community of ComfyUI users has built a pretty phenomenal collection of workflows! There are even websites dedicated to the sharing of workflows built to help get you started:
+ComfyUI is a popular no-code interface for building complex stable diffusion workflows. Its ease of use, modular setup, and intuitive flowchart interface have helped the community build an extensive collection of workflows. Several websites offer shared workflows to help you get started:
 
 - https://comfyworkflows.com/
 - https://openart.ai/workflows/home‍
 
-While it is currently easy to experiment with ComfyUI workflows, there isn’t a lot of guidance or tutorials on how to productionize these workflows at scale. In this tutorial, I am going to show you how you can use Cerebrium to deploy your pipelines to an API endpoint so they can autoscale based on demand and that you only pay for the compute you use. You can find the full example code [here](https://github.com/CerebriumAI/examples/tree/master/7-image-and-video/1-comfyui).
+While experimenting with ComfyUI workflows is straightforward, guidance on production-scale deployment is limited. This tutorial shows how to use Cerebrium to deploy your pipelines as autoscaling API endpoints with pay-as-you-go compute costs. You can find the full example code [here](https://github.com/CerebriumAI/examples/tree/master/7-image-and-video/1-comfyui).
 
 ### Creating your Comfy UI workflow locally
 
-We first need to create our workflow which you can do locally on your machine or by renting a GPU from [Lambda Labs](https://lambdalabs.com/).
+Create your workflow either locally or using a rented GPU from [Lambda Labs](https://lambdalabs.com/). First, ensure [ComfyUI is installed](https://github.com/comfyanonymous/ComfyUI#installing) in your local environment.
 
-Before we get started, make sure ComfyUI is [installed properly on your local environment](https://github.com/comfyanonymous/ComfyUI#installing).
-
-For our use case, we are going to use Stable Diffusion XL and ControlNet to create a cool QR code. If you have a existing workflow setup, you can simply skip to the step “Export ComfyUI Workflow”
+This tutorial uses Stable Diffusion XL and ControlNet to create custom QR codes. If you already have a workflow, skip to "Export ComfyUI Workflow".
 
 1. Let us first create our Cerebrium project with: `cerebrium init 1-comfyui`
 2. Inside your project, lets copy the ComfyUI GitHub project: `git clone https://github.com/comfyanonymous/ComfyUI`
@@ -53,9 +51,14 @@ You should then see that a button appear on the right hover box that reads “Sa
 
 ### ComfyUI Application
 
-Our main application code lives in main.py so we now use the exported ComfyUI API workflow file above to create an API endpoint for our workflow. In the code below we initialize the ComfyUI server and load in our workflow API template. In our predict function, we then send in the various values we would like to alter in our workflow ie: prompt, image and run the workflow. Our function then users the inputs to alter the ComfyUI workflow values and then generates the output which in this case is base64 encoded images.
+The main code in `main.py` uses the exported ComfyUI API workflow to create an endpoint. The code:
 
-In Cerebrium, the code outside the predict function runs only on initialization (ie: startup) whereas subsequent requests will only run the predict function.
+1. Initializes the ComfyUI server
+2. Loads the workflow API template
+3. Processes inputs (prompts, images) through the `predict` function
+4. Generates base64-encoded image outputs
+
+Note: Cerebrium runs code outside the `predict` function only during initialization, while the `predict` function handles all subsequent requests.
 
 We need to alter our workflow_api.json file to have placeholders so that we can replace user values on inference. You can alter the file as follows.
 
@@ -166,7 +169,7 @@ def predict(workflow_values=None, run_id, logger):
 
 ### Deploy ComfyUI Application
 
-If we run cerebrium deploy it will upload the ComfyUI directory and our ~10GB of model weights so if you have a slow internet connection this can be a pain. However, in our repo we have a helper file that will download the models weights for us and put it in the appropriate folder. Create a file called model.json with the following contents:
+Running `cerebrium deploy` uploads both the ComfyUI directory and ~10GB of model weights. For slower connections, use our helper file to download model weights directly to the appropriate folders. Create a file called model.json with the following contents:
 
 ```
 [
@@ -181,7 +184,7 @@ If we run cerebrium deploy it will upload the ComfyUI directory and our ~10GB of
 ]
 ```
 
-This file is basically telling our helper function the URL to download the model from, and the directory to save the file in. It will only download the file on first deploy. On subsequent deploys, we wrote the logic to skip downloading the model if the file already exists.
+This configuration tells the helper function where to download models from and where to save them. Models download only on first deployment, with subsequent deploys checking for existing files.
 
 This is what your file folder structure should look like:
 
@@ -213,4 +216,4 @@ You will get two responses from the output:
 
 ### Conclusion
 
-With Cerebrium, companies can implement productionized instances of their ComfyUI workflows to create unique user experiences. Users can have peace of mine that their workloads will autoscale with demand and will only charge based on the compute used. We are excited to see what you build and please tag @cerebriumai so we can share your work
+Cerebrium enables companies to deploy production-ready ComfyUI workflows for unique user experiences. Workloads automatically scale with demand, and costs align with actual compute usage. Share your creations by tagging @cerebriumai!

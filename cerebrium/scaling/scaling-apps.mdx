@@ -154,8 +154,8 @@ scaling relative to 0GB of memory, it is required that `min_replicas=1` if using
 
 ## Keeping a Scaling Buffer
 
-In certain use-cases where app startup time or total request time is long and traffic is predicatable, a consistent excess capacity
-which is dynamically added to the app's current required capacity may be needed in order to meet adequate request throughput.
+In certain use-cases where app startup time or total request time is long and traffic is predictable, a consistent excess capacity
+which is dynamically added to the app's current required capacity may be needed to meet adequate request throughput.
 Cerebrium provides a replica buffer mechanism to cater for this, whereby the scaling system aims to keep a specific excess replica capacity
 available at all times above what the scaling metric suggests. This is done through the `scaling_buffer` option in the config. Currently, this
 is only available when using the following scaling metrics:
