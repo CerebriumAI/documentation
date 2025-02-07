@@ -3,9 +3,9 @@ title: "Hyperparameter Sweep training Llama 3.2 with WandB"
 description: "Run a hyperparameter sweep on Llama 3.2 with WandB"
 ---
 
-Finding the perfect combination of hyperparameters for machine learning models can feel overwhelming, but when done well, it can transform a good model into a great one. Hyperparameter sweeps help you find the best-performing model while minimizing compute costs and training time by systematically testing variations to uncover optimal results.
+When training machine learning models, finding the perfect combination of hyper parameters can feel overwhelming however if you do it well, it can turn a good model into a great one! Hyper parameter sweeps help you find the best performing model for the least amount of compute or time spent training - think of them as your systematic approach to testing every variation to uncover the best result.
 
-In this tutorial, we'll train Llama 3.2 using [Weights & Biases](https://wandb.ai/site) (W&B) for hyperparameter optimization. We'll leverage Cerebrium's serverless GPUs to scale our experiments, finding the best-performing model faster than ever.
+In this tutorial, we'll walk through training Llama 3.2, using [Wandb](https://wandb.ai/site) (Weights and Biases) to run hyper parameter sweeps to optimize its performance and we'll leverage Cerebrium to scale our experiments across serverless GPUs, allowing us to find the best-performing model faster than ever.
 
 If you would like to see the final version of this tutorial, you can view it on Github [here](https://github.com/CerebriumAI/examples/tree/master/12-training/1-wandb-sweep).
 
@@ -13,15 +13,21 @@ Read this section if you're unfamiliar with sweeps.
 
 ### Analogy: Pizza Topping Sweep
 
-Think of hyperparameter optimization like finding the perfect pizza combination. You have three variables:
+Forget about ML for a second. Imagine you're making pizzas, and you want to discover the most delicious combination of toppings. You can change three things about your pizza:
 
-- **Cheese Type**: mozzarella, cheddar, parmesan
-- **Sauce Type**: tomato, pesto
-- **Extra Topping**: pepperoni, mushrooms, olives
+• **Type of Cheese** (mozzarella, cheddar, parmesan)
 
-With 12 possible combinations, finding the best requires systematic testing. This is similar to a **hyperparameter sweep**, where cheese, sauce, and topping are your parameters.
+• **Type of Sauce** (tomato, pesto)
 
-Testing one pizza at a time is slow, but with 12 ovens (like GPUs), you can test all combinations simultaneously. Cerebrium lets you run parallel experiments across multiple GPUs (12 or even 1,000), finding the optimal model configuration quickly and efficiently.
+• **Extra Topping** (pepperoni, mushrooms, olives)
+
+There are 12 possible combinations of pizzas you can make. One of them will taste the best!
+
+To find out which pizza is the tastiest, you need to try all the combinations and rate them. This process is called a **hyperparameter sweep**. Your three hyperparameters are the cheese, sauce, and extra topping.
+
+If you do it one pizza at a time, it could take hours. But if you had 12 ovens, you could bake all the pizzas at once and find the best one in just a few minutes!
+
+If a kitchen is a GPU, then you need 12 GPUs to run each experiment to see which cookie is the best. The power of Cerebrium is the ability to run sweeps like this on 12 different GPUs (or 1,000 GPUs if you'd like) to get you the best version of a model fast.
 
 ### Setup Cerebrium
 
