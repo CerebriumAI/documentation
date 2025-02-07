@@ -32,10 +32,10 @@ entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000"]
 healthcheck_endpoint = "/health"
 
 [cerebrium.dependencies.pip]
-pydantic = "*"
-numpy = "*"
-loguru = "*"
-fastapi = "*"
+pydantic = "latest"
+numpy = "latest"
+loguru = "latest"
+fastapi = "latest"
 ```
 
 The configuration requires three key parameters:
