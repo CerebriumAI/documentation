@@ -15,7 +15,7 @@ A tool refers to any framework, utility, or system with defined functionality fo
 
 Key LangChain concepts:
 
-1. `ChatModel.bind_tools()`: Attaches tool definitions to model calls. While providers have different tool definition formats, LangChain provides a standard interface for versatility. Accepts tool definitions as dictionaries, Pydantic classes, LangChain tools, or functions, telling the LLM how to use each tool.
+`ChatModel.bind_tools()`: Attaches tool definitions to model calls. While providers have different tool definition formats, LangChain provides a standard interface for versatility. Accepts tool definitions as dictionaries, Pydantic classes, LangChain tools, or functions, telling the LLM how to use each tool.
 
 ```python
 @tool
@@ -24,7 +24,7 @@ def exponentiate(x: float, y: float) -> float:
     return x**y
 ```
 
-2. `AIMessage.tool_calls`: An attribute on AIMessage that provides easy access to model-initiated tool calls, specifying invocations in the bind_tools format:
+`AIMessage.tool_calls`: An attribute on AIMessage that provides easy access to model-initiated tool calls, specifying invocations in the bind_tools format:
 
 ```python
 # -> AIMessage(
@@ -36,7 +36,7 @@ def exponentiate(x: float, y: float) -> float:
 #   )
 ```
 
-3. `create_tool_calling_agent()`: Unifies the above concepts to work across different provider formats, enabling easy model switching.
+`create_tool_calling_agent()`: Unifies the above concepts to work across different provider formats, enabling easy model switching.
 
 ```python
 agent = create_tool_calling_agent(llm, tools, prompt)
