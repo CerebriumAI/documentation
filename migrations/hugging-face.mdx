@@ -94,13 +94,13 @@ Next, Update your `main.py` file. This is where you'll define your model loading
 
 ```python
 import torch
-from cerebrium import get_secret
+import os
 from huggingface_hub import login
 from pydantic import BaseModel
 from transformers import AutoModelForCausalLM, AutoTokenizer, GenerationConfig
 
 # Log into Hugging Face Hub
-login(token=get_secret("HF_AUTH_TOKEN"))
+login(token=os.environ.get("HF_AUTH_TOKEN"))
 
 model_path = "meta-llama/Meta-Llama-3.1-8B-Instruct"
 cache_directory = "/persistent-storage"

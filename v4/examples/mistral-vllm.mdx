@@ -56,11 +56,12 @@ We use Pydantic for data validation. The `prompt` parameter is required, while o
 ## Model Setup
 
 ```python
+import os
 from vllm import LLM, SamplingParams
 from huggingface_hub import login
-from cerebrium import get_secret
 
-login(token=get_secret("HF_AUTH_TOKEN"))  # HF_AUTH_TOKEN should be stored in your project secrets
+# Your huggingface token (HF_AUTH_TOKEN) should be stored in your project secrets on your dashboard
+login(token=os.environ.get("HF_AUTH_TOKEN"))
 
 # Initialize model with optimized settings
 llm = LLM(model="mistralai/Mistral-7B-Instruct-v0.1", dtype="bfloat16", max_model_len=20000, gpu_memory_utilization=0.9)
