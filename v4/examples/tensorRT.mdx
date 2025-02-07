@@ -99,9 +99,8 @@ You can then add the following code to your main.py to download the model:
 
 ```python
 from huggingface_hub import snapshot_download
-from cerebrium import get_secret
 
-huggingface_hub.login(token=get_secret("HF_AUTH_TOKEN"))
+huggingface_hub.login(token=os.environ.get("HF_AUTH_TOKEN"))
 
 MODEL_ID="meta-llama/Meta-Llama-3-8B-Instruct"
 MODEL_DIR="/persistent-storage/model_input"
