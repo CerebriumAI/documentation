@@ -1,13 +1,17 @@
 ---
-title: "Roll-out Duration"
+title: "Gradual Roll-out"
 description: "Control the transition between revisions during deployments"
 ---
+
+<Note>This feature is available in CLI versions 1.38.0+</Note>
 
 The `roll_out_duration_seconds` parameter in the `[cerebrium.scaling]` section of your `cerebrium.toml` file controls how quickly traffic transitions between revisions after a successful build.
 
 ## Overview
 
-When you deploy a new version of your application, Cerebrium creates a new revision. The `roll_out_duration_seconds` parameter determines how long it takes to transition traffic from the old revision to the new one.
+When you deploy a new version of your app, Cerebrium creates a new revision. The `roll_out_duration_seconds` parameter determines how long it takes to transition traffic from the old revision to the new one.
+
+Traffic is shifted in 5 batches of 20% each, over the specified duration. This gradual transition helps ensure a smooth user experience and minimizes disruptions.
 
 ## Configuration
 
