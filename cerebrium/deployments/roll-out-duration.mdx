@@ -1,0 +1,30 @@
+---
+title: "Roll-out Duration"
+description: "Control the transition between revisions during deployments"
+---
+
+The `roll_out_duration_seconds` parameter in the `[cerebrium.scaling]` section of your `cerebrium.toml` file controls how quickly traffic transitions between revisions after a successful build.
+
+## Overview
+
+When you deploy a new version of your application, Cerebrium creates a new revision. The `roll_out_duration_seconds` parameter determines how long it takes to transition traffic from the old revision to the new one.
+
+## Configuration
+
+Add the `roll_out_duration_seconds` parameter to the `[cerebrium.scaling]` section of your `cerebrium.toml` file:
+
+```toml
+[cerebrium.scaling]
+roll_out_duration_seconds = 0  # Default value
+```
+
+## Parameters
+
+- **Valid range**: 0-600 seconds
+- **Default value**: 0 (immediate transition)
+
+## Best Practices
+
+- **Development environments**: Keep the value at 0 during development for immediate transitions
+- **Production environments**: Use lower values to optimize cost and resources while ensuring smooth transitions
+- **High-traffic applications**: Consider using higher values for gradual transitions to minimize disruption
