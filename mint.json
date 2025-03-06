@@ -108,7 +108,10 @@
     },
     {
       "group": "Deployments",
-      "pages": ["cerebrium/deployments/ci-cd", "cerebrium/deployments/roll-out-duration"]
+      "pages": [
+        "cerebrium/deployments/ci-cd",
+        "cerebrium/deployments/roll-out-duration"
+      ]
     },
     {
       "group": "Endpoints",
