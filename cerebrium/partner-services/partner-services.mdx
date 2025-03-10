@@ -19,7 +19,7 @@ Partner Services provide several advantages:
 - Simplified configuration with specialized TOML sections
 - Independent scaling of each service
 - Quick and easy deployment
-- Reduced latency by running models locally
+- Reduced latency by running models within the same network
 
 ## Deepgram
 
@@ -44,7 +44,7 @@ gpu_count = 1
 [cerebrium.scaling]
 min_replicas = 0
 max_replicas = 2
-cooldown = 1800
+cooldown = 60
 ```
 
 ## Rime
@@ -70,7 +70,7 @@ gpu_count = 1
 [cerebrium.scaling]
 min_replicas = 0
 max_replicas = 2
-cooldown = 1800
+cooldown = 60
 ```
 
 ## Deployment
@@ -78,11 +78,5 @@ cooldown = 1800
 To deploy a Partner Service, create a TOML file with the appropriate configuration and deploy it using the Cerebrium CLI:
 
 ```bash
-cerebrium deploy -f your-config.toml
+cerebrium deploy
 ```
-
-## Usage Examples
-
-Partner Services can be used in various applications, particularly for voice agents. For example, Cerebrium has partnerships with both Deepgram and Rime to run their STT and TTS models locally next to LiveKit workers, which reduces latency by approximately 400ms.
-
-For more information on using these services in voice agent applications, see the [LiveKit Outbound Agent example](/v4/examples/livekit-outbound-agent).
