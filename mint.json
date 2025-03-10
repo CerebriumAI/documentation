@@ -130,7 +130,10 @@
     },
     {
       "group": "Integrations",
-      "pages": ["cerebrium/integrations/vercel"]
+      "pages": [
+        "cerebrium/integrations/vercel",
+        "cerebrium/partner-services/partner-services"
+      ]
     },
     {
       "group": "Other concepts",
