@@ -1,0 +1,59 @@
+---
+title: Deepgram
+description: Deploy Deepgram speech-to-text services on Cerebrium
+---
+
+<Note>Deepgram Partner Service is available from CLI version 1.39.0 and greater</Note>
+
+Cerebrium's partnership with [Deepgram](https://www.deepgram.com/) allows you to easily deploy speech-to-text (STT) services with simplified configuration and independent scaling.
+
+## Configuration
+
+Deepgram services use a simplified TOML configuration with the `[cerebrium.runtime.deepgram]` section:
+
+```toml
+[cerebrium.deployment]
+name = "deepgram"
+
+[cerebrium.runtime.deepgram]
+
+[cerebrium.hardware]
+cpu = 2
+memory = 4
+compute = "AMPERE_A10"
+gpu_count = 1
+
+[cerebrium.scaling]
+min_replicas = 0
+max_replicas = 2
+cooldown = 1800
+replica_concurrency = 10
+```
+
+## API Key Configuration
+
+To use Deepgram services, you need to provide your Deepgram API key:
+
+1. Sign up for a Deepgram account at [deepgram.com](https://www.deepgram.com/)
+2. Create an API key from your Deepgram dashboard
+3. Add the API key to Cerebrium:
+   - Navigate to the **Secrets** tab in your Cerebrium dashboard
+   - Add your Deepgram API key as either an app-specific or project-wide secret
+   - The secret will be automatically available as an environment variable in your deployment
+
+## Scaling and Concurrency
+
+Deepgram services support independent scaling configurations:
+
+- **min_replicas**: Minimum number of instances to maintain (0 for scale-to-zero)
+- **max_replicas**: Maximum number of instances that can be created during high load
+- **replica_concurrency**: Number of concurrent requests each instance can handle
+- **cooldown**: Time in seconds that an instance remains active after processing its last request
+
+Adjust these parameters based on your expected traffic patterns and latency requirements.
+
+## Usage Examples
+
+Deepgram services are particularly useful for voice agent applications. For example, Cerebrium runs Deepgram STT models locally next to LiveKit workers, which reduces latency by approximately 400ms.
+
+For a complete example of using Deepgram in a voice agent application, see the [LiveKit Outbound Agent example](/v4/examples/livekit-outbound-agent).

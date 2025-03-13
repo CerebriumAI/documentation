@@ -131,8 +131,15 @@
     {
       "group": "Integrations",
       "pages": [
-        "cerebrium/integrations/vercel",
-        "cerebrium/partner-services/partner-services"
+        "cerebrium/integrations/vercel"
+      ]
+    },
+    {
+      "group": "Partner Services",
+      "pages": [
+        "cerebrium/partner-services/index",
+        "cerebrium/partner-services/deepgram",
+        "cerebrium/partner-services/rime"
       ]
     },
     {

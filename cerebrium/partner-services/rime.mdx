@@ -1,0 +1,59 @@
+---
+title: Rime
+description: Deploy Rime text-to-speech services on Cerebrium
+---
+
+<Note>Rime Partner Service is available from CLI version 1.39.0 and greater</Note>
+
+Cerebrium's partnership with Rime allows you to easily deploy text-to-speech (TTS) services with simplified configuration and independent scaling.
+
+## Configuration
+
+Rime services use a simplified TOML configuration with the `[cerebrium.runtime.rime]` section:
+
+```toml
+[cerebrium.deployment]
+name = "rime"
+
+[cerebrium.runtime.rime]
+
+[cerebrium.hardware]
+cpu = 2
+memory = 4
+compute = "AMPERE_A10"
+gpu_count = 1
+
+[cerebrium.scaling]
+min_replicas = 0
+max_replicas = 2
+cooldown = 1800
+replica_concurrency = 10
+```
+
+## API Key Configuration
+
+To use Rime services, you need to provide your Rime API key:
+
+1. Sign up for a Rime account
+2. Create an API key from your Rime dashboard
+3. Add the API key to Cerebrium:
+   - Navigate to the **Secrets** tab in your Cerebrium dashboard
+   - Add your Rime API key as either an app-specific or project-wide secret
+   - The secret will be automatically available as an environment variable in your deployment
+
+## Scaling and Concurrency
+
+Rime services support independent scaling configurations:
+
+- **min_replicas**: Minimum number of instances to maintain (0 for scale-to-zero)
+- **max_replicas**: Maximum number of instances that can be created during high load
+- **replica_concurrency**: Number of concurrent requests each instance can handle
+- **cooldown**: Time in seconds that an instance remains active after processing its last request
+
+Adjust these parameters based on your expected traffic patterns and latency requirements.
+
+## Usage Examples
+
+Rime services are particularly useful for voice agent applications. For example, Cerebrium runs Rime TTS models locally next to LiveKit workers, which reduces latency by approximately 400ms.
+
+For a complete example of using voice services in a voice agent application, see the [LiveKit Outbound Agent example](/v4/examples/livekit-outbound-agent).
