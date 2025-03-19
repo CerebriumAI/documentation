@@ -259,6 +259,7 @@ def shutdown_event():
 ### Deploy ComfyUI Application
 
 Before deploying our application, we must first define the deployment configuration, which installs all our dependencies, contains our hardware and scaling configurations, as well as any scripts which must be executed before running our app. The following should be added to our `cerebrium.toml` file:
+
 ```
 [cerebrium.deployment]
 name = "1-comfyui"
@@ -320,14 +321,14 @@ Finally, running `cerebrium deploy` uploads both the ComfyUI directory and ~10GB
 
 ```json
 [
-    {
-        "url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/main/sd_xl_base_1.0.safetensors",
-        "path": "models/checkpoints/sd_xl_base_1.0.safetensors"
-    },
-    {
-        "url": "https://huggingface.co/diffusers/controlnet-canny-sdxl-1.0/resolve/main/diffusion_pytorch_model.fp16.safetensors",
-        "path": "models/controlnet/diffusers_xl_canny_full.safetensors"
-    }
+  {
+    "url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/main/sd_xl_base_1.0.safetensors",
+    "path": "models/checkpoints/sd_xl_base_1.0.safetensors"
+  },
+  {
+    "url": "https://huggingface.co/diffusers/controlnet-canny-sdxl-1.0/resolve/main/diffusion_pytorch_model.fp16.safetensors",
+    "path": "models/controlnet/diffusers_xl_canny_full.safetensors"
+  }
 ]
 ```
 
