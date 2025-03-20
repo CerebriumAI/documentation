@@ -3,12 +3,6 @@ title: "ComfyUI application at Scale"
 description: "Deploy a ComfyUI application"
 ---
 
-<Note>
-  This example is only compatible with CLI v1.20 and later. Should you be making
-  use of an older version of the CLI, please run `pip install --upgrade
-  cerebrium` to upgrade it to the latest version.
-</Note>
-
 ### Introduction
 
 ComfyUI is a popular no-code interface for building complex stable diffusion workflows. Its ease of use, modular setup, and intuitive flowchart interface have helped the community build an extensive collection of workflows. Several websites offer shared workflows to help you get started:
@@ -55,10 +49,10 @@ The main code in `main.py` uses the exported ComfyUI API workflow to create an e
 
 1. Initializes the ComfyUI server
 2. Loads the workflow API template
-3. Processes inputs (prompts, images) through the `predict` function
+3. Processes inputs (prompts, images) through the `run` function
 4. Generates base64-encoded image outputs
 
-Note: Cerebrium runs code outside the `predict` function only during initialization, while the `predict` function handles all subsequent requests.
+Note: Cerebrium runs code outside the `run` function only during initialization, while the `run` function handles all subsequent requests.
 
 We need to alter our workflow_api.json file to have placeholders so that we can replace user values on inference. You can alter the file as follows.
 
@@ -67,21 +61,25 @@ We need to alter our workflow_api.json file to have placeholders so that we can 
 - Replace line 58, the input text of node 7 with: "\{\{negative_prompt\}\}"
 - Replace line 108, the image of node 11 with: "\{\{controlnet_image\}\}"
 
-We created a file that contains utility functions to make it easier to work with ComfyUI. You can find the code here. Create a file named helpers.py and copy the code into there.
+### FastAPI app
+
+In addition to the `main.py` file below (Which runs our fastAPI server and initializes ComfyUI on application start), We created a file that contains utility functions to make it easier to work with ComfyUI. You can find the code for that helper [here](https://github.com/CerebriumAI/examples/blob/master/7-image-and-video/1-comfyui/helpers.py). Create a file named `helpers.py` and copy the code into there.
 
 ```python
-from typing import Optional
-from pydantic import BaseModel
-
 import copy
 import json
+import logging
 import os
+import signal
 import time
 import uuid
+from contextlib import contextmanager
 from multiprocessing import Process
-from typing import Dict
 
 import websocket
+from fastapi import FastAPI, BackgroundTasks, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+
 from helpers import (
     convert_outputs_to_base64,
     convert_request_file_url_to_path,
@@ -90,97 +88,247 @@ from helpers import (
     setup_comfyui,
 )
 
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("comfyui-api")
+
+# Initialize FastAPI app
+app = FastAPI(title="ComfyUI API")
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+
+# Define configuration
 server_address = "127.0.0.1:8188"
-client_id = str(uuid.uuid4())
 original_working_directory = os.getcwd()
-global json_workflow
 json_workflow = None
-
-global side_process
 side_process = None
-if side_process is None:
-    side_process = Process(
-        target=setup_comfyui,
-        kwargs=dict(
-            original_working_directory=original_working_directory,
-            data_dir="",
-        ),
-    )
-    side_process.start()
+WEBSOCKET_TIMEOUT = 60
 
-# Load the workflow file as a python dictionary
-with open(
-    os.path.join("./", "workflow_api.json"), "r"
-) as json_file:
-    json_workflow = json.load(json_file)
 
-# Connect to the ComfyUI server via websockets
-socket_connected = False
-while not socket_connected:
+@contextmanager
+def websocket_connection():
+    """Establish WebSocket connection to ComfyUI server with proper cleanup."""
+    client_id = str(uuid.uuid4())
+    ws = None
+
     try:
         ws = websocket.WebSocket()
-        ws.connect(
-            "ws://{}/ws?clientId={}".format(server_address, client_id)
-        )
-        socket_connected = True
+        ws.settimeout(WEBSOCKET_TIMEOUT)
+        ws.connect(f"ws://{server_address}/ws?clientId={client_id}")
+        logger.info("WebSocket connected successfully")
+        yield ws, client_id
     except Exception as e:
-        print("Could not connect to comfyUI server. Trying again...")
-        time.sleep(5)
+        logger.error(f"WebSocket connection error: {str(e)}")
+        raise HTTPException(status_code=503, detail=f"ComfyUI server connection error: {str(e)}")
+    finally:
+        if ws:
+            try:
+                ws.close()
+            except Exception:
+                pass
 
-print("Successfully connected to the ComfyUI server!")
 
-class Item(BaseModel):
-    workflow_values: Optional[Dict]
+def load_workflow_file(file_path: str) -> dict:
+    """Load workflow JSON file."""
+    try:
+        with open(file_path, "r") as json_file:
+            return json.load(json_file)
+    except FileNotFoundError:
+        logger.error(f"Workflow file not found: {file_path}")
+        raise HTTPException(status_code=500, detail=f"Workflow file not found: {file_path}")
+    except json.JSONDecodeError:
+        logger.error(f"Invalid JSON in workflow file: {file_path}")
+        raise HTTPException(status_code=500, detail=f"Invalid JSON in workflow file: {file_path}")
 
-def predict(workflow_values=None, run_id, logger):
-    item = Item(workflow_values=workflow_values)
 
-    template_values = item.workflow_values
+def cleanup_tempfiles(files):
+    """Clean up temporary files."""
+    for file in files:
+        try:
+            if hasattr(file, 'name') and os.path.exists(file.name):
+                os.unlink(file.name)
+        except Exception as e:
+            logger.warning(f"Error cleaning up temp file: {str(e)}")
 
-    template_values, tempfiles = convert_request_file_url_to_path(template_values)
-    json_workflow_copy = copy.deepcopy(json_workflow)
-    json_workflow_copy = fill_template(json_workflow_copy, template_values)
-    outputs = {}  # Initialize outputs to an empty dictionary
+
+def terminate_process():
+    """Terminate the ComfyUI process."""
+    global side_process
+    if side_process and side_process.is_alive():
+        logger.info("Terminating ComfyUI process...")
+        side_process.terminate()
+        side_process.join(timeout=5)
+        if side_process.is_alive():
+            side_process.kill()
+
+
+@app.on_event("startup")
+async def startup_event():
+    """Start ComfyUI server on application startup."""
+    global json_workflow, side_process
+
+    # Load workflow JSON
+    json_workflow = load_workflow_file("workflow_api.json")
+    logger.info("Loaded workflow from workflow_api.json")
+
+    # Start ComfyUI process
+    if side_process is None:
+        side_process = Process(
+            target=setup_comfyui,
+            kwargs=dict(original_working_directory=original_working_directory, data_dir=""),
+            daemon=True,
+        )
+        side_process.start()
+        logger.info(f"Started ComfyUI process (PID: {side_process.pid})")
+
+        for sig in [signal.SIGINT, signal.SIGTERM]:
+            signal.signal(sig, lambda s, f: terminate_process())
+
+        # Wait for ComfyUI to start
+        max_attempts = 30
+        for attempt in range(max_attempts):
+            try:
+                with websocket_connection() as (ws, _):
+                    logger.info("Successfully connected to ComfyUI!")
+                    break
+            except Exception:
+                logger.info(f"Waiting for ComfyUI to start... ({attempt + 1}/{max_attempts})")
+                time.sleep(2)
+        else:
+            logger.warning("Could not confirm ComfyUI is running after multiple attempts")
+
+
+@app.post("/run")
+async def run(workflow_values: dict, background_tasks: BackgroundTasks):
+    """Run a workflow with the provided template values."""
+    # Process input values
+    template_values, tempfiles = convert_request_file_url_to_path(workflow_values)
+    background_tasks.add_task(cleanup_tempfiles, tempfiles)
 
     try:
-        outputs = get_images(
-            ws, json_workflow_copy, client_id, server_address
-        )
+        with websocket_connection() as (ws, client_id):
+            # Apply template values to workflow
+            json_workflow_copy = copy.deepcopy(json_workflow)
+            json_workflow_copy = fill_template(json_workflow_copy, template_values)
 
+            # Run workflow and get outputs
+            outputs = get_images(ws, json_workflow_copy, client_id, server_address)
+
+            # Process outputs to base64
+            result = []
+            for node_id in outputs:
+                for unit in outputs[node_id]:
+                    try:
+                        file_name = unit.get("filename")
+                        file_data = unit.get("data")
+                        output = convert_outputs_to_base64(
+                            node_id=node_id, file_name=file_name, file_data=file_data
+                        )
+                        result.append(output)
+                    except Exception as e:
+                        result.append({
+                            "node_id": node_id,
+                            "error": f"Failed to process output: {str(e)}",
+                            "format": "error"
+                        })
+
+            return {"result": result, "status": "success"}
     except Exception as e:
-        print('did it get here')
-        print("Error occurred while running Comfy workflow: ", e)
+        logger.error(f"Error running workflow: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
-    for file in tempfiles:
-        file.close()
 
-    result = []
-    for node_id in outputs:
-        for unit in outputs[node_id]:
-            file_name = unit.get("filename")
-            file_data = unit.get("data")
-            output = convert_outputs_to_base64(
-                node_id=node_id, file_name=file_name, file_data=file_data
-            )
-            result.append(output)
+@app.get("/health")
+async def health_check():
+    """Health check endpoint."""
+    global side_process
+    process_status = "running" if side_process and side_process.is_alive() else "not running"
+    return {
+        "status": "ok",
+        "comfyui_process": process_status,
+        "timestamp": time.time()
+    }
 
-    return {"result": result}
+
+@app.on_event("shutdown")
+def shutdown_event():
+    """Clean up on application shutdown."""
+    logger.info("Application shutting down, cleaning up resources...")
+    terminate_process()
 ```
 
 ### Deploy ComfyUI Application
 
-Running `cerebrium deploy` uploads both the ComfyUI directory and ~10GB of model weights. For slower connections, use our helper file to download model weights directly to the appropriate folders. Create a file called model.json with the following contents:
+Before deploying our application, we must first define the deployment configuration, which installs all our dependencies, contains our hardware and scaling configurations, as well as any scripts which must be executed before running our app. The following should be added to our `cerebrium.toml` file:
 
 ```
+[cerebrium.deployment]
+name = "1-comfyui"
+python_version = "3.11"
+include = ["./*", "main.py", "cerebrium.toml", "workflow.json", "workflow_api.json", "helpers.py", "model.json"]
+exclude = ["./example_exclude", "./ComfyUI", "./ComfyUI/models/checkpoints/sd_xl_base_1.0.safetensors", "./ComfyUI/models/controlnet/diffusion_pytorch_model.fp16.safetensors"]
+shell_commands = ["git clone https://github.com/comfyanonymous/ComfyUI", "pip install -r ComfyUI/requirements.txt"]
+
+[cerebrium.runtime.custom]
+port = 8765
+entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8765"]
+healthcheck_endpoint = "/health"
+
+[cerebrium.hardware]
+compute = "AMPERE_A10"
+cpu = 4
+memory = 16.0
+
+[cerebrium.scaling]
+min_replicas = 0
+max_replicas = 2
+cooldown = 30
+replica_concurrency = 1
+response_grace_period = 900
+scaling_metric = "concurrency_utilization"
+scaling_target = 100
+scaling_buffer = 0
+
+[cerebrium.dependencies.pip]
+uvicorn = "latest"
+fastapi = "latest"
+requests = "latest"
+channels = "latest"
+websockets = "latest"
+websocket-client = "==1.6.4"
+accelerate = "==0.23.0"
+opencv-python = "latest"
+pydantic = "latest"
+pillow = "latest"
+safetensors = "latest"
+torch = "latest"
+torchvision = "latest"
+transformers = "latest"
+torchsde = "latest"
+einops = "latest"
+aiohttp = "latest"
+pyyaml = "latest"
+Pillow = "latest"
+scipy = "latest"
+tqdm = "latest"
+psutil = "latest"
+kornia = ">=0.7.1"
+
+[cerebrium.dependencies.apt]
+git = "latest"
+```
+
+Finally, running `cerebrium deploy` uploads both the ComfyUI directory and ~10GB of model weights. For slower connections, use our helper file to download model weights directly to the appropriate folders. Create a file called `model.json` with the following contents:
+
+```json
 [
-    {
-        "url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/main/sd_xl_base_1.0.safetensors",
-        "path": "models/checkpoints/sd_xl_base_1.0.safetensors"
-    },
-    {
-        "url": "https://huggingface.co/diffusers/controlnet-canny-sdxl-1.0/resolve/main/diffusion_pytorch_model.fp16.safetensors",
-        "path": "models/controlnet/diffusers_xl_canny_full.safetensors"
-    }
+  {
+    "url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/main/sd_xl_base_1.0.safetensors",
+    "path": "models/checkpoints/sd_xl_base_1.0.safetensors"
+  },
+  {
+    "url": "https://huggingface.co/diffusers/controlnet-canny-sdxl-1.0/resolve/main/diffusion_pytorch_model.fp16.safetensors",
+    "path": "models/controlnet/diffusers_xl_canny_full.safetensors"
+  }
 ]
 ```
 
@@ -190,12 +338,12 @@ This is what your file folder structure should look like:
 
 ![ComfyUI folder structure](/images/examples/comfyui3.png)
 
-You can now deploy your application by running: cerebrium deploy
+Now you can now deploy your application by running: `cerebrium deploy`
 
 Once your ComfyUI application has been deployed successfully, you should be able to make a request to the endpoint using the following JSON payload:
 
 ```curl
-curl --location 'https://api.cortex.cerebrium.ai/v4/p-xxxx/1-comfyui/predict' \
+curl --location 'https://api.cortex.cerebrium.ai/v4/p-xxxx/1-comfyui/run' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer <YOUR TOKEN HERE>' \
 --data '{"workflow_values": {
