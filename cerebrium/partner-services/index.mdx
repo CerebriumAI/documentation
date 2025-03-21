@@ -1,5 +1,5 @@
 ---
-title: Partner Services
+title: Introduction
 description: Deploy specialized services from Cerebrium's partners with simplified configurations
 ---
 
@@ -16,18 +16,18 @@ Currently, Cerebrium offers the following Partner Services:
 
 Partner Services provide several advantages:
 
-- Simplified configuration with specialized TOML sections
-- Independent scaling of each service
 - Quick and easy deployment
+- Independent scaling of each service
+- Reduced costs by running models on Cerebrium's optimized runtime
 - Reduced latency by running models on the same network as the app
+- Deploy to specific regions for data compliance and latency requirements
 
-## API Keys
+## Getting Started
+To use Partner Services, you'll need to configure service-specific requirements through Cerebrium's platform. Each partner service has unique configuration needs - please refer to the individual service pages linked above for detailed requirements, which may include:
 
-To use Partner Services, you need to provide API keys through Cerebrium's secrets management:
-
-1. Navigate to the **Secrets** tab in your Cerebrium dashboard
-2. Add your API key as either an app-specific or project-wide secret
-3. The secret will be automatically available as an environment variable in your deployment
+1. API keys and authentication details
+2. Service-specific configuration parameters
+3. Resource requirements and limitations
 
 ## Scaling and Concurrency
 
@@ -36,6 +36,7 @@ Partner Services support independent scaling configurations:
 - Use the `min_replicas` and `max_replicas` parameters to control the number of instances
 - The `replica_concurrency` parameter determines how many concurrent requests each instance can handle
 - Adjust the `cooldown` parameter to control how long instances remain active after processing requests
+- Adjust the `hardware` section to control the instance type which affects performance and/or cost
 
 For more information on specific Partner Services, see:
 

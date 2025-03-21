@@ -7,11 +7,12 @@ description: Deploy Rime text-to-speech services on Cerebrium
   Rime Partner Service is available from CLI version 1.39.0 and greater
 </Note>
 
-Cerebrium's partnership with [Rime](https://www.rime.ai/) allows you to easily deploy text-to-speech (TTS) services with simplified configuration and independent scaling.
+Cerebrium's partnership with [Rime](https://www.rime.ai/) allows you to easily deploy text-to-speech (TTS) services with simplified configuration and independent scaling. It 
+also allows you to run at much lower latencies and adhere to data privacy regulations by deploying in different regions.
 
 ## Configuration
 
-Rime services use a simplified TOML configuration with the `[cerebrium.runtime.rime]` section:
+Rime services use a simplified TOML configuration with the `[cerebrium.runtime.rime]` section. Create a cerebrium.toml file with the following:
 
 ```toml
 [cerebrium.deployment]
@@ -28,34 +29,40 @@ gpu_count = 1
 [cerebrium.scaling]
 min_replicas = 0
 max_replicas = 2
-cooldown = 1800
-replica_concurrency = 10
+cooldown = 120
+replica_concurrency = 3 
 ```
 
-## API Key Configuration
+Run `cerebrium deploy` to deploy your Rime service. You should then see output like the following:
+```
+App Dashboard: https://dev-dashboard.cerebrium.ai/projects/p-xxxx/apps/p-xxxxx-rime
+```
 
-To use Rime services, you need to provide your Rime API key:
+You can find the Deployment url in the output above. Then use the following curl request to make a request to your Rime service:
+```
+curl --location 'https://dev-api.cortex.cerebrium.ai/v4/p-xxxxx/rime/' \
+--header 'Authorization: Bearer <RIME_API_KEY>' \
+--header 'Content-Type: application/json' \
+--header 'Accept: audio/pcm' \
+--data '{
+  "text": "I would love to have a conversation with you.",
+  "speaker": "joy",
+  "modelId": "mist"
+}'
+```
 
-1. Sign up for a Rime account
-2. Create an API key from your Rime dashboard
-3. Add the API key to Cerebrium:
-   - Navigate to the **Secrets** tab in your Cerebrium dashboard
-   - Add your Rime API key as either an app-specific or project-wide secret
-   - The secret will be automatically available as an environment variable in your deployment
+The RIME_API_KEY is the API key for your Rime service. You can find it in the Rime dashboard.
 
 ## Scaling and Concurrency
 
 Rime services support independent scaling configurations:
 
-- **min_replicas**: Minimum number of instances to maintain (0 for scale-to-zero)
-- **max_replicas**: Maximum number of instances that can be created during high load
-- **replica_concurrency**: Number of concurrent requests each instance can handle
-- **cooldown**: Time in seconds that an instance remains active after processing its last request
+- **min_replicas**: Minimum number of instances to maintain (0 for scale-to-zero). Recommended to set to 1.
+- **max_replicas**: Maximum number of instances that can be created during high load.
+- **replica_concurrency**: Number of concurrent requests each instance can handle. Recommended to set to 3.
+- **cooldown**: Time in seconds that an instance remains active after processing its last request. Recommended to set to 120.
+- **compute**: The instance type to use for the service. Recommended to set to `AMPERE_A10`.
 
 Adjust these parameters based on your expected traffic patterns and latency requirements.
 
-## Usage Examples
-
-Rime services are particularly useful for voice agent applications. For example, Cerebrium runs Rime TTS models on the same network as the app next to LiveKit workers, which reduces latency by approximately 400ms.
-
-For a complete example of using voice services in a voice agent application, see the [LiveKit Outbound Agent example](/v4/examples/livekit-outbound-agent).
+For further documentation on Rime, see the [Rime documentation](https://docs.rime.ai/).
