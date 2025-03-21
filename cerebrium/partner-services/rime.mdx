@@ -7,7 +7,7 @@ description: Deploy Rime text-to-speech services on Cerebrium
   Rime Partner Service is available from CLI version 1.39.0 and greater
 </Note>
 
-Cerebrium's partnership with [Rime](https://www.rime.ai/) allows you to easily deploy text-to-speech (TTS) services with simplified configuration and independent scaling. It 
+Cerebrium's partnership with [Rime](https://www.rime.ai/) allows you to easily deploy text-to-speech (TTS) services with simplified configuration and independent scaling. It
 also allows you to run at much lower latencies and adhere to data privacy regulations by deploying in different regions.
 
 ## Configuration
@@ -30,15 +30,17 @@ gpu_count = 1
 min_replicas = 0
 max_replicas = 2
 cooldown = 120
-replica_concurrency = 3 
+replica_concurrency = 3
 ```
 
 Run `cerebrium deploy` to deploy your Rime service. You should then see output like the following:
+
 ```
 App Dashboard: https://dev-dashboard.cerebrium.ai/projects/p-xxxx/apps/p-xxxxx-rime
 ```
 
 You can find the Deployment url in the output above. Then use the following curl request to make a request to your Rime service:
+
 ```
 curl --location 'https://dev-api.cortex.cerebrium.ai/v4/p-xxxxx/rime/' \
 --header 'Authorization: Bearer <RIME_API_KEY>' \
