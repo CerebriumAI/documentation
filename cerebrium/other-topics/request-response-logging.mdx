@@ -13,9 +13,9 @@ Cerebrium provides two settings that allow you to control logging behavior in th
 - `DISABLE_RESPONSE_LOGS` - When enabled, prevents logging of response data from your application
 
 <Note>
-  These settings only affect the default Cortex runtime. If you are using a 
-  [custom runtime](/cerebrium/container-images/custom-web-servers), you will need to
-  handle logging behavior in your own server implementation.
+  These settings only affect the default Cortex runtime. If you are using a
+  [custom runtime](/cerebrium/container-images/custom-web-servers), you will
+  need to handle logging behavior in your own server implementation.
 </Note>
 
 ## Configuration
@@ -45,10 +45,10 @@ Some common reasons to disable logs include:
 
 To disable both request and response logging, add the following secrets to your application:
 
-| Key | Value |
-| --- | --- |
-| DISABLE_REQUEST_LOGS | true |
-| DISABLE_RESPONSE_LOGS | true |
+| Key                   | Value |
+| --------------------- | ----- |
+| DISABLE_REQUEST_LOGS  | true  |
+| DISABLE_RESPONSE_LOGS | true  |
 
 <Note>
   Remember that secrets are loaded on container startup. If you update a secret,
