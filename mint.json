@@ -137,6 +137,7 @@
       "pages": [
         "security",
         "cerebrium/other-topics/using-secrets",
+        "cerebrium/other-topics/request-response-logging",
         "cerebrium/other-topics/faster-model-loading",
         "calculating-cost",
         "cerebrium/other-topics/fast-deployments-dos-and-donts"
