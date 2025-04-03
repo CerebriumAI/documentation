@@ -61,6 +61,19 @@ The CLI provides three commands for working with persistent storage:
    cerebrium rm sub_folder/
    ```
 
+4. Download files with `cerebrium download`:
+
+   ```bash
+   # Download to current directory with same filename
+   cerebrium download file_name.txt
+
+   # Download with a different local filename
+   cerebrium download file_name.txt local_file_name.txt
+
+   # Download from a subdirectory
+   cerebrium download sub_folder/file_name.txt
+   ```
+
 ## Using Stored Files
 
 Here's how to work with files in persistent storage:
