@@ -20,8 +20,9 @@ name = "deepgram"
 [cerebrium.runtime.deepgram]
 
 [cerebrium.hardware]
-cpu = 2
-memory = 4
+cpu = 4
+region = "eu-south-2"
+memory = 32
 compute = "AMPERE_A10"
 gpu_count = 1
 
@@ -40,7 +41,7 @@ To use Deepgram services, you need to provide your Deepgram API key:
 2. Create an API key from your Deepgram dashboard
 3. Add the API key to Cerebrium:
    - Navigate to the **Secrets** tab in your Cerebrium dashboard
-   - Add your Deepgram API key as either an app-specific or project-wide secret
+   - Add your Deepgram API key as either an app-specific or project-wide secret. The name of the secret should be `DEEPGRAM_API_KEY`
    - The secret will be automatically available as an environment variable in your deployment
 
 ## Scaling and Concurrency
