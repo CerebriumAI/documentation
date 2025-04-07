@@ -3,7 +3,7 @@ title: "REST API"
 description: "Make HTTP requests to your Cerebrium endpoints"
 ---
 
-By default, all apps on Cerebrium are accessible via authenticated POST requests. Authentication is handled using the JWT token available in the **API Keys** section of your dashboard.
+By default, all functions on Cerebrium are accessible via authenticated POST requests, unless they are marked as private by prefixing the function name with an underscore (e.g. `_private_function()`). Authentication is handled using the JWT token available in the **API Keys** section of your dashboard.
 
 The POST request follows the structure below, where `{function}` is the name of the function you want to invoke. For example, in this case, the function `predict()` from `main.py` is being called.
 

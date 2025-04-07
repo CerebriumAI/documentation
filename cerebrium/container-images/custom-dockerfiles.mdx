@@ -1,6 +1,6 @@
 ---
-title: "Containerized Runtimes with Custom Dockerfiles"
-description: "Run generic containerized applications on Cerebrium using custom Dockerfiles."
+title: "Custom Dockerfiles"
+description: "Run generic containerized applications on Cerebrium using your own custom Dockerfiles."
 ---
 
 For enhanced flexibility, users can bring existing containerized apps to Cerebrium. These can range from standard Python apps to compiled Rust binaries, provided a functional Dockerfile is supplied to build the app.
@@ -41,10 +41,14 @@ RUN pip install -r requirements.txt
 
 # Configuration
 EXPOSE 8192
-CMD ["dumb-init", "--", "fastapi", "run", "main.py", "--port", "8192"]
+CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8192"]
 ```
 
-This is a standard Dockerfile with a `CMD` clause that specifies how to run the container. Use this Dockerfile in Cerebrium by referencing it directly in the configuration file.
+When creating a Dockerfile for Cerebrium, there are three key requirements:
+
+1. You must expose a port using the `EXPOSE` command - this port will be referenced later in your `cerebrium.toml` configuration
+2. A `CMD` command is required to specify what runs when the container starts (typically your server process)
+3. Set the working directory using `WORKDIR` to ensure your application runs from the correct location (defaults to root directory if not specified)
 
 Update cerebrium.toml to include a custom runtime section with the `dockerfile_path` parameter:
 
