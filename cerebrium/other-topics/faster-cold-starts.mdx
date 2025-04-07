@@ -26,7 +26,12 @@ When deploying machine learning models, you have two main options for storing mo
 
 For most use cases, we recommend storing model weights in a storage volume. If your use case requires absolute minimum cold start times and you have a smaller model, storing weights in the container may be appropriate.
 
-<Note>Increasing core counts can improve pull-through times for large images as the download is parallelized. This is particularly relevant when dealing with large files stored in the storage layer, as more cores can handle multiple parts of the download simultaneously, reducing overall download time.</Note>
+<Note>
+  Increasing core counts can improve pull-through times for large images as the
+  download is parallelized. This is particularly relevant when dealing with
+  large files stored in the storage layer, as more cores can handle multiple
+  parts of the download simultaneously, reducing overall download time.
+</Note>
 
 ## Loading Models from Storage Volume Faster
 
