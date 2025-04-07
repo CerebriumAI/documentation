@@ -25,7 +25,17 @@ cerebrium init my-first-app
 cd my-first-app
 ```
 
-This creates a basic project with `main.py` for app code and `cerebrium.toml` for configuration.
+This creates a basic project with `main.py` for app code and `cerebrium.toml` for configuration. This is was the main.py file contains:
+
+```python
+def run(param_1: str, param_2: str, run_id):  # run_id is optional, injected by Cerebrium at runtime
+    my_results = {"1": param_1, "2": param_2}
+    my_status_code = 200
+
+    return {"my_result": my_results, "status_code": my_status_code}
+```
+
+This will turn the function into a callable endpoint that accepts json parameters (param_1 and param_2) and can scale to 1000s of requests.
 
 ### 3. Deploy an App
 
@@ -34,6 +44,12 @@ cerebrium deploy
 ```
 
 The app now builds and deploys, typically within a few seconds. Check out a detailed description of the deployment process for more information. Once deployed, an app becomes callable through an endpoint `https://api.cortex.cerebrium.ai/v4/{project-id}/{app-name}/{function-name}`.
+
+You can also call it using:
+
+```bash
+cerebrium run my-first-app:run -d '{"param_1": "Hello", "param_2": "World"}'
+```
 
 ## How It Works
 

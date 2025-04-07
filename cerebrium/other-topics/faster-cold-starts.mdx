@@ -1,15 +1,40 @@
 ---
-title: Decrease Model Loading Time
-description: Decrease the time it takes to load your model from storage into GPU
+title: Faster Cold Starts
+description: Decrease the time it takes start your application
 ---
+
+## Container vs Storage Volume for Model Loading
+
+When deploying machine learning models, you have two main options for storing model weights:
+
+1. **Inside the Container**: Packaging model weights directly in your container image
+
+   - Pros:
+     - Faster initial startup as weights are already in the container
+     - No need to download or transfer weights from external storage
+   - Cons:
+     - Much larger container size, leading to longer deployment times
+     - Less flexibility to update model weights without rebuilding container
+
+2. **Storage Volume**: Storing weights in a persistent storage volume
+   - Pros:
+     - Smaller container sizes and faster deployments
+     - Easy to update model weights without rebuilding container
+   - Cons:
+     - Initial cold start includes time to load weights from storage
+     - Requires managing separate storage infrastructure
+
+For most use cases, we recommend storing model weights in a storage volume. If your use case requires absolute minimum cold start times and you have a smaller model, storing weights in the container may be appropriate.
+
+<Note>Increasing core counts can improve pull-through times for large images as the download is parallelized. This is particularly relevant when dealing with large files stored in the storage layer, as more cores can handle multiple parts of the download simultaneously, reducing overall download time.</Note>
+
+## Loading Models from Storage Volume Faster
 
 One of the biggest factors in model startup time is loading the model from storage into GPU memory. For example, in larger models of 20B+ parameters, it can take over 40 seconds to load using a normal Hugging Face load, even with 2GB/s transfer speeds from persistent storage.
 
 While we've optimized the underlying hardware to load models as fast as possible, there are several ways to decrease model loading time and reduce cold-start times.
 
-## Using Serialization and Zero-Copy Initialization Libraries
-
-## Tensorizer (recommended)
+### Tensorizer (recommended)
 
 [Tensorizer](https://github.com/coreweave/tensorizer) is a library that loads models from storage into GPU memory in a single step. While initially built to fetch models from S3, it can also load models from Cerebrium's persistent storage, which features nearly 2GB/s read speed. For large models (20B+ parameters), we've observed a 30–50% decrease in loading time, with even greater improvements for larger models. For more information on the underlying methods, see their [GitHub page](https://github.com/coreweave/tensorizer).
 
