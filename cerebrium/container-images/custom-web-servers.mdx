@@ -21,6 +21,10 @@ def hello():
 @app.get("/health")
 def health():
     return "OK"
+
+@app.get("/ready")
+def ready():
+    return "OK"
 ```
 
 Configure this server in `cerebrium.toml` by adding a custom runtime section:
@@ -30,6 +34,7 @@ Configure this server in `cerebrium.toml` by adding a custom runtime section:
 port = 5000
 entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000"]
 healthcheck_endpoint = "/health"
+readycheck_endpoint = "/ready"
 
 [cerebrium.dependencies.pip]
 pydantic = "latest"
@@ -42,7 +47,8 @@ The configuration requires three key parameters:
 
 - `entrypoint`: The command that starts your server
 - `port`: The port your server listens on
-- `healthcheck_endpoint`: The endpoint that confirms server health. If empty, it will default to a TCP ping of your specified port
+- `healthcheck_endpoint`: The endpoint used to confirm instance health. If unspecified, defaults to a TCP ping on the configured port. If the health check registers a non-200 response, it will be considered _unhealthy_, and be restarted should it not recover timely.
+- `readycheck_endpoint`: The endpoint used to confirm if the instance is ready to receive. If unspecified, defaults to a TCP ping on the configured port. If the ready check registers a non-200 response, it will not be a viable target for request routing.
 
 <Info>
   For ASGI applications like FastAPI, include the appropriate server package

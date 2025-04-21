@@ -23,6 +23,10 @@ def hello():
 @app.get("/health")
 def health():
     return "OK"
+
+@app.get("/ready")
+def ready():
+    return "OK"
 ```
 
 The application is built using the following Dockerfile:
@@ -56,13 +60,15 @@ Update cerebrium.toml to include a custom runtime section with the `dockerfile_p
 [cerebrium.runtime.custom]
 port = 8192
 healthcheck_endpoint = "/health"
+readycheck_endpoint = "/ready"
 dockerfile_path = "./Dockerfile"
 ```
 
 The configuration requires three key parameters:
 
 - `port`: The port the server listens on.
-- `healthcheck_endpoint`: The endpoint used to confirm server health. If unspecified, defaults to a TCP ping on the configured port.
+- `healthcheck_endpoint`: The endpoint used to confirm instance health. If unspecified, defaults to a TCP ping on the configured port. If the health check registers a non-200 response, it will be considered _unhealthy_, and be restarted should it not recover timely.
+- `readycheck_endpoint`: The endpoint used to confirm if the instance is ready to receive. If unspecified, defaults to a TCP ping on the configured port. If the ready check registers a non-200 response, it will not be a viable target for request routing.
 - `dockerfile_path`: The relative path to the Dockerfile used to build the app.
 
 If a Dockerfile does not contain a `CMD` clause, specifying the `entrypoint` parameter in the `cerebrium.toml` file is required.
@@ -100,11 +106,17 @@ async fn health() -> &'static str {
     "OK"
 }
 
+
+async fn ready() -> &'static str {
+    "OK"
+}
+
 #[tokio::main]
 async fn main() {
     let app = Router::new()
         .route("/hello", post(hello))
-        .route("/health", get(health));
+        .route("/health", get(health))
+        .route("/ready", get(health));
     tracing::info!("Listening on port 8192");
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:8192").await.unwrap();
@@ -156,5 +168,6 @@ Similarly to the FastAPI webserver, the application should be configured in the 
 [cerebrium.runtime.custom]
 port = 8192
 healthcheck_endpoint = "/health"
+readycheck_endpoint = "/ready"
 dockerfile_path = "./Dockerfile"
 ```

@@ -61,6 +61,7 @@ As an example, implementation with LitServe requires additional configuration in
 port = 8000
 entrypoint = ["python", "app/main.py"]
 healthcheck_endpoint = "/health"
+readycheck_endpoint = "/ready"
 
 [cerebrium.dependencies.pip]
 litserve = "latest"

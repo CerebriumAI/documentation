@@ -18,13 +18,15 @@ Below is an example of the required changes in your `cerebrium.toml` configurati
 port = 5000
 entrypoint = "uvicorn main:app --host 0.0.0.0 --port 5000"
 healthcheck_endpoint = "/health"
+readycheck_endpoint = "/ready"
 ```
 
 Explanation:
 
 - port: The port your app will listen on inside the container
 - entrypoint: The command to start your app. In this example, we're using Uvicorn to run a FastAPI app located in `main.py`
-- healthcheck_endpoint: The endpoint used by Cerebrium to verify that your app is running
+- `healthcheck_endpoint`: The endpoint used to confirm instance health. If unspecified, defaults to a TCP ping on the configured port. If the health check registers a non-200 response, it will be considered _unhealthy_, and be restarted should it not recover timely.
+- `readycheck_endpoint`: The endpoint used to confirm if the instance is ready to receive. If unspecified, defaults to a TCP ping on the configured port. If the ready check registers a non-200 response, it will not be a viable target for request routing.
 
 ## Things to note
 

@@ -35,11 +35,12 @@ The `[cerebrium.deployment]` section defines core deployment settings.
 
 The `[cerebrium.runtime.custom]` section configures custom web servers and runtime behavior.
 
-| Option               | Type     | Default  | Description                                  |
-| -------------------- | -------- | -------- | -------------------------------------------- |
-| port                 | integer  | required | Port the application listens on              |
-| entrypoint           | string[] | required | Command to start the application             |
-| healthcheck_endpoint | string   | ""       | HTTP path for health checks (empty uses TCP) |
+| Option               | Type     | Default  | Description                                                                                                       |
+| -------------------- | -------- | -------- | ----------------------------------------------------------------------------------------------------------------- |
+| port                 | integer  | required | Port the application listens on                                                                                   |
+| entrypoint           | string[] | required | Command to start the application                                                                                  |
+| healthcheck_endpoint | string   | ""       | HTTP path for health checks (empty uses TCP). Failure causes the instance to restart                              |
+| readycheck_endpoint  | string   | ""       | HTTP path for readiness checks (empty uses TCP). Failure ensures the load balancer does not route to the instance |
 
 <Info>
   The port specified in entrypoint must match the port parameter. All endpoints
@@ -158,6 +159,7 @@ exclude = [".*"]
 port = 8000
 entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 healthcheck_endpoint = "/health"
+readycheck_endpoint = "/ready"
 
 [cerebrium.hardware]
 cpu = 4

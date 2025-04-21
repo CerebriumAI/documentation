@@ -132,6 +132,8 @@ Cerebrium's build process includes two specialized command types that execute at
 Pre-build commands execute at the start of the build process, before dependency installation begins. This early execution timing makes them essential for setting up the build environment:
 
 ```toml
+
+[cerebrium.deployment]
 pre_build_commands = [
     # Add specialized build tools
     "curl -o /usr/local/bin/pget -L 'https://github.com/replicate/pget/releases/download/v0.6.2/pget_linux_x86_64'",
@@ -146,6 +148,7 @@ Pre-build commands typically handle tasks like installing build tools, configuri
 Shell commands execute after all dependencies install and the application code copies into the container. This later timing ensures access to the complete environment:
 
 ```toml
+[cerebrium.deployment]
 shell_commands = [
     # Initialize application resources
     "python -m download_models",
@@ -175,9 +178,13 @@ The base image selection shapes how an app runs in Cerebrium. While the default 
 Cerebrium supports several categories of base images to ensure system compatibility:
 
 ```toml
+[cerebrium.deployment]
 # Default minimal image
 docker_base_image_url = "debian:bookworm-slim"
+```
 
+```toml
+[cerebrium.deployment]
 # CUDA-enabled images
 docker_base_image_url = "nvidia/cuda:12.0.1-runtime-ubuntu22.04"
 ```
@@ -186,10 +193,10 @@ The system accepts these image types:
 
 #### Ubuntu-based CUDA Images
 
-All `nvidia/cuda` images that include Ubuntu are supported. These provide GPU acceleration capabilities:
+All Ubuntu-based `nvidia/cuda` images that include Ubuntu are supported. These include the CUDA libraries necessary to provide GPU acceleration:
 
 ```toml
-docker_base_image_url = "nvidia/cuda:12.0.1-runtime-ubuntu22.04"
+[cerebrium.deployment]
 docker_base_image_url = "nvidia/cuda:12.0.1-devel-ubuntu22.04"
 ```
 
@@ -198,7 +205,12 @@ docker_base_image_url = "nvidia/cuda:12.0.1-devel-ubuntu22.04"
 Any Debian or Ubuntu base image works as a foundation:
 
 ```toml
+[cerebrium.deployment]
 docker_base_image_url = "debian:bullseye"
+```
+
+```toml
+[cerebrium.deployment]
 docker_base_image_url = "ubuntu:22.04"
 ```
 
@@ -207,7 +219,7 @@ docker_base_image_url = "ubuntu:22.04"
 Python images based on Debian bullseye or bookworm provide pre-configured Python environments:
 
 ```toml
-docker_base_image_url = "python:3.11-bullseye"
+[cerebrium.deployment]
 docker_base_image_url = "python:3.11-bookworm"
 ```
 
@@ -229,9 +241,9 @@ Define a custom runtime by adding the `cerebrium.runtime.custom` section to the 
 
 ```toml
 [cerebrium.runtime.custom]
-entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
-port = 8080
+entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"] port = 8080
 healthcheck_endpoint = ""  # Empty string uses TCP health check
+readycheck_endpoint = ""  # Empty string uses TCP health check
 
 ```
 
@@ -239,7 +251,8 @@ Key parameters:
 
 - `entrypoint`: Command to start the app (string or string list)
 - `port`: Port the app listens on
-- `healthcheck_endpoint`: Path for health checks
+- `healthcheck_endpoint`: The endpoint used to confirm instance health. If unspecified, defaults to a TCP ping on the configured port. If the health check registers a non-200 response, it will be considered _unhealthy_, and be restarted should it not recover timely.
+- `readycheck_endpoint`: The endpoint used to confirm if the instance is ready to receive. If unspecified, defaults to a TCP ping on the configured port. If the ready check registers a non-200 response, it will not be a viable target for request routing.
 
 <Info>
   Check out [this
@@ -256,6 +269,7 @@ Custom runtimes also support apps with built-in servers. For example, deploying 
 entrypoint = "vllm serve meta-llama/Meta-Llama-3-8B-Instruct --host 0.0.0.0 --port 8000 --device cuda"
 port = 8000
 healthcheck_endpoint = "/health"
+healthcheck_endpoint = "/ready"
 
 [cerebrium.dependencies.pip]
 torch = "latest"
