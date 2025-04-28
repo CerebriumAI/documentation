@@ -3,16 +3,16 @@ title: Deepgram
 description: Deploy Deepgram speech-to-text services on Cerebrium
 ---
 
-
 Cerebrium's partnership with [Deepgram](https://www.deepgram.com/) allows you to easily deploy speech-to-text (STT) services with simplified configuration and independent scaling.
 
 <Note>
-  In order to use Deepgram services, you need to have a Enterprise Deepgram account and an API key in order to use their self-hosted models. Please contact Deepgram support to get access to this feature.
+  In order to use Deepgram services, you need to have a Enterprise Deepgram
+  account and an API key in order to use their self-hosted models. Please
+  contact Deepgram support to get access to this feature.
 </Note>
 <Note>
   Deepgram Partner Service is available from CLI version 1.39.0 and greater
 </Note>
-
 
 ## Setup
 
@@ -25,7 +25,7 @@ cerebrium init deepgram
 2. Create a self-hosted API key from your <b>Deepgram</b> dashboard and navigate to the **Secrets** tab in your <b>Cerebrium</b> dashboard and add the API key with the name `DEEPGRAM_API_KEY`. The secret will be automatically available as an environment variable in your deployment
 
 3. Download the model files from Deepgram (you can find these instructions on the self-hosted section of the <b>Deepgram</b> dashboard [here](https://developers.deepgram.com/docs/deploy-deepgram-services#pull-deepgram-container-images)) - make sure to select the 'license proxy' deployment type.
-Once you have downloaded all the model files (ending in .dg), upload the models you wish to use to your persistent-storage in the `/deepgram-models` folder - this will be attached to the engine container. You can use this command to upload the files:
+   Once you have downloaded all the model files (ending in .dg), upload the models you wish to use to your persistent-storage in the `/deepgram-models` folder - this will be attached to the engine container. You can use this command to upload the files:
 
 ```bash
 cerebrium cp <model>.dg deepgram-models/<model>.dg
