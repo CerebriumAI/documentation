@@ -3,15 +3,35 @@ title: Deepgram
 description: Deploy Deepgram speech-to-text services on Cerebrium
 ---
 
+
+Cerebrium's partnership with [Deepgram](https://www.deepgram.com/) allows you to easily deploy speech-to-text (STT) services with simplified configuration and independent scaling.
+
+<Note>
+  In order to use Deepgram services, you need to have a Enterprise Deepgram account and an API key in order to use their self-hosted models. Please contact Deepgram support to get access to this feature.
+</Note>
 <Note>
   Deepgram Partner Service is available from CLI version 1.39.0 and greater
 </Note>
 
-Cerebrium's partnership with [Deepgram](https://www.deepgram.com/) allows you to easily deploy speech-to-text (STT) services with simplified configuration and independent scaling.
 
-## Configuration
+## Setup
 
-Deepgram services use a simplified TOML configuration with the `[cerebrium.runtime.deepgram]` section:
+1. Create a simple cerebrium app with the CLI:
+
+```bash
+cerebrium init deepgram
+```
+
+2. Create a self-hosted API key from your <b>Deepgram</b> dashboard and navigate to the **Secrets** tab in your <b>Cerebrium</b> dashboard and add the API key with the name `DEEPGRAM_API_KEY`. The secret will be automatically available as an environment variable in your deployment
+
+3. Download the model files from Deepgram (you can find these instructions on the self-hosted section of the <b>Deepgram</b> dashboard [here](https://developers.deepgram.com/docs/deploy-deepgram-services#pull-deepgram-container-images)) - make sure to select the 'license proxy' deployment type.
+Once you have downloaded all the model files (ending in .dg), upload the models you wish to use to your persistent-storage in the `/deepgram-models` folder - this will be attached to the engine container. You can use this command to upload the files:
+
+```bash
+cerebrium cp <model>.dg deepgram-models/<model>.dg
+```
+
+4. Update the cerebrium.toml file to be the following - this is where you can set your hardware requirements, scaling parameters, region etc..
 
 ```toml
 [cerebrium.deployment]
@@ -21,7 +41,7 @@ name = "deepgram"
 
 [cerebrium.hardware]
 cpu = 4
-region = "eu-south-2"
+region = "us-east-1"
 memory = 32
 compute = "AMPERE_A10"
 gpu_count = 1
@@ -30,7 +50,15 @@ gpu_count = 1
 min_replicas = 0
 max_replicas = 2
 cooldown = 1800
-replica_concurrency = 10
+replica_concurrency = 150
+```
+
+5. Run 'cerebrium deploy' to deploy your app. This should now give you an endpoint to use for your Deepgram service.
+
+6. You can now use the Deepgram service in your app by calling the endpoint with the appropriate parameters such as
+
+```curl
+curl -X POST --data-binary @audio.wav "https://api.cortex.cerebrium.ai/v4/p-xxxxxx/deepgram/v1/listen?model=nova-3&smart_format=true"
 ```
 
 ## API Key Configuration
@@ -54,16 +82,6 @@ Deepgram services support independent scaling configurations:
 - **cooldown**: Time in seconds that an instance remains active after processing its last request
 
 Adjust these parameters based on your expected traffic patterns and latency requirements.
-
-## Model Storage
-
-The project's default storage volume is attached to the engine container.
-
-All model files that you want to load (provided by Deepgram) need to be uploaded to the `/deepgram-models` folder. You can use this command to upload the files:
-
-```bash
-cerebrium cp model.dg deepgram-models/model.dg
-```
 
 ## Usage Examples
 
