@@ -27,9 +27,7 @@ cerebrium init deepgram
 
 2. Create a self-hosted API key from the <b>Deepgram</b> dashboard. Navigate to the **Secrets** tab in the <b>Cerebrium</b> dashboard and add the API key with the name `DEEPGRAM_API_KEY`. This secret automatically becomes available as an environment variable in the deployment.
 
-3. ```
-   Download model files from Deepgram's self-hosted section in the <b>Deepgram</b> dashboard [here](https://developers.deepgram.com/docs/deploy-deepgram-services#pull-deepgram-container-images). Select the 'license proxy' deployment type. Upload downloaded model files (with .dg extension) to persistent-storage in the `/deepgram-models` folder, which attaches to the engine container. Use this command to upload the files:
-   ```
+3. Download model files from Deepgram's self-hosted section in the <b>Deepgram</b> dashboard [here](https://developers.deepgram.com/docs/deploy-deepgram-services#pull-deepgram-container-images). Select the 'license proxy' deployment type. Upload downloaded model files (with `.dg` extension) to persistent-storage in the `/deepgram-models` folder, which attaches to the engine container. Use this command to upload the files:
 
 ```bash
 cerebrium cp <model>.dg deepgram-models/<model>.dg
