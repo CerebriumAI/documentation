@@ -40,6 +40,8 @@ cerebrium cp <model>.dg deepgram-models/<model>.dg
 ```toml
 [cerebrium.deployment]
 name = "deepgram"
+#Enable below in production environments
+disable_auth = true
 
 [cerebrium.runtime.deepgram]
 
