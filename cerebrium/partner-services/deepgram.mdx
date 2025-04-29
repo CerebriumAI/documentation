@@ -57,9 +57,9 @@ cooldown = 1800
 replica_concurrency = 150
 ```
 
-5. Run 'cerebrium deploy' to deploy your app. This should now give you an endpoint to use for your Deepgram service.
+5. Run 'cerebrium deploy' to deploy the app. After deployment and endpoint for the Deepgram services is provided in the terminal output (The URL for this endpoint can also be found in the App's overview page on the dashboard).
 
-6. You can now use the Deepgram service in your app by calling the endpoint with the appropriate parameters such as
+6. Access the Deepgram service by calling the endpoint with appropriate parameters such as:
 
 ```curl
 curl -X POST --data-binary @audio.wav "https://api.cortex.cerebrium.ai/v4/p-xxxxxx/deepgram/v1/listen?model=nova-3&smart_format=true"
