@@ -52,18 +52,18 @@ curl --location 'https://dev-api.cortex.cerebrium.ai/v4/p-xxxxx/rime/' \
 }'
 ```
 
-The RIME_API_KEY is the API key for your Rime service. You can find it in the Rime dashboard.
+The `RIME_API_KEY` is available in the Rime dashboard.
 
 ## Scaling and Concurrency
 
 Rime services support independent scaling configurations:
 
-- **min_replicas**: Minimum number of instances to maintain (0 for scale-to-zero). Recommended to set to 1.
-- **max_replicas**: Maximum number of instances that can be created during high load.
-- **replica_concurrency**: Number of concurrent requests each instance can handle. Recommended to set to 3.
-- **cooldown**: Time in seconds that an instance remains active after processing its last request. Recommended to set to 120.
-- **compute**: The instance type to use for the service. Recommended to set to `AMPERE_A10`.
+- **min_replicas**: Minimum instances to maintain (0 for scale-to-zero). Recommended: 1.
+- **max_replicas**: Maximum instances during high load.
+- **replica_concurrency**: Concurrent requests per instance. Recommended: 3.
+- **cooldown**: Seconds an instance remains active after last request. Recommended: 120.
+- **compute**: Instance type. Recommended: `AMPERE_A10`.
 
-Adjust these parameters based on your expected traffic patterns and latency requirements.
+Adjust these parameters based on traffic patterns and latency requirements.
 
 For further documentation on Rime, see the [Rime documentation](https://docs.rime.ai/).
