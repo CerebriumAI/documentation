@@ -60,7 +60,7 @@ replica_concurrency = 150
 5. Run 'cerebrium deploy' to deploy the app. After deployment and endpoint for the Deepgram services is provided in the terminal output (The URL for this endpoint can also be found in the App's overview page on the dashboard).
 6. Download an example audio file for use with the deepgram service: `wget https://dpgr.am/bueller.wav`
 
-6. Access the Deepgram service by calling the endpoint with appropriate parameters such as:
+7. Access the Deepgram service by calling the endpoint with appropriate parameters such as:
 
 ```curl
 curl -X POST --data-binary @bueller.wav "https://api.cortex.cerebrium.ai/v4/p-xxxxxx/deepgram/v1/listen?model=nova-3&smart_format=true"
