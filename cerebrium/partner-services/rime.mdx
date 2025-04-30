@@ -9,9 +9,15 @@ description: Deploy Rime text-to-speech services on Cerebrium
 
 Cerebrium's partnership with [Rime](https://www.rime.ai/) helps teams deliver text-to-speech (TTS) services with efficient deployment, minimized latency, and region selection for data privacy compliance needs.
 
-## Configuration
+## Setup
 
-Rime services use a simplified TOML configuration with the `[cerebrium.runtime.rime]` section. Create a cerebrium.toml file with the following:
+1. Create a simple cerebrium app with the CLI:
+
+```bash
+cerebrium init rime
+```
+
+2. Rime services use a simplified TOML configuration with the `[cerebrium.runtime.rime]` section. Create a `cerebrium.toml` file with the following:
 
 ```toml
 [cerebrium.deployment]
@@ -20,8 +26,8 @@ name = "rime"
 [cerebrium.runtime.rime]
 
 [cerebrium.hardware]
-cpu = 2
-memory = 4
+cpu = 4
+memory = 32
 compute = "AMPERE_A10"
 gpu_count = 1
 
@@ -32,16 +38,16 @@ cooldown = 120
 replica_concurrency = 3
 ```
 
-Run `cerebrium deploy` to deploy the Rime service - the output of which should appear as follows:
+3. Run `cerebrium deploy` to deploy the Rime service - the output of which should appear as follows:
 
 ```
-App Dashboard: https://dev-dashboard.cerebrium.ai/projects/p-xxxx/apps/p-xxxxx-rime
+App Dashboard: https://dev-dashboard.cerebrium.ai/projects/p-xxxxxxxx/apps/p-xxxxxxxx-rime
 ```
 
-Use the Deployment url from the output to send requests to the Rime service via curl request:
+4. Use the Deployment url from the output to send requests to the Rime service via curl request:
 
 ```
-curl --location 'https://dev-api.cortex.cerebrium.ai/v4/p-xxxxx/rime/' \
+curl --location 'https://api.cortex.cerebrium.ai/v4/p-xxxxxxxx/rime' \
 --header 'Authorization: Bearer <RIME_API_KEY>' \
 --header 'Content-Type: application/json' \
 --header 'Accept: audio/pcm' \

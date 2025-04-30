@@ -11,8 +11,8 @@ Using Deepgram services requires an Enterprise Deepgram account and API key for 
 Links to the Deepgram model files referenced below (file extension `.dg`) should should be obtained from the Deepgram Account Representative.
 
 For the purposes of this example, the `nova-2-general` model will be used.
-
 </Note>
+
 <Note>
   Deepgram Partner Service is available from CLI version 1.39.0 and greater
 </Note>
@@ -27,7 +27,7 @@ cerebrium init deepgram
 
 2. Create a self-hosted API key from the <b>Deepgram</b> dashboard. Navigate to the **Secrets** tab in the <b>Cerebrium</b> dashboard and add the API key with the name `DEEPGRAM_API_KEY`. This secret automatically becomes available as an environment variable in the deployment.
 
-3. Download model files from Deepgram's self-hosted section in the <b>Deepgram</b> dashboard [here](https://developers.deepgram.com/docs/deploy-deepgram-services#pull-deepgram-container-images). Select the 'license proxy' deployment type. Upload downloaded model files (with `.dg` extension) to persistent-storage in the `/deepgram-models` folder, which attaches to the engine container. Use this command to upload the files:
+3. Download model files from Deepgram's self-hosted section in the <b>Deepgram</b> dashboard using the guide available, [here](https://developers.deepgram.com/docs/deploy-deepgram-services#pull-deepgram-container-images). Select the 'license proxy' deployment type. Upload downloaded model files using the links provided by your Account Representative (with `.dg` extension) to persistent-storage in the `/deepgram-models` folder. This folder automatically attaches to the engine container. Use this command to upload the files:
 
 ```bash
 cerebrium cp <model>.dg deepgram-models/<model>.dg
@@ -38,7 +38,7 @@ cerebrium cp <model>.dg deepgram-models/<model>.dg
 ```toml
 [cerebrium.deployment]
 name = "deepgram"
-#Enable below in production environments
+# Enable below in production environments
 disable_auth = true
 
 [cerebrium.runtime.deepgram]
@@ -53,12 +53,17 @@ gpu_count = 1
 [cerebrium.scaling]
 min_replicas = 0
 max_replicas = 2
-cooldown = 30
+cooldown = 120
 replica_concurrency = 150
 ```
 
 5. Run 'cerebrium deploy' to deploy the app. After deployment and endpoint for the Deepgram services is provided in the terminal output (The URL for this endpoint can also be found in the App's overview page on the dashboard).
-6. Download an example audio file for use with the deepgram service: `wget https://dpgr.am/bueller.wav`
+
+6. Download an example audio file for use with the deepgram service:
+
+```bash
+wget https://dpgr.am/bueller.wav
+```
 
 7. Access the Deepgram service by calling the endpoint with appropriate parameters such as:
 
