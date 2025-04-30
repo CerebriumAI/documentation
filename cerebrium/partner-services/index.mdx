@@ -1,0 +1,45 @@
+---
+title: Introduction
+description: Deploy specialized services from Cerebrium's partners with simplified configurations
+---
+
+<Note>Partner Services are available from CLI version 1.39.0 and greater</Note>
+
+Cerebrium offers specialized services in partnership with leading AI companies. These Partner Services feature simplified configurations, independent scaling, and quick deployment.
+
+Currently, Cerebrium offers the following Partner Services:
+
+- [Deepgram](/cerebrium/partner-services/deepgram) - Speech-to-text (STT) services
+- [Rime](/cerebrium/partner-services/rime) - Text-to-speech (TTS) services
+
+## Benefits of Partner Services
+
+Partner Services provide several advantages:
+
+- Quick and easy deployment
+- Independent scaling of each service
+- Reduced costs by running models on Cerebrium's optimized runtime
+- Reduced latency by running models on the same network as the app
+- Deploy to specific regions for data compliance and latency requirements
+
+## Getting Started
+
+To use Partner Services, configure service-specific requirements through Cerebrium's platform. Each partner service has unique configuration needs - refer to individual service pages linked above for detailed requirements, which may include:
+
+1. API keys and authentication details
+2. Service-specific configuration parameters
+3. Resource requirements and limitations
+
+## Scaling and Concurrency
+
+Partner Services support independent scaling configurations:
+
+- Use the `min_replicas` and `max_replicas` parameters to control the number of instances
+- The `replica_concurrency` parameter determines how many concurrent requests each instance can handle
+- Adjust the `cooldown` parameter to control how long instances remain active after processing requests
+- Adjust the `hardware` section to control the instance type which affects performance and/or cost
+
+For more information on specific Partner Services, see:
+
+- [Deepgram](/cerebrium/partner-services/deepgram)
+- [Rime](/cerebrium/partner-services/rime)

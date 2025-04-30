@@ -1,0 +1,104 @@
+---
+title: Deepgram
+description: Deploy Deepgram speech-to-text services on Cerebrium
+---
+
+Cerebrium's partnership with [Deepgram](https://www.deepgram.com/) enables simple deployment of speech-to-text (STT) services with simplified configuration and independent scaling.
+
+<Note>
+Using Deepgram services requires an Enterprise Deepgram account and API key for self-hosted models. Contact Deepgram support to access this feature.
+
+Links to the Deepgram model files referenced below (file extension `.dg`) should should be obtained from the Deepgram Account Representative.
+
+For the purposes of this example, the `nova-2-general` model will be used.
+
+</Note>
+
+<Note>
+  Deepgram Partner Service is available from CLI version 1.39.0 and greater
+</Note>
+
+## Setup
+
+1. Create a simple cerebrium app with the CLI:
+
+```bash
+cerebrium init deepgram
+```
+
+2. Create a self-hosted API key from the <b>Deepgram</b> dashboard. Navigate to the **Secrets** tab in the <b>Cerebrium</b> dashboard and add the API key with the name `DEEPGRAM_API_KEY`. This secret automatically becomes available as an environment variable in the deployment.
+
+3. Download model files from Deepgram's self-hosted section in the <b>Deepgram</b> dashboard using the guide available, [here](https://developers.deepgram.com/docs/deploy-deepgram-services#pull-deepgram-container-images). Select the 'license proxy' deployment type. Upload downloaded model files using the links provided by your Account Representative (with `.dg` extension) to persistent-storage in the `/deepgram-models` folder. This folder automatically attaches to the engine container. Use this command to upload the files:
+
+```bash
+cerebrium cp <model>.dg deepgram-models/<model>.dg
+```
+
+4. Update the cerebrium.toml file with the following configuration to set hardware requirements, scaling parameters, region, and other settings:
+
+```toml
+[cerebrium.deployment]
+name = "deepgram"
+# Enable below in production environments
+disable_auth = true
+
+[cerebrium.runtime.deepgram]
+
+[cerebrium.hardware]
+cpu = 4
+region = "us-east-1"
+memory = 32
+compute = "AMPERE_A10"
+gpu_count = 1
+
+[cerebrium.scaling]
+min_replicas = 0
+max_replicas = 2
+cooldown = 120
+replica_concurrency = 150
+```
+
+5. Run 'cerebrium deploy' to deploy the app. After deployment and endpoint for the Deepgram services is provided in the terminal output (The URL for this endpoint can also be found in the App's overview page on the dashboard).
+
+6. Download an example audio file for use with the deepgram service:
+
+```bash
+wget https://dpgr.am/bueller.wav
+```
+
+7. Access the Deepgram service by calling the endpoint with appropriate parameters such as:
+
+```curl
+curl -X POST --data-binary @bueller.wav "https://api.cortex.cerebrium.ai/v4/p-xxxxxx/deepgram/v1/listen?model=nova-3&smart_format=true"
+```
+
+Parameters accepted by the Deepgram service can be found in the [speech-to-text API reference](https://developers.deepgram.com/reference/speech-to-text-api/listen-streaming).
+
+## API Key Configuration
+
+To use Deepgram services:
+
+1. Sign up at [deepgram.com](https://www.deepgram.com/)
+2. Create an API key in the Deepgram dashboard
+3. Add the API key to Cerebrium:
+
+- Navigate to **Secrets** tab in the Cerebrium dashboard
+- Add the Deepgram API key as an app-specific or project-wide secret named `DEEPGRAM_API_KEY`
+- This secret automatically becomes available as an environment variable in the deployment
+
+## Scaling and Concurrency
+
+Deepgram services support independent scaling configurations:
+
+- **min_replicas**: Minimum number of instances to maintain (0 for scale-to-zero)
+- **max_replicas**: Maximum number of instances that can be created during high load
+- **replica_concurrency**: Number of concurrent requests each instance can handle
+- **cooldown**: Time in seconds that an instance remains active after processing its last request
+
+Adjust these parameters based on expected traffic patterns and latency requirements.
+
+## Usage Examples
+
+Cerebrium runs both Deepgram STT models and applications on the same network alongside LiveKit workers, reducing latency by approximately 400ms—a significant advantage for voice agent applications.
+
+For a complete implementation reference, see the [LiveKit Outbound Agent example](/v4/examples/livekit-outbound-agent).
