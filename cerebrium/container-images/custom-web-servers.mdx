@@ -58,3 +58,7 @@ The configuration requires three key parameters:
 </Info>
 
 Our [FastAPI Server Example](https://github.com/CerebriumAI/examples) provides a complete implementation.
+
+## Request Headers
+
+When using custom web servers, you can access the Cerebrium run ID through the `X-Request-Id` header, which is included in all requests to your endpoints. This header is particularly useful for tracking and debugging requests in your custom runtime implementation, as it corresponds to the `run_id` that Cerebrium uses internally.
