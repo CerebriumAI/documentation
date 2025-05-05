@@ -29,11 +29,3 @@ Responses follow this format:
 Successful requests return a status code of 200, while errors result in a status code of 500.
 
 To return custom status codes such as 422, 404, etc., include the `status_code` field in the JSON response from your `main.py`.
-
-## Response Headers
-
-All responses from Cerebrium endpoints include the following headers:
-
-| Header       | Description                                                                                                                                                                                   |
-| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| X-Request-Id | Represents the Cerebrium run ID, which is the same as the `run_id` included in the response body. This header is useful for tracking and correlating requests, especially in custom runtimes. |
