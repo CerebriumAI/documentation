@@ -14,7 +14,7 @@ The Requests graph shows the number of concurrent requests being processed by yo
 
 **What it shows:** This graph displays the number of requests waiting in the queue or currently being processed by your application. Higher values indicate increased load on your system.
 
-**Data source:** For individual containers (pods), this metric comes from `revision_queue_depth`, which measures the depth of the request queue for a specific pod. For the entire application, it uses `activator_request_concurrency`, which tracks the total concurrent requests across all instances.
+**Data source:** This metric tracks the number of requests in the queue for individual containers and the total concurrent requests across all instances of your application.
 
 **Nuances and gotchas:**
 
@@ -28,7 +28,7 @@ The GPU graph shows the GPU memory usage of your application over time.
 
 **What it shows:** This graph displays the amount of GPU memory (VRAM) being used by your application in gigabytes. It represents the maximum memory used across all GPUs allocated to your application.
 
-**Data source:** This metric comes from `DCGM_FI_DEV_FB_USED`, which is provided by NVIDIA's Data Center GPU Manager (DCGM). The value is divided by 1024 to convert from megabytes to gigabytes.
+**Data source:** This metric is collected from NVIDIA's Data Center GPU Manager. The value is converted from megabytes to gigabytes for easier reading.
 
 **Nuances and gotchas:**
 
@@ -44,7 +44,7 @@ The CPU graph shows the CPU utilization of your application over time.
 
 **What it shows:** This graph displays the maximum rate of CPU usage in cores. For example, a value of 2.0 means your application is using the equivalent of 2 full CPU cores.
 
-**Data source:** This metric comes from `container_cpu_usage_seconds_total`, which measures the cumulative CPU time consumed by the container. The `rate()` function is applied to calculate the per-second usage over the specified time window.
+**Data source:** This metric measures the cumulative CPU time consumed by the container and calculates the per-second usage over the specified time window.
 
 **Nuances and gotchas:**
 
@@ -59,7 +59,7 @@ The Memory graph shows the RAM usage of your application over time.
 
 **What it shows:** This graph displays the maximum memory usage in gigabytes across all instances of your application.
 
-**Data source:** This metric comes from `container_memory_usage_bytes`, which measures the total memory used by the container. The value is divided by 1024³ to convert from bytes to gigabytes.
+**Data source:** This metric measures the total memory used by the container. The value is converted from bytes to gigabytes for easier reading.
 
 **Nuances and gotchas:**
 
@@ -74,7 +74,7 @@ The Workers graph shows the number of active replicas (instances) of your applic
 
 **What it shows:** This graph displays the number of ready replicas that are currently serving traffic for your application.
 
-**Data source:** This metric comes from `kube_deployment_status_replicas_ready`, which tracks the number of replicas that are ready to serve traffic in a Kubernetes deployment.
+**Data source:** This metric tracks the number of replicas that are ready to serve traffic for your application.
 
 **Nuances and gotchas:**
 
