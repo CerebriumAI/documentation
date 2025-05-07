@@ -19,8 +19,7 @@ The Requests graph shows the number of concurrent requests being processed by yo
 **Notes:**
 
 - Spikes in this graph often correlate with increased latency in your app
-- If this value consistently remains high, consider increasing your replica count or adjusting your scaling configuration
-- Zero values don't necessarily mean your app isn't receiving traffic - it could mean requests are being processed immediately without queuing
+- When requests spike, the app will auto-scale to handle the load - no need for user intervention
 
 ### GPU
 
