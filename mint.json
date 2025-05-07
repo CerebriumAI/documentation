@@ -96,7 +96,8 @@
       "pages": [
         "cerebrium/hardware/using-gpus",
         "cerebrium/hardware/using-cuda",
-        "cerebrium/hardware/cpu-and-memory"
+        "cerebrium/hardware/cpu-and-memory",
+        "cerebrium/hardware/metrics-graphs"
       ]
     },
     {
