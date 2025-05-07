@@ -2,31 +2,31 @@
 title: Understanding Metrics Graphs
 ---
 
-Cerebrium provides real-time metrics graphs to help you monitor your application's resource usage and performance. These graphs offer valuable insights into how your application is utilizing resources and can help you identify potential bottlenecks or optimization opportunities.
+Cerebrium provides real-time metrics graphs to help you monitor your app's resource usage and performance. These graphs offer valuable insights into how your application is utilizing resources and can help you identify potential bottlenecks or optimization opportunities.
 
 ## Available Metrics
 
-The dashboard displays the following metrics for your applications:
+The dashboard displays the following metrics for your apps:
 
 ### Requests
 
-The Requests graph shows the number of concurrent requests being processed by your application over time.
+The Requests graph shows the number of concurrent requests being processed by your app over time.
 
-**What it shows:** This graph displays the number of requests waiting in the queue or currently being processed by your application. Higher values indicate increased load on your system.
+**What it shows:** This graph displays the number of requests waiting in the queue or currently being processed by your app. Higher values indicate increased load on your system.
 
-**Data source:** This metric tracks the number of requests in the queue for individual containers and the total concurrent requests across all instances of your application.
+**Data source:** This metric tracks the number of requests in the queue for individual containers and the total concurrent requests across all instances of your app.
 
 **Notes:**
 
-- Spikes in this graph often correlate with increased latency in your application
+- Spikes in this graph often correlate with increased latency in your app
 - If this value consistently remains high, consider increasing your replica count or adjusting your scaling configuration
-- Zero values don't necessarily mean your application isn't receiving traffic - it could mean requests are being processed immediately without queuing
+- Zero values don't necessarily mean your app isn't receiving traffic - it could mean requests are being processed immediately without queuing
 
 ### GPU
 
-The GPU graph shows the GPU memory usage of your application over time.
+The GPU graph shows the GPU memory usage of your app over time.
 
-**What it shows:** This graph displays the amount of GPU memory (VRAM) being used by a single worker of your application in gigabytes. It represents the maximum memory used by a single worker across all GPUs allocated to that worker.
+**What it shows:** This graph displays the amount of GPU memory (VRAM) being used by a single worker of your app in gigabytes. It represents the maximum memory used by a single worker across all GPUs allocated to that worker.
 
 **Data source:** This metric is collected from NVIDIA's Data Center GPU Manager. The value is converted from megabytes to gigabytes for easier reading.
 
@@ -36,13 +36,13 @@ The GPU graph shows the GPU memory usage of your application over time.
 - Memory spikes often occur during inference or when loading models
 - If you're seeing values close to your GPU's total memory, you may be at risk of out-of-memory errors
 - Some frameworks may not release GPU memory immediately after use, resulting in a "sawtooth" pattern
-- Zero values may indicate your application isn't utilizing the GPU, which could mean your model isn't properly loaded on the GPU
+- Zero values may indicate your app isn't utilizing the GPU, which could mean your model isn't properly loaded on the GPU
 
 ### CPU
 
-The CPU graph shows the CPU utilization of your application over time.
+The CPU graph shows the CPU utilization of your app over time.
 
-**What it shows:** This graph displays the maximum rate of CPU usage in cores for a single worker. For example, a value of 2.0 means a single worker of your application is using the equivalent of 2 full CPU cores.
+**What it shows:** This graph displays the maximum rate of CPU usage in cores for a single worker. For example, a value of 2.0 means a single worker of your app is using the equivalent of 2 full CPU cores.
 
 **Data source:** This metric measures the cumulative CPU time consumed by the container and calculates the per-second usage over the specified time window.
 
@@ -51,37 +51,37 @@ The CPU graph shows the CPU utilization of your application over time.
 - CPU usage can spike during model loading, preprocessing, or when handling requests that don't utilize the GPU
 - Values consistently near your configured CPU limit may indicate CPU bottlenecks
 - The graph shows the maximum rate across all instances, not the average
-- CPU throttling may occur if your application exceeds its allocated CPU resources
+- CPU throttling may occur if your app exceeds its allocated CPU resources
 
 ### Memory
 
-The Memory graph shows the RAM usage of your application over time.
+The Memory graph shows the RAM usage of your app over time.
 
-**What it shows:** This graph displays the maximum memory usage in gigabytes for a single worker of your application.
+**What it shows:** This graph displays the maximum memory usage in gigabytes for a single worker of your app.
 
 **Data source:** This metric measures the total memory used by the container. The value is converted from bytes to gigabytes for easier reading.
 
 **Notes:**
 
-- Memory includes both your application code, loaded models (when not on GPU), and any data being processed
+- Memory includes both your app code, loaded models (when not on GPU), and any data being processed
 - Memory usage typically increases during model loading and may decrease once models are transferred to GPU
-- If memory usage approaches your configured limit, your application may be terminated with an OOM (Out of Memory) error
+- If memory usage approaches your configured limit, your app may be terminated with an OOM (Out of Memory) error
 - Memory usage patterns can help identify memory leaks or inefficient resource usage
 
 ### Workers
 
-The Workers graph shows the number of active replicas (instances) of your application over time.
+The Workers graph shows the number of active replicas (instances) of your app over time.
 
-**What it shows:** This graph displays the number of ready replicas that are currently serving traffic for your application.
+**What it shows:** This graph displays the number of ready replicas that are currently serving traffic for your app.
 
-**Data source:** This metric tracks the number of replicas that are ready to serve traffic for your application.
+**Data source:** This metric tracks the number of replicas that are ready to serve traffic for your app.
 
 **Notes:**
 
-- Changes in this graph reflect your application's auto-scaling behavior
+- Changes in this graph reflect your app's auto-scaling behavior
 - Increases indicate scaling up to handle more traffic, while decreases show scaling down during periods of lower demand
-- If this value remains at 0, your application may be experiencing deployment issues
-- The time it takes for this number to increase reflects your application's cold start time
+- If this value remains at 0, your app may be experiencing deployment issues
+- The time it takes for this number to increase reflects your app's cold start time
 
 ## Reading Time-Series Graphs
 
@@ -94,11 +94,11 @@ When interpreting the metrics graphs, keep these points in mind:
 
 ## Using Metrics for Optimization
 
-These metrics can help you optimize your application in several ways:
+These metrics can help you optimize your app in several ways:
 
 - **Scaling configuration:** Analyze the Requests and Workers graphs to fine-tune your scaling parameters
 - **Resource allocation:** Use the CPU, Memory, and GPU graphs to right-size your resource requests
-- **Performance bottlenecks:** Identify which resources are limiting your application's performance
+- **Performance bottlenecks:** Identify which resources are limiting your app's performance
 - **Cost optimization:** Detect over-provisioned resources that could be reduced to lower costs
 
 For more information on configuring CPU and memory resources, see the [CPU and Memory](/cerebrium/hardware/cpu-and-memory) documentation. For GPU configuration, refer to [Using GPUs](/cerebrium/hardware/using-gpus).
