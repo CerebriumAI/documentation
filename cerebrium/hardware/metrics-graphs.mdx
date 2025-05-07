@@ -26,7 +26,7 @@ The Requests graph shows the number of concurrent requests being processed by yo
 
 The GPU graph shows the GPU memory usage of your application over time.
 
-**What it shows:** This graph displays the amount of GPU memory (VRAM) being used by your application in gigabytes. It represents the maximum memory used across all GPUs allocated to your application.
+**What it shows:** This graph displays the amount of GPU memory (VRAM) being used by a single worker of your application in gigabytes. It represents the maximum memory used by a single worker across all GPUs allocated to that worker.
 
 **Data source:** This metric is collected from NVIDIA's Data Center GPU Manager. The value is converted from megabytes to gigabytes for easier reading.
 
@@ -42,7 +42,7 @@ The GPU graph shows the GPU memory usage of your application over time.
 
 The CPU graph shows the CPU utilization of your application over time.
 
-**What it shows:** This graph displays the maximum rate of CPU usage in cores. For example, a value of 2.0 means your application is using the equivalent of 2 full CPU cores.
+**What it shows:** This graph displays the maximum rate of CPU usage in cores for a single worker. For example, a value of 2.0 means a single worker of your application is using the equivalent of 2 full CPU cores.
 
 **Data source:** This metric measures the cumulative CPU time consumed by the container and calculates the per-second usage over the specified time window.
 
@@ -57,7 +57,7 @@ The CPU graph shows the CPU utilization of your application over time.
 
 The Memory graph shows the RAM usage of your application over time.
 
-**What it shows:** This graph displays the maximum memory usage in gigabytes across all instances of your application.
+**What it shows:** This graph displays the maximum memory usage in gigabytes for a single worker of your application.
 
 **Data source:** This metric measures the total memory used by the container. The value is converted from bytes to gigabytes for easier reading.
 
