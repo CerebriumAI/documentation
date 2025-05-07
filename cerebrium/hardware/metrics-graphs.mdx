@@ -16,7 +16,7 @@ The Requests graph shows the number of concurrent requests being processed by yo
 
 **Data source:** This metric tracks the number of requests in the queue for individual containers and the total concurrent requests across all instances of your application.
 
-**Nuances and gotchas:**
+**Notes:**
 
 - Spikes in this graph often correlate with increased latency in your application
 - If this value consistently remains high, consider increasing your replica count or adjusting your scaling configuration
@@ -30,7 +30,7 @@ The GPU graph shows the GPU memory usage of your application over time.
 
 **Data source:** This metric is collected from NVIDIA's Data Center GPU Manager. The value is converted from megabytes to gigabytes for easier reading.
 
-**Nuances and gotchas:**
+**Notes:**
 
 - GPU memory usage includes both model weights and intermediate activations
 - Memory spikes often occur during inference or when loading models
@@ -46,7 +46,7 @@ The CPU graph shows the CPU utilization of your application over time.
 
 **Data source:** This metric measures the cumulative CPU time consumed by the container and calculates the per-second usage over the specified time window.
 
-**Nuances and gotchas:**
+**Notes:**
 
 - CPU usage can spike during model loading, preprocessing, or when handling requests that don't utilize the GPU
 - Values consistently near your configured CPU limit may indicate CPU bottlenecks
@@ -61,7 +61,7 @@ The Memory graph shows the RAM usage of your application over time.
 
 **Data source:** This metric measures the total memory used by the container. The value is converted from bytes to gigabytes for easier reading.
 
-**Nuances and gotchas:**
+**Notes:**
 
 - Memory includes both your application code, loaded models (when not on GPU), and any data being processed
 - Memory usage typically increases during model loading and may decrease once models are transferred to GPU
@@ -76,7 +76,7 @@ The Workers graph shows the number of active replicas (instances) of your applic
 
 **Data source:** This metric tracks the number of replicas that are ready to serve traffic for your application.
 
-**Nuances and gotchas:**
+**Notes:**
 
 - Changes in this graph reflect your application's auto-scaling behavior
 - Increases indicate scaling up to handle more traffic, while decreases show scaling down during periods of lower demand
