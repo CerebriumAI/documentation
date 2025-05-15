@@ -32,3 +32,38 @@ curl -X POST https://webhook.site/'\
        -H 'Content-Type: application/json'\
        --data '{"smile": "wave"}'
 ```
+
+## Webhook Signature Verification
+
+To verify that webhooks are genuinely coming from Cerebrium, you can use our webhook signature verification system:
+
+1. Include an `X-Webhook-Secret` header with a secret value of your choice when making requests to our API
+2. When you receive a webhook, we'll include the following headers:
+   - `X-Cerebrium-Webhook-Id`: A unique identifier for the webhook
+   - `X-Cerebrium-Webhook-Timestamp`: The Unix timestamp when the webhook was sent
+   - `X-Cerebrium-Webhook-Signature`: The signature in the format `v1,<signature>`
+
+3. To verify the signature:
+   ```python
+   import hmac
+   import hashlib
+   
+   def verify_webhook_signature(webhook_id, timestamp, body, signature, secret):
+       # Remove the 'v1,' prefix from the signature
+       signature = signature.split(',')[1] if ',' in signature else signature
+       
+       # Construct the signed content
+       signed_content = f"{webhook_id}.{timestamp}.{body}"
+       
+       # Calculate expected signature
+       expected_signature = hmac.new(
+           secret.encode(),
+           signed_content.encode(),
+           hashlib.sha256
+       ).hexdigest()
+       
+       # Compare signatures
+       return hmac.compare_digest(expected_signature, signature)
+   ```
+
+This ensures that the webhook is genuinely from Cerebrium and hasn't been tampered with.
