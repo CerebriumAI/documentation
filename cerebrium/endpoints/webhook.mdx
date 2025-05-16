@@ -39,7 +39,7 @@ To verify that webhooks are genuinely coming from Cerebrium, you can use our web
 
 1. Include an `X-Webhook-Secret` header with a secret value of your choice when making requests to our API
 2. When you receive a webhook, we'll include the following headers:
-   - `X-Cerebrium-Webhook-Id`: A unique identifier for the webhook
+   - `X-Request-Id`: A unique identifier for the requst
    - `X-Cerebrium-Webhook-Timestamp`: The Unix timestamp when the webhook was sent
    - `X-Cerebrium-Webhook-Signature`: The signature in the format `v1,<signature>`
 
@@ -48,12 +48,12 @@ To verify that webhooks are genuinely coming from Cerebrium, you can use our web
    import hmac
    import hashlib
    
-   def verify_webhook_signature(webhook_id, timestamp, body, signature, secret):
+   def verify_webhook_signature(request_id, timestamp, body, signature, secret):
        # Remove the 'v1,' prefix from the signature
        signature = signature.split(',')[1] if ',' in signature else signature
        
        # Construct the signed content
-       signed_content = f"{webhook_id}.{timestamp}.{body}"
+       signed_content = f"{request_id}.{timestamp}.{body}"
        
        # Calculate expected signature
        expected_signature = hmac.new(
@@ -65,5 +65,7 @@ To verify that webhooks are genuinely coming from Cerebrium, you can use our web
        # Compare signatures
        return hmac.compare_digest(expected_signature, signature)
    ```
+
+<Note>The body should include everything returned from cerebrium (run_id, function response, timestamp etc) not just your function response</Note>
 
 This ensures that the webhook is genuinely from Cerebrium and hasn't been tampered with.
