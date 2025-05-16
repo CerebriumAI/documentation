@@ -3,8 +3,8 @@ title: "Webhook Forwarding"
 description: "Forward responses to a specified webhook"
 ---
 
-An HTTP request to the Cerebrium API can be parameterised to forward data from your function/app to a specified endpoint via a POST.
-This allows you to utilize webhooks in your architecture! To achieve this, we can simply add the `webhookEndpoint`
+An HTTP request to the Cerebrium API can be parameterized to forward data from your function/app to a specified endpoint via a POST.
+This allows you to use webhooks in your architecture. To achieve this, we can simply add the `webhookEndpoint`
 query parameter to any API call:
 
 ```bash
@@ -16,7 +16,7 @@ curl -X POST https://api.cortex.cerebrium.ai/v4/<YOUR-PROJECT-ID>/<YOUR-APP>/run
 
 This will then forward the body by sending a POST request to your specified webhook. Since this is
 a feature of our proxy, you will not need to modify any part of your code to use the webhook
-functionality. You should however ensure that your endpoint is able to receive POST requests. While
+functionality. You should, however, ensure that your endpoint is able to receive POST requests. While
 this will work for both Cortex and Custom runtimes, it will only work for HTTP requests, and not websockets.
 
 To illustrate this, suppose your function returns `{"smile": "wave"}`. We would then make a POST call from
@@ -40,33 +40,33 @@ To verify that webhooks are genuinely coming from Cerebrium, you can use our web
 1. Include an `X-Webhook-Secret` header with a secret value of your choice when making requests to our API
 2. When you receive a webhook, we'll include the following headers:
 
-   - `X-Request-Id`: A unique identifier for the requst
-   - `X-Cerebrium-Webhook-Timestamp`: The Unix timestamp when the webhook was sent
-   - `X-Cerebrium-Webhook-Signature`: The signature in the format `v1,<signature>`
+- `X-Request-Id`: A unique identifier for the request
+- `X-Cerebrium-Webhook-Timestamp`: The Unix timestamp when the webhook was sent
+- `X-Cerebrium-Webhook-Signature`: The signature in the format `v1,<signature>`
 
 3. To verify the signature:
 
-   ```python
-   import hmac
-   import hashlib
+```python
+import hmac
+import hashlib
 
-   def verify_webhook_signature(request_id, timestamp, body, signature, secret):
-       # Remove the 'v1,' prefix from the signature
-       signature = signature.split(',')[1] if ',' in signature else signature
+def verify_webhook_signature(request_id, timestamp, body, signature, secret):
+    # Remove the 'v1,' prefix from the signature
+    signature = signature.split(',')[1] if ',' in signature else signature
 
-       # Construct the signed content
-       signed_content = f"{request_id}.{timestamp}.{body}"
+    # Construct the signed content
+    signed_content = f"{request_id}.{timestamp}.{body}"
 
-       # Calculate expected signature
-       expected_signature = hmac.new(
-           secret.encode(),
-           signed_content.encode(),
-           hashlib.sha256
-       ).hexdigest()
+    # Calculate expected signature
+    expected_signature = hmac.new(
+        secret.encode(),
+        signed_content.encode(),
+        hashlib.sha256
+    ).hexdigest()
 
-       # Compare signatures
-       return hmac.compare_digest(expected_signature, signature)
-   ```
+    # Compare signatures
+    return hmac.compare_digest(expected_signature, signature)
+```
 
 <Note>
   The body should include everything returned from cerebrium (run_id, function
