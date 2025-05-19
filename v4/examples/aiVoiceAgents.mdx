@@ -7,13 +7,154 @@ In this tutorial, we'll create a real-time voice agent that responds to queries 
 
 To create this app, we use [PipeCat](https://www.pipecat.ai/), a framework that handles component integration, user interruptions, and audio data processing. We'll demonstrate this by joining a meeting room with our voice agent using [Daily](https://daily.co) (PipeCat's creators) and deploy the app on Cerebrium for seamless deployment and scaling.
 
+Essentially our application will have 3/4 parts:
+- Your Pipecat agent which acts as the orchestrator
+- Your Deepgram TTS/STT service (Requires a Deepgram Enterprise account)
+- A self-hosted LLM using the vLLM framework
+
+The reason we achieve such low latency is that each service is hosted within Cerebrium and so we have no network latency for the requests we make - communication across containers is less than 10ms.
+
+![Realtime Voice Agents](/images/examples/self-hosted-pipecat.png)
+
 You can find the final version of the code [here](https://github.com/CerebriumAI/examples/tree/master/6-voice/2-realtime-voice-agent)
 
-### Cerebrium setup
+### Deepgram deployment
+
+For the sake of conciseness, look at our Partner Services page to see how you can deploy a Deepgram service on Cerebrium. The link is [here](/cerebrium/partner-services/deepgram)
+<Note>You need a Deepgram Enterprise License to do deploy Deegram on Cerebrium else you must use their API endpoint below.</Note>
+
+### LLM Deployment
+
+For our LLM we deploy a OpenAI compatible Llama-3 endpoint using the vLLM framework - in order to have a low TTFT we deploy a quantized version (RedHatAI/Meta-Llama-3.1-8B-Instruct-quantized.w8a8").
+
+Run `cerebrium init llama-llm` and add the following code to your cerebrium.toml:
+```
+[cerebrium.deployment]
+name = "llama-llm"
+python_version = "3.11"
+docker_base_image_url = "debian:bookworm-slim"
+include = ["./*", "main.py", "cerebrium.toml"]
+exclude = [".*"]
+
+[cerebrium.hardware]
+cpu = 4
+memory = 12.0
+compute = "ADA_L40"
+
+[cerebrium.scaling]
+min_replicas = 1
+max_replicas = 5
+cooldown = 60
+
+[cerebrium.dependencies.pip]
+vllm = "latest"
+pydantic = "latest"
+```
+
+Add the following code to your main.py - this uses the vLLM framework and makes it openAI compatible:
+```
+import os
+import time
+import json
+
+from huggingface_hub import login
+from pydantic import BaseModel
+from vllm import SamplingParams, AsyncLLMEngine
+from vllm.engine.arg_utils import AsyncEngineArgs
+
+login(token=os.environ.get("HF_TOKEN"))
+
+engine_args = AsyncEngineArgs(
+    model="RedHatAI/Meta-Llama-3.1-8B-Instruct-quantized.w8a8",
+    gpu_memory_utilization=0.9,
+    max_model_len=8192,
+)
+engine = AsyncLLMEngine.from_engine_args(engine_args)
+
+
+class Message(BaseModel):
+    role: str
+    content: str
+
+
+def format_chat_prompt(messages: list) -> str:
+    formatted_messages = []
+    for msg in messages:
+        msg_obj = Message(**msg)
+        formatted_messages.append(
+            f"<|start_header_id|>{msg_obj.role}<|end_header_id|>\n{msg_obj.content}<|eot_id|>"
+        )
+    return "<|begin_of_text|>" + "".join(formatted_messages) + "<|start_header_id|>assistant<|end_header_id|>"
+
+
+async def run(
+    messages: list,
+    model: str,
+    run_id: str,
+    stream: bool = True,
+    temperature: float = 0.8,
+    top_p: float = 0.95,
+    max_tokens: int = 256,
+    stream_options: dict = None,
+):
+    # Format your prompt for llama-friendly usage:
+    prompt = format_chat_prompt(messages)
+
+    sampling_params = SamplingParams(temperature=temperature, top_p=top_p, max_tokens=max_tokens)
+    results_generator = engine.generate(prompt, sampling_params, run_id)
+
+    previous_text = ""
+    first_chunk = True
+
+    async for output in results_generator:
+        prompt_output = output.outputs
+        new_text = prompt_output[0].text[len(previous_text) :]
+        previous_text = prompt_output[0].text
+
+        # Construct OpenAI-compatible chunk
+        chunk = {
+            "id": run_id,
+            "object": "chat.completion.chunk",
+            "created": int(time.time()),
+            "model": model,
+            "choices": [
+                {
+                    "index": 0,
+                    "delta": {},
+                    "finish_reason": None,
+                }
+            ],
+        }
+
+        # Include the role in the first chunk
+        if first_chunk:
+            chunk["choices"][0]["delta"]["role"] = "assistant"
+            first_chunk = False
+
+        # Add new text to the delta if any
+        if new_text:
+            chunk["choices"][0]["delta"]["content"] = new_text
+
+        # Capture a finish reason if it's provided
+        finish_reason = prompt_output[0].finish_reason or None
+        if finish_reason and finish_reason != "none":
+            chunk["choices"][0]["finish_reason"] = finish_reason
+
+        yield f"data: {json.dumps(chunk)}\n\n"
+
+    # Send the final [DONE] message
+    yield "data: [DONE]\n\n"
+```
+
+Make sure to add your HuggingFace token to your Secrets on Cerebrium as `HF_TOKEN`.
+
+The run `cerebrium deploy` to make it live - you should see it live in your Cerebrium dashboard. We will use your deployment url in the next step.
+
+### Pipecat setup
 
 If you don't have a Cerebrium account, you can create one by signing up [here](https://dashboard.cerebrium.ai/register) and following the documentation [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation) to get set up.
 
-In your IDE, run the following command to create our Cerebrium starter project: `cerebrium init 2-realtime-agent`. This creates two files:
+In your IDE, run the following command to create our Cerebrium starter project: `cerebrium init pipecat-agent`. This creates two files:
 
 - `main.py`: Our entrypoint file where our code lives
 - `cerebrium.toml`: A configuration file that contains all our build and environment settings
@@ -22,16 +163,35 @@ Add the following pip packages to your `cerebrium.toml` to create your deploymen
 
 ```
 [cerebrium.deployment]
-docker_base_image_url = "registry.cerebrium.ai/daily:latest"
+name = "pipecat-agent"
+python_version = "3.11"
+include = ["./*", "main.py", "cerebrium.toml"]
+exclude = ["./example_exclude"]
+
+[cerebrium.hardware]
+region = "us-east-1"
+provider = "aws"
+compute = "CPU"
+cpu = 6
+memory = 18.0
+gpu_count = 1
+
+[cerebrium.scaling]
+min_replicas = 1 # Note: This incurs a constant cost since at least one instance is always running.
+max_replicas = 2
+cooldown = 180
 
 [cerebrium.dependencies.pip]
 torch = ">=2.0.0"
-"pipecat-ai[silero, daily, openai, deepgram]" = "latest"
-aiohttp = "latest"
-torchaudio = "latest"
-vllm = "latest"
-huggingface_hub = "latest"
+"pipecat-ai[silero, daily, openai, deepgram, cartesia]" = "==0.0.67"
+aiohttp = ">=3.9.4"
+torchaudio = ">=2.3.0"
+channels = ">=4.0.0"
+requests = "==2.32.2"
+dotenv = "latest"
 ```
+
+
 
 We specify a Docker base image that contains local [Deepgram](https://deepgram.com/) Speech-to-Text (STT) and Text-to-Speech (TTS) models, provided by Daily. Running everything locally instead of over the network helps achieve low latency.
 

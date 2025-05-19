@@ -1,346 +1,402 @@
 ---
-title: "Real-time Voice AI Agent"
-description: "Deploy a real-time voice AI agent"
+title: "Real-time Voice Agent"
+description: "Deploy a real-time AI voice agent"
 ---
 
-In this tutorial, we'll create a real-time voice AI agent that responds to queries via speech in ~500ms. This flexible implementation lets you swap in any Large Language Model, Text-to-Speech (TTS) model, and Speech-to-Text (STT) model. It's ideal for voice-based use cases like customer service bots and receptionists.
+In this tutorial, we'll create a real-time voice agent that responds to queries via speech in ~500ms. This flexible implementation lets you swap in any Large Language Model (LLM) or Text-to-Speech (TTS) model. It's ideal for voice-based use cases like customer support bots and receptionists.
 
-To create this app, we use [PipeCat](https://www.pipecat.ai/), an open-source framework for voice and multimodal conversational AI that handles user interruptions, audio data, and other essential functions. We communicate with our voice AI agent via WebRTC transport using [Daily](https://daily.co) (PipeCat's creators) and deploy the app on Cerebrium for seamless deployment and scaling.
+To create this app, we use [PipeCat](https://www.pipecat.ai/), a framework that handles component integration, user interruptions, and audio data processing. We'll demonstrate this by joining a meeting room with our voice agent using [Daily](https://daily.co) (PipeCat's creators) and deploy the app on Cerebrium for seamless deployment and scaling.
+
+Essentially our application will have 3/4 parts:
+- Your Pipecat agent which acts as the orchestrator
+- Your Deepgram TTS/STT service (Requires a Deepgram Enterprise account)
+- A self-hosted LLM using the vLLM framework
+
+The reason we achieve such low latency is that each service is hosted within Cerebrium and so we have no network latency for the requests we make - communication across containers is less than 10ms.
+
+![Realtime Voice Agents](/images/examples/self-hosted-pipecat.png)
 
 You can find the final version of the code [here](https://github.com/CerebriumAI/examples/tree/master/6-voice/2-realtime-voice-agent)
 
-### Cerebrium setup
-
 If you don't have a Cerebrium account, you can create one by signing up [here](https://dashboard.cerebrium.ai/register) and following the documentation [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation) to get set up.
 
-In your IDE, run the following command to create our Cerebrium starter project: `cerebrium init 2-realtime-voice-agent`. This creates two files:
+### Deepgram deployment
 
-- `main.py`: Our entrypoint file where our code lives.
-- `cerebrium.toml`: A configuration file that contains all our build and environment settings.
+For the sake of conciseness, look at our Partner Services page to see how you can deploy a Deepgram service on Cerebrium. The link is [here](/cerebrium/partner-services/deepgram)
+<Note>You need a Deepgram Enterprise License to do deploy Deegram on Cerebrium else you must use their API endpoint below.</Note>
 
-Add the following pip packages and hardware requirements near the bottom of your `cerebrium.toml` to create your deployment environment:
+### LLM Deployment
+
+For our LLM we deploy a OpenAI compatible Llama-3 endpoint using the vLLM framework - in order to have a low TTFT we deploy a quantized version (RedHatAI/Meta-Llama-3.1-8B-Instruct-quantized.w8a8").
+
+Run `cerebrium init llama-llm` and add the following code to your cerebrium.toml:
+```
+[cerebrium.deployment]
+name = "llama-llm"
+python_version = "3.11"
+docker_base_image_url = "debian:bookworm-slim"
+include = ["./*", "main.py", "cerebrium.toml"]
+exclude = [".*"]
+
+[cerebrium.hardware]
+cpu = 4
+memory = 12.0
+compute = "ADA_L40"
+
+[cerebrium.scaling]
+min_replicas = 1
+max_replicas = 5
+cooldown = 60
+
+[cerebrium.dependencies.pip]
+vllm = "latest"
+pydantic = "latest"
+```
+
+Add the following code to your main.py - this uses the vLLM framework and makes it openAI compatible:
+```
+import os
+import time
+import json
+
+from huggingface_hub import login
+from pydantic import BaseModel
+from vllm import SamplingParams, AsyncLLMEngine
+from vllm.engine.arg_utils import AsyncEngineArgs
+
+login(token=os.environ.get("HF_TOKEN"))
+
+engine_args = AsyncEngineArgs(
+    model="RedHatAI/Meta-Llama-3.1-8B-Instruct-quantized.w8a8",
+    gpu_memory_utilization=0.9,
+    max_model_len=8192,
+)
+engine = AsyncLLMEngine.from_engine_args(engine_args)
+
+
+class Message(BaseModel):
+    role: str
+    content: str
+
+
+def format_chat_prompt(messages: list) -> str:
+    formatted_messages = []
+    for msg in messages:
+        msg_obj = Message(**msg)
+        formatted_messages.append(
+            f"<|start_header_id|>{msg_obj.role}<|end_header_id|>\n{msg_obj.content}<|eot_id|>"
+        )
+    return "<|begin_of_text|>" + "".join(formatted_messages) + "<|start_header_id|>assistant<|end_header_id|>"
+
+
+async def run(
+    messages: list,
+    model: str,
+    run_id: str,
+    stream: bool = True,
+    temperature: float = 0.8,
+    top_p: float = 0.95,
+    max_tokens: int = 256,
+    stream_options: dict = None,
+):
+    # Format your prompt for llama-friendly usage:
+    prompt = format_chat_prompt(messages)
+
+    sampling_params = SamplingParams(temperature=temperature, top_p=top_p, max_tokens=max_tokens)
+    results_generator = engine.generate(prompt, sampling_params, run_id)
+
+    previous_text = ""
+    first_chunk = True
+
+    async for output in results_generator:
+        prompt_output = output.outputs
+        new_text = prompt_output[0].text[len(previous_text) :]
+        previous_text = prompt_output[0].text
+
+        # Construct OpenAI-compatible chunk
+        chunk = {
+            "id": run_id,
+            "object": "chat.completion.chunk",
+            "created": int(time.time()),
+            "model": model,
+            "choices": [
+                {
+                    "index": 0,
+                    "delta": {},
+                    "finish_reason": None,
+                }
+            ],
+        }
+
+        # Include the role in the first chunk
+        if first_chunk:
+            chunk["choices"][0]["delta"]["role"] = "assistant"
+            first_chunk = False
+
+        # Add new text to the delta if any
+        if new_text:
+            chunk["choices"][0]["delta"]["content"] = new_text
+
+        # Capture a finish reason if it's provided
+        finish_reason = prompt_output[0].finish_reason or None
+        if finish_reason and finish_reason != "none":
+            chunk["choices"][0]["finish_reason"] = finish_reason
+
+        yield f"data: {json.dumps(chunk)}\n\n"
+
+    # Send the final [DONE] message
+    yield "data: [DONE]\n\n"
+```
+
+Make sure to add your HuggingFace token to your Secrets on Cerebrium as `HF_TOKEN`.
+
+The run `cerebrium deploy` to make it live - you should see it live in your Cerebrium dashboard. We will use your deployment url in the next step.
+
+Based on your GPU hardware and replica-concurrency in your cerebrium.toml, you can set how many concurrent calls the LLM can take.
+
+### Pipecat setup
+
+In your IDE, run the following command to create our pipecat-agent: `cerebrium init pipecat-agent`. We will be using the [Pipecat framework](https://docs.pipecat.ai/getting-started/overview) to orchestrate our services to create a voice agent
+
+Add the following pip packages to your `cerebrium.toml` to create your deployment environment:
 
 ```
 [cerebrium.deployment]
-# existing values...
-docker_base_image_url = "registry.cerebrium.ai/daily:latest"
+# This file was automatically generated by Cerebrium as a starting point for your project. 
+# You can edit it as you wish.
+# If you would like to learn more about your Cerebrium config, please visit https://docs.cerebrium.ai/cerebrium/environments/config-files#config-file-example
+
+[cerebrium.deployment]
+name = "pipecat-agent"
+python_version = "3.11"
+include = ["./*", "main.py", "cerebrium.toml"]
+exclude = ["./example_exclude"]
 
 [cerebrium.hardware]
 region = "us-east-1"
 provider = "aws"
-gpu = "AMPERE_A10"
-cpu = 4
-memory = 18.0
-gpu_count = 1
+compute = "CPU"
+cpu = 6
+memory = 12.0
+
+[cerebrium.scaling]
+min_replicas = 1 # Note: This incurs a constant cost since at least one instance is always running.
+max_replicas = 2
+cooldown = 180
 
 [cerebrium.dependencies.pip]
 torch = ">=2.0.0"
-"pipecat-ai[silero, daily, openai, deepgram]" = "latest"
-aiohttp = "latest"
-torchaudio = "latest"
-vllm = "latest"
-huggingface_hub = "latest"
+"pipecat-ai[silero, daily, openai, deepgram, cartesia]" = "==0.0.67"
+aiohttp = ">=3.9.4"
+torchaudio = ">=2.3.0"
+channels = ">=4.0.0"
+requests = "==2.32.2"
+dotenv = "latest"
 ```
-
-We specify a Docker base image that contains local [Deepgram](https://deepgram.com/) Speech-to-Text (STT) and Text-to-Speech (TTS) models, provided by Daily. Running everything locally instead of over the network helps achieve low latency.
-
-<Note>
-  Custom Docker files are not support yet but are rather in the works to be
-  released soon. This is just a very early preview of how it would work.
-</Note>
-
-### Pipecat setup
-
-In this example, we will be using Llama 3 8B as our LLM and serving it via [vLLM](https://docs.vllm.ai/en/latest/getting_started/installation.html). To use Llama 3, we need to be authenticated via Hugging Face.
-
-To authenticate ourselves, we need to go to HuggingFace and accept the model permissions for [Llama 8B](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct) if we haven’t already. It takes about 30 minutes or less for them to accept your request.
-
-In your Cerebrium dashboard, you can add your HuggingFace token as a secret by navigating to “Secrets” in the sidebar. For the sake of this tutorial, I called mine “HF_TOKEN”. We can now access these values in our code at runtime without exposing them in our code.
 
 You can then add the following code to your main.py:
 
 ```python
-from huggingface_hub import login
-import subprocess
-import os
-
-os.environ['OUTLINES_CACHE_DIR'] = '/tmp/.outlines'
-
-login(token=os.environ.get('HF_TOKEN'))
-# Run vllM Server in background process
-def start_server():
-    while True:
-        process = subprocess.Popen(
-            f"subprocess.Popen(f"python -m vllm.entrypoints.openai.api_server --port 5000 --model NousResearch/Meta-Llama-3-8B-Instruct --dtype bfloat16 --api-key {os.environ.get('HF_TOKEN')} --download-dir /persistent-storage/", shell=True)",
-            shell=True
-        )
-        process.wait()  # Wait for the process to complete
-        logger.error("Server process ended unexpectedly. Restarting in 5 seconds...")
-        time.sleep(5)  # Wait before restarting
-
-# Start the server in a separate process
-server_process = Process(target=start_server, daemon=True)
-server_process.start()
-```
-
-Since PipeCat requires models to follow the OpenAI-compatible format and doesn't support local instantiation, we run the vLLM server locally in a background process. We monitor the process for successful launch due to a known issue with rapidly starting multiple vLLM instances, retrying after 5 seconds if needed. We set the `OUTLINES_CACHE_DIR` environment variable to address a disk I/O bug in outlines used by vLLM (see GitHub issue [here](https://github.com/vllm-project/vllm/issues/4193)).
-
-Note, we are running the vLLM server on port **5000** (8000 is automatically used by Cerebrium) and we set the download directory of the model so that subsequent cold starts can be much quicker.
-
-Now we implement the Pipecat framework by instantiating the various components. Create a function call **main** with the following code:
-
-```python
-import aiohttp
-import os
-import sys
-import subprocess
-import time
-import requests
 import asyncio
+import os
+import subprocess
+import sys
+import time
 from multiprocessing import Process
+
+import aiohttp
+import requests
 from loguru import logger
-
-from pipecat.vad.vad_analyzer import VADParams
-from pipecat.vad.silero import SileroVADAnalyzer
-from pipecat.transports.services.daily import DailyParams, DailyTransport
-from pipecat.services.openai import OpenAILLMService
-from pipecat.services.deepgram import DeepgramSTTService
-from pipecat.pipeline.task import PipelineParams, PipelineTask
-from pipecat.pipeline.runner import PipelineRunner
-from pipecat.pipeline.pipeline import Pipeline
 from pipecat.frames.frames import LLMMessagesFrame, EndFrame
+from pipecat.pipeline.pipeline import Pipeline
+from pipecat.pipeline.runner import PipelineRunner
 
+from pipecat.pipeline.task import PipelineParams, PipelineTask
 from pipecat.processors.aggregators.llm_response import (
-    LLMAssistantResponseAggregator, LLMUserResponseAggregator
+    LLMAssistantResponseAggregator,
+    LLMUserResponseAggregator,
 )
+from pipecat.services.deepgram.stt import DeepgramSTTService
+from pipecat.services.cartesia.tts import CartesiaTTSService
+from deepgram import LiveOptions
+from pipecat.services.rime.tts import RimeHttpTTSService, RimeTTSService, Language
+from pipecat.services.openai import OpenAILLMService
+from pipecat.transports.services.daily import DailyParams, DailyTransport
+from pipecat.audio.vad.silero import SileroVADAnalyzer
+from pipecat.audio.vad.vad_analyzer import VADParams
 
 from helpers import (
-    ClearableDeepgramTTSService,
-    AudioVolumeTimer,
-    TranscriptionTimingLogger
+    CustomDeepgramSTTService,
 )
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 logger.remove(0)
 logger.add(sys.stderr, level="DEBUG")
 
 deepgram_voice: str = "aura-asteria-en"
 
-async def main(room_url: str, token: str = None):
-
+async def main(room_url: str, token: str):
     async with aiohttp.ClientSession() as session:
         transport = DailyTransport(
             room_url,
-            token if token else os.environ.get("DAILY_TOKEN"),
-            "Respond bots",
+            token,
+            "Respond bot",
             DailyParams(
                 audio_out_enabled=True,
+                audio_in_enabled=True,
                 transcription_enabled=False,
                 vad_enabled=True,
-                vad_analyzer=SileroVADAnalyzer(params=VADParams(
-                    stop_secs=0.2
-                )),
-                vad_audio_passthrough=True
+                vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.15)),
+                vad_audio_passthrough=True,
+            ),
+        )
+        
+        stt = CustomDeepgramSTTService(
+            api_key=os.environ.get("DEEPGRAM_API_KEY"),
+            websocket_url="ws://p-xxxxxx-deepgram.tenant-cerebrium-prod.svc.cluster.local/v1/listen",
+            live_options=LiveOptions(
+                model="nova-2-general",
+                language="en-US",
+                smart_format=True,
+                vad_events=True
             )
         )
 
-        stt = DeepgramSTTService(
-            name="STT",
-            api_key=None,
-            url='ws://127.0.0.1:8082/v1/listen'
-        )
+        tts = CartesiaTTSService(
+            api_key=os.environ.get("CARTESIA_API_KEY"),
+            voice_id='97f4b8fb-f2fe-444b-bb9a-c109783a857a',
 
-        tts = ClearableDeepgramTTSService(
-            name="Voice",
-            aiohttp_session=session,
-            api_key=None,
-            voice=deepgram_voice,
-            base_url="http://127.0.0.1:8082/v1/speak"
         )
 
         llm = OpenAILLMService(
             name="LLM",
-            api_key=os.environ.get("HF_TOKEN"),
-            model="NousResearch/Meta-Llama-3-8B-Instruct",
-            base_url="http://0.0.0.0:5000/v1"
+            model="RedHatAI/Meta-Llama-3.1-8B-Instruct-quantized.w8a8",
+            base_url="http://p-xxxxxx-llama-llm.tenant-cerebrium-prod.svc.cluster.local/run"
         )
 
         messages = [
             {
                 "role": "system",
-                "content": "You are a helpful LLM in a WebRTC call. Your goal is to demonstrate your capabilities in a succinct way. Your output will be converted to audio so don't include special characters in your answers. Respond to what the user said in a creative and helpful way.",
+                "content": "You are a fast, low-latency chatbot. Your goal is to demonstrate voice-driven AI capabilities at human-like speeds. The technology powering you is Daily for transport, Cerebrium for serverless infrastructure, Llama 3 (8-B version) LLM, and Deepgram for speech-to-text and text-to-speech. You are hosted on the east coast of the United States. Respond to what the user said in a creative and helpful way, but keep responses short and legible. Ensure responses contain only words. Check again that you have not included special characters other than '?' or '!'.",
             },
         ]
-
-        avt = AudioVolumeTimer()
-        tl = TranscriptionTimingLogger(avt)
 
         tma_in = LLMUserResponseAggregator(messages)
         tma_out = LLMAssistantResponseAggregator(messages)
 
-        pipeline = Pipeline([
-            transport.input(),   # Transport user input
-            avt,                 # Audio volume timer
-            stt,                 # Speech-to-text
-            tl,                  # Transcription timing logger
-            tma_in,              # User responses
-            llm,                 # LLM
-            tts,                 # TTS
-            transport.output(),  # Transport bot output
-            tma_out,             # Assistant spoken responses
-        ])
+        pipeline = Pipeline(
+            [
+                transport.input(),  # Transport user input
+                stt,  # Speech-to-text
+                tma_in,  # User responses
+                llm,  # LLM
+                tts,  # TTS
+                transport.output(),  # Transport bot output
+                tma_out,  # Assistant spoken responses
+            ]
+        )
 
         task = PipelineTask(
             pipeline,
-            PipelineParams(
+            params=PipelineParams(
                 allow_interruptions=True,
-                enable_metrics=True,
-                report_only_initial_ttfb=True
-            ))
-```
+                enable_metrics=True
+            ),
+        )
 
-In our main function, we initialize the Daily transport layer to handle audio/video data from the Daily room. We pass the room URL and authentication token for programmatic joining. We set the VAD stop seconds to 200 milliseconds, which defines the pause duration before the bot responds.
+        # When the first participant joins, the bot should introduce itself.
+        @transport.event_handler("on_first_participant_joined")
+        async def on_first_participant_joined(transport, participant):
+            # Kick off the conversation.
+            time.sleep(1.5)
+            messages.append(
+                {
+                    "role": "system",
+                    "content": "Introduce yourself by saying 'hello, I'm FastBot, how can I help you today?'",
+                }
+            )
+            await task.queue_frame(LLMMessagesFrame(messages))
 
-Next, we connect to our locally running Deepgram models from our Docker base image on port 8082. The PipeCat framework handles audio-to-text and text-to-audio conversion. We then connect to our local LLM model from the vLLM server using the same pattern.
+        # When the participant leaves, we exit the bot.
+        @transport.event_handler("on_participant_left")
+        async def on_participant_left(transport, participant, reason):
+            await task.queue_frame(EndFrame())
 
-Finally, we combine everything into a PipelineTask, which PipeCat executes. Tasks are fully customizable and support Image and Vision use cases (learn more [here](https://docs.pipecat.ai/docs/category/services)). Pipeline tasks include parameters for handling interruptions, swapping models, and other features with minimal code changes.
+        # If the call is ended make sure we quit as well.
+        @transport.event_handler("on_call_state_updated")
+        async def on_call_state_updated(transport, state):
+            if state == "left":
+                await task.queue_frame(EndFrame())
 
-In the code above, we are importing some helper functions at the top of our file to help with our implementation. You can copy the file from the github repository [here](https://github.com/CerebriumAI/examples/blob/master/18-realtime-voice-agent/helpers.py).
-Make sure to name the file **helpers.py**.
+        runner = PipelineRunner()
 
-### Daily Event Webhooks
+        await runner.run(task)
+        await session.close()
 
-The Daily Python SDK comes with a lot of event webhooks where you can trigger functionality based on events occurring within your Daily room. We would like to handle events such as a user leaving/joining a call.
-Continue to add the following code to the **main()** function.
 
-```python
-# When the first participant joins, the bot should introduce itself.
-@transport.event_handler("on_first_participant_joined")
-async def on_first_participant_joined(transport, participant):
-    # Kick off the conversation.
-    messages.append(
-        {"role": "system", "content": "Please introduce yourself to the user."})
-    await task.queue_frame(LLMMessagesFrame(messages))
+async def start_bot(room_url: str, token: str = None):
 
-# When the participant leaves, we exit the bot.
-@transport.event_handler("on_participant_left")
-async def on_participant_left(transport, participant, reason):
-    await task.queue_frame(EndFrame())
+    try:
+        await main(room_url, token)
+    except Exception as e:
+        logger.error(f"Exception in main: {e}")
+        sys.exit(1)  # Exit with a non-zero status code
 
-# If the call is ended make sure we quit as well.
-@transport.event_handler("on_call_state_updated")
-async def on_call_state_updated(transport, state):
-    if state == "left":
-        await task.queue_frame(EndFrame())
-
-runner = PipelineRunner()
-
-await runner.run(task)
-await session.close()
-```
-
-Above we handle the following events:
-
-- When the first participant joins, we get the bot to introduce itself to the user. We do this by adding a message to the conversation.
-- We add support for multiple participants to join and listen/respond to the bot.
-- When a participant leaves or the call is ended, we get the bot to terminate itself.
-
-From the code above, you will see the events are attached to "Transport", which is the method of communication - in this case the meeting room. We then pass in our defined Pipeline task
-to our pipeline runner which executes indefinitely until we signal it to exit which in this case happens when a call ends. If you want to read further about the PipeCat infrastructure
-you can read more [here](https://docs.pipecat.ai/docs/understanding-bots/dailyai-architecture)
-
-### Starting Bot
-
-We set `min_replicas` in our `cerebrium.toml` to ensure optimal user experience while supporting autoscaling. Before the bot joins a meeting, we verify the vLLM server is running with a local GET request. Note that these models take about 40 seconds to load into VRAM from disk.
-
-We run the code in a separate execution environment to prevent multiple PipeCat instances. This background process serves as the entry point for our REST API endpoint to start the PipeCat bot. When the call ends and the bot returns, we send a response to our API endpoint.
-We therefore create the following function:
-
-<NOTE>
-  Currently, Cerebrium does not support workloads running longer than 5 minutes
-  however it is currently being worked on internally and will be released soon.
-  This means that conversations are limited to a 5 minute window. If this is a
-  issue and you have a urgent use case, please reach out to
-  [support](mailto:support@cerebrium.ai)
-</NOTE>
-
-```python
-def check_vllm_model_status():
-    url = "http://0.0.0.0:5000/v1/models"
-    headers = {
-        "Authorization": f"Bearer {os.environ.get('HF_TOKEN')}"
-    }
-    max_retries = 8
-    for _ in range(max_retries):
-        response = requests.get(url, headers=headers)
-        if response.status_code == 200:
-            return True
-        time.sleep(15)
-    return False
-
-def start_bot(room_url: str, token: str = None):
-
-    def target():
-        asyncio.run(main(room_url, token))
-
-    check_vllm_model_status()
-    process = Process(target=target)
-    process.start()
-    process.join()  # Wait for the process to complete
     return {"message": "session finished"}
-```
 
-That's it! You now have a fully functioning AI bot that can interact with a user through speech in ~500ms. Imagine the possibilities!
 
-Let us now create a user facing UI in order for you to interface with this bot.
-
-### Creating Meeting Room
-
-Cerebrium can run any Python code, not just AI workloads. For our demo, we define two functions that use the Daily REST API to create a room and temporary token, both valid for 5 minutes.
-
-Get your Daily developer token from your profile. If you don't have an account, sign up [here](https://dashboard.daily.co/u/signup) (they offer a generous free tier). Navigate to the "developers" tab to get your API key and add it to your Cerebrium Secrets.
-
-![Daily API Key](/images/examples/voice_agent/daily-api-key.png)
-
-Below we create a room that only lasts 5 minutes and a temporary token to access it
-
-```python
 def create_room():
     url = "https://api.daily.co/v1/rooms/"
     headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {os.environ.get('DAILY_TOKEN')}"
+        "Authorization": f"Bearer {os.environ.get('DAILY_TOKEN')}",
     }
     data = {
         "properties": {
-            "exp": int(time.time()) + 60*5 ##5 mins
+            "exp": int(time.time()) + 60 * 5,  ##5 mins
+            "eject_at_room_exp": True,
         }
     }
 
     response = requests.post(url, headers=headers, json=data)
     if response.status_code == 200:
         room_info = response.json()
-        token = create_token(room_info['name'])
-        if token and 'token' in token:
-            room_info['token'] = token['token']
+        token = create_token(room_info["name"])
+        if token and "token" in token:
+            room_info["token"] = token["token"]
         else:
             logger.error("Failed to create token")
-            return {"message": 'There was an error creating your room', "status_code": 500}
+            return {
+                "message": "There was an error creating your room",
+                "status_code": 500,
+            }
         return room_info
     else:
+        data = response.json()
+        if data.get("error") == "invalid-request-error" and "rooms reached" in data.get(
+            "info", ""
+        ):
+            logger.error(
+                "We are currently at capacity for this demo. Please try again later."
+            )
+            return {
+                "message": "We are currently at capacity for this demo. Please try again later.",
+                "status_code": 429,
+            }
         logger.error(f"Failed to create room: {response.status_code}")
-        return {"message": 'There was an error creating your room', "status_code": 500}
+        return {"message": "There was an error creating your room", "status_code": 500}
+
 
 def create_token(room_name: str):
     url = "https://api.daily.co/v1/meeting-tokens"
     headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {os.environ.get('DAILY_TOKEN')}"
+        "Authorization": f"Bearer {os.environ.get('DAILY_TOKEN')}",
     }
-    data = {
-        "properties": {
-            "room_name": room_name
-        }
-    }
+    data = {"properties": {"room_name": room_name, "is_owner": True}}
 
     response = requests.post(url, headers=headers, json=data)
     if response.status_code == 200:
@@ -349,26 +405,63 @@ def create_token(room_name: str):
     else:
         logger.error(f"Failed to create token: {response.status_code}")
         return None
+
+
+# if __name__ == "__main__":
+#     room = create_room()
+#     if room and "token" in room:
+#         asyncio.run(main(room["url"], room["token"]))
+#     else:
+#         logger.error("Failed to create room")
 ```
+
+There is a lot happening above but below we will give a summary:
+- We are using the WebRTC functionality from Daily to create our room which you can switch out for Twilio/Telenyx. We then have two functions to create/authenticate our meeting room - create_room() and create_token()
+- For the Deepgram and LLM service, we use a local url to connect to the services within the Cerebrium cluster. We are working on making this better but for now just edit with your project key.
+- For TTS, we are using the Cartesia service to showcase how versatile Pipecat is but you can use the TTS service from Deepgram too!
+
+The Daily Python SDK provides event webhooks to trigger functionality based on events like users joining or leaving calls. Add this event handling code to the `main()` function:
+
+This code handles these events:
+
+- First participant joins: Bot introduces itself via a conversation message
+- Additional participants join: Bot listens and responds to all participants
+- Participant leaves or call ends: Bot terminates itself
+
+Based on your CPU hardware and replica-concurrency in your cerebrium.toml, you can set how many concurrent calls this Pipecat agent can take.
+
+Create a .env file within your pipecat-agent folder with the following set:
+```
+DAILY_TOKEN=
+HF_TOKEN=
+DEEPGRAM_API_KEY=
+CARTESIA_API_KEY=
+```
+
+Get your Daily developer token from your profile. If you don't have an account, sign up [here](https://dashboard.daily.co/u/signup) (they offer a generous free tier). Navigate to the "developers" tab to get your API key and add it to your Cerebrium Secrets.
+
+![Daily API Key](/images/examples/voice_agent/daily-api-key.png)
+
+To test your voice bot locally, you uncomment that main code at the bottom and then run `python main.py`. Your code should then work
+
+That's it! You now have a fully functioning AI bot that interacts with users through speech in ~500ms. Imagine the possibilities!
+
+Now, let's create a user interface for the bot.
 
 ### Deploy to Cerebrium
 
-To deploy this application to Cerebrium you can simply run the command: cerebrium deploy in your terminal.
+Deploy the app to Cerebrium by running this command in your terminal: `cerebrium deploy`
 
-If it deployed successfully, you should see something like this:
+We'll add these endpoints to our frontend interface.
 
-![Cerebrium Deployment](/images/examples/voice_agent/deployment.png)
+## Connect frontend
 
-We will add these endpoints to our frontend interface.
-
-### Connect frontend
-
-We created a public fork of the [PipeCat frontend](https://github.com/pipecat-ai/web-client-ui) to show you a nice demo of this application. You can clone the repo [here](https://github.com/CerebriumAI/web-client-ui).
+We created a public fork of the PipeCat frontend to show you a nice demo of this application. You can clone the repo [here](https://github.com/CerebriumAI/web-client-ui).
 
 Follow the instructions in the README.md and then populate the following variables in your .env.development.local
 
 ```
-VITE_SERVER_URL=https://api.cortex.cerebrium.ai/v4/p-xxxxx/<APP_NAME> #This is the base url. Do not include the function names
+VITE_SERVER_URL=https://api.cortex.cerebrium.ai/v4/p-xxxxx/<APP_NAME> #This is the base url of your pipecat-agent. Do not include the function names
 VITE_SERVER_AUTH= #This is the JWT token you can get from the API Keys section of your Cerebrium Dashboard.
 ```
 
@@ -376,6 +469,6 @@ You can now run yarn dev and go to the URL: http://localhost:5173/ to test your 
 
 ### Conclusion
 
-This tutorial provides a foundation for implementing voice AI agents in your app and extending into image and vision capabilities. PipeCat is an extensible, open-source framework for building generative AI apps, while Cerebrium provides seamless deployment and autoscaling with pay-as-you-go compute.
+This tutorial provides a foundation for implementing voice in your app and extending into image and vision capabilities. PipeCat is an extensible, open-source framework for building voice-enabled apps, while Cerebrium provides seamless deployment and autoscaling with pay-as-you-go compute.
 
 Tag us as **@cerebriumai** to showcase your work and join our [Slack](https://join.slack.com/t/cerebriumworkspace/shared_invite/zt-1qojg3eac-q4xyu5O~MeniNIg2jNeadg) or [Discord](https://discord.gg/ATj6USmeE2) communities for questions and feedback.
