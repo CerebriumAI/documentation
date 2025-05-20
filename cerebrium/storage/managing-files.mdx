@@ -35,9 +35,7 @@ Files included in deployments must be under 2GB each, with deployments working b
 The CLI provides four commands for working with persistent storage.
 
 <Note>
-  When using these commands, the Cerebrium CLI does not display the
-  `/persistent-storage/` portion of the path in its output - it shows relative
-  paths from the persistent storage root.
+  At runtime, the volume is mounted at `/persistent-storage`. When using these commands, the Cerebrium CLI does not display the  `/persistent-storage/` portion of the path.
 </Note>
 
 1. Upload files with `cerebrium cp`:
