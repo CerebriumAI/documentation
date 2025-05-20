@@ -2,7 +2,7 @@
 title: "Managing Files"
 ---
 
-Cerebrium offers file management through a 50GB persistent volume that's available to all apps in a project. This storage mounts at `/persistent-storage` and helps store model weights and files efficiently across deployments.
+Cerebrium offers file management through a 50GB persistent volume that's available to all apps in a project. This storage mounts at `/persistent-storage` and helps store model weights and files efficiently across deployments. Note that the `/persistent-storage` directory is not directly accessible during development or outside of the Cerebrium environment - you'll need to use the Cerebrium CLI commands to manage these files.
 
 ## Including Files in Deployments
 
@@ -26,7 +26,7 @@ Files included in deployments must be under 2GB each, with deployments working b
 
 ## Managing Persistent Storage
 
-The CLI provides three commands for working with persistent storage:
+The CLI provides four commands for working with persistent storage. Note that when using these commands, the Cerebrium CLI does not display the `/persistent-storage/` portion of the path in its output - it shows relative paths from the persistent storage root:
 
 1. Upload files with `cerebrium cp`:
 
@@ -86,6 +86,24 @@ import torch
 file_path = "/persistent-storage/segment-anything/sam_vit_h_4b8939.pth"
 model = torch.jit.load(file_path)
 ```
+
+During runtime on Cerebrium, your application should access files using the full `/persistent-storage/` path. For example:
+
+```python
+# Read a file from persistent storage
+with open("/persistent-storage/data/config.json", "r") as f:
+    config = json.load(f)
+
+# Write to persistent storage
+with open("/persistent-storage/data/results.json", "w") as f:
+    json.dump(results, f)
+
+# Check if file exists in persistent storage
+if os.path.exists("/persistent-storage/models/mymodel.pt"):
+    model = torch.load("/persistent-storage/models/mymodel.pt")
+```
+
+Remember that while the CLI commands don't display the `/persistent-storage/` prefix in their output, your code must use the full path to access these files at runtime.
 
 <Warning>
   Should you require additional storage capacity, please reach out to us through
