@@ -3,7 +3,7 @@ title: "cerebrium run Command"
 description: "Run a Python script in a new container on Cerebrium"
 ---
 
-The `cerebrium run` command allows you to execute a Python script in a new container on the Cerebrium platform. This is useful for running one-off scripts or testing your code in the same environment as your deployed applications.
+The `cerebrium run` command allows you to execute a Python script in a new container on the Cerebrium platform. This is useful for running one-off scripts or testing your code in the same environment as your deployed apps.
 
 ## Usage
 
@@ -14,7 +14,7 @@ cerebrium run <file> --app <app-name>
 ### Parameters
 
 - `<file>`: The Python file you want to execute (required)
-- `--app <app-name>`: The name of the application to run the file under (required)
+- `--app <app-name>`: The name of the app to run the file under (required)
 
 ## Example
 
@@ -24,7 +24,7 @@ cerebrium run start.py --app my-cere-app
 
 This command will:
 
-1. Start a new container using the configuration specified in the `my-cere-app` application
+1. Start a new container using the configuration specified in the `my-cere-app` app
 2. Execute the `start.py` file within that container
 3. Stream the logs to your terminal
 
@@ -34,23 +34,23 @@ When you run a script using the `cerebrium run` command:
 
 - Logs are displayed in real-time in your terminal
 - The same logs are also available in the Cerebrium dashboard
-- The run will appear under the specified application in your dashboard
+- The run will appear under the specified app in your dashboard
 
 ## Use Cases
 
-- Testing scripts in the same environment as your deployed applications
+- Testing scripts in the same environment as your deployed apps
 - Running one-off data processing tasks
-- Debugging application code in a production-like environment
+- Debugging app code in a production-like environment
 - Executing maintenance scripts
 
 <Note>
   The container started by the `cerebrium run` command will be terminated once
-  the script completes execution. If you need a persistent application, use
+  the script completes execution. If you need a persistent app, use
   `cerebrium deploy` instead.
 </Note>
 
 <Note>
   The container has access to your project's persistent storage and secrets,
-  just like a deployed application. This allows you to test scripts that use the
-  same resources as your production environment.
+  just like a deployed app. This allows you to test scripts that use
+  the same resources as your production environment.
 </Note>
