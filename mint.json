@@ -199,10 +199,7 @@
     },
     {
       "group": "Reference",
-      "pages": [
-        "cli-reference/cli-reference",
-        "toml-reference/toml-reference"
-      ]
+      "pages": ["cli-reference/cli-reference", "toml-reference/toml-reference"]
     },
     {
       "group": "Migrations",

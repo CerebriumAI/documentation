@@ -17,37 +17,41 @@ cerebrium run <app_name>[:<function_name>] --data <json_data> [OPTIONS]
 
 ### Arguments
 
-| Argument | Type | Required | Description |
-|----------|------|----------|-------------|
-| `app_name_with_function` | string | Yes | The app name and optional function name in format `app_name:function_name`. If no function is specified, defaults to `run` |
+| Argument                 | Type   | Required | Description                                                                                                                |
+| ------------------------ | ------ | -------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `app_name_with_function` | string | Yes      | The app name and optional function name in format `app_name:function_name`. If no function is specified, defaults to `run` |
 
 ### Options
 
-| Option | Short | Type | Default | Description |
-|--------|-------|------|---------|-------------|
-| `--data` | `-d` | string | Required | Data to send to the app in JSON format |
-| `--method` | `-m` | string | `POST` | HTTP method to use for the request |
-| `--webhook` | | string | None | URL to which the results should be sent |
-| `--function` | `-f` | string | `run` | Function name to call (alternative to using app_name:function_name format) |
+| Option       | Short | Type   | Default  | Description                                                                |
+| ------------ | ----- | ------ | -------- | -------------------------------------------------------------------------- |
+| `--data`     | `-d`  | string | Required | Data to send to the app in JSON format                                     |
+| `--method`   | `-m`  | string | `POST`   | HTTP method to use for the request                                         |
+| `--webhook`  |       | string | None     | URL to which the results should be sent                                    |
+| `--function` | `-f`  | string | `run`    | Function name to call (alternative to using app_name:function_name format) |
 
 ### Examples
 
 #### Basic function call
+
 ```bash
 cerebrium run my-cere-app --data '{"param_1": "Hello", "param_2": "World"}'
 ```
 
 #### Specify function explicitly
+
 ```bash
 cerebrium run my-cere-app:predict --data '{"input": "sample text"}'
 ```
 
 #### Using webhook for async processing
+
 ```bash
 cerebrium run my-cere-app --data '{"file_path": "/data/large_file.csv"}' --webhook https://my-app.com/webhook
 ```
 
 #### Custom HTTP method
+
 ```bash
 cerebrium run my-cere-app --data '{"action": "delete", "id": "123"}' --method DELETE
 ```
