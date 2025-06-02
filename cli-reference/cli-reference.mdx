@@ -1,0 +1,78 @@
+---
+title: CLI Reference
+description: Complete reference for all Cerebrium CLI commands and their options.
+---
+
+The Cerebrium CLI provides commands for deploying, managing, and running apps on the Cerebrium platform.
+
+## cerebrium run
+
+Execute a Python script or call a deployed function in a new container on the Cerebrium platform.
+
+### Usage
+
+```bash
+cerebrium run <app_name>[:<function_name>] --data <json_data> [OPTIONS]
+```
+
+### Arguments
+
+| Argument | Type | Required | Description |
+|----------|------|----------|-------------|
+| `app_name_with_function` | string | Yes | The app name and optional function name in format `app_name:function_name`. If no function is specified, defaults to `run` |
+
+### Options
+
+| Option | Short | Type | Default | Description |
+|--------|-------|------|---------|-------------|
+| `--data` | `-d` | string | Required | Data to send to the app in JSON format |
+| `--method` | `-m` | string | `POST` | HTTP method to use for the request |
+| `--webhook` | | string | None | URL to which the results should be sent |
+| `--function` | `-f` | string | `run` | Function name to call (alternative to using app_name:function_name format) |
+
+### Examples
+
+#### Basic function call
+```bash
+cerebrium run my-cere-app --data '{"param_1": "Hello", "param_2": "World"}'
+```
+
+#### Specify function explicitly
+```bash
+cerebrium run my-cere-app:predict --data '{"input": "sample text"}'
+```
+
+#### Using webhook for async processing
+```bash
+cerebrium run my-cere-app --data '{"file_path": "/data/large_file.csv"}' --webhook https://my-app.com/webhook
+```
+
+#### Custom HTTP method
+```bash
+cerebrium run my-cere-app --data '{"action": "delete", "id": "123"}' --method DELETE
+```
+
+### Behavior
+
+When you run the `cerebrium run` command:
+
+- A new container is started using the configuration specified in the target app
+- The specified function is executed within that container with the provided data
+- Logs are displayed in real-time in your terminal
+- The same logs are also available in the Cerebrium dashboard
+- The run will appear under the specified app in your dashboard
+- The container is terminated once the function completes execution
+
+<Note>
+  The container has access to your project's persistent storage and secrets,
+  just like a deployed app. This allows you to test scripts that use the same
+  resources as your production environment.
+</Note>
+
+### Use Cases
+
+- Testing functions in the same environment as deployed apps
+- Running one-off data processing tasks
+- Debugging app code in a production-like environment
+- Executing maintenance scripts
+- Calling deployed functions programmatically
