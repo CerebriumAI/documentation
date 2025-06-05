@@ -5,23 +5,113 @@ description: Complete reference for all Cerebrium CLI commands and their options
 
 The Cerebrium CLI provides commands for deploying, managing, and running apps on the Cerebrium platform.
 
-## cerebrium run
+## Core Commands
+
+### cerebrium init
+
+Initialize an empty Cerebrium project with a basic configuration.
+
+#### Usage
+
+```bash
+cerebrium init <name> [OPTIONS]
+```
+
+#### Arguments
+
+| Argument | Type | Required | Description |
+|----------|------|----------|-------------|
+| `name` | string | Yes | Name of the Cerebrium deployment |
+
+#### Options
+
+| Option | Short | Type | Default | Description |
+|--------|-------|------|---------|-------------|
+| `--dir` | | string | `./` | Directory to create the Cerebrium deployment |
+
+#### Examples
+
+```bash
+# Initialize a new project in the current directory
+cerebrium init my-cere-app
+
+# Initialize a new project in a specific directory
+cerebrium init my-cere-app --dir /path/to/projects/
+```
+
+#### Behavior
+
+When you run the `cerebrium init` command:
+
+- Creates a new directory with the specified name (if it doesn't exist)
+- Generates a basic `cerebrium.toml` configuration file
+- Creates a sample `main.py` file with a basic function implementation
+- Sets up default scaling, hardware, and deployment configurations
+
+### cerebrium deploy
+
+Deploy a Cerebrium app to the platform.
+
+#### Usage
+
+```bash
+cerebrium deploy [OPTIONS]
+```
+
+#### Options
+
+| Option | Short | Type | Default | Description |
+|--------|-------|------|---------|-------------|
+| `--name` | | string | None | Name of the app (overrides the value in the TOML file) |
+| `--disable-syntax-check` | | boolean | `false` | Flag to disable syntax check |
+| `--log-level` | | string | `INFO` | Log level for the deployment (`DEBUG` or `INFO`) |
+| `--config-file` | | string | `./cerebrium.toml` | Path to the cerebrium config TOML file |
+| `--disable-confirmation` | `-y` | boolean | `false` | Disable the confirmation prompt before deploying |
+| `--disable-animation` | | boolean | `false` | Disable TQDM loading bars and yaspin animations |
+| `--disable-build-logs` | | boolean | `false` | Disable build logs during a deployment |
+
+#### Examples
+
+```bash
+# Deploy an app with the default settings
+cerebrium deploy
+
+# Deploy an app with a custom name and disabled syntax check
+cerebrium deploy --name my-cere-app --disable-syntax-check
+
+# Deploy without confirmation prompt
+cerebrium deploy -y
+```
+
+#### Behavior
+
+When you run the `cerebrium deploy` command:
+
+- Loads the configuration from `cerebrium.toml`
+- Validates the configuration for required fields and deprecated options
+- Packages your app code and dependencies
+- Uploads the package to Cerebrium
+- Builds a container with your code and dependencies
+- Deploys the app to the Cerebrium platform
+- Provides endpoint URLs for accessing your deployed app
+
+### cerebrium run
 
 Execute a Python script or call a deployed function in a new container on the Cerebrium platform.
 
-### Usage
+#### Usage
 
 ```bash
 cerebrium run <app_name>[:<function_name>] --data <json_data> [OPTIONS]
 ```
 
-### Arguments
+#### Arguments
 
 | Argument                 | Type   | Required | Description                                                                                                                |
 | ------------------------ | ------ | -------- | -------------------------------------------------------------------------------------------------------------------------- |
 | `app_name_with_function` | string | Yes      | The app name and optional function name in format `app_name:function_name`. If no function is specified, defaults to `run` |
 
-### Options
+#### Options
 
 | Option       | Short | Type   | Default  | Description                                                                |
 | ------------ | ----- | ------ | -------- | -------------------------------------------------------------------------- |
@@ -30,33 +120,29 @@ cerebrium run <app_name>[:<function_name>] --data <json_data> [OPTIONS]
 | `--webhook`  |       | string | None     | URL to which the results should be sent                                    |
 | `--function` | `-f`  | string | `run`    | Function name to call (alternative to using app_name:function_name format) |
 
-### Examples
+#### Examples
 
 #### Basic function call
-
 ```bash
 cerebrium run my-cere-app --data '{"param_1": "Hello", "param_2": "World"}'
 ```
 
 #### Specify function explicitly
-
 ```bash
 cerebrium run my-cere-app:predict --data '{"input": "sample text"}'
 ```
 
 #### Using webhook for async processing
-
 ```bash
 cerebrium run my-cere-app --data '{"file_path": "/data/large_file.csv"}' --webhook https://my-app.com/webhook
 ```
 
 #### Custom HTTP method
-
 ```bash
 cerebrium run my-cere-app --data '{"action": "delete", "id": "123"}' --method DELETE
 ```
 
-### Behavior
+#### Behavior
 
 When you run the `cerebrium run` command:
 
@@ -73,10 +159,536 @@ When you run the `cerebrium run` command:
   resources as your production environment.
 </Note>
 
-### Use Cases
+#### Use Cases
 
 - Testing functions in the same environment as deployed apps
 - Running one-off data processing tasks
 - Debugging app code in a production-like environment
 - Executing maintenance scripts
 - Calling deployed functions programmatically
+
+### cerebrium logs
+
+Fetch and display logs for a specified app, watching until interrupted.
+
+#### Usage
+
+```bash
+cerebrium logs <app_name>
+```
+
+#### Arguments
+
+| Argument | Type | Required | Description |
+|----------|------|----------|-------------|
+| `app_name` | string | Yes | The name of the app to view logs for |
+
+#### Examples
+
+```bash
+# Get logs of a specific app
+cerebrium logs my-cere-app
+```
+
+#### Behavior
+
+When you run the `cerebrium logs` command:
+
+- Connects to the logs stream for the specified app
+- Displays logs in real-time as they are generated
+- Shows timestamps and log messages in a formatted table
+- Continues watching for new logs until interrupted with Ctrl+C
+- Automatically refreshes to show the latest logs
+
+#### Use Cases
+
+- Monitoring app behavior in real-time
+- Debugging issues in deployed apps
+- Viewing the output of long-running processes
+- Verifying that an app is functioning correctly
+
+### cerebrium version
+
+Print the version of the Cerebrium CLI.
+
+#### Usage
+
+```bash
+cerebrium version
+```
+
+#### Examples
+
+```bash
+cerebrium version
+```
+
+#### Behavior
+
+Displays the current version number of the Cerebrium CLI.
+
+## App Management Commands
+
+### cerebrium app list
+
+List all apps under your current project context.
+
+#### Usage
+
+```bash
+cerebrium app list
+```
+
+#### Examples
+
+```bash
+# List all apps
+cerebrium app list
+```
+
+#### Behavior
+
+When you run the `cerebrium app list` command:
+
+- Retrieves all apps associated with your current project
+- Displays a table with app IDs, status, and last updated timestamp
+- Apps are sorted by last updated time (most recent first)
+
+### cerebrium app get
+
+Get specific details about an app.
+
+#### Usage
+
+```bash
+cerebrium app get <app_id>
+```
+
+#### Arguments
+
+| Argument | Type | Required | Description |
+|----------|------|----------|-------------|
+| `app_id` | string | Yes | The ID of the app to get details for |
+
+#### Examples
+
+```bash
+# Get details of a specific app
+cerebrium app get p-abc123-my-cere-app
+```
+
+#### Behavior
+
+When you run the `cerebrium app get` command:
+
+- Retrieves detailed information about the specified app
+- Displays app details including:
+  - App ID and status
+  - Creation and update timestamps
+  - Hardware configuration (compute type, CPU, memory, GPU count)
+  - Scaling parameters (cooldown period, min/max replicas)
+  - Build status and live pods information
+
+### cerebrium app delete
+
+Delete an app from Cerebrium.
+
+#### Usage
+
+```bash
+cerebrium app delete <app_id>
+```
+
+#### Arguments
+
+| Argument | Type | Required | Description |
+|----------|------|----------|-------------|
+| `app_id` | string | Yes | ID of the app to delete |
+
+#### Examples
+
+```bash
+# Delete a specific app
+cerebrium app delete p-abc123-my-cere-app
+```
+
+#### Behavior
+
+When you run the `cerebrium app delete` command:
+
+- Permanently deletes the specified app from the Cerebrium platform
+- Displays a confirmation message upon successful deletion
+- Returns an error if the app ID is invalid or the deletion fails
+
+### cerebrium app scale
+
+Change the scaling parameters of an app.
+
+#### Usage
+
+```bash
+cerebrium app scale <app_id> --cooldown <seconds> --min-replicas <count> --max-replicas <count> --response-grace-period <seconds>
+```
+
+#### Arguments
+
+| Argument | Type | Required | Description |
+|----------|------|----------|-------------|
+| `app_id` | string | Yes | The ID of the app to scale |
+
+#### Options
+
+| Option | Short | Type | Default | Description |
+|--------|-------|------|---------|-------------|
+| `--cooldown` | | integer | Required | Cooldown period in seconds before scaling down |
+| `--min-replicas` | | integer | Required | Minimum number of replicas to keep running |
+| `--max-replicas` | | integer | Required | Maximum number of replicas allowed |
+| `--response-grace-period` | | integer | Required | Time in seconds for the app to respond or gracefully terminate |
+
+#### Examples
+
+```bash
+# Scale an app with specific parameters
+cerebrium app scale p-abc123-my-cere-app --cooldown 300 --min-replicas 1 --max-replicas 5 --response-grace-period 60
+```
+
+#### Behavior
+
+When you run the `cerebrium app scale` command:
+
+- Updates the scaling configuration for the specified app
+- Sets the cooldown period (time before scaling down after last request)
+- Configures minimum and maximum replica counts
+- Sets the response grace period for requests and termination
+- Displays a confirmation message upon successful update
+
+## Project Management Commands
+
+### cerebrium project current
+
+Get the current project you are working in.
+
+#### Usage
+
+```bash
+cerebrium project current
+```
+
+#### Examples
+
+```bash
+cerebrium project current
+```
+
+#### Behavior
+
+When you run the `cerebrium project current` command:
+
+- Displays the ID of the currently active project
+- This is the project context used for all other commands
+
+### cerebrium project list
+
+List all your projects.
+
+#### Usage
+
+```bash
+cerebrium project list
+```
+
+#### Examples
+
+```bash
+cerebrium project list
+```
+
+#### Behavior
+
+When you run the `cerebrium project list` command:
+
+- Retrieves all projects associated with your account
+- Displays a table with project IDs and names
+- Shows a message explaining how to set a different project as current
+
+### cerebrium project set
+
+Set the project context you are working in.
+
+#### Usage
+
+```bash
+cerebrium project set <project_id>
+```
+
+#### Arguments
+
+| Argument | Type | Required | Description |
+|----------|------|----------|-------------|
+| `project_id` | string | Yes | The project ID to set as current context |
+
+#### Examples
+
+```bash
+cerebrium project set p-abc123
+```
+
+#### Behavior
+
+When you run the `cerebrium project set` command:
+
+- Updates your local configuration to use the specified project
+- All subsequent commands will operate in the context of this project
+- Displays a confirmation message with the new project ID
+
+## Runs Management Commands
+
+### cerebrium runs list
+
+List all runs for a specific app.
+
+#### Usage
+
+```bash
+cerebrium runs list <app_name> [OPTIONS]
+```
+
+#### Arguments
+
+| Argument | Type | Required | Description |
+|----------|------|----------|-------------|
+| `app_name` | string | Yes | The name of the app for which to list runs |
+
+#### Options
+
+| Option | Short | Type | Default | Description |
+|--------|-------|------|---------|-------------|
+| `--async` | | boolean | `false` | Only list runs that were executed asynchronously |
+
+#### Examples
+
+```bash
+# List all runs for an app
+cerebrium runs list my-cere-app
+
+# List only async runs
+cerebrium runs list my-cere-app --async
+```
+
+#### Behavior
+
+When you run the `cerebrium runs list` command:
+
+- Retrieves all runs for the specified app
+- Displays a table with run ID, function name, status, creation time, and async flag
+- Filters to show only async runs if the `--async` flag is used
+
+## File Management Commands
+
+### cerebrium ls
+
+List contents of persistent storage.
+
+#### Usage
+
+```bash
+cerebrium ls [REMOTE_PATH]
+```
+
+#### Arguments
+
+| Argument | Type | Required | Description |
+|----------|------|----------|-------------|
+| `REMOTE_PATH` | string | No | Remote path to list contents (defaults to root `/`) |
+
+#### Examples
+
+```bash
+# List all files in the root directory
+cerebrium ls
+
+# List all files in a specific directory
+cerebrium ls sub_folder/
+```
+
+#### Behavior
+
+When you run the `cerebrium ls` command:
+
+- Lists files and directories at the specified path in persistent storage
+- Displays a table with name, size, and last modified date for each item
+- Directories are indicated with "Directory" in the size column
+
+### cerebrium cp
+
+Copy contents to persistent storage.
+
+#### Usage
+
+```bash
+cerebrium cp <LOCAL_PATH> [REMOTE_PATH]
+```
+
+#### Arguments
+
+| Argument | Type | Required | Description |
+|----------|------|----------|-------------|
+| `LOCAL_PATH` | string | Yes | Path to the source file or directory to be uploaded |
+| `REMOTE_PATH` | string | No | Destination path on the server (defaults to root with original filename) |
+
+#### Examples
+
+```bash
+# Copy a single file to root with same name
+cerebrium cp src_file_name.txt
+
+# Copy a file with a different destination name
+cerebrium cp src_file_name.txt dest_file_name.txt
+
+# Copy a directory to a specific folder
+cerebrium cp dir_name sub_folder/
+```
+
+#### Behavior
+
+When you run the `cerebrium cp` command:
+
+- Uploads files or directories to persistent storage
+- For directories, preserves the directory structure
+- Shows progress with a progress bar during upload
+- Confirms successful upload with a message
+
+### cerebrium rm
+
+Remove a file or directory from persistent storage.
+
+#### Usage
+
+```bash
+cerebrium rm <REMOTE_PATH>
+```
+
+#### Arguments
+
+| Argument | Type | Required | Description |
+|----------|------|----------|-------------|
+| `REMOTE_PATH` | string | Yes | Path to the file or directory to be removed |
+
+#### Examples
+
+```bash
+# Remove a specific file
+cerebrium rm /file_name.txt
+cerebrium rm /sub_folder/file_name.txt
+
+# Remove a directory and all its contents
+cerebrium rm /sub_folder/
+```
+
+#### Behavior
+
+When you run the `cerebrium rm` command:
+
+- Permanently deletes the specified file or directory from persistent storage
+- For directories, removes all contents recursively
+- Confirms successful deletion with a message
+
+### cerebrium download
+
+Download a file from persistent storage.
+
+#### Usage
+
+```bash
+cerebrium download <REMOTE_PATH> [LOCAL_PATH]
+```
+
+#### Arguments
+
+| Argument | Type | Required | Description |
+|----------|------|----------|-------------|
+| `REMOTE_PATH` | string | Yes | Remote path to the file to be downloaded |
+| `LOCAL_PATH` | string | No | Local destination path (defaults to the original filename) |
+
+#### Examples
+
+```bash
+# Download a file with the same name
+cerebrium download file_name.txt
+
+# Download a file with a different name
+cerebrium download file_name.txt local_file_name.txt
+
+# Download a file from a subfolder
+cerebrium download sub_folder/file_name.txt
+```
+
+#### Behavior
+
+When you run the `cerebrium download` command:
+
+- Downloads the specified file from persistent storage to your local machine
+- Shows download progress with a progress bar
+- Creates any necessary directories in the local path
+- Confirms successful download with a message
+
+## Authentication Commands
+
+### cerebrium login
+
+Authenticate user via OAuth and store token.
+
+#### Usage
+
+```bash
+cerebrium login
+```
+
+#### Examples
+
+```bash
+cerebrium login
+```
+
+#### Behavior
+
+When you run the `cerebrium login` command:
+
+- Initiates an OAuth authentication flow
+- Opens a browser window for authentication
+- Waits for authentication to complete
+- Stores the access and refresh tokens in your local configuration
+- Sets the current project context if not already set
+- Confirms successful login with a message
+
+### cerebrium save-auth-config
+
+Save authentication configuration for CI/CD environments.
+
+#### Usage
+
+```bash
+cerebrium save-auth-config <access_token> <refresh_token> <project_id>
+```
+
+#### Arguments
+
+| Argument | Type | Required | Description |
+|----------|------|----------|-------------|
+| `access_token` | string | Yes | Access token for authentication |
+| `refresh_token` | string | Yes | Refresh token for authentication |
+| `project_id` | string | Yes | Project ID to use as context |
+
+#### Examples
+
+```bash
+cerebrium save-auth-config eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... p-abc123
+```
+
+#### Behavior
+
+When you run the `cerebrium save-auth-config` command:
+
+- Saves the provided tokens and project ID to your local configuration
+- Useful for CI/CD environments where interactive login is not possible
+- Confirms successful configuration with a message
