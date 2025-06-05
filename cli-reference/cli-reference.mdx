@@ -19,15 +19,15 @@ cerebrium init <name> [OPTIONS]
 
 #### Arguments
 
-| Argument | Type | Required | Description |
-|----------|------|----------|-------------|
-| `name` | string | Yes | Name of the Cerebrium deployment |
+| Argument | Type   | Required | Description                      |
+| -------- | ------ | -------- | -------------------------------- |
+| `name`   | string | Yes      | Name of the Cerebrium deployment |
 
 #### Options
 
-| Option | Short | Type | Default | Description |
-|--------|-------|------|---------|-------------|
-| `--dir` | | string | `./` | Directory to create the Cerebrium deployment |
+| Option  | Short | Type   | Default | Description                                  |
+| ------- | ----- | ------ | ------- | -------------------------------------------- |
+| `--dir` |       | string | `./`    | Directory to create the Cerebrium deployment |
 
 #### Examples
 
@@ -60,15 +60,15 @@ cerebrium deploy [OPTIONS]
 
 #### Options
 
-| Option | Short | Type | Default | Description |
-|--------|-------|------|---------|-------------|
-| `--name` | | string | None | Name of the app (overrides the value in the TOML file) |
-| `--disable-syntax-check` | | boolean | `false` | Flag to disable syntax check |
-| `--log-level` | | string | `INFO` | Log level for the deployment (`DEBUG` or `INFO`) |
-| `--config-file` | | string | `./cerebrium.toml` | Path to the cerebrium config TOML file |
-| `--disable-confirmation` | `-y` | boolean | `false` | Disable the confirmation prompt before deploying |
-| `--disable-animation` | | boolean | `false` | Disable TQDM loading bars and yaspin animations |
-| `--disable-build-logs` | | boolean | `false` | Disable build logs during a deployment |
+| Option                   | Short | Type    | Default            | Description                                            |
+| ------------------------ | ----- | ------- | ------------------ | ------------------------------------------------------ |
+| `--name`                 |       | string  | None               | Name of the app (overrides the value in the TOML file) |
+| `--disable-syntax-check` |       | boolean | `false`            | Flag to disable syntax check                           |
+| `--log-level`            |       | string  | `INFO`             | Log level for the deployment (`DEBUG` or `INFO`)       |
+| `--config-file`          |       | string  | `./cerebrium.toml` | Path to the cerebrium config TOML file                 |
+| `--disable-confirmation` | `-y`  | boolean | `false`            | Disable the confirmation prompt before deploying       |
+| `--disable-animation`    |       | boolean | `false`            | Disable TQDM loading bars and yaspin animations        |
+| `--disable-build-logs`   |       | boolean | `false`            | Disable build logs during a deployment                 |
 
 #### Examples
 
@@ -123,21 +123,25 @@ cerebrium run <app_name>[:<function_name>] --data <json_data> [OPTIONS]
 #### Examples
 
 #### Basic function call
+
 ```bash
 cerebrium run my-cere-app --data '{"param_1": "Hello", "param_2": "World"}'
 ```
 
 #### Specify function explicitly
+
 ```bash
 cerebrium run my-cere-app:predict --data '{"input": "sample text"}'
 ```
 
 #### Using webhook for async processing
+
 ```bash
 cerebrium run my-cere-app --data '{"file_path": "/data/large_file.csv"}' --webhook https://my-app.com/webhook
 ```
 
 #### Custom HTTP method
+
 ```bash
 cerebrium run my-cere-app --data '{"action": "delete", "id": "123"}' --method DELETE
 ```
@@ -179,9 +183,9 @@ cerebrium logs <app_name>
 
 #### Arguments
 
-| Argument | Type | Required | Description |
-|----------|------|----------|-------------|
-| `app_name` | string | Yes | The name of the app to view logs for |
+| Argument   | Type   | Required | Description                          |
+| ---------- | ------ | -------- | ------------------------------------ |
+| `app_name` | string | Yes      | The name of the app to view logs for |
 
 #### Examples
 
@@ -266,9 +270,9 @@ cerebrium app get <app_id>
 
 #### Arguments
 
-| Argument | Type | Required | Description |
-|----------|------|----------|-------------|
-| `app_id` | string | Yes | The ID of the app to get details for |
+| Argument | Type   | Required | Description                          |
+| -------- | ------ | -------- | ------------------------------------ |
+| `app_id` | string | Yes      | The ID of the app to get details for |
 
 #### Examples
 
@@ -301,9 +305,9 @@ cerebrium app delete <app_id>
 
 #### Arguments
 
-| Argument | Type | Required | Description |
-|----------|------|----------|-------------|
-| `app_id` | string | Yes | ID of the app to delete |
+| Argument | Type   | Required | Description             |
+| -------- | ------ | -------- | ----------------------- |
+| `app_id` | string | Yes      | ID of the app to delete |
 
 #### Examples
 
@@ -332,18 +336,18 @@ cerebrium app scale <app_id> --cooldown <seconds> --min-replicas <count> --max-r
 
 #### Arguments
 
-| Argument | Type | Required | Description |
-|----------|------|----------|-------------|
-| `app_id` | string | Yes | The ID of the app to scale |
+| Argument | Type   | Required | Description                |
+| -------- | ------ | -------- | -------------------------- |
+| `app_id` | string | Yes      | The ID of the app to scale |
 
 #### Options
 
-| Option | Short | Type | Default | Description |
-|--------|-------|------|---------|-------------|
-| `--cooldown` | | integer | Required | Cooldown period in seconds before scaling down |
-| `--min-replicas` | | integer | Required | Minimum number of replicas to keep running |
-| `--max-replicas` | | integer | Required | Maximum number of replicas allowed |
-| `--response-grace-period` | | integer | Required | Time in seconds for the app to respond or gracefully terminate |
+| Option                    | Short | Type    | Default  | Description                                                    |
+| ------------------------- | ----- | ------- | -------- | -------------------------------------------------------------- |
+| `--cooldown`              |       | integer | Required | Cooldown period in seconds before scaling down                 |
+| `--min-replicas`          |       | integer | Required | Minimum number of replicas to keep running                     |
+| `--max-replicas`          |       | integer | Required | Maximum number of replicas allowed                             |
+| `--response-grace-period` |       | integer | Required | Time in seconds for the app to respond or gracefully terminate |
 
 #### Examples
 
@@ -423,9 +427,9 @@ cerebrium project set <project_id>
 
 #### Arguments
 
-| Argument | Type | Required | Description |
-|----------|------|----------|-------------|
-| `project_id` | string | Yes | The project ID to set as current context |
+| Argument     | Type   | Required | Description                              |
+| ------------ | ------ | -------- | ---------------------------------------- |
+| `project_id` | string | Yes      | The project ID to set as current context |
 
 #### Examples
 
@@ -455,15 +459,15 @@ cerebrium runs list <app_name> [OPTIONS]
 
 #### Arguments
 
-| Argument | Type | Required | Description |
-|----------|------|----------|-------------|
-| `app_name` | string | Yes | The name of the app for which to list runs |
+| Argument   | Type   | Required | Description                                |
+| ---------- | ------ | -------- | ------------------------------------------ |
+| `app_name` | string | Yes      | The name of the app for which to list runs |
 
 #### Options
 
-| Option | Short | Type | Default | Description |
-|--------|-------|------|---------|-------------|
-| `--async` | | boolean | `false` | Only list runs that were executed asynchronously |
+| Option    | Short | Type    | Default | Description                                      |
+| --------- | ----- | ------- | ------- | ------------------------------------------------ |
+| `--async` |       | boolean | `false` | Only list runs that were executed asynchronously |
 
 #### Examples
 
@@ -497,9 +501,9 @@ cerebrium ls [REMOTE_PATH]
 
 #### Arguments
 
-| Argument | Type | Required | Description |
-|----------|------|----------|-------------|
-| `REMOTE_PATH` | string | No | Remote path to list contents (defaults to root `/`) |
+| Argument      | Type   | Required | Description                                         |
+| ------------- | ------ | -------- | --------------------------------------------------- |
+| `REMOTE_PATH` | string | No       | Remote path to list contents (defaults to root `/`) |
 
 #### Examples
 
@@ -531,10 +535,10 @@ cerebrium cp <LOCAL_PATH> [REMOTE_PATH]
 
 #### Arguments
 
-| Argument | Type | Required | Description |
-|----------|------|----------|-------------|
-| `LOCAL_PATH` | string | Yes | Path to the source file or directory to be uploaded |
-| `REMOTE_PATH` | string | No | Destination path on the server (defaults to root with original filename) |
+| Argument      | Type   | Required | Description                                                              |
+| ------------- | ------ | -------- | ------------------------------------------------------------------------ |
+| `LOCAL_PATH`  | string | Yes      | Path to the source file or directory to be uploaded                      |
+| `REMOTE_PATH` | string | No       | Destination path on the server (defaults to root with original filename) |
 
 #### Examples
 
@@ -570,9 +574,9 @@ cerebrium rm <REMOTE_PATH>
 
 #### Arguments
 
-| Argument | Type | Required | Description |
-|----------|------|----------|-------------|
-| `REMOTE_PATH` | string | Yes | Path to the file or directory to be removed |
+| Argument      | Type   | Required | Description                                 |
+| ------------- | ------ | -------- | ------------------------------------------- |
+| `REMOTE_PATH` | string | Yes      | Path to the file or directory to be removed |
 
 #### Examples
 
@@ -605,10 +609,10 @@ cerebrium download <REMOTE_PATH> [LOCAL_PATH]
 
 #### Arguments
 
-| Argument | Type | Required | Description |
-|----------|------|----------|-------------|
-| `REMOTE_PATH` | string | Yes | Remote path to the file to be downloaded |
-| `LOCAL_PATH` | string | No | Local destination path (defaults to the original filename) |
+| Argument      | Type   | Required | Description                                                |
+| ------------- | ------ | -------- | ---------------------------------------------------------- |
+| `REMOTE_PATH` | string | Yes      | Remote path to the file to be downloaded                   |
+| `LOCAL_PATH`  | string | No       | Local destination path (defaults to the original filename) |
 
 #### Examples
 
@@ -673,11 +677,11 @@ cerebrium save-auth-config <access_token> <refresh_token> <project_id>
 
 #### Arguments
 
-| Argument | Type | Required | Description |
-|----------|------|----------|-------------|
-| `access_token` | string | Yes | Access token for authentication |
-| `refresh_token` | string | Yes | Refresh token for authentication |
-| `project_id` | string | Yes | Project ID to use as context |
+| Argument        | Type   | Required | Description                      |
+| --------------- | ------ | -------- | -------------------------------- |
+| `access_token`  | string | Yes      | Access token for authentication  |
+| `refresh_token` | string | Yes      | Refresh token for authentication |
+| `project_id`    | string | Yes      | Project ID to use as context     |
 
 #### Examples
 
