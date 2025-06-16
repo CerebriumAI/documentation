@@ -45,12 +45,6 @@ cerebrium deploy
 
 The app now builds and deploys, typically within a few seconds. Check out a detailed description of the deployment process for more information. Once deployed, an app becomes callable through an endpoint `https://api.cortex.cerebrium.ai/v4/{project-id}/{app-name}/{function-name}`.
 
-You can also call it using:
-
-```bash
-cerebrium run my-first-app:run -d '{"param_1": "Hello", "param_2": "World"}'
-```
-
 ## How It Works
 
 Cerebrium uses containerization to ensure consistent environments and reliable scaling for apps. When code is deployed, Cerebrium packages it with all necessary dependencies into a container image. This image serves as a blueprint for creating instances that handle incoming requests. The system automatically manages scaling, creating new instances when traffic increases and removing them during quiet periods.
