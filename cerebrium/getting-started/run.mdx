@@ -1,0 +1,118 @@
+---
+title: Run
+description: Execute functions in your Cerebrium apps using the cerebrium run command
+---
+
+The `cerebrium run` command allows you to execute functions in your Cerebrium apps directly from the command line. This is useful for testing, debugging, and running one-off tasks without needing to make HTTP requests to your deployed endpoints.
+
+## Basic Usage
+
+The basic syntax for the `cerebrium run` command is:
+
+```bash
+cerebrium run <filename>
+```
+
+For example, to run the main.py file in your current directory:
+
+```bash
+cerebrium run main.py
+```
+
+## Specifying a Function
+
+You can specify a particular function to run using the `::` syntax:
+
+```bash
+cerebrium run <filename>::<function_name>
+```
+
+For example, to run a specific function called `predict` in your main.py file:
+
+```bash
+cerebrium run main.py::predict
+```
+
+## Passing Arguments
+
+You can pass arguments to your function using the `--` prefix followed by key-value pairs:
+
+```bash
+cerebrium run main.py --arg1 value1 --arg2 value2
+```
+
+Arguments can be passed in two formats:
+- Space-separated: `--key value`
+- Equals-separated: `--key=value`
+
+For example:
+
+```bash
+cerebrium run main.py --message "Hello World" --count=5
+```
+
+## Using JSON Data
+
+For more complex data structures, you can pass JSON data using the `--data` option:
+
+```bash
+cerebrium run main.py --data '{"param_1": "Hello", "param_2": "World"}'
+```
+
+<Note>
+You cannot use both `--data` and individual arguments (`--key value`) in the same command.
+</Note>
+
+## Complete Examples
+
+Here are some complete examples using a hypothetical app called `my-cere-app`:
+
+### Running the main file
+```bash
+cerebrium run main.py
+```
+
+### Running a specific function
+```bash
+cerebrium run main.py::process_data
+```
+
+### Passing simple arguments
+```bash
+cerebrium run main.py --input_text "Hello Cerebrium" --temperature 0.7
+```
+
+### Passing JSON data
+```bash
+cerebrium run main.py --data '{"messages": [{"role": "user", "content": "Hello"}], "max_tokens": 100}'
+```
+
+## How It Works
+
+When you run `cerebrium run`, the command:
+
+1. Packages your current directory into a tar file (up to 4MB)
+2. Uploads it to Cerebrium along with any specified arguments
+3. Executes the specified file or function in your project's environment
+4. Streams the logs and output back to your terminal
+
+The command uses your current project context and any configuration specified in your `cerebrium.toml` file, including:
+- App name (or uses the current directory name if not specified)
+- Hardware requirements (CPU, memory, GPU)
+- Dependencies (pip, conda, apt packages up to 380KB)
+
+<Note>
+The `cerebrium run` command has access to your project's persistent storage and secrets, just like your deployed apps. This makes it useful for testing functions that rely on these resources.
+</Note>
+
+## Limitations
+
+- Maximum tar file size: 4MB
+- Maximum dependency list size: 380KB
+- For larger projects or dependency lists, use `cerebrium deploy` instead
+
+## Configuration
+
+The command respects your `cerebrium.toml` configuration file if present. If no app name is specified in the configuration, it will use your current directory name as the app name.
+
+For more information about configuring your app, see the [TOML Reference](/toml-reference/toml-reference).
