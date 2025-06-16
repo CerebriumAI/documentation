@@ -42,6 +42,7 @@ cerebrium run main.py --arg1 value1 --arg2 value2
 ```
 
 Arguments can be passed in two formats:
+
 - Space-separated: `--key value`
 - Equals-separated: `--key=value`
 
@@ -60,7 +61,8 @@ cerebrium run main.py --data '{"param_1": "Hello", "param_2": "World"}'
 ```
 
 <Note>
-You cannot use both `--data` and individual arguments (`--key value`) in the same command.
+  You cannot use both `--data` and individual arguments (`--key value`) in the
+  same command.
 </Note>
 
 ## Complete Examples
@@ -68,21 +70,25 @@ You cannot use both `--data` and individual arguments (`--key value`) in the sam
 Here are some complete examples using a hypothetical app called `my-cere-app`:
 
 ### Running the main file
+
 ```bash
 cerebrium run main.py
 ```
 
 ### Running a specific function
+
 ```bash
 cerebrium run main.py::process_data
 ```
 
 ### Passing simple arguments
+
 ```bash
 cerebrium run main.py --input_text "Hello Cerebrium" --temperature 0.7
 ```
 
 ### Passing JSON data
+
 ```bash
 cerebrium run main.py --data '{"messages": [{"role": "user", "content": "Hello"}], "max_tokens": 100}'
 ```
@@ -97,12 +103,15 @@ When you run `cerebrium run`, the command:
 4. Streams the logs and output back to your terminal
 
 The command uses your current project context and any configuration specified in your `cerebrium.toml` file, including:
+
 - App name (or uses the current directory name if not specified)
 - Hardware requirements (CPU, memory, GPU)
 - Dependencies (pip, conda, apt packages up to 380KB)
 
 <Note>
-The `cerebrium run` command has access to your project's persistent storage and secrets, just like your deployed apps. This makes it useful for testing functions that rely on these resources.
+  The `cerebrium run` command has access to your project's persistent storage
+  and secrets, just like your deployed apps. This makes it useful for testing
+  functions that rely on these resources.
 </Note>
 
 ## Limitations
