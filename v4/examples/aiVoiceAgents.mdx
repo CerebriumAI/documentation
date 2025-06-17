@@ -8,6 +8,7 @@ In this tutorial, we'll create a real-time voice agent that responds to queries 
 To create this app, we use [PipeCat](https://www.pipecat.ai/), a framework that handles component integration, user interruptions, and audio data processing. We'll demonstrate this by joining a meeting room with our voice agent using [Daily](https://daily.co) (PipeCat's creators) and deploy the app on Cerebrium for seamless deployment and scaling.
 
 Essentially our application will have 3/4 parts:
+
 - Your Pipecat agent which acts as the orchestrator
 - Your Deepgram TTS/STT service (Requires a Deepgram Enterprise account)
 - A self-hosted LLM using the vLLM framework
@@ -21,13 +22,18 @@ You can find the final version of the code [here](https://github.com/CerebriumAI
 ### Deepgram deployment
 
 For the sake of conciseness, look at our Partner Services page to see how you can deploy a Deepgram service on Cerebrium. The link is [here](/cerebrium/partner-services/deepgram)
-<Note>You need a Deepgram Enterprise License to do deploy Deegram on Cerebrium else you must use their API endpoint below.</Note>
+
+<Note>
+  You need a Deepgram Enterprise License to do deploy Deegram on Cerebrium else
+  you must use their API endpoint below.
+</Note>
 
 ### LLM Deployment
 
 For our LLM we deploy a OpenAI compatible Llama-3 endpoint using the vLLM framework - in order to have a low TTFT we deploy a quantized version (RedHatAI/Meta-Llama-3.1-8B-Instruct-quantized.w8a8").
 
 Run `cerebrium init llama-llm` and add the following code to your cerebrium.toml:
+
 ```
 [cerebrium.deployment]
 name = "llama-llm"
@@ -52,6 +58,7 @@ pydantic = "latest"
 ```
 
 Add the following code to your main.py - this uses the vLLM framework and makes it openAI compatible:
+
 ```
 import os
 import time
@@ -190,8 +197,6 @@ channels = ">=4.0.0"
 requests = "==2.32.2"
 dotenv = "latest"
 ```
-
-
 
 We specify a Docker base image that contains local [Deepgram](https://deepgram.com/) Speech-to-Text (STT) and Text-to-Speech (TTS) models, provided by Daily. Running everything locally instead of over the network helps achieve low latency.
 
