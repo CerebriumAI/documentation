@@ -123,7 +123,8 @@ step = 0.2
 ```
 
 5. Create a file named <b>api.toml</b> with the following content and upload to your <b>/persistent-storage/</b> root directory. These are
-the default settings but feel free to update.
+   the default settings but feel free to update.
+
 ```bash
 ### Keep in mind that all paths are in-container paths, and do not need to exist
 ### on the host machine.
@@ -289,8 +290,10 @@ curl -X POST --data-binary @bueller.wav "https://api.cortex.cerebrium.ai/v4/p-xx
 Parameters accepted by the Deepgram service can be found in the [speech-to-text API reference](https://developers.deepgram.com/reference/speech-to-text-api/listen-streaming).
 
 <Note>
-If 'disable_auth' in your cerebrium.toml is set to false, you need to use your inference token in your Authorization header in order to
-authenticate with your Cerebrium service. Don't worry about the Deepgram API key, we automatically pull that from your secrets.
+  If 'disable_auth' in your cerebrium.toml is set to false, you need to use your
+  inference token in your Authorization header in order to authenticate with
+  your Cerebrium service. Don't worry about the Deepgram API key, we
+  automatically pull that from your secrets.
 </Note>
 
 ## API Key Configuration

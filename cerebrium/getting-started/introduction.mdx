@@ -8,7 +8,7 @@ Cerebrium is a serverless infrastructure platform for building and scaling data 
 - Launch your code in the cloud in seconds
 - Define your own [containers environments](/cerebrium/container-images/defining-container-images) or bring your own [Dockerfile](/cerebrium/container-images/custom-dockerfiles)
 - Run [CPUs](/cerebrium/hardware/cpu-and-memory) or [GPUs](/cerebrium/hardware/using-gpus) at scale—with support for thousands of concurrent containers
-- [Scale](/cerebrium/scaling/scaling-apps) based on concurrency, Requests per second or CPU/Memory utilization, 
+- [Scale](/cerebrium/scaling/scaling-apps) based on concurrency, Requests per second or CPU/Memory utilization,
 - Serve [WebSockets](/cerebrium/endpoints/websockets), [REST APIs](/cerebrium/endpoints/inference-api), or any [ASGI-compatible app](/cerebrium/container-images/custom-web-servers)
 - Store model weights, files, and more with [distributed storage](/cerebrium/storage/managing-files)
 - Pay only for the compute you use — [billed by the second](https://www.cerebrium.ai/pricing)
@@ -50,18 +50,17 @@ cerebrium run main.py::run --prompt "Hello World!"
 
 Awesome, we are running this function in the cloud! Now lets turns this into a scalable REST endpoint.
 
-
 Run the following command:
+
 ```bash
 cerebrium deploy
 ```
 
 This will turn the function into a callable endpoint that accepts json parameters (prompt) and can scale to 1000s of requests automatically!
 
-
 Once deployed, an app becomes callable through a POST endpoint `https://api.cortex.cerebrium.ai/v4/{project-id}/{app-name}/{function-name}` and takes a json parameter, prompt
 
-Great! You made it! Join our Community [Discord](https://discord.gg/ATj6USmeE2) for support and updates. 
+Great! You made it! Join our Community [Discord](https://discord.gg/ATj6USmeE2) for support and updates.
 
 ## How It Works
 
@@ -76,4 +75,3 @@ For a detailed explanation of how Cerebrium builds and manages container images,
   This targeted approach significantly reduces cold start times and optimizes
   resource usage.
 </Info>
-
