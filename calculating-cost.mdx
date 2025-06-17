@@ -18,21 +18,20 @@ When you deploy a model, there are two processes we charge you for:
   load your environment, connect storage, etc. This is part of the Cerebrium
   service and something we are working on every day to get as low as possible.
   <b>We do not charge you for this!</b>
-- <u>Model initialization</u>: This part of your code is outside of the predict
+- <u>Model initialization</u>: This part of your code is outside of your functions
   function and only runs when your app incurs a cold start. You are charged for
   the amount of time it takes for this code to run. Typically this is loading a
-  model into GPU RAM.
-- <u>Predict runtime</u>: This is the code stored in your predict function and
+  model into GPU RAM, loading python packages etc.
+- <u>Function runtime</u>: This is the code stored in your function and
   runs every time a request hits your endpoint
 
 Let us go through an example of how you can calculate the cost of your deployment:
 
 The model you wish to deploy requires:
 
-- 24 GB VRam (A5000): $0.000356 per second
-- 2 CPU cores: 2 \* $0.0000532 per second
-- 20GB Memory: 20 \* $0.00000659 per second
-- 10 GB persistent storage: 10 \* $0.3 per month
+- 24 GB VRam (A10): $0.000306 per second
+- 2 CPU cores: 2 \* $0.00000655 per second
+- 20GB Memory: 20 \* $0.00000222 per second
 
 In our situation, your app works on the first deployment and so you incur only one build process of 2 minutes. Additionally, let's say that the app has 10 cold starts a day with an average initialization of 2 seconds and lastly and average runtime (predict) of 2 seconds. Let us calculate your
 expected cost at month-end with you expecting to do 100,000 model inferences.
@@ -44,34 +43,29 @@ cold_starts_per_month = 300  # 10 a day for 30 days
 average_inference_time = 2  # seconds
 number_of_inferences = 100000  # number of inferences per month
 
+GPU_cost = 0.000306  # per second
+CPU_cost = 0.00000655  # per second per core
+memory_cost = 0.00000222  # per second per GB
+num_of_cpu_cores = 2
+gb_of_RAM = 20
+build_seconds = 120  # 2 minutes
+
 # cost calculation
-total_build_compute_cost = build_seconds * (GPU_cost + CPU_cost*num_of_cpu_cores + memory_cost*gb_of_RAM)
+compute_rate = GPU_cost + (CPU_cost * num_of_cpu_cores) + (memory_cost * gb_of_RAM)
+
+total_build_compute_cost = build_seconds * compute_rate
 total_initialization_time = average_initialization_time * cold_starts_per_month
 total_inference_time = average_inference_time * number_of_inferences
-inference_compute_cost = (GPU_cost + CPU_cost*num_of_cpu_cores + memory_cost*gb_of_RAM) * total_inference_time
+
+initialization_compute_cost = total_initialization_time * compute_rate
+inference_compute_cost = total_inference_time * compute_rate
 storage_cost = gb_of_persistent_storage * persistent_storage_cost
 
-total_cost = inference_compute_cost + storage_cost + total_build_compute_cost + total_initialization_time
-
+total_cost = inference_compute_cost + storage_cost + total_build_compute_cost + initialization_compute_cost
 
 print(f"Build Compute cost: ${total_build_compute_cost :.2f}/month",
-      f"Initialization Compute cost: ${total_initialization_time :.2f}/month",
-      f"Inference Compute cost: ${total_inference_time :.2f}/month",
+      f"Initialization Compute cost: ${initialization_compute_cost :.2f}/month",
+      f"Inference Compute cost: ${inference_compute_cost :.2f}/month",
       f"\nStorage cost: ${storage_cost :.2f}/month",
       f"\nTotal cost: ${total_cost :.2f}/month")
 ```
-
-From this, you can see that the cost of your deployment is:
-
-```bash
-Build Compute cost: $0.07/month
-Initialization Compute cost: $0.357/month
-Inference Compute cost: $118.84/month
-Storage cost: $3.00/month
-Total cost: $121.567/month
-```
-
-Now, you would expect the cost to grow linearly with the number of requests you get; however, we want to help you grow your business, and so we are happy to discount your computing cost as you grow.
-To see the discounts you can get for your volume, please contact us directly at [Sales](mailto:sales@cerebrium.ai).
-
-As you grow, don't worry about scaling your deployment with demand, sourcing new hardware, or managing your infrastructure. You can focus on your code and we'll handle the rest.
