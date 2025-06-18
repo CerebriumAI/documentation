@@ -289,8 +289,8 @@ curl -X POST --data-binary @bueller.wav "https://api.cortex.cerebrium.ai/v4/p-xx
 Parameters accepted by the Deepgram service can be found in the [speech-to-text API reference](https://developers.deepgram.com/reference/speech-to-text-api/listen-streaming).
 
 <Note>
-If 'disable_auth' in your cerebrium.toml is set to false, you need to use your inference token in your Authorization header in order to
-authenticate with your Cerebrium service. Don't worry about the Deepgram API key, we automatically pull that from your secrets.
+If 'disable_auth' in your cerebrium.toml is set to false, use the inference token in your Authorization header in order to
+authenticate with your Cerebrium service. Don't worry about the Deepgram API key, it will be pulled automatically from your secrets.
 </Note>
 
 ## API Key Configuration

@@ -42,14 +42,17 @@ def run(prompt: str):
     return {"my_result": prompt}
 ```
 
+### 3. Run code remotely
+
 We can then run this function in the cloud and pass it a prompt.
 
 ```bash
 cerebrium run main.py::run --prompt "Hello World!"
 ```
 
-Awesome, we are running this function in the cloud! Now lets turns this into a scalable REST endpoint.
+Your should see logs that output the prompt you sent in - this is running in the cloud! Let us now turn this into a scalable REST endpoint.
 
+### 4. Deploy your app
 
 Run the following command:
 ```bash
@@ -57,7 +60,6 @@ cerebrium deploy
 ```
 
 This will turn the function into a callable endpoint that accepts json parameters (prompt) and can scale to 1000s of requests automatically!
-
 
 Once deployed, an app becomes callable through a POST endpoint `https://api.cortex.cerebrium.ai/v4/{project-id}/{app-name}/{function-name}` and takes a json parameter, prompt
 
