@@ -129,10 +129,6 @@
       "pages": ["cerebrium/storage/managing-files"]
     },
     {
-      "group": "Integrations",
-      "pages": ["cerebrium/integrations/vercel"]
-    },
-    {
       "group": "Partner Services",
       "pages": [
         "cerebrium/partner-services/index",
