@@ -96,8 +96,7 @@
       "pages": [
         "cerebrium/hardware/using-gpus",
         "cerebrium/hardware/using-cuda",
-        "cerebrium/hardware/cpu-and-memory",
-        "cerebrium/hardware/multi-region-deployment"
+        "cerebrium/hardware/cpu-and-memory"
       ]
     },
     {
@@ -111,7 +110,8 @@
       "group": "Deployments",
       "pages": [
         "cerebrium/deployments/ci-cd",
-        "cerebrium/deployments/gradual-roll-out"
+        "cerebrium/deployments/gradual-roll-out",
+        "cerebrium/deployments/multi-region-deployment"
       ]
     },
     {
