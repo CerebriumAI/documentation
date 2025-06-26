@@ -28,19 +28,24 @@ name = "rime"
 disable_auth = true
 
 [cerebrium.runtime.rime]
+port = 8001
 
 [cerebrium.hardware]
 cpu = 4
-memory = 32
+memory = 30
 compute = "AMPERE_A10"
 gpu_count = 1
+region = "us-east-1"
 
 [cerebrium.scaling]
 min_replicas = 1
 max_replicas = 2
 cooldown = 120
-replica_concurrency = 3
+replica_concurrency = 50
 ```
+
+<Note>You need to disable auth in the above since you need to use your Rime API key in the header. API authentication
+is handle by the Rime Server using your API key</Note>
 
 4. Run `cerebrium deploy` to deploy the Rime service - the output of which should appear as follows:
 
@@ -48,7 +53,7 @@ replica_concurrency = 3
 App Dashboard: https://dashboard.cerebrium.ai/projects/p-xxxxxxxx/apps/p-xxxxxxxx-rime
 ```
 
-5. Use the Deployment url from the output to send requests to the Rime service via curl request:
+5. Use the Deployment url from the output to send requests to the <b>HTTP</b> Rime service via curl request:
 
 ```
 curl --location 'https://api.cortex.cerebrium.ai/v4/p-xxxxxxxx/rime' \
@@ -62,6 +67,28 @@ curl --location 'https://api.cortex.cerebrium.ai/v4/p-xxxxxxxx/rime' \
 }'
 ```
 
+For <b>Websockets</b>, send the following
+
+```
+wss://api.dev-aws.us-east-1.cerebrium.ai/v4/p-xxxxxx/rime/ws2?audioFormat=mp3&speaker=cove&modelId=mistv2&phonemizeBetweenBrackets=true
+Authorization Bearer <RIME_API_KEY>
+
+#With a message like:
+{"text": "This "},
+{"text": "is "},
+{"text": "a "},
+{"text": "test against the "},
+{"text": "websockets endpoint of the "},
+{"text": "api image. "},
+{"operation": "flush"},
+{"text": "This "},
+{"text": "is "},
+{"text": "an "},
+{"text": "incomplete "},
+{"text": "phrase "},
+{"operation": "eos"}
+```
+
 ## Scaling and Concurrency
 
 Rime services support independent scaling configurations:
@@ -69,9 +96,10 @@ Rime services support independent scaling configurations:
 - **min_replicas**: Minimum instances to maintain (0 for scale-to-zero). Recommended: 1.
 - **max_replicas**: Maximum instances during high load.
 - **replica_concurrency**: Concurrent requests per instance. Recommended: 3.
-- **cooldown**: Seconds an instance remains active after last request. Recommended: 120.
+- **cooldown**: Seconds an instance remains active after last request. Recommended: 50.
 - **compute**: Instance type. Recommended: `AMPERE_A10`.
 
-Adjust these parameters based on traffic patterns and latency requirements.
+Adjust these parameters based on traffic patterns and latency requirements. Best would be to consult the Rime team
+about concurrency and scalability
 
 For further documentation on Rime, see the [Rime documentation](https://docs.rime.ai/).
