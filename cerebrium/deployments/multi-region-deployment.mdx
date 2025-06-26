@@ -1,0 +1,78 @@
+---
+title: Multi-Region Deployment
+description: Deploy your apps globally across multiple regions for improved latency and data residency compliance
+---
+
+Cerebrium's multi-region deployment capability allows you to deploy your apps globally across different continents, taking advantage of co-location for reduced latency and meeting data residency requirements.
+
+<Warning>
+  Multi-region deployment is currently in **beta**. Rapid updates and
+  improvements will be made over the next few months to bring full functionality
+  to life. Please reach out on our [Discord](https://discord.gg/ATj6USmeE2)
+  about features/functionality you would like to see
+</Warning>
+
+## Why Use Multi-Region Deployment
+
+- **Reduced Latency**: Deploy closer to users for faster response times and better experience with real-time applications like voice agents and LLMs
+- **Data Residency**: Meet data protection requirements by keeping sensitive data within specific geographic regions to comply with regulations like GDPR and CCPA
+- **High Availability**: Ensure fault tolerance and continuous service through geographic redundancy, disaster recovery, and load balancing across multiple regions
+
+## Available Regions
+
+Cerebrium supports deployment across three major continents with the following regions:
+
+### United States
+
+- **us-east-1** (N. Virginia) - Default region
+
+### Europe
+
+- **eu-west-2** (United Kingdon)
+
+### Asia Pacific
+
+- **ap-south-1** (India)
+
+<Info>
+  Additional regions are being evaluated and will be added based on user demand
+  and infrastructure availability. Contact
+  [support](mailto:support@cerebrium.ai) if you need deployment in a specific
+  region not currently listed.
+</Info>
+
+## Configuration
+
+Configure your app's deployment region using the `region` parameter in the `[cerebrium.hardware]` section of your `cerebrium.toml` file:
+
+```toml
+[cerebrium.hardware]
+region = "us-east-1"
+provider = "aws"
+compute = "AMPERE_A10"
+cpu = 2
+memory = 8.0
+```
+
+## Pricing
+
+Pricing varies by region based on local infrastructure costs and availability:
+
+## GPU Availability by Region
+
+GPU availability and pricing vary across regions due to infrastructure constraints and local demand:
+
+| GPU Model        | US East | EU West | AP South |
+| ---------------- | ------- | ------- | -------- |
+| HOPPER_H100      | ✅      | ✅      | ✅       |
+| AMPERE_A100_40GB | ✅      | ✅      | ✅       |
+| ADA_L40S         | ✅      | ❌      | ❌       |
+| ADA_L4           | ✅      | ✅      | ✅       |
+| AMPERE_A10       | ✅      | ✅      | ✅       |
+| TURING_T4        | ✅      | ✅      | ✅       |
+
+### Limitations
+
+- Each region requires a separate deployment. Apps deployed in one region do not automatically replicate to other regions.
+- Each region has its own isolated persistent storage volume. Data stored in `/persistent-storage` in one region is not accessible
+  from other regions.
