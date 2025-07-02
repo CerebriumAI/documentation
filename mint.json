@@ -110,7 +110,8 @@
       "group": "Deployments",
       "pages": [
         "cerebrium/deployments/ci-cd",
-        "cerebrium/deployments/gradual-roll-out"
+        "cerebrium/deployments/gradual-roll-out",
+        "cerebrium/deployments/multi-region-deployment"
       ]
     },
     {
