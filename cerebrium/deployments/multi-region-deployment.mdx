@@ -32,7 +32,7 @@ Cerebrium supports deployment across three major continents with the following r
 
 ### Asia Pacific
 
-- **ap-south-1** (India)
+- **ap-south-1** (India) - Coming soon
 
 <Info>
   Additional regions are being evaluated and will be added based on user demand
@@ -41,7 +41,33 @@ Cerebrium supports deployment across three major continents with the following r
   region not currently listed.
 </Info>
 
-## Configuration
+## CLI Configuration
+
+You can configure your CLI to work with different regions in two ways:
+
+Set a default region for your CLI sessions that will be used for all commands:
+
+```bash
+cerebrium region set us-east-1
+```
+
+This will set the default region for commands like listing storage volumes, running applications, and other operations.
+
+Alternatively, you can specify the region for individual commands using the `--region` flag:
+
+```bash
+# List storage volumes in a specific region
+cerebrium ls --region eu-west-2
+
+```
+
+<Info>
+  The `--region` flag takes precedence over the default region set with
+  `cerebrium region set`. This allows you to temporarily use a different region
+  without changing your default configuration.
+</Info>
+
+## App Deployment
 
 Configure your app's deployment region using the `region` parameter in the `[cerebrium.hardware]` section of your `cerebrium.toml` file:
 
