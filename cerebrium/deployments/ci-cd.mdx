@@ -5,9 +5,9 @@ description: "Automate Cerebrium deployments using GitHub Actions"
 
 Configure a Continuous Integration or Continuous Deployment system (CI/CD) to automatically deploy a new version of an app to production/development when a branch is pushed or workflow triggered.
 
-This guide sets up a CI/CD system using GitHub Actions and Cerebriums' Service Accounts.
+This guide sets up a CI/CD pipeline using GitHub Actions and Cerebriums' Service Accounts.
 
-> Maintaining **separate development and production apps** in separate projects is recommended, so that changes can be safely tested before going live.
+<Note> Maintaining **separate development and production apps** in separate projects is recommended, so that changes can be safely tested before going live.</Note>
 
 ### 1. Authenticating to Cerebrium
 
@@ -41,7 +41,7 @@ GitHub Actions use workflow files located in the `.github/workflows/` directory 
 2. Within that directory, create a new file named `cerebrium-deploy.yml`
 3. Paste the following YAML into the file:
 
-```
+```yaml
 name: Cerebrium Deployment
 on:
   push:
@@ -83,9 +83,9 @@ jobs:
 
 ```
 
-Once committed, this workflow will automatically :
+Once committed, this workflow will automatically:
 
-- Deploy a production application on every push to master
-- Deploy a development app on pull requests to master or development it.
+- Deploy a production application on every push to master.
+- Deploy a development app on pull requests to master or development branches.
 
-You can monitor workflow runs in the “Actions” tab of your repository.
+Monitor workflow runs in the “Actions” tab of the repository on GitHub.
