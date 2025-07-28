@@ -1,10 +1,9 @@
 ---
 title: "CI/CD Pipelines"
 description: "Automate your Cerebrium deployments using GitHub Actions"
-
 ---
 
-If you would like to automatically deploy a new version of your app to production/development when you push a branch or press a button you should configure a Continuous Integration or Continuous Deployment system (CI/CD). 
+If you would like to automatically deploy a new version of your app to production/development when you push a branch or press a button you should configure a Continuous Integration or Continuous Deployment system (CI/CD).
 
 This guide sets up a CI/CD system using GitHub Actions and Cerebriums' Service Accounts.
 
@@ -16,7 +15,7 @@ CI/CD workflows use **machine credentials**, not personal user credentials. Cere
 
 1. Go to the [Cerebrium Dashboard](https://dashboard.cerebrium.ai/) and open the **API Keys** page.
 2. Click **Create Service Account**, name it `"GitHub Actions CI/CD"`, choose an expiry date, and click **Create**.
-3. **Copy the token** generated for your service account. 
+3. **Copy the token** generated for your service account.
 
 ![Cerebrium API Keys dashboard](/images/api-key-sa.png)
 
@@ -30,12 +29,11 @@ Now, store this token in your GitHub repository for use in your GitHub Actions w
    - **Name**: `CEREBRIUM_SERVICE_ACCOUNT_TOKEN`
    - **Value**: the token you copied in the previous step.
 
-> 🔒 Use *secrets*, not plain environment variables, to prevent leaking sensitive data in logs.
+> 🔒 Use _secrets_, not plain environment variables, to prevent leaking sensitive data in logs.
 
 ![GitHub](/images/githubActions.png)
 
 ### 3. GitHub Actions Workflow
-
 
 GitHub Actions uses workflow files located in the `.github/workflows/` directory of your repository. You’ll need to create one to define your deployment process.
 
@@ -86,8 +84,8 @@ jobs:
 ```
 
 Once committed, this workflow will automatically :
-	•	On every push to master it will deploy your production application
-	•	On pull requests to master or development it will deploy to your development app.
-	•	When manually triggered from the GitHub UI (under the “Actions” tab)
+• On every push to master it will deploy your production application
+• On pull requests to master or development it will deploy to your development app.
+• When manually triggered from the GitHub UI (under the “Actions” tab)
 
 You can monitor workflow runs in the “Actions” tab of your repository.
