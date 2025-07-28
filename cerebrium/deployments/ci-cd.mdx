@@ -7,7 +7,11 @@ Configure a Continuous Integration or Continuous Deployment system (CI/CD) to au
 
 This guide sets up a CI/CD pipeline using GitHub Actions and Cerebriums' Service Accounts.
 
-<Note> Maintaining **separate development and production apps** in separate projects is recommended, so that changes can be safely tested before going live.</Note>
+<Note>
+  {" "}
+  Maintaining **separate development and production apps** in separate projects
+  is recommended, so that changes can be safely tested before going live.
+</Note>
 
 ### 1. Authenticating to Cerebrium
 
@@ -80,7 +84,6 @@ jobs:
 
       - name: Deploy App
         run: cerebrium deploy
-
 ```
 
 Once committed, this workflow will automatically:
