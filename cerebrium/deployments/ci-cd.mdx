@@ -1,13 +1,13 @@
 ---
 title: "CI/CD Pipelines"
-description: "Automate your Cerebrium deployments using GitHub Actions"
+description: "Automate Cerebrium deployments using GitHub Actions"
 ---
 
-If you would like to automatically deploy a new version of your app to production/development when you push a branch or press a button you should configure a Continuous Integration or Continuous Deployment system (CI/CD).
+Configure a Continuous Integration or Continuous Deployment system (CI/CD) to automatically deploy a new version of an app to production/development when a branch is pushed or workflow triggered.
 
 This guide sets up a CI/CD system using GitHub Actions and Cerebriums' Service Accounts.
 
-> We recommend maintaining **separate development and production apps** in separate projects in Cerebrium so that changes can be safely tested before going live.
+> Maintaining **separate development and production apps** in separate projects is recommended, so that changes can be safely tested before going live.
 
 ### 1. Authenticating to Cerebrium
 
@@ -15,19 +15,19 @@ CI/CD workflows use **machine credentials**, not personal user credentials. Cere
 
 1. Go to the [Cerebrium Dashboard](https://dashboard.cerebrium.ai/) and open the **API Keys** page.
 2. Click **Create Service Account**, name it `"GitHub Actions CI/CD"`, choose an expiry date, and click **Create**.
-3. **Copy the token** generated for your service account.
+3. **Copy the token** generated for the new service account.
 
 ![Cerebrium API Keys dashboard](/images/api-key-sa.png)
 
-### 2. Define secrets in your GitHub environment
+### 2. Define secrets in a GitHub environment
 
-Now, store this token in your GitHub repository for use in your GitHub Actions workflows.
+Store this token in a secret for use in GitHub Actions workflows.
 
-1. Navigate to your **GitHub repository → Settings → Environments**
-2. Create environments named `"dev"` and/or `"prod"` (depending on your needs).
+1. Navigate to the **GitHub repository → Settings → Environments**
+2. Create environments named `"dev"` and/or `"prod"` (Adjust to specific needs)
 3. Inside each environment, add a secret:
    - **Name**: `CEREBRIUM_SERVICE_ACCOUNT_TOKEN`
-   - **Value**: the token you copied in the previous step.
+   - **Value**: the token copied in the previous step
 
 > 🔒 Use _secrets_, not plain environment variables, to prevent leaking sensitive data in logs.
 
@@ -35,10 +35,10 @@ Now, store this token in your GitHub repository for use in your GitHub Actions w
 
 ### 3. GitHub Actions Workflow
 
-GitHub Actions uses workflow files located in the `.github/workflows/` directory of your repository. You’ll need to create one to define your deployment process.
+GitHub Actions use workflow files located in the `.github/workflows/` directory of a repository. Create one to define a deployment process.
 
-1. In the root of your GitHub repository, create the directory `.github/workflows` if it doesn’t already exist.
-2. Inside that directory, create a new file named `cerebrium-deploy.yml`.
+1. Create a `.github/workflows`  directory in the root of a new or existing GitHub repository
+2. Within that directory, create a new file named `cerebrium-deploy.yml`
 3. Paste the following YAML into the file:
 
 ```
@@ -84,8 +84,7 @@ jobs:
 ```
 
 Once committed, this workflow will automatically :
-• On every push to master it will deploy your production application
-• On pull requests to master or development it will deploy to your development app.
-• When manually triggered from the GitHub UI (under the “Actions” tab)
+- Deploy a production application on every push to master
+- Deploy a development app on pull requests to master or development it.
 
 You can monitor workflow runs in the “Actions” tab of your repository.
