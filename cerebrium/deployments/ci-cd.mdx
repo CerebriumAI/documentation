@@ -1,47 +1,51 @@
 ---
 title: "CI/CD Pipelines"
-description: "Integrate Cerebrium into your CI/CD workflow for automated deployments"
+description: "Automate Cerebrium deployments using GitHub Actions"
 ---
 
-If you would like to automatically deploy a new version of your app to production/development once you have merged into the
-respective branch, you can do so using the commands below. We will be using a GitHub Actions workflow.
+Configure a Continuous Integration or Continuous Deployment system (CI/CD) to automatically deploy a new version of an app to production/development when a branch is pushed or workflow triggered.
 
-### 1. Get your Cerebrium OAuth credentials
+This guide sets up a CI/CD pipeline using GitHub Actions and Cerebriums' Service Accounts.
 
-Cerebrium stores your credentials in the directory `~/.cerebrium/config.yaml`. If you run the command `cat ~/.cerebrium/config`, then
-you should see an output of three variables, namely:
+<Note>
+  {" "}
+  Maintaining **separate development and production apps** in separate projects
+  is recommended, so that changes can be safely tested before going live.
+</Note>
 
-- accessToken
-- refreshToken
-- projectId
+### 1. Authenticating to Cerebrium
 
-We will need these in the next step.
+The GitHub Action workflow will use a **Service Account key** to authenticate to Cerebrium. Service Account keys are credentials that are not tied to an indivdual but to a specific service.
 
-### 2. Define secrets in your GitHub environment
+1. Go to the [Cerebrium Dashboard](https://dashboard.cerebrium.ai/) and open the **API Keys** page.
+2. Click **Create Service Account**, name it `"GitHub Actions CI/CD"`, choose an expiry date, and click **Create**.
+3. **Copy the key** generated for the new service account.
 
-Go to your GitHub repository → Settings → Environments
+![Cerebrium API Keys dashboard](/images/api-keys-sa.png)
+
+### 2. Define secrets in a GitHub environment
+
+Store this key in a secret for use in GitHub Actions workflows.
+
+1. Navigate to the **GitHub repository → Settings → Environments**
+2. Create environments named `"dev"` and/or `"prod"` (Adjust to specific needs)
+3. Inside each environment, add a secret:
+   - **Name**: `CEREBRIUM_SERVICE_ACCOUNT_TOKEN`
+   - **Value**: the key copied in the previous step
+
+> 🔒 Use _secrets_, not plain environment variables, to prevent leaking sensitive data in logs.
 
 ![GitHub](/images/githubActions.png)
 
-You should create a new environment with a title of your choice ("prod" and "dev"). Within these environments, you have two types
-of variables you can work with:
-
-- Environment secrets: These are encrypted and do not show in your workflow logs
-- Environment variables: These are not encrypted and will show in the workflow logs
-
-In our use case, we will store all our variables (accessToken, refreshToken, projectId) as secrets to keep the values hidden.
-
 ### 3. GitHub Actions Workflow
 
-In this flow, we do the following:
+GitHub Actions use workflow files located in the `.github/workflows/` directory of a repository. Create one to define a deployment process.
 
-1. Install a Python version of our choice (3.8 to 3.11).
-2. Install the Cerebrium package using pip.
-3. Log in to Cerebrium using our credentials.
-4. Deploy our app.
-5. Notify a Slack channel of successful deployment.
+1. Create a `.github/workflows` directory in the root of a new or existing GitHub repository
+2. Within that directory, create a new file named `cerebrium-deploy.yml`
+3. Paste the following YAML into the file:
 
-```
+```yaml
 name: Cerebrium Deployment
 on:
   push:
@@ -68,9 +72,7 @@ jobs:
     environment: ${{ github.event.inputs.environment || (github.ref == 'refs/heads/master' && 'prod') || 'dev' }}
     env:
       ENV: ${{ github.event.inputs.environment || (github.ref == 'refs/heads/master' && 'prod') || 'dev' }}
-      PROJECT_ID: ${{ secrets.PROJECT_ID }}
-      ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-      REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+      CEREBRIUM_SERVICE_ACCOUNT_TOKEN: ${{ secrets.CEREBRIUM_SERVICE_ACCOUNT_TOKEN }}
     steps:
       - uses: actions/checkout@v4.0
       - uses: actions/setup-python@v5.0
@@ -80,17 +82,13 @@ jobs:
       - name: Install Cerebrium
         run: pip install cerebrium
 
-      - name: Add Auth keys
-        run: cerebrium save-auth-config "$ACCESS_TOKEN" "$REFRESH_TOKEN" "$PROJECT_ID"
-
       - name: Deploy App
         run: cerebrium deploy
-
-      - name: Notify Slack
-        uses: someimportantcompany/github-actions-slack-message@v1
-        with:
-          webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
-          text: "Cerebrium app deployed to production! :tada:"
-        if: github.ref == 'refs/heads/master'
-
 ```
+
+Once committed, this workflow will automatically:
+
+- Deploy a production application on every push to master.
+- Deploy a development app on pull requests to master or development branches.
+
+Monitor workflow runs in the “Actions” tab of the repository on GitHub.
