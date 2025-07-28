@@ -11,23 +11,23 @@ This guide sets up a CI/CD system using GitHub Actions and Cerebriums' Service A
 
 ### 1. Authenticating to Cerebrium
 
-CI/CD workflows use **machine credentials**, not personal user credentials. Cerebrium Service Accounts are designed for this. Create separate service accounts for your production and development projects.
+The GitHub Action workflow will use a **Service Account key** to authenticate to Cerebrium. Service Account keys are credentials that are not tied to an indivdual but to a specific service.
 
 1. Go to the [Cerebrium Dashboard](https://dashboard.cerebrium.ai/) and open the **API Keys** page.
 2. Click **Create Service Account**, name it `"GitHub Actions CI/CD"`, choose an expiry date, and click **Create**.
-3. **Copy the token** generated for the new service account.
+3. **Copy the key** generated for the new service account.
 
-![Cerebrium API Keys dashboard](/images/api-key-sa.png)
+![Cerebrium API Keys dashboard](/images/api-keys-sa.png)
 
 ### 2. Define secrets in a GitHub environment
 
-Store this token in a secret for use in GitHub Actions workflows.
+Store this key in a secret for use in GitHub Actions workflows.
 
 1. Navigate to the **GitHub repository → Settings → Environments**
 2. Create environments named `"dev"` and/or `"prod"` (Adjust to specific needs)
 3. Inside each environment, add a secret:
    - **Name**: `CEREBRIUM_SERVICE_ACCOUNT_TOKEN`
-   - **Value**: the token copied in the previous step
+   - **Value**: the key copied in the previous step
 
 > 🔒 Use _secrets_, not plain environment variables, to prevent leaking sensitive data in logs.
 
