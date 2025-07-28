@@ -37,7 +37,7 @@ Store this token in a secret for use in GitHub Actions workflows.
 
 GitHub Actions use workflow files located in the `.github/workflows/` directory of a repository. Create one to define a deployment process.
 
-1. Create a `.github/workflows`  directory in the root of a new or existing GitHub repository
+1. Create a `.github/workflows` directory in the root of a new or existing GitHub repository
 2. Within that directory, create a new file named `cerebrium-deploy.yml`
 3. Paste the following YAML into the file:
 
@@ -84,6 +84,7 @@ jobs:
 ```
 
 Once committed, this workflow will automatically :
+
 - Deploy a production application on every push to master
 - Deploy a development app on pull requests to master or development it.
 
