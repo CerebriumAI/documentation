@@ -3,21 +3,24 @@ title: "CI/CD Pipelines"
 description: "Integrate Cerebrium into your CI/CD workflow for automated deployments"
 ---
 
-If you would like to automatically deploy a new version of your app to production/development once you have merged into the
-respective branch, you can do so using the commands below. We will be using a GitHub Actions workflow.
+If you would like to automatically deploy a new version of your app to production/development when you push a branch or press a button you should configure a Continuous Integration or Continuous Deployment system (CI/CD). 
 
-### 1. Get your Cerebrium OAuth credentials
 
-Cerebrium stores your credentials in the directory `~/.cerebrium/config.yaml`. If you run the command `cat ~/.cerebrium/config`, then
-you should see an output of three variables, namely:
+This guide sets up a CI/CD system using GitHub Actions and Cerebriums' Service Accounts.
 
-- accessToken
-- refreshToken
-- projectId
+### 1. Authenticating to Cerebrium
 
-We will need these in the next step.
+CI/CD and other automated systems need to authenticate to Cerebrium using machine credentials rather than standard user credentials. 
+Cerebrium Service accounts provide machine credentials for these use cases.
+
+1 Navigate to your [Cerebrium Dashboard](https://dashboard.cerebrium.ai/) and open the "API Keys" page, this page lists your Inference and Service Account Keys. 
+2. Create a new Service Account called "Github Actions CI/CD" with some expiry date and click create.
+3. Copy the token that was just created for your service account. 
+
 
 ### 2. Define secrets in your GitHub environment
+
+We will now store this token in your GitHub environment for use in your Github Actions pipeline.
 
 Go to your GitHub repository → Settings → Environments
 
@@ -29,7 +32,7 @@ of variables you can work with:
 - Environment secrets: These are encrypted and do not show in your workflow logs
 - Environment variables: These are not encrypted and will show in the workflow logs
 
-In our use case, we will store all our variables (accessToken, refreshToken, projectId) as secrets to keep the values hidden.
+In our case we will store the service account token as a secret. Create a secret called CEREBRIUM_SERVICE_ACCOUNT_TOKEN and set the value to the value we created above.
 
 ### 3. GitHub Actions Workflow
 
@@ -37,8 +40,7 @@ In this flow, we do the following:
 
 1. Install a Python version of our choice (3.8 to 3.11).
 2. Install the Cerebrium package using pip.
-3. Log in to Cerebrium using our credentials.
-4. Deploy our app.
+3. Deploy our app. The cerebrium CLI will automatically use the service account from the secret we created.
 5. Notify a Slack channel of successful deployment.
 
 ```
@@ -79,9 +81,6 @@ jobs:
 
       - name: Install Cerebrium
         run: pip install cerebrium
-
-      - name: Add Auth keys
-        run: cerebrium save-auth-config "$ACCESS_TOKEN" "$REFRESH_TOKEN" "$PROJECT_ID"
 
       - name: Deploy App
         run: cerebrium deploy
