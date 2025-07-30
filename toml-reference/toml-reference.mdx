@@ -152,8 +152,12 @@ conda = "conda_pkglist.txt"
 [cerebrium.deployment]
 name = "llm-inference"
 python_version = "3.12"
+disable_auth = false
 include = ["*"]
 exclude = [".*"]
+shell_commands = []
+pre_build_commands = []
+docker_base_image_url = "debian:bookworm-slim"
 
 [cerebrium.runtime.custom]
 port = 8000
@@ -166,12 +170,18 @@ cpu = 4
 memory = 16.0
 compute = "AMPERE_A10"
 gpu_count = 1
+provider = "aws"
+region = "us-east-1"
 
 [cerebrium.scaling]
 min_replicas = 0
 max_replicas = 2
 replica_concurrency = 10
+response_grace_period = 3600
 cooldown = 1800
+scaling_metric = "concurrency_utilization"
+scaling_target = 100
+roll_out_duration_seconds = 0
 
 [cerebrium.dependencies.pip]
 torch = "latest"
@@ -180,4 +190,13 @@ uvicorn = "latest"
 
 [cerebrium.dependencies.apt]
 ffmpeg = "latest"
+
+[cerebrium.dependencies.conda]
+# Optional conda dependencies
+
+[cerebrium.dependencies.paths]
+# Optional paths to dependency files
+# pip = "requirements.txt"
+# apt = "pkglist.txt"
+# conda = "conda_pkglist.txt"
 ```
