@@ -1,9 +1,10 @@
 ---
 title: "Custom Domains"
-description: "Connect your own domain to your Cerebrium project for professional, branded API endpoints"
+description: "Connect your own domain to your Cerebrium project"
 ---
 
-Custom domains allow you to serve your Cerebrium apps through your own domain instead of the default `*.cerebrium.ai` URLs. Once configured, your API calls will use your custom domain while keeping the same path structure: `api.yourdomain.com/v4/p-1234/my-app/run`.
+Custom domains allow you to serve your Cerebrium apps through your own domain instead of the default `*.cerebrium.ai` URLs.
+Once configured, your API calls will use your custom domain while keeping the same path structure: `api.yourdomain.com/v4/p-1234/my-app/run`.
 
 ## Key Features
 
@@ -15,26 +16,18 @@ Custom domains allow you to serve your Cerebrium apps through your own domain in
 
 ## How Custom Domains Work
 
-Custom domains in Cerebrium are **project-level**, meaning:
-
-- **One domain serves all apps** in your project
-- **Multiple domains** can point to the same project (useful for different environments or regions)
-- **Professional branding**: Use your own domain instead of `*.cerebrium.ai` URLs
-- **Region-specific**: Each domain is tied to a specific AWS region for optimal performance
+- **Domains are region-specific** meaning each will always resolve to the selected region
+- **Domains are app-agnostic** so you can use connect to any number of deployed apps within your project via custom domain
+- **Multiple domains** can be configured on the same project (useful if you have apps within the project deployed in different regions)
 
 ## Getting Started
-
-### Prerequisites
-
-- Access to your domain's DNS settings
-- A Cerebrium project
 
 ### Step 1: Create Your Custom Domain
 
 1. Navigate to your project settings in the Cerebrium dashboard
 2. Click on the "Custom Domains" tab
 3. Click "Add Custom Domain"
-4. Enter your domain name and select your target AWS region (choose the region closest to your users for optimal latency)
+4. Enter your domain name and select your target region (choose the region closest to your users for optimal latency)
 5. Click "Create Domain"
 
 ### Step 2: Configure DNS Records
@@ -72,7 +65,6 @@ After creating the domain, you'll receive DNS configuration instructions. Copy t
     Name: @ (or leave blank)
     Value: proxy.aws.{region}.cerebrium.ai
     ```
-
   </Tab>
 
   <Tab title="Wildcard Domains">
@@ -87,7 +79,6 @@ After creating the domain, you'll receive DNS configuration instructions. Copy t
     Name: *
     Value: proxy.aws.{region}.cerebrium.ai
     ```
-
   </Tab>
 </Tabs>
 
@@ -100,7 +91,7 @@ After creating the domain, you'll receive DNS configuration instructions. Copy t
 1. After configuring DNS, return to the Cerebrium dashboard
 2. Cerebrium will automatically attempt to validate your DNS records every 30 minutes for up to 2 days
 3. To trigger an immediate validation attempt, click "Validate Domain" next to your domain, even after the 2 days have elapsed
-4. If validation fails, the dialog will show you the last known error. Reach out to us on our [Discord support channel](https://discord.gg/ATj6USmeE2) if you have questions
+4. If validation fails, the dialog will show you the last known error.
 5. Once validated, SSL certificates will be automatically provisioned
 
 ### Step 4: Start Using Your Custom Domain
@@ -125,28 +116,7 @@ Once validation is complete, you can immediately start using your custom domain 
   </Tab>
 </Tabs>
 
-**Multiple Apps in Same Project:**
-
-```bash
-# First app
-curl -X POST https://api.yourdomain.com/v4/p-1234/chatbot/predict
-
-# Second app
-curl -X POST https://api.yourdomain.com/v4/p-1234/image-generator/run
-
-# Third app
-curl -X POST https://api.yourdomain.com/v4/p-1234/data-processor/process
-```
-
 ## Managing Your Domains
-
-### Viewing Domain Status
-
-In your project's Custom Domains tab, you can see:
-
-- **Domain Name**: The custom domain you've configured
-- **Status**: Current validation status (Pending, Validated, Failed)
-- **Actions**: Validate, view DNS records, or delete the domain
 
 ### Domain Validation Statuses
 
@@ -158,48 +128,25 @@ occurred.
 - **Validated**: Domain is successfully validated and ready to use
 - **Failed**: DNS validation failed - click "Validation Status" to see the specific error
 
-### Deleting Domains
-
-To remove a custom domain:
-
-1. Click the delete button (🗑️) next to the domain
-2. Confirm the deletion in the dialog
-3. The domain will be removed from Cerebrium's ingress controllers and SSL certificates cleaned up
-
-## Troubleshooting
-
-<Note>
-  For any questions or issues, reach out to us on our [Discord support
-  channel](https://discord.gg/ATj6USmeE2).
-</Note>
-
 ### Validation Errors
 
 If your domain shows "Failed" status it means that the DNS record has been misconfigured, common issues include:
 
 - **Wrong target**: CNAME points to incorrect proxy URL
-- **Multiple conflicting records**: Remove any existing A records for the same hostname
+- **Multiple conflicting records**: Remove any existing ALIAS records for the same hostname
 
 ### Common DNS Provider Issues
 
 - **Cloudflare**: Disable proxy (set to "DNS only" - gray cloud icon)
 - **Route53**: Use simple routing policy, not weighted or latency-based
 - **Namecheap**: Use "@" for apex domains, not "www" or blank
-- **GoDaddy**: CNAME records cannot be used with apex domains - consider using a subdomain or an A record
+- **GoDaddy**: CNAME records cannot be used with apex domains - consider using a subdomain or an ALIAS record
 
 ### Common DNS Mistakes
 
 - **Wrong proxy URL**: Ensure you're using the exact URL provided in the dashboard
 - **TTL too high**: Consider lowering TTL before making DNS changes
 - **Multiple records**: Remove conflicting A or CNAME records for the same name
-
-### Still Having Issues?
-
-1. Double-check the DNS record in your provider matches exactly what's shown in the dashboard
-2. Use a DNS checker tool like `dig` or online DNS lookup tools to verify your record
-3. Wait for DNS propagation (can take up to 48 hours)
-4. Try the manual validation button in the dashboard
-5. Contact us on [Discord](https://discord.gg/ATj6USmeE2) with your domain name, project ID and error message
 
 ## Security Considerations
 
