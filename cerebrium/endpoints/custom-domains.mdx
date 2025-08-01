@@ -25,6 +25,7 @@ Custom domains in Cerebrium are **project-level**, meaning:
 ## Getting Started
 
 ### Prerequisites
+
 - Access to your domain's DNS settings
 - A Cerebrium project
 
@@ -41,12 +42,15 @@ Custom domains in Cerebrium are **project-level**, meaning:
 After creating the domain, you'll receive DNS configuration instructions. Copy these and create a CNAME record in your DNS provider using the DNS record Cerebrium generates for you.
 
 <Note>
-You can also find your DNS record details later by clicking "DNS Record" in the Custom Domains list.
+  You can also find your DNS record details later by clicking "DNS Record" in
+  the Custom Domains list.
 </Note>
 
 **For subdomains (recommended):**
+
 - Easier DNS configuration
 - Allows other subdomains for different purposes
+
 ```
 Type: CNAME
 Name: api
@@ -54,9 +58,11 @@ Value: proxy.aws.{region}.cerebrium.ai
 ```
 
 **For apex domains:**
+
 - Routes all traffic from your domain root
 - ALIAS records are preferred over CNAME since only one CNAME is allowed per domain
 - Best for dedicated API domains
+
 ```
 Type: CNAME (or ALIAS if supported)
 Name: @ (or leave blank)
@@ -64,9 +70,11 @@ Value: proxy.aws.{region}.cerebrium.ai
 ```
 
 **For wildcard domains:**
+
 - Catches all subdomains under your domain
 - Useful for multi-tenant applications
 - Requires careful consideration of existing subdomains
+
 ```
 Type: CNAME
 Name: *
@@ -74,8 +82,9 @@ Value: proxy.aws.{region}.cerebrium.ai
 ```
 
 <Note>
-    You will be prompted to select your `{region}` when creating your custom domain.
-    The exact DNS record value will be provided in your dashboard after creating the domain.
+  You will be prompted to select your `{region}` when creating your custom
+  domain. The exact DNS record value will be provided in your dashboard after
+  creating the domain.
 </Note>
 
 ### Step 3: Domain Validation
@@ -91,6 +100,7 @@ Value: proxy.aws.{region}.cerebrium.ai
 Once validation is complete, you can immediately start using your custom domain with all apps in your project:
 
 **POST Request (most common):**
+
 ```bash
 curl -X POST https://api.yourdomain.com/v4/p-1234/my-app/run \
   -H "Authorization: Bearer <YOUR_API_KEY>" \
@@ -99,17 +109,19 @@ curl -X POST https://api.yourdomain.com/v4/p-1234/my-app/run \
 ```
 
 **GET Request:**
+
 ```bash
 curl https://api.yourdomain.com/v4/p-1234/my-app/run \
   -H "Authorization: Bearer <YOUR_API_KEY>"
 ```
 
 **Multiple Apps in Same Project:**
+
 ```bash
 # First app
 curl -X POST https://api.yourdomain.com/v4/p-1234/chatbot/predict
 
-# Second app  
+# Second app
 curl -X POST https://api.yourdomain.com/v4/p-1234/image-generator/run
 
 # Third app
@@ -139,6 +151,7 @@ occurred.
 ### Deleting Domains
 
 To remove a custom domain:
+
 1. Click the delete button (🗑️) next to the domain
 2. Confirm the deletion in the dialog
 3. The domain will be removed from Cerebrium's ingress controllers and SSL certificates cleaned up
@@ -146,7 +159,8 @@ To remove a custom domain:
 ## Troubleshooting
 
 <Note>
-For any questions or issues, reach out to us on our [Discord support channel](https://discord.gg/ATj6USmeE2).
+  For any questions or issues, reach out to us on our [Discord support
+  channel](https://discord.gg/ATj6USmeE2).
 </Note>
 
 ### Validation Errors
