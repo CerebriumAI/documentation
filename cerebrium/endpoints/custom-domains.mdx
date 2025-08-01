@@ -46,45 +46,51 @@ After creating the domain, you'll receive DNS configuration instructions. Copy t
   the Custom Domains list.
 </Note>
 
-**For subdomains (recommended):**
+<Tabs>
+  <Tab title="Subdomains (Recommended)">
+    **Benefits:**
+    - Easier DNS configuration
+    - Allows other subdomains for different purposes
 
-- Easier DNS configuration
-- Allows other subdomains for different purposes
+    ```
+    Type: CNAME
+    Name: api
+    Value: proxy.aws.{region}.cerebrium.ai
+    ```
+  </Tab>
 
-```
-Type: CNAME
-Name: api
-Value: proxy.aws.{region}.cerebrium.ai
-```
+  <Tab title="Apex Domains">
+    **Benefits:**
+    - Routes all traffic from your domain root
+    - Best for dedicated API domains
 
-**For apex domains:**
+    **Note:** ALIAS records are preferred over CNAME since only one CNAME is allowed per domain
 
-- Routes all traffic from your domain root
-- ALIAS records are preferred over CNAME since only one CNAME is allowed per domain
-- Best for dedicated API domains
+    ```
+    Type: CNAME (or ALIAS if supported)
+    Name: @ (or leave blank)
+    Value: proxy.aws.{region}.cerebrium.ai
+    ```
+  </Tab>
 
-```
-Type: CNAME (or ALIAS if supported)
-Name: @ (or leave blank)
-Value: proxy.aws.{region}.cerebrium.ai
-```
+  <Tab title="Wildcard Domains">
+    **Benefits:**
+    - Catches all subdomains under your domain
+    - Useful for multi-tenant applications
 
-**For wildcard domains:**
+    **Note:** Requires careful consideration of existing subdomains
 
-- Catches all subdomains under your domain
-- Useful for multi-tenant applications
-- Requires careful consideration of existing subdomains
-
-```
-Type: CNAME
-Name: *
-Value: proxy.aws.{region}.cerebrium.ai
-```
+    ```
+    Type: CNAME
+    Name: *
+    Value: proxy.aws.{region}.cerebrium.ai
+    ```
+  </Tab>
+</Tabs>
 
 <Note>
-  You will be prompted to select your `{region}` when creating your custom
-  domain. The exact DNS record value will be provided in your dashboard after
-  creating the domain.
+  You will be prompted to select a `{region}` when creating your custom
+  domain.
 </Note>
 
 ### Step 3: Domain Validation
@@ -99,21 +105,23 @@ Value: proxy.aws.{region}.cerebrium.ai
 
 Once validation is complete, you can immediately start using your custom domain with all apps in your project:
 
-**POST Request (most common):**
+<Tabs>
+  <Tab title="POST Request">
+    ```bash
+    curl -X POST https://api.yourdomain.com/v4/p-1234/my-app/run \
+      -H "Authorization: Bearer {YOUR_API_KEY}" \
+      -H "Content-Type: application/json" \
+      -d "{"inputs": {"prompt": "Hello world"}}"
+    ```
+  </Tab>
 
-```bash
-curl -X POST https://api.yourdomain.com/v4/p-1234/my-app/run \
-  -H "Authorization: Bearer <YOUR_API_KEY>" \
-  -H "Content-Type: application/json" \
-  -d '{"inputs": {"prompt": "Hello world"}}'
-```
-
-**GET Request:**
-
-```bash
-curl https://api.yourdomain.com/v4/p-1234/my-app/run \
-  -H "Authorization: Bearer <YOUR_API_KEY>"
-```
+  <Tab title="GET Request">
+    ```bash
+    curl https://api.yourdomain.com/v4/p-1234/my-app/run \
+      -H "Authorization: Bearer {YOUR_API_KEY}"
+    ```
+  </Tab>
+</Tabs>
 
 **Multiple Apps in Same Project:**
 
