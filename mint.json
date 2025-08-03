@@ -122,7 +122,8 @@
         "cerebrium/endpoints/streaming",
         "cerebrium/endpoints/websockets",
         "cerebrium/endpoints/webhook",
-        "cerebrium/endpoints/async"
+        "cerebrium/endpoints/async",
+        "cerebrium/endpoints/custom-domains"
       ]
     },
     {
