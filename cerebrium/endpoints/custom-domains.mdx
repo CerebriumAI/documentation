@@ -8,7 +8,7 @@ Once configured, your API calls will use your custom domain while keeping the sa
 
 ## Key Features
 
-- Support for apex domains (`yourdomain.com`), subdomains (`api.yourdomain.com`), and wildcard domains (`*.yourdomain.com`)
+- Support for apex domains (`yourdomain.com`) and subdomains (`api.yourdomain.com`)
 - Automatic SSL certificate provisioning and renewal
 - Project-level domains - one domain serves all apps in your project
 - Multiple domains can point to the same project
@@ -65,23 +65,8 @@ After creating the domain, you'll receive DNS configuration instructions. Copy t
     Name: @ (or leave blank)
     Value: proxy.aws.{region}.cerebrium.ai
     ```
-
   </Tab>
 
-  <Tab title="Wildcard Domains">
-    **Benefits:**
-    - Catches all subdomains under your domain
-    - Useful for multi-tenant applications
-
-    **Note:** Requires careful consideration of existing subdomains
-
-    ```
-    Type: CNAME
-    Name: *
-    Value: proxy.aws.{region}.cerebrium.ai
-    ```
-
-  </Tab>
 </Tabs>
 
 <Note>
