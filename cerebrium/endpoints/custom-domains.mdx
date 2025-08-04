@@ -3,39 +3,39 @@ title: "Custom Domains"
 description: "Connect your own domain to your Cerebrium project"
 ---
 
-Custom domains allow you to serve your Cerebrium apps through your own domain instead of the default `*.cerebrium.ai` URLs.
-Once configured, your API calls will use your custom domain while keeping the same path structure: `api.yourdomain.com/v4/p-1234/my-app/run`.
+Custom domains allow serving Cerebrium apps through custom domains instead of the default `*.cerebrium.ai` URLs.
+Once configured, API calls will use the custom domain while keeping the same path structure: `api.example.com/v4/p-1234/my-app/run`.
 
 ## Key Features
 
-- Support for apex domains (`yourdomain.com`) and subdomains (`api.yourdomain.com`)
+- Support for apex domains (`example.com`) and subdomains (`api.example.com`)
 - Automatic SSL certificate provisioning and renewal
-- Project-level domains - one domain serves all apps in your project
+- Project-level domains - one domain serves all apps in a project
 - Multiple domains can point to the same project
-- Professional branding with your own domain instead of `*.cerebrium.ai` URLs
+- Professional branding with custom domains instead of `*.cerebrium.ai` URLs
 
 ## How Custom Domains Work
 
 - **Domains are region-specific** meaning each will always resolve to the selected region
-- **Domains are app-agnostic** so you can use connect to any number of deployed apps within your project via custom domain
-- **Multiple domains** can be configured on the same project (useful if you have apps within the project deployed in different regions)
+- **Domains are app-agnostic** enabling connection to any number of deployed apps within a project via custom domain
+- **Multiple domains** can be configured on the same project (useful for apps within the project deployed in different regions)
 
 ## Getting Started
 
-### Step 1: Create Your Custom Domain
+### Step 1: Create a Custom Domain
 
-1. Navigate to your project settings in the Cerebrium dashboard
+1. Navigate to project settings in the Cerebrium dashboard
 2. Click on the "Custom Domains" tab
 3. Click "Add Custom Domain"
-4. Enter your domain name and select your target region (choose the region closest to your users for optimal latency)
+4. Enter the domain name and select the target region (choose the region closest to users for optimal latency)
 5. Click "Create Domain"
 
 ### Step 2: Configure DNS Records
 
-After creating the domain, you'll receive DNS configuration instructions. Copy these and create a CNAME record in your DNS provider using the DNS record Cerebrium generates for you.
+After creating the domain, DNS configuration instructions will be displayed. Create a CNAME record at the DNS provider using the DNS record Cerebrium generates.
 
 <Note>
-  You can also find your DNS record details later by clicking "DNS Record" in
+  DNS record details can also be found later by clicking "DNS Record" in
   the Custom Domains list.
 </Note>
 
@@ -55,7 +55,7 @@ After creating the domain, you'll receive DNS configuration instructions. Copy t
 
   <Tab title="Apex Domains">
     **Benefits:**
-    - Routes all traffic from your domain root
+    - Routes all traffic from the domain root
     - Best for dedicated API domains
 
     **Note:** ALIAS records are preferred over CNAME since only one CNAME is allowed per domain
@@ -71,25 +71,25 @@ After creating the domain, you'll receive DNS configuration instructions. Copy t
 </Tabs>
 
 <Note>
-  You will be prompted to select a `{region}` when creating your custom domain.
+  A `{region}` must be selected when creating a custom domain.
 </Note>
 
 ### Step 3: Domain Validation
 
 1. After configuring DNS, return to the Cerebrium dashboard
-2. Cerebrium will automatically attempt to validate your DNS records every 30 minutes for up to 2 days
-3. To trigger an immediate validation attempt, click "Validate Domain" next to your domain, even after the 2 days have elapsed
-4. If validation fails, the dialog will show you the last known error.
+2. Cerebrium will automatically attempt to validate DNS records every 30 minutes for up to 2 days
+3. To trigger an immediate validation attempt, click "Validate Domain" next to the domain, even after the 2 days have elapsed
+4. If validation fails, the dialog will show the last known error.
 5. Once validated, SSL certificates will be automatically provisioned
 
-### Step 4: Start Using Your Custom Domain
+### Step 4: Start Using the Custom Domain
 
-Once validation is complete, you can immediately start using your custom domain with all apps in your project:
+Once validation is complete, the custom domain can be used immediately with all apps in the project:
 
 <Tabs>
   <Tab title="POST Request">
     ```bash
-    curl -X POST https://api.yourdomain.com/v4/p-1234/my-app/run \
+    curl -X POST https://api.example.com/v4/p-1234/my-app/run \
       -H "Authorization: Bearer {YOUR_API_KEY}" \
       -H "Content-Type: application/json" \
       -d "{'inputs': {'prompt': 'Hello world'}}"
@@ -98,18 +98,18 @@ Once validation is complete, you can immediately start using your custom domain 
 
   <Tab title="GET Request">
     ```bash
-    curl https://api.yourdomain.com/v4/p-1234/my-app/run \
+    curl https://api.example.com/v4/p-1234/my-app/run \
       -H "Authorization: Bearer {YOUR_API_KEY}"
     ```
   </Tab>
 </Tabs>
 
-## Managing Your Domains
+## Managing Domains
 
 ### Domain Validation Statuses
 
-Cerebrium will attempt to validate your domain once every 30 minutes up to a maximum of 2 days. If your domain is not
-being validated, you can click on "Validation Status" to see the last validation attempt, along with any error that
+Cerebrium will attempt to validate domains once every 30 minutes up to a maximum of 2 days. If a domain is not
+being validated, click on "Validation Status" to see the last validation attempt, along with any error that
 occurred.
 
 - **Pending**: Domain is waiting for DNS validation
@@ -118,7 +118,7 @@ occurred.
 
 ### Validation Errors
 
-If your domain shows "Failed" status it means that the DNS record has been misconfigured, common issues include:
+If a domain shows "Failed" status, the DNS record has been misconfigured. Common issues include:
 
 - **Wrong target**: CNAME points to incorrect proxy URL
 - **Multiple conflicting records**: Remove any existing ALIAS records for the same hostname
@@ -132,7 +132,7 @@ If your domain shows "Failed" status it means that the DNS record has been misco
 
 ### Common DNS Mistakes
 
-- **Wrong proxy URL**: Ensure you're using the exact URL provided in the dashboard
+- **Wrong proxy URL**: Ensure the exact URL provided in the dashboard is being used
 - **TTL too high**: Consider lowering TTL before making DNS changes
 - **Multiple records**: Remove conflicting A or CNAME records for the same name
 
@@ -141,4 +141,4 @@ If your domain shows "Failed" status it means that the DNS record has been misco
 - Custom domains automatically receive SSL certificates
 - All traffic is encrypted end-to-end
 - Certificates auto-renew before expiration
-- Domain validation ensures you control the domain
+- Domain validation ensures control of the domain
