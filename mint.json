@@ -160,6 +160,7 @@
         {
           "group": "Large Language Models",
           "pages": [
+            "v4/examples/gpt-oss",
             "v4/examples/openai-compatible-endpoint-vllm",
             "v4/examples/streaming-falcon-7B"
           ]
