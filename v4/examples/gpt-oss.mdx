@@ -1,0 +1,87 @@
+---
+title: "Serving GPT-OSS with vLLM"
+description: "Deploy OpenAI's Latest Open Source Model"
+---
+
+GPT recently released GPT-OSS ([gpt-oss-20b](https://huggingface.co/openai/gpt-oss-20b) and [gpt-oss-120b](https://huggingface.co/openai/gpt-oss-120b)) two state-of-the-art open-weight language models that deliver strong real-world performance at low cost. Available under the flexible Apache 2.0 license, these models outperform similarly sized open models on reasoning tasks, demonstrate strong tool use capabilities, and are optimized for efficient deployment on consumer hardware.
+
+## What Makes GPT-OSS Special?
+
+GPT-OSS introduces some unique capabilities that set it apart from other open source LLMs:
+
+- **Mixture of Experts (MoE) Architecture**: The model comes in 20B and 120B parameter variants, but uses MoE to keep active parameters low while maintaining strong capabilities
+- **MXFP4 Quantization**: A novel 4-bit floating point format specifically designed for MoE layers, enabling efficient serving
+- **Attention Sinks**: Special attention mechanism that allows for longer context lengths without degrading output quality
+- **Harmony Response Format**: Built-in support for structured outputs like chain-of-thought reasoning and tool use
+
+<Note>
+  Please note that in vLLM, you can only run it on NVIDIA H100, H200, B200 as
+  well as MI300x, MI325x, MI355x and Radeon AI PRO R9700 as of 6th August 2025
+</Note>
+
+In this tutorial, we will show the most simple variation of deploying this model using `vllm serve` however if you would like more control then please look at our [OpenAI compatible endpoint with vLLM guide](/v4/examples/openai-compatible-endpoint-vllm)
+
+### Project Setup
+
+1. Run the command, `cerebrium init gpt-oss`
+2. Edit your toml file with the following settings
+
+```
+[cerebrium.deployment]
+name = "7-openai-gpt-oss"
+python_version = "3.12"
+docker_base_image_url = "nvidia/cuda:12.8.1-devel-ubuntu22.04"
+disable_auth = true
+include = ['./*', 'main.py', 'cerebrium.toml']
+exclude = ['.*']
+pre_build_commands = [
+    "apt-get update",
+    "apt-get install -y curl",
+    "curl -LsSf https://astral.sh/uv/install.sh | sh",
+    "export PATH=\"$HOME/.local/bin:$PATH\" && uv pip install --pre vllm==0.10.1+gptoss --extra-index-url https://wheels.vllm.ai/gpt-oss/ --extra-index-url https://download.pytorch.org/whl/nightly/cu128 --index-strategy unsafe-best-match",
+    "uv pip install huggingface_hub[hf_transfer]==0.34"
+]
+
+[cerebrium.hardware]
+cpu = 8.0
+memory = 18.0
+compute = "HOPPER_H100"
+provider = "aws"
+region = "us-east-1"
+
+[cerebrium.scaling]
+min_replicas = 0
+max_replicas = 5
+cooldown = 30
+replica_concurrency = 32
+scaling_metric = "concurrency_utilization"
+scaling
+
+[cerebrium.runtime.custom]
+port = 8000
+entrypoint = ["sh", "-c", "export HF_HUB_ENABLE_HF_TRANSFER=1 && export VLLM_USER_V1=1 && vllm serve openai/gpt-oss-20b --enforce-eager"]
+```
+
+In the above we do quite a few things:
+
+- We set the docker_base_image_url to the <b>cuda:12.8.1-devel image</b> which is quite large but necessary to contain all the require packages/libraries.
+- We use pre-build commands to install uv (a faster Python package installer) and install the required vLLM packages. These commands execute at the start of the build process, before dependency installation begins. This early execution timing makes them essential for setting up the build environment. You can read more [here](https://docs.cerebrium.ai/cerebrium/container-images/defining-container-images#pre-build-commands)
+- We set our hardware to use a <b>H100</b> and run in the <b>us-east-1 region</b>
+- We set the <b>replica concurrency to 32</b> meaning this container on a H100 can handle 32 requests concurrently at a time
+- Lastly, we use vllm serve to serve this container which turns it automatically into a <b>OpenAI compatible server</b>. This server runs on <b>port 8000</b> so we just too to export that.
+
+### Deploy & Test
+
+To deploy the above simply run the command cerebrium deploy. You should see it create your environment and download the model.
+
+In order to test your endpoint, you can simply make the following request:
+
+```
+curl --location 'https://api.aws.us-east-1.cerebrium.ai/v4/p-xxxxxx/7-openai-gpt-oss/v1/chat/completions' \
+--header 'Content-Type: application/json' \
+--header 'Accept: text/event-stream' \
+--data '{"messages": [{"role": "user", "content": "hello how are you"}], "model": "Qwen/Qwen2.5-1.5B-Instruct", "stream": true}'
+```
+
+When you make the request, a container should be spun up, the modal loaded and you should be streamed the output. As of 6th August, this generating
+roughly 30 tokens per/second.
