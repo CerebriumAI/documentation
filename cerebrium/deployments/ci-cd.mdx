@@ -5,7 +5,7 @@ description: "Automate Cerebrium deployments using GitHub Actions"
 
 Configure a Continuous Integration or Continuous Deployment system (CI/CD) to automatically deploy a new version of an app to production/development when a branch is pushed or workflow triggered.
 
-This guide sets up a CI/CD pipeline using GitHub Actions and Cerebriums' Service Accounts.
+This guide sets up a CI/CD pipeline using GitHub Actions and Cerebrium's Service Accounts.
 
 <Note>
   {" "}
@@ -29,9 +29,11 @@ Store this key in a secret for use in GitHub Actions workflows.
 
 1. Navigate to the **GitHub repository → Settings → Environments**
 2. Create environments named `"dev"` and/or `"prod"` (Adjust to specific needs)
-3. Inside each environment, add a secret:
+3. Inside each environment, add 2 secrets:
    - **Name**: `CEREBRIUM_SERVICE_ACCOUNT_TOKEN`
    - **Value**: the key copied in the previous step
+   - **Name**: `CEREBRIUM_PROJECT_ID`
+   - **Value**: your project ID
 
 > 🔒 Use _secrets_, not plain environment variables, to prevent leaking sensitive data in logs.
 
@@ -73,6 +75,7 @@ jobs:
     env:
       ENV: ${{ github.event.inputs.environment || (github.ref == 'refs/heads/master' && 'prod') || 'dev' }}
       CEREBRIUM_SERVICE_ACCOUNT_TOKEN: ${{ secrets.CEREBRIUM_SERVICE_ACCOUNT_TOKEN }}
+      CEREBRIUM_PROJECT_ID: ${{ secrets.CEREBRIUM_PROJECT_ID }}
     steps:
       - uses: actions/checkout@v4.0
       - uses: actions/setup-python@v5.0
@@ -81,6 +84,9 @@ jobs:
 
       - name: Install Cerebrium
         run: pip install cerebrium
+
+      - name: Set Cerebrium Project ID
+        run: cerebrium project set ${{ secrets.CEREBRIUM_PROJECT_ID }}
 
       - name: Deploy App
         run: cerebrium deploy
