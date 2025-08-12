@@ -1,0 +1,68 @@
+---
+title: "Using LiveKit"
+description: "Configure LiveKit apps on Cerebrium to respect drain_timeout with proper signal handling using a custom Dockerfile runtime."
+---
+
+LiveKit provides a drain_timeout to let an agent finish in-flight work when the process is shutting down. This is important for real-time voice and streaming scenarios where you want a graceful teardown rather than abruptly dropping connections.
+
+## Why a custom Dockerfile is recommended
+
+When deploying with the default cortex runtime, apps run behind a FastAPI server layer. For LiveKit-based agents, this wrapper affects how shutdown signals are propagated, and a SIGTERM can terminate the process before drain_timeout completes. To ensure graceful shutdown that respects LiveKit’s drain_timeout, deploy your app with a custom Dockerfile so your process handles signals directly.
+
+See:
+- Custom Dockerfiles: cerebrium/container-images/custom-dockerfiles
+- Scaling and shutdown behavior: cerebrium/scaling/scaling-apps
+
+## Recommended configuration
+
+Use a custom runtime with a Dockerfile so that your process receives and handles SIGTERM properly. In your cerebrium.toml:
+
+```toml
+[cerebrium.runtime.custom]
+port = 8192
+healthcheck_endpoint = "/health"
+readycheck_endpoint = "/ready"
+dockerfile_path = "./Dockerfile"
+```
+
+In your Dockerfile, run your server process as PID 1 (or via an init like dumb-init) and ensure your app catches SIGTERM to allow drain_timeout to finish. For example:
+
+```dockerfile
+FROM python:3.12-bookworm
+RUN apt-get update && apt-get install -y dumb-init && update-ca-certificates
+
+WORKDIR /app
+COPY . /app
+
+RUN pip install -r requirements.txt
+
+EXPOSE 8192
+CMD ["dumb-init", "--", "python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8192"]
+```
+
+Additionally, set an appropriate response_grace_period to allow requests to complete during shutdown:
+
+```toml
+[cerebrium.scaling]
+response_grace_period = 120
+```
+
+Notes:
+- Keep replica_concurrency aligned with your real-time workload characteristics
+- Ensure your server code traps SIGTERM and defers process exit until LiveKit completes active tasks within drain_timeout
+- Provide /health and /ready endpoints that reflect server status
+
+## LiveKit examples
+
+Reference existing LiveKit agents in the examples repository for patterns integrating LiveKit:
+- examples/6-voice/12-realtime-livekit/livekit-agent/main.py
+- examples/6-voice/7-outbound-livekit-agent/main.py
+
+These examples show how to structure a LiveKit agent and can be adapted to run under a custom Dockerfile on Cerebrium so drain_timeout works as intended.
+
+## Summary
+
+- drain_timeout allows LiveKit agents to finish in-flight work during shutdown
+- The default cortex runtime wraps apps with FastAPI, which can end the process before drain_timeout completes for LiveKit agents
+- Deploying with a custom Dockerfile lets your process handle SIGTERM properly and respect drain_timeout
+- Use cerebrium.runtime.custom with health/ready endpoints, expose the server port, and ensure signal handling in your app
