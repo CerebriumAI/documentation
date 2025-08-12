@@ -144,6 +144,7 @@
         "security",
         "cerebrium/other-topics/using-secrets",
         "cerebrium/other-topics/request-response-logging",
+        "cerebrium/other-topics/using-livekit",
         "cerebrium/other-topics/faster-cold-starts",
         "calculating-cost"
       ]
