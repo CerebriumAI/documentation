@@ -10,6 +10,7 @@ LiveKit provides a drain_timeout to let an agent finish in-flight work when the 
 When deploying with the default cortex runtime, apps run behind a FastAPI server layer. For LiveKit-based agents, this wrapper affects how shutdown signals are propagated, and a SIGTERM can terminate the process before drain_timeout completes. To ensure graceful shutdown that respects LiveKit’s drain_timeout, deploy your app with a custom Dockerfile so your process handles signals directly.
 
 See:
+
 - Custom Dockerfiles: cerebrium/container-images/custom-dockerfiles
 - Scaling and shutdown behavior: cerebrium/scaling/scaling-apps
 
@@ -48,6 +49,7 @@ response_grace_period = 120
 ```
 
 Notes:
+
 - Keep replica_concurrency aligned with your real-time workload characteristics
 - Ensure your server code traps SIGTERM and defers process exit until LiveKit completes active tasks within drain_timeout
 - Provide /health and /ready endpoints that reflect server status
@@ -55,6 +57,7 @@ Notes:
 ## LiveKit examples
 
 Reference existing LiveKit agents in the examples repository for patterns integrating LiveKit:
+
 - examples/6-voice/12-realtime-livekit/livekit-agent/main.py
 - examples/6-voice/7-outbound-livekit-agent/main.py
 
