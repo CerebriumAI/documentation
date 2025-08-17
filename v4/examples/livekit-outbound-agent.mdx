@@ -350,7 +350,42 @@ With this now working locally, let us deploy it on Cerebrium to make it producti
 
 ### Deploy on Cerebrium
 
-We need to specify our Cerebrium environment to deploy our app. In our `cerebrium.toml`, edit the values with the following contents:
+We need to specify our Cerebrium environment to deploy our app. We will be doing this using a Dockerfile:
+
+```
+FROM debian:bookworm-slim
+
+# Install Python and pip
+RUN apt-get update && apt-get install -y \
+    python3.11 \
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create and set working directory
+WORKDIR /cortex
+
+# Copy requirements and install dependencies
+COPY requirements.txt .
+RUN pip install --break-system-packages -r requirements.txt
+
+# Copy application code
+COPY . .
+
+# Download model files
+RUN python3 main.py download-files
+
+# Set environment variables
+ENV HF_HOME=/cortex/.cache/
+
+# Expose port
+EXPOSE 8600
+
+# Set entrypoint
+CMD ["python3", "main.py", "start"]
+```
+
+
+ In our `cerebrium.toml`, edit the values with the following contents:
 
 ```
 [cerebrium.deployment]
@@ -377,10 +412,10 @@ pip = "requirements.txt"
 
 [cerebrium.runtime.custom]
 port = 8600
-entrypoint = ["python", "main.py", "start"]
+dockerfile_path = "./Dockerfile"
 ```
 
-Above we simply define our hardware, scaling parameters, dependancies as well as the port and entrypoint command to run our application.
+Above we simply define our hardware, scaling parameters, dependancies as well as the port and Dockerfile to run our application.
 
 In your Cerebrium dashboard, go to the secrets tab in the left sidebar and upload your .env file. Cerebrium imports secrets into your application as normal ENV vars so its seamless to test locally and in the cloud.
 
