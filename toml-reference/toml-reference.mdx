@@ -151,8 +151,8 @@ conda = "conda_pkglist.txt"
 
 The `[cerebrium.build]` section configures build-time optimizations and tools.
 
-| Option | Type    | Default | Description                                    |
-| ------ | ------- | ------- | ---------------------------------------------- |
+| Option | Type    | Default | Description                                   |
+| ------ | ------- | ------- | --------------------------------------------- |
 | use_uv | boolean | false   | Use UV for faster Python package installation |
 
 ### UV Package Manager
@@ -167,6 +167,7 @@ UV typically installs packages 10-100x faster than pip, especially beneficial fo
 - Clean builds without cache
 
 If UV encounters any issues, the system automatically falls back to pip, ensuring your deployment always succeeds.
+
 </Info>
 
 **Example with UV enabled:**
@@ -193,6 +194,7 @@ While UV is compatible with most packages, some edge cases may trigger fallback 
 - Private package indices (will use pip automatically)
 
 The automatic fallback ensures these cases don't break your deployment.
+
 </Warning>
 
 ## Complete Example
@@ -252,3 +254,4 @@ ffmpeg = "latest"
 # Enable fast package installation with UV (ignore or set to false if you want to use pip)
 [cerebrium.build]
 use_uv = true
+```
