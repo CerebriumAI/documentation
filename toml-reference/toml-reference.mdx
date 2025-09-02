@@ -166,7 +166,6 @@ UV typically installs packages 10-100x faster than pip, especially beneficial fo
 - Multiple packages
 - Clean builds without cache
 
-If UV encounters any issues, the system automatically falls back to pip, ensuring your deployment always succeeds.
 </Info>
 
 **Example with UV enabled:**
@@ -181,18 +180,10 @@ use_uv = true
 Check your build logs for these indicators:
 
 - **UV_PIP_INSTALL_STARTED** - UV is successfully being used
-- **UV_INSTALL_FAILED_FALLING_BACK_TO_PIP** - UV failed, using pip fallback
 - **PIP_INSTALL_STARTED** - Standard pip installation (when `use_uv=false` or not specified)
 
 <Warning>
-While UV is compatible with most packages, some edge cases may trigger fallback to pip:
-
-- Git dependencies with complex authentication
-- Editable installs (`-e` flag)
-- Legacy packages with non-standard metadata
-- Private package indices (will use pip automatically)
-
-The automatic fallback ensures these cases don't break your deployment.
+While UV is compatible with most packages, some edge cases may cause build failures, such as legacy packages with non-standard metadata.
 </Warning>
 
 ## Complete Example
@@ -249,6 +240,6 @@ ffmpeg = "latest"
 # apt = "pkglist.txt"
 # conda = "conda_pkglist.txt"
 
-# Enable fast package installation with UV (ignore or set to false if you want to use pip)
 [cerebrium.build]
 use_uv = true
+# Enable fast package installation with UV (ignore or set to false if you want to use pip)
