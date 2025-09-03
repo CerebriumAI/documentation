@@ -31,6 +31,44 @@ The `[cerebrium.deployment]` section defines core deployment settings.
   they affect the base environment.
 </Info>
 
+### UV Configuration
+
+| Option | Type    | Default | Description                                   |
+| ------ | ------- | ------- | --------------------------------------------- |
+| use_uv | boolean | false   | Use UV for faster Python package installation |
+
+### UV Package Manager
+
+UV is a fast Python package installer written in Rust that can significantly speed up deployment times. When enabled, UV will be used instead of pip for installing Python dependencies.
+
+<Info>
+UV typically installs packages 10-100x faster than pip, especially beneficial for:
+
+- Large dependency trees
+- Multiple packages
+- Clean builds without cache
+
+</Info>
+
+**Example with UV enabled:**
+
+```toml
+[cerebrium.build]
+use_uv = true
+```
+
+### Monitoring UV Usage
+
+Check your build logs for these indicators:
+
+- **UV_PIP_INSTALL_STARTED** - UV is successfully being used
+- **PIP_INSTALL_STARTED** - Standard pip installation (when `use_uv=false`)
+
+<Warning>
+  While UV is compatible with most packages, some edge cases may cause build
+  failures, such as legacy packages with non-standard metadata.
+</Warning>
+
 ## Runtime Configuration
 
 The `[cerebrium.runtime.custom]` section configures custom web servers and runtime behavior.
@@ -145,44 +183,6 @@ pip = "requirements.txt"
 apt = "pkglist.txt"
 conda = "conda_pkglist.txt"
 ```
-
-### UV Configuration
-
-| Option | Type    | Default | Description                                   |
-| ------ | ------- | ------- | --------------------------------------------- |
-| use_uv | boolean | false   | Use UV for faster Python package installation |
-
-### UV Package Manager
-
-UV is a fast Python package installer written in Rust that can significantly speed up deployment times. When enabled, UV will be used instead of pip for installing Python dependencies.
-
-<Info>
-UV typically installs packages 10-100x faster than pip, especially beneficial for:
-
-- Large dependency trees
-- Multiple packages
-- Clean builds without cache
-
-</Info>
-
-**Example with UV enabled:**
-
-```toml
-[cerebrium.build]
-use_uv = true
-```
-
-### Monitoring UV Usage
-
-Check your build logs for these indicators:
-
-- **UV_PIP_INSTALL_STARTED** - UV is successfully being used
-- **PIP_INSTALL_STARTED** - Standard pip installation (when `use_uv=false`)
-
-<Warning>
-  While UV is compatible with most packages, some edge cases may cause build
-  failures, such as legacy packages with non-standard metadata.
-</Warning>
 
 ## Complete Example
 
