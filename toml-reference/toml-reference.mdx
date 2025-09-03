@@ -25,17 +25,12 @@ The `[cerebrium.deployment]` section defines core deployment settings.
 | shell_commands        | string[] | []                     | Commands to run at the end of the build                     |
 | pre_build_commands    | string[] | []                     | Commands to run before dependencies install                 |
 | docker_base_image_url | string   | "debian:bookworm-slim" | Base Docker image                                           |
+| use_uv                | boolean  | false                  | Use UV for faster Python package installation               |
 
 <Info>
   Changes to python_version or docker_base_image_url trigger full rebuilds since
   they affect the base environment.
 </Info>
-
-### UV Configuration
-
-| Option | Type    | Default | Description                                   |
-| ------ | ------- | ------- | --------------------------------------------- |
-| use_uv | boolean | false   | Use UV for faster Python package installation |
 
 ### UV Package Manager
 
