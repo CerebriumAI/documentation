@@ -10,7 +10,6 @@ The configuration is organized into the following main sections:
 - **[cerebrium.hardware]** Compute resources including CPU, memory, and GPU specifications
 - **[cerebrium.scaling]** Auto-scaling behavior and replica management
 - **[cerebrium.dependencies]** Package management for Python (pip), system (apt), and Conda dependencies
-- **[cerebrium.build]** Build optimizations including UV package manager support (Optional)
 
 ## Deployment Configuration
 
@@ -147,9 +146,7 @@ apt = "pkglist.txt"
 conda = "conda_pkglist.txt"
 ```
 
-## Build Configuration
-
-The `[cerebrium.build]` section configures build-time optimizations and tools.
+### UV Configuration
 
 | Option | Type    | Default | Description                                   |
 | ------ | ------- | ------- | --------------------------------------------- |
@@ -199,6 +196,8 @@ exclude = [".*"]
 shell_commands = []
 pre_build_commands = []
 docker_base_image_url = "debian:bookworm-slim"
+use_uv = true
+# Enable fast package installation with UV (ignore or set to false if you want to use pip)
 
 [cerebrium.runtime.custom]
 port = 8000
@@ -240,8 +239,4 @@ ffmpeg = "latest"
 # pip = "requirements.txt"
 # apt = "pkglist.txt"
 # conda = "conda_pkglist.txt"
-
-[cerebrium.build]
-use_uv = true
-# Enable fast package installation with UV (ignore or set to false if you want to use pip)
 ```
