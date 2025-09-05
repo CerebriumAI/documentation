@@ -35,7 +35,7 @@ Explanation:
 You can test your WebSocket endpoint using websocat, a command-line utility for connecting to WebSocket servers:
 
 ```bash
-websocat wss://api.cortex.cerebrium.ai/v4/<your-project-id>/<your-app-name>/<your-websocket-function-name>
+websocat wss://api.aws.us-east-1.cerebrium.ai/v4/<your-project-id>/<your-app-name>/<your-websocket-function-name>
 ```
 
 ## Implementing the WebSocket Endpoint
@@ -62,7 +62,7 @@ Client-side Implementation: When connecting from a client app, ensure you handle
 ```javascript
 // Example using JavaScript in a browser
 const socket = new WebSocket(
-  "wss://api.cortex.cerebrium.ai/v4/<your-project-id>/<your-app-name>/<your-websocket-function-name>",
+  "wss://api.aws.us-east-1.cerebrium.ai/v4/<your-project-id>/<your-app-name>/<your-websocket-function-name>",
 );
 
 socket.onopen = function (event) {
