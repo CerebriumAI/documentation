@@ -8,7 +8,7 @@ By default, all functions on Cerebrium are accessible via authenticated POST req
 The POST request follows the structure below, where `{function}` is the name of the function you want to invoke. For example, in this case, the function `predict()` from `main.py` is being called.
 
 ```bash
-curl --location --request POST 'https://api.cortex.cerebrium.ai/v4/p-xxxxx/{app-name}/{function}' \
+curl --location --request POST 'https://api.aws.us-east-1.cerebrium.ai/v4/p-xxxxx/{app-name}/{function}' \
 --header 'Authorization: Bearer <JWT_TOKEN>' \
 --header 'Content-Type: application/json' \
 --data '{

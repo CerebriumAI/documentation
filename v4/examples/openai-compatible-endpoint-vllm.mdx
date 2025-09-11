@@ -117,7 +117,7 @@ cerebrium deploy
 After deployment, you'll see a curl command like this:
 
 ```curl
-curl --location 'https://api.cortex.cerebrium.ai/v4/p-<YOUR PROJECT ID>/5-openai-compatible-endpoint/{function}' \
+curl --location 'https://api.aws.us-east-1.cerebrium.ai/v4/p-<YOUR PROJECT ID>/5-openai-compatible-endpoint/{function}' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer <YOUR TOKEN HERE>' \
 --data '{"..."}'
@@ -130,7 +130,7 @@ import os
 from openai import OpenAI
 
 client = OpenAI(
-    base_url="https://api.cortex.cerebrium.ai/v4/p-xxxxxxx/5-openai-compatible-endpoint/run",
+    base_url="https://api.aws.us-east-1.cerebrium.ai/v4/p-xxxxxxx/5-openai-compatible-endpoint/run",
     api_key="<CEREBRIUM_JWT_TOKEN>",
 )
 

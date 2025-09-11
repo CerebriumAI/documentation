@@ -148,7 +148,7 @@ cerebrium deploy
 After deployment, make this request:
 
 ```curl
-curl --location 'https://api.cortex.cerebrium.ai/v4/p-<YOUR PROJECT ID>/1-whisper-transcription/predict' \
+curl --location 'https://api.aws.us-east-1.cerebrium.ai/v4/p-<YOUR PROJECT ID>/1-whisper-transcription/predict' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer <YOUR TOKEN HERE>' \
 --data '{"file_url": "https://your-public-url.com/test.mp3"}''
