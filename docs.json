@@ -1,0 +1,277 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Cerebrium",
+  "description": "Cerebrium developer documentation to help you build, deploy, and scale AI applications on serverless compute. Learn about serverless GPUs and CPUs, long-running jobs, fine-tuning, hosting LLMs and voice agents, observability, cold starts, and multi-region deployments.",
+  "colors": {
+    "primary": "#EB3A6F",
+    "light": "#F393B0",
+    "dark": "#C9134A"
+  },
+  "favicon": {
+    "light": "/favicon.png",
+    "dark": "/favicon.png"
+  },
+  "navigation": {
+    "versions": [
+      {
+        "version": "v4",
+        "tabs": [
+          {
+            "tab": "Documentation",
+            "groups": [
+              {
+                "group": "Getting Started",
+                "pages": [
+                  "cerebrium/getting-started/introduction",
+                  "cerebrium/getting-started/collaborating"
+                ]
+              },
+              {
+                "group": "Container Images",
+                "pages": [
+                  "cerebrium/container-images/defining-container-images",
+                  "cerebrium/container-images/custom-web-servers",
+                  "cerebrium/container-images/custom-dockerfiles"
+                ]
+              },
+              {
+                "group": "GPUs and Compute Resources",
+                "pages": [
+                  "cerebrium/hardware/using-gpus",
+                  "cerebrium/hardware/using-cuda",
+                  "cerebrium/hardware/cpu-and-memory"
+                ]
+              },
+              {
+                "group": "Scaling apps",
+                "pages": [
+                  "cerebrium/scaling/scaling-apps",
+                  "cerebrium/scaling/batching-concurrency"
+                ]
+              },
+              {
+                "group": "Deployments",
+                "pages": [
+                  "cerebrium/deployments/ci-cd",
+                  "cerebrium/deployments/gradual-roll-out",
+                  "cerebrium/deployments/multi-region-deployment"
+                ]
+              },
+              {
+                "group": "Endpoints",
+                "pages": [
+                  "cerebrium/endpoints/openai-compatible-endpoints",
+                  "cerebrium/endpoints/inference-api",
+                  "cerebrium/endpoints/streaming",
+                  "cerebrium/endpoints/websockets",
+                  "cerebrium/endpoints/webhook",
+                  "cerebrium/endpoints/async",
+                  "cerebrium/endpoints/custom-domains"
+                ]
+              },
+              {
+                "group": "Storage",
+                "pages": [
+                  "cerebrium/storage/managing-files"
+                ]
+              },
+              {
+                "group": "Partner Services",
+                "pages": [
+                  "cerebrium/partner-services/index",
+                  "cerebrium/partner-services/deepgram",
+                  "cerebrium/partner-services/rime"
+                ]
+              },
+              {
+                "group": "Other concepts",
+                "pages": [
+                  "security",
+                  "cerebrium/other-topics/using-secrets",
+                  "cerebrium/other-topics/request-response-logging",
+                  "cerebrium/other-topics/faster-cold-starts",
+                  "calculating-cost"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Examples",
+            "groups": [
+              {
+                "group": "Examples",
+                "pages": [
+                  "v4/examples/featured",
+                  {
+                    "group": "Advanced Concepts",
+                    "pages": [
+                      "v4/examples/mistral-vllm"
+                    ]
+                  },
+                  {
+                    "group": "Large Language Models",
+                    "pages": [
+                      "v4/examples/gpt-oss",
+                      "v4/examples/openai-compatible-endpoint-vllm",
+                      "v4/examples/streaming-falcon-7B"
+                    ]
+                  },
+                  {
+                    "group": "Integrations",
+                    "pages": [
+                      "v4/examples/langchain-langsmith"
+                    ]
+                  },
+                  {
+                    "group": "Voice",
+                    "pages": [
+                      "v4/examples/transcribe-whisper",
+                      "v4/examples/twilio-voice-agent",
+                      "v4/examples/realtime-voice-agents",
+                      "v4/examples/livekit-outbound-agent"
+                    ]
+                  },
+                  {
+                    "group": "Image & Video",
+                    "pages": [
+                      "v4/examples/comfyUI",
+                      "v4/examples/sdxl"
+                    ]
+                  },
+                  {
+                    "group": "Python Apps",
+                    "pages": [
+                      "v4/examples/asgi-gradio-interface"
+                    ]
+                  },
+                  {
+                    "group": "Training",
+                    "pages": [
+                      "v4/examples/wandb-sweep"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Migrations",
+            "groups": [
+              {
+                "group": "Migrations",
+                "pages": [
+                  "migrations/replicate",
+                  "migrations/hugging-face",
+                  "migrations/mystic"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "TOML Reference",
+            "groups": [
+              {
+                "group": "Reference",
+                "pages": [
+                  "toml-reference/toml-reference"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "API Reference",
+            "openapi": {
+              "source": "https://s3.eu-west-1.amazonaws.com/www.cerebrium.ai/openapi_spec.json",
+              "directory": "api-reference"
+            }
+          }
+        ]
+      }
+    ],
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Dashboard",
+          "href": "https://dashboard.cerebrium.ai/login",
+          "icon": "circle-play"
+        },
+        {
+          "anchor": "Blog",
+          "href": "https://cerebrium.ai/blog",
+          "icon": "newspaper"
+        },
+        {
+          "anchor": "Community",
+          "href": "https://discord.gg/ATj6USmeE2",
+          "icon": "discord"
+        },
+        {
+          "anchor": "Status",
+          "href": "https://status.cerebrium.ai",
+          "icon": "eye"
+        },
+        {
+          "anchor": "Pricing",
+          "href": "https://www.cerebrium.ai/pricing",
+          "icon": "money-bill"
+        }
+      ]
+    }
+  },
+  "seo": {
+    "indexing": "navigable",
+    "metatags": {
+      "description": "Cerebrium developer documentation to help you build, deploy, and scale AI applications on serverless compute. Learn about serverless GPUs and CPUs, long-running jobs, fine-tuning, hosting LLMs and voice agents, observability, cold starts, and multi-region deployments.",
+      "keywords": "Cerebrium, serverless GPUs, AI infrastructure, hosting Large Language Models, AI voice agents, Real-time AI",
+      "language": "en",
+      "copyright": "Copyright 2025"
+  },
+  "search": {
+    "prompt": "Search Cerebrium docs..."
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg",
+    "href": "https://cerebrium.ai"
+  },
+  "background": {
+    "image": "/images/background.png",
+    "color": {
+      "dark": "#121212"
+    }
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Contact Us",
+        "href": "mailto:support@cerebrium.ai"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Sign Up",
+      "href": "https://dashboard.cerebrium.ai/login"
+    }
+  },
+  "footer": {
+    "socials": {
+      "twitter": "https://twitter.com/cerebriumai",
+      "discord": "https://discord.gg/ATj6USmeE2",
+      "linkedin": "https://www.linkedin.com/company/cerebriumai",
+      "github": "https://www.linkedin.com/company/cerebrium"
+    }
+  },
+  "integrations": {
+    "ga4": {
+      "measurementId": "G-7SBXER6DHL"
+    },
+    "gtm": {
+      "tagId": "GTM-M3Z656N"
+    },
+    "hotjar": {
+      "hjid": "3423876",
+      "hjsv": "6"
+    }
+  }
+}
