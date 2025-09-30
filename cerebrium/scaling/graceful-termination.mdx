@@ -1,0 +1,34 @@
+---
+title: "Graceful Termination"
+description: "Handle instance shutdown to prevent 502 errors during scaling"
+---
+
+Cerebrium terminates instances during scaling and redeployments. Proper graceful termination ensures active requests complete successfully rather than failing with 502 errors.
+
+## How Termination Works
+
+When Cerebrium needs to terminate an instance:
+
+1. Stops routing new requests to the instance
+2. Sends SIGTERM signal to your application
+3. Waits for `response_grace_period` seconds
+4. Sends SIGKILL if the instance has not stopped
+
+## Configuration
+
+Configure the grace period in your `cerebrium.toml` file:
+```toml
+[cerebrium.scaling]
+response_grace_period = 300  # Seconds to wait before force termination
+
+<Warning>
+Without `response_grace_period`, instances are force-killed immediately, causing 502 errors.
+</Warning>
+
+Set to 1.5x your maximum expected request duration.
+
+Runtime Behavior
+Cortex Runtime (Default): SIGTERM handled automatically. Just configure response_grace_period.
+Custom Runtime: You must handle SIGTERM in your application code.
+
+FastAPI Implementation
