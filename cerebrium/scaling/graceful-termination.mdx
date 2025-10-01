@@ -1,34 +1,109 @@
----
 title: "Graceful Termination"
-description: "Handle instance shutdown to prevent 502 errors during scaling"
+description: "Prevent 502 errors during instance shutdown"
 ---
 
-Cerebrium terminates instances during scaling and redeployments. Proper graceful termination ensures active requests complete successfully rather than failing with 502 errors.
+Cerebrium instances are subject to termination during scaling events and redeployments. Without proper configuration, active requests fail with 502 errors when instances are killed mid-execution.
 
-## How Termination Works
+Instance terminations are common during normal operations. Applications with long-running tasks (model inference, video processing, etc.) must handle termination gracefully, as the likelihood of interruption increases with task duration.
 
-When Cerebrium needs to terminate an instance:
+## Preparing for Termination
 
-1. Stops routing new requests to the instance
-2. Sends SIGTERM signal to your application
-3. Waits for `response_grace_period` seconds
-4. Sends SIGKILL if the instance has not stopped
-
-## Configuration
-
-Configure the grace period in your `cerebrium.toml` file:
+Configure `response_grace_period` in `cerebrium.toml`:
 ```toml
 [cerebrium.scaling]
-response_grace_period = 300  # Seconds to wait before force termination
+response_grace_period = 300  # Seconds before force-kill
 
 <Warning>
-Without `response_grace_period`, instances are force-killed immediately, causing 502 errors.
+Without this configuration, Cerebrium force-kills instances immediately, causing 502 errors.
 </Warning>
+When termination occurs, Cerebrium:
 
-Set to 1.5x your maximum expected request duration.
+Stops routing new requests
+Sends SIGTERM signal
+Waits response_grace_period seconds
+Sends SIGKILL
 
-Runtime Behavior
-Cortex Runtime (Default): SIGTERM handled automatically. Just configure response_grace_period.
-Custom Runtime: You must handle SIGTERM in your application code.
+Set to 1.5x your longest expected request duration.
+Runtime-Specific Handling
+Cortex Runtime (Default): Automatic - SIGTERM is captured and requests complete before termination.
+Custom Runtime: You must implement SIGTERM handling in your application code.
 
-FastAPI Implementation
+Custom Runtime Implementation
+FastAPI
+Implement the lifespan pattern to track active requests:
+
+from fastapi import FastAPI, HTTPException
+from contextlib import asynccontextmanager
+import asyncio
+
+active_requests = 0
+shutting_down = False
+lock = asyncio.Lock()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    yield
+    
+    global shutting_down
+    shutting_down = True
+    
+    while active_requests > 0:
+        await asyncio.sleep(1)
+
+app = FastAPI(lifespan=lifespan)
+
+@app.middleware("http")
+async def track_requests(request, call_next):
+    global active_requests
+    if shutting_down:
+        raise HTTPException(503, "Shutting down")
+    
+    async with lock:
+        active_requests += 1
+    try:
+        return await call_next(request)
+    finally:
+        async with lock:
+            active_requests -= 1
+
+Critical: Entrypoint Configuration
+Your entrypoint must use exec to ensure SIGTERM reaches the application:
+dockerfileENTRYPOINT ["exec", "fastapi", "run", "app.py", "--port", "8000"]
+
+Or in bash scripts:
+bashexec fastapi run app.py --port ${PORT:-8000}
+Without exec, SIGTERM is sent to the shell (PID 1) instead of your application, and graceful shutdown never executes.
+
+Best Practices
+
+Checkpoint long operations - Save progress frequently for tasks exceeding the grace period
+Make operations idempotent - Ensure interrupted tasks can safely retry
+Explicit resource cleanup - Release GPU memory and models during shutdown:
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    model = load_model()
+    yield
+    del model
+    torch.cuda.empty_cache()
+Troubleshooting
+502 errors during scaling
+
+Add or increase response_grace_period in cerebrium.toml
+
+Shutdown code never runs
+
+Verify exec is in your entrypoint
+Test locally with Ctrl+C - you should see shutdown logs
+Check for process wrappers blocking signals (dumb-init, etc.)
+
+Containers not terminating
+
+Ensure your shutdown code completes within response_grace_period
+Verify no infinite loops in cleanup logic
+
+<Note>
+Custom runtimes require three components: `response_grace_period` configuration + SIGTERM handling code + `exec` in entrypoint
+</Note>
+```
+This follows Modal's structure (intro → preparation → implementation → best practices) while addressing every issue BitHuman faced: missing response_grace_period, missing exec, FastAPI lifespan pattern, and the debugging journey they went through.
