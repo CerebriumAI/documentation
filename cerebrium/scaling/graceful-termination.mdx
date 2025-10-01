@@ -26,7 +26,8 @@ Set `response_grace_period` in `cerebrium.toml` to give your application time to
 [cerebrium.scaling]
 response_grace_period = 300  # Seconds to wait before SIGKILL
 
-<Warning> Missing this configuration is the most common cause of 502 errors during scaling. Set this to **1.5× your longest expected request duration**. </Warning>
+<Warning> Missing this configuration is the most common cause of 502 errors during scaling. Set this to **1.5× your longest expected request duration**. 
+</Warning>
 
 Runtime-Specific Requirements
 
