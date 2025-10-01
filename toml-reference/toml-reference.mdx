@@ -66,9 +66,7 @@ Check your build logs for these indicators:
 
 ### Deploying with UV Lock Files
 
-<Info>
-  read only if you're using `pyproject.toml` and `uv.lock`
-</Info>
+<Info>read only if you're using `pyproject.toml` and `uv.lock`</Info>
 
 Generate your lock file locally. This creates a uv.lock file with exact dependency versions.
 
@@ -86,6 +84,7 @@ uv pip compile uv.lock -o requirements.txt
 ```
 
 Include in your deployment:
+
 - Ensure requirements.txt is in your project directory
 - Deploy with UV enabled
 
@@ -102,8 +101,8 @@ The `[cerebrium.runtime.custom]` section configures custom web servers and runti
 
 <Info>
   The port specified in entrypoint must match the port parameter. All endpoints
-  will be available at `https://api.aws.us-east-1.cerebrium.ai/v4/{project - id}/
-  {app - name}/your/endpoint`
+  will be available at `https://api.aws.us-east-1.cerebrium.ai/v4/{project - id}
+  /{app - name}/your/endpoint`
 </Info>
 
 ## Hardware Configuration

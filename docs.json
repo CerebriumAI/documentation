@@ -72,9 +72,7 @@
               },
               {
                 "group": "Storage",
-                "pages": [
-                  "cerebrium/storage/managing-files"
-                ]
+                "pages": ["cerebrium/storage/managing-files"]
               },
               {
                 "group": "Partner Services",
@@ -105,9 +103,7 @@
                   "v4/examples/featured",
                   {
                     "group": "Advanced Concepts",
-                    "pages": [
-                      "v4/examples/mistral-vllm"
-                    ]
+                    "pages": ["v4/examples/mistral-vllm"]
                   },
                   {
                     "group": "Large Language Models",
@@ -119,9 +115,7 @@
                   },
                   {
                     "group": "Integrations",
-                    "pages": [
-                      "v4/examples/langchain-langsmith"
-                    ]
+                    "pages": ["v4/examples/langchain-langsmith"]
                   },
                   {
                     "group": "Voice",
@@ -134,22 +128,15 @@
                   },
                   {
                     "group": "Image & Video",
-                    "pages": [
-                      "v4/examples/comfyUI",
-                      "v4/examples/sdxl"
-                    ]
+                    "pages": ["v4/examples/comfyUI", "v4/examples/sdxl"]
                   },
                   {
                     "group": "Python Apps",
-                    "pages": [
-                      "v4/examples/asgi-gradio-interface"
-                    ]
+                    "pages": ["v4/examples/asgi-gradio-interface"]
                   },
                   {
                     "group": "Training",
-                    "pages": [
-                      "v4/examples/wandb-sweep"
-                    ]
+                    "pages": ["v4/examples/wandb-sweep"]
                   }
                 ]
               }
@@ -173,9 +160,7 @@
             "groups": [
               {
                 "group": "Reference",
-                "pages": [
-                  "toml-reference/toml-reference"
-                ]
+                "pages": ["toml-reference/toml-reference"]
               }
             ]
           },
