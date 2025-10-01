@@ -48,7 +48,7 @@ UV typically installs packages 10-100x faster than pip, especially beneficial fo
 **Example with UV enabled:**
 
 ```toml
-[cerebrium.build]
+[cerebrium.deployment]
 use_uv = true
 ```
 
@@ -64,6 +64,30 @@ Check your build logs for these indicators:
   failures, such as legacy packages with non-standard metadata.
 </Warning>
 
+### Deploying with UV Lock Files
+
+<Info>read only if you're using `pyproject.toml` and `uv.lock`</Info>
+
+Generate your lock file locally. This creates a uv.lock file with exact dependency versions.
+
+```bash
+# In your project directory with pyproject.toml
+uv sync
+```
+
+Export your locked dependencies to requirements.txt
+
+```bash
+uv pip compile pyproject.toml -o requirements.txt
+# Or if you want to use the lock file:
+uv pip compile uv.lock -o requirements.txt
+```
+
+Include in your deployment:
+
+- Ensure requirements.txt is in your project directory
+- Deploy with UV enabled
+
 ## Runtime Configuration
 
 The `[cerebrium.runtime.custom]` section configures custom web servers and runtime behavior.
@@ -77,8 +101,8 @@ The `[cerebrium.runtime.custom]` section configures custom web servers and runti
 
 <Info>
   The port specified in entrypoint must match the port parameter. All endpoints
-  will be available at `https://api.aws.us-east-1.cerebrium.ai/v4/{project - id}/
-  {app - name}/your/endpoint`
+  will be available at `https://api.aws.us-east-1.cerebrium.ai/v4/{project - id}
+  /{app - name}/your/endpoint`
 </Info>
 
 ## Hardware Configuration
