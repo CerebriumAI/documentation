@@ -5,43 +5,34 @@ description: "Prevent 502 errors by handling SIGTERM signals during instance shu
 
 # Graceful Termination
 
-**Cerebrium sends SIGTERM signals when scaling down instances.** Without proper handling, active requests fail with 502 errors. This requires both platform configuration and application-level code changes.
+Cerebrium sends SIGTERM signals when scaling down instances. Without proper handling, active requests fail with 502 errors during scale-down or redeployment.
 
-## How Instance Termination Works
+## Understanding Instance Termination
 
-When Cerebrium needs to terminate an instance (during scale-down or redeployment):
+When Cerebrium needs to terminate an instance:
 
-1. **Stops routing new requests** to the instance  
-2. **Sends SIGTERM signal** to your container  
-3. **Waits** for `response_grace_period` seconds (if configured)  
-4. **Sends SIGKILL** if the instance hasn't stopped  
+1. Stops routing new requests to the instance
+2. Sends SIGTERM signal to your container
+3. Waits for `response_grace_period` seconds (if configured)
+4. Sends SIGKILL if the instance hasn't stopped
 
-**Without `response_grace_period` configured, Cerebrium force-kills instances immediately, causing 502 errors.**
+Without `response_grace_period` configured, Cerebrium force-kills instances immediately, causing 502 errors.
 
-## Required: Configure Grace Period
+## Configure Grace Period
 
 Set `response_grace_period` in `cerebrium.toml` to give your application time to finish active requests:
-
 ```toml
 [cerebrium.scaling]
 response_grace_period = 300  # Seconds to wait before SIGKILL
-
-<Warning> Missing this configuration is the most common cause of 502 errors during scaling. Set this to **1.5× your longest expected request duration**. 
+<Warning>
+Missing this configuration is the most common cause of 502 errors during scaling. Set this to 1.5x your longest expected request duration.
 </Warning>
-
-Runtime-Specific Requirements
-
-Cortex Runtime (Default):
-SIGTERM is handled automatically. Just configure response_grace_period — no code changes needed.
-
-Custom Runtime (FastAPI, Flask, etc.):
-You must implement SIGTERM handling in your application and configure response_grace_period. Both are required.
-
+Runtime Requirements
+Cortex Runtime (Default): SIGTERM is handled automatically. Configure response_grace_period - no code changes needed.
+Custom Runtime (FastAPI, Flask, etc.): You must implement SIGTERM handling AND configure response_grace_period. Both are required.
 FastAPI Implementation
-
 For custom runtimes using FastAPI, implement the lifespan pattern to respond to SIGTERM:
-
-from fastapi import FastAPI, HTTPException
+pythonfrom fastapi import FastAPI, HTTPException
 from contextlib import asynccontextmanager
 import asyncio
 
@@ -76,76 +67,40 @@ async def track_requests(request, call_next):
     finally:
         async with lock:
             active_requests -= 1
-
 Critical: Use exec in Entrypoint
-
-Your entrypoint must use exec or SIGTERM won't reach your application.
-
-Dockerfile example:
-
-ENTRYPOINT ["exec", "fastapi", "run", "app.py", "--port", "8000"]
-
-Bash script example:
-
-exec fastapi run app.py --port ${PORT:-8000}
-
-Without exec, SIGTERM is sent to the bash script (PID 1) instead of FastAPI,
-so your shutdown code never runs and Cerebrium force-kills the container after the grace period.
-
+Your entrypoint must use exec or SIGTERM won't reach your application:
+dockerfileENTRYPOINT ["exec", "fastapi", "run", "app.py", "--port", "8000"]
+In bash scripts:
+bashexec fastapi run app.py --port ${PORT:-8000}
+Without exec, SIGTERM is sent to the bash script (PID 1) instead of FastAPI, so your shutdown code never runs and Cerebrium force-kills the container after the grace period.
 GPU Resource Cleanup
-
 For GPU applications, explicitly release resources during shutdown:
-
-@asynccontextmanager
+python@asynccontextmanager
 async def lifespan(app: FastAPI):
     model = load_model()
     yield
     # Cleanup when SIGTERM received
     del model
     torch.cuda.empty_cache()
-
 Troubleshooting
-
 502 errors during scaling events
-
 Cause: response_grace_period not configured or too short
-
-Solution: Add to cerebrium.toml and set to 1.5× your longest request duration
-
+Solution: Add to cerebrium.toml and set to 1.5x your longest request duration
 Shutdown code never executes
-
 Cause: SIGTERM not reaching your application
-
 Solution:
 
 Add exec to your entrypoint command
-
-Test locally: Run your app and press Ctrl+C — you should see shutdown logs
-
+Test locally: Run your app and press Ctrl+C - you should see shutdown logs
 Remove unnecessary process wrappers (dumb-init, etc.) that may block signals
 
 Containers don't terminate automatically
-
 Cause: Shutdown code takes longer than response_grace_period or has infinite loops
-
 Solution: Ensure cleanup completes within the grace period and verify no blocking operations
-
-Testing Locally
-
-Before deploying, verify SIGTERM handling works:
-
-# Start your application
-python -m your_app
-
-# In another terminal, send SIGTERM
-kill -TERM $(pgrep -f your_app)
-
-# You should see graceful shutdown logs
-
-<Note> Custom runtimes require three components: - `response_grace_period` configuration - SIGTERM handling code - `exec` in entrypoint
-
-Missing any of these causes 502 errors.
+<Tip>
+Test SIGTERM handling locally before deploying: start your app, send SIGTERM with `Ctrl+C`, and verify you see graceful shutdown logs.
+</Tip>
+<Note>
+Custom runtimes require three components: `response_grace_period` configuration + SIGTERM handling code + `exec` in entrypoint. Missing any of these causes 502 errors.
 </Note>
-
-
-
+```
