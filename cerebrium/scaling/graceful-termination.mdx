@@ -1,0 +1,143 @@
+---
+title: "Graceful Termination"
+description: "Prevent 502 errors by handling SIGTERM signals during instance shutdown"
+---
+
+# Graceful Termination
+
+Cerebrium sends SIGTERM signals when scaling down instances. Without proper handling, active requests fail with 502 errors during scale-down or redeployment.
+
+## Understanding Instance Termination
+
+When Cerebrium needs to terminate an instance:
+
+1. Stops routing new requests to the instance
+2. Sends SIGTERM signal to your container
+3. Waits for `response_grace_period` seconds (if configured)
+4. Sends SIGKILL if the instance hasn't stopped
+
+Without `response_grace_period` configured, Cerebrium force-kills instances immediately, causing 502 errors.
+
+## Configure Grace Period
+
+Set `response_grace_period` in `cerebrium.toml` to give your application time to finish active requests:
+```toml
+
+[cerebrium.scaling]
+
+response_grace_period = 300  # Seconds to wait before SIGKILL
+
+<Warning>
+Missing this configuration is the most common cause of 502 errors during scaling. Set this to 1.5x your longest expected request duration.
+</Warning>
+
+Runtime Requirements
+
+Cortex Runtime (Default): SIGTERM is handled automatically. Configure response_grace_period - no code changes needed.
+
+Custom Runtime (FastAPI, Flask, etc.): You must implement SIGTERM handling AND configure response_grace_period. Both are required.
+
+FastAPI Implementation
+
+For custom runtimes using FastAPI, implement the lifespan pattern to respond to SIGTERM:
+
+```python`
+
+from fastapi import FastAPI, HTTPException
+from contextlib import asynccontextmanager
+import asyncio
+
+active_requests = 0
+shutting_down = False
+lock = asyncio.Lock()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    yield  # Application startup complete
+    
+    # Shutdown: runs when Cerebrium sends SIGTERM
+    global shutting_down
+    shutting_down = True
+    
+    # Wait for active requests to complete
+    while active_requests > 0:
+        await asyncio.sleep(1)
+
+app = FastAPI(lifespan=lifespan)
+
+@app.middleware("http")
+async def track_requests(request, call_next):
+    global active_requests
+    if shutting_down:
+        raise HTTPException(503, "Shutting down")
+    
+    async with lock:
+        active_requests += 1
+    try:
+        return await call_next(request)
+    finally:
+        async with lock:
+            active_requests -= 1
+```
+
+### Critical: Use exec in Entrypoint
+
+Your entrypoint must use exec or SIGTERM won't reach your application:
+
+```dockerfile
+ENTRYPOINT ["exec", "fastapi", "run", "app.py", "--port", "8000"]
+```
+In bash scripts:
+
+```bash
+exec fastapi run app.py --port ${PORT:-8000}
+```
+Without exec, SIGTERM is sent to the bash script (PID 1) instead of FastAPI, so your shutdown code never runs and Cerebrium force-kills the container after the grace period.
+
+GPU Resource Cleanup
+
+For GPU applications, explicitly release resources during shutdown:
+
+```python`
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    model = load_model()
+    yield
+    # Cleanup when SIGTERM received
+    del model
+    torch.cuda.empty_cache()
+```
+Troubleshooting
+
+502 errors during scaling events
+
+Cause: response_grace_period not configured or too short
+
+Solution: Add to cerebrium.toml and set to 1.5x your longest request duration
+
+Shutdown code never executes
+
+Cause: SIGTERM not reaching your application
+
+Solution:
+
+Add exec to your entrypoint command
+
+Test locally: Run your app and press Ctrl+C - you should see shutdown logs
+Remove unnecessary process wrappers (dumb-init, etc.) that may block signals
+
+Containers don't terminate automatically
+
+Cause: Shutdown code takes longer than response_grace_period or has infinite loops
+
+Solution: Ensure cleanup completes within the grace period and verify no blocking operations
+
+<Tip>
+Test SIGTERM handling locally before deploying: start your app, send SIGTERM with `Ctrl+C`, and verify you see graceful shutdown logs.
+</Tip>
+
+<Note>
+Custom runtimes require three components: `response_grace_period` configuration + SIGTERM handling code + `exec` in entrypoint. Missing any of these causes 502 errors.
+</Note>
+
+```
