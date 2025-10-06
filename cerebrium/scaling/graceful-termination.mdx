@@ -160,6 +160,7 @@ Solution: Ensure cleanup completes within the grace period and verify no blockin
 Test SIGTERM handling locally before deploying: start your app, send SIGTERM with `Ctrl+C`, and verify you see graceful shutdown logs.
 </Tip>
 
+
 <Note>
 Custom runtimes require three components: `response_grace_period` configuration + SIGTERM handling code + `exec` in entrypoint. Missing any of these causes 502 errors.
 </Note>
