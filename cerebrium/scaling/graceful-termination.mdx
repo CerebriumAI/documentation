@@ -51,21 +51,18 @@ When Cerebrium needs to terminate an instance:
 3. Waits for `response_grace_period` seconds (if configured)
 4. Sends SIGKILL if the instance hasn't stopped
 
-Without `response_grace_period` configured, Cerebrium force-kills instances immediately, causing 502 errors.
+Without `response_grace_period` configured, Cerebrium terminates instances immediately after sending `SIGTERM`, which can interrupt in-flight requests and cause **502 errors**.
 
-## Configure Grace Period
-
-Set `response_grace_period` in `cerebrium.toml` to give your application time to finish active requests:
+<Warning>
+If `response_grace_period` is **unset or set to 0**, requests may end abruptly during scale-down or redeploys, resulting in failed responses.  
+Set this to roughly **1.5 × your longest expected request duration**.
+</Warning>
 
 ```toml
 [cerebrium.scaling]
-response_grace_period = 300  # Seconds to wait before SIGKILL
+# Example: 300 seconds allows long-running requests to complete
+response_grace_period = 300
 ```
-
-<Warning>
-Missing this configuration is the most common cause of 502 errors during scaling.  
-Set this to 1.5× your longest expected request duration**.
-</Warning>
 
 ## Runtime Requirements
 
@@ -140,7 +137,8 @@ ENTRYPOINT ["exec", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"
 Or in cerebrium.toml:
 ```toml
 [cerebrium.runtime.custom]
-entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+entrypoint = ["fastapi", "run", "app.py", "--port", "8000"]
+
 ```
 In bash scripts:
 
@@ -149,6 +147,10 @@ exec fastapi run app.py --port ${PORT:-8000}
 ```
 
 Without exec, SIGTERM is sent to the bash script (PID 1) instead of FastAPI, so your shutdown code never runs and Cerebrium force-kills the container after the grace period.
+
+<Tip>
+Test SIGTERM handling locally before deploying: start your app, send SIGTERM with `Ctrl+C`, and verify you see graceful shutdown logs.
+</Tip>
 
 ## GPU Resource Cleanup
 
@@ -163,37 +165,6 @@ async def lifespan(app: FastAPI):
     del model
     torch.cuda.empty_cache()
 ```
-
-## Troubleshooting
-
-**502 errors during scaling events**
-
-Cause: `response_grace_period` not configured or too short
-
-Solution: Add to `cerebrium.toml` and set to 1.5x your longest request duration
-
-**Shutdown code never executes**
-
-Cause: SIGTERM not reaching your application
-
-Solution:
-- Add `exec` to your entrypoint command
-- Test locally: Run your app and press `Ctrl+C` - you should see shutdown logs
-- Remove unnecessary process wrappers (dumb-init, etc.) that may block signals
-
-**Containers don't terminate automatically**
-
-Cause: Shutdown code takes longer than `response_grace_period` or has infinite loops
-
-Solution: Ensure cleanup completes within the grace period and verify no blocking operations
-<Tip>
-Test SIGTERM handling locally before deploying: start your app, send SIGTERM with `Ctrl+C`, and verify you see graceful shutdown logs.
-</Tip>
-
-
-<Note>
-Custom runtimes require three components: `response_grace_period` configuration + SIGTERM handling code + `exec` in entrypoint. Missing any of these causes 502 errors.
-</Note>
 
 ## Related Resources 
 
