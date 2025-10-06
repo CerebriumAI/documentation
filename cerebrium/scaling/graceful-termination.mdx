@@ -23,39 +23,40 @@ Without `response_grace_period` configured, Cerebrium force-kills instances imme
 ## Configure Grace Period
 
 Set `response_grace_period` in `cerebrium.toml` to give your application time to finish active requests:
+
 ```toml
-
 [cerebrium.scaling]
-
 response_grace_period = 300  # Seconds to wait before SIGKILL
+```
 
-<Warning>
-Missing this configuration is the most common cause of 502 errors during scaling. Set this to 1.5x your longest expected request duration.
-</Warning>
+:::warning
+Missing this configuration is the most common cause of 502 errors during scaling.  
+Set this to **1.5× your longest expected request duration**.
+:::
 
-Runtime Requirements
+## Runtime Requirements
 
-**Cortex Runtime (Default):** SIGTERM is handled automatically. Configure `response_grace_period` - no code changes needed.
+Cortex runtime (default):
+SIGTERM is handled automatically. Configure response_grace_period only — no code changes required.
+
+Custom runtimes (FastAPI, Flask, etc.):
+You must implement SIGTERM handling and configure response_grace_period. Both are required.
+
 ```toml
-[cerebrium.scaling]
-response_grace_period = 300
-```` ``` ````
-Custom Runtime (FastAPI, Flask, etc.): You must implement SIGTERM handling AND configure response_grace_period. Both are required.
-````toml`
 [cerebrium.scaling]
 response_grace_period = 300
 
 [cerebrium.runtime.custom]
 port = 8000
 entrypoint = ["fastapi", "run", "app.py"]
-```` ``` ````
+```
 
-FastAPI Implementation
-
-For custom runtimes using FastAPI, implement the lifespan pattern to respond to SIGTERM:
 ## FastAPI Implementation
 
-For custom runtimes using FastAPI, implement the [`lifespan` pattern](https://fastapi.tiangolo.com/advanced/events/) to respond to SIGTERM. The code below tracks active requests using a counter and prevents new requests during shutdown. When SIGTERM is received, it sets a shutdown flag and waits for all active requests to complete before the application terminates.
+For custom runtimes using FastAPI, implement the [`lifespan` pattern](https://fastapi.tiangolo.com/advanced/events/) to respond to SIGTERM. 
+
+The code below tracks active requests using a counter and prevents new requests during shutdown. When SIGTERM is received, it sets a shutdown flag and waits for all active requests to complete before the application terminates.
+
 ```python
 from fastapi import FastAPI, HTTPException
 from contextlib import asynccontextmanager
@@ -100,26 +101,27 @@ Your entrypoint must use exec or SIGTERM won't reach your application:
 
 In your Dockerfile:
 
-````dockerfile`
+```dockerfile
 ENTRYPOINT ["exec", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 Or in cerebrium.toml:
-````toml`
+```toml
 [cerebrium.runtime.custom]
 entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 In bash scripts:
 
-````bash`
+```bash
 exec fastapi run app.py --port ${PORT:-8000}
 ```
+
 Without exec, SIGTERM is sent to the bash script (PID 1) instead of FastAPI, so your shutdown code never runs and Cerebrium force-kills the container after the grace period.
 
-GPU Resource Cleanup
+## GPU Resource Cleanup
 
 For GPU applications, explicitly release resources during shutdown:
 
-```python`
+```python
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     model = load_model()
@@ -128,7 +130,8 @@ async def lifespan(app: FastAPI):
     del model
     torch.cuda.empty_cache()
 ```
-Troubleshooting
+
+## Troubleshooting
 
 502 errors during scaling events
 
@@ -153,13 +156,13 @@ Cause: Shutdown code takes longer than response_grace_period or has infinite loo
 
 Solution: Ensure cleanup completes within the grace period and verify no blocking operations
 
-<Tip>
+:::Tip
 Test SIGTERM handling locally before deploying: start your app, send SIGTERM with `Ctrl+C`, and verify you see graceful shutdown logs.
-</Tip>
+:::
 
-<Note>
+:::Note
 Custom runtimes require three components: `response_grace_period` configuration + SIGTERM handling code + `exec` in entrypoint. Missing any of these causes 502 errors.
-</Note>
+:::
 
 ## Related Resources 
 
