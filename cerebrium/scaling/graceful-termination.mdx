@@ -125,7 +125,7 @@ async def track_requests(request, call_next):
             active_requests -= 1
 ```
 
-### Critical: Use exec in Entrypoint
+## Critical: Use exec in Entrypoint
 
 Your entrypoint must use exec or SIGTERM won't reach your application:
 
