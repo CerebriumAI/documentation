@@ -9,6 +9,31 @@ Cerebrium is a shared-compute, multi-tenant environment. As such, to scale out, 
 
 ## Understanding Instance Termination
 
+```mermaid
+stateDiagram-v2
+    [*] --> Running: Instance Active
+    Running --> SIGTERMSent: Scale down event or redeployment
+    
+    SIGTERMSent --> WaitingGracePeriod: response_grace_period configured
+    SIGTERMSent --> ForceKilled: No response_grace_period ❌
+    
+    WaitingGracePeriod --> GracefulShutdown: All requests complete ✓
+    WaitingGracePeriod --> ForceKilled: Grace period timeout ❌
+    
+    ForceKilled --> [*]: 502 errors
+    GracefulShutdown --> [*]: Clean shutdown
+    
+    note right of SIGTERMSent
+        Cortex: Automatic
+        Custom: Must implement
+    end note
+    
+    note right of WaitingGracePeriod
+        Application waits for
+        active requests to complete
+    end note
+```` ``` ````
+
 For both application autoscaling and our own internal node scaling, we will send your application a SIGTERM signal, as a warning to the application that we are intending to shut down this instance. For Cortex applications, this is handled. On custom runtimes, should you wish to gracefully shut down, you will need to catch and handle this signal. Once at least responseGracePeriod has elapsed, we will send your application a SIGKILL signal, terminating the instance immediately.
 
 When Cerebrium needs to terminate an instance:
