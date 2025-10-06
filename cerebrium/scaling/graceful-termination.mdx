@@ -9,9 +9,10 @@ Cerebrium is a shared-compute, multi-tenant environment. As such, to scale out, 
 
 ## Understanding Instance Termination
 
-```mermaid`
+```mermaid 
 stateDiagram-v2
     [*] --> Running: Instance Active
+```
     Running --> SIGTERMSent: Scale down event or redeployment
     
     SIGTERMSent --> WaitingGracePeriod: response_grace_period configured
