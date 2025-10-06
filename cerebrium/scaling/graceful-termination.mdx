@@ -1,13 +1,15 @@
 ---
-title: "Graceful Termination"
+title: "Preemption and Graceful Termination"
 description: "Prevent 502 errors by handling SIGTERM signals during instance shutdown"
 ---
 
 # Graceful Termination
 
-Cerebrium sends SIGTERM signals when scaling down instances. Without proper handling, active requests fail with 502 errors during scale-down or redeployment.
+Cerebrium is a shared-compute, multi-tenant environment. As such, to scale out, optimise compute packing, and conduct updates, Cerebrium will dynamically change our capacity; shutting down nodes as well as bringing on new nodes throughout the day. As we do this, we will shift user workloads to new nodes. In addition, your application has its own metric-based autoscaling criteria, dictating when application instances should remain or scale, as well as instance shifting when deploying a new app revision. As such, you may need to implement graceful shutdown to prevent requests from prematurely ending when app instances start to terminate, commonly preventing 502 errors.
 
 ## Understanding Instance Termination
+
+For both application autoscaling and our own internal node scaling, we will send your application a SIGTERM signal, as a warning to the application that we are intending to shut down this instance. For Cortex applications, this is handled. On custom runtimes, should you wish to gracefully shut down, you will need to catch and handle this signal. Once at least responseGracePeriod has elapsed, we will send your application a SIGKILL signal, terminating the instance immediately.
 
 When Cerebrium needs to terminate an instance:
 
@@ -33,16 +35,28 @@ Missing this configuration is the most common cause of 502 errors during scaling
 
 Runtime Requirements
 
-Cortex Runtime (Default): SIGTERM is handled automatically. Configure response_grace_period - no code changes needed.
-
+**Cortex Runtime (Default):** SIGTERM is handled automatically. Configure `response_grace_period` - no code changes needed.
+```toml
+[cerebrium.scaling]
+response_grace_period = 300
+```` ``` ````
 Custom Runtime (FastAPI, Flask, etc.): You must implement SIGTERM handling AND configure response_grace_period. Both are required.
+````toml`
+[cerebrium.scaling]
+response_grace_period = 300
+
+[cerebrium.runtime.custom]
+port = 8000
+entrypoint = ["fastapi", "run", "app.py"]
+```` ``` ````
 
 FastAPI Implementation
 
 For custom runtimes using FastAPI, implement the lifespan pattern to respond to SIGTERM:
+## FastAPI Implementation
 
-```python`
-
+For custom runtimes using FastAPI, implement the [`lifespan` pattern](https://fastapi.tiangolo.com/advanced/events/) to respond to SIGTERM. The code below tracks active requests using a counter and prevents new requests during shutdown. When SIGTERM is received, it sets a shutdown flag and waits for all active requests to complete before the application terminates.
+```python
 from fastapi import FastAPI, HTTPException
 from contextlib import asynccontextmanager
 import asyncio
@@ -84,12 +98,19 @@ async def track_requests(request, call_next):
 
 Your entrypoint must use exec or SIGTERM won't reach your application:
 
-```dockerfile
-ENTRYPOINT ["exec", "fastapi", "run", "app.py", "--port", "8000"]
+In your Dockerfile:
+
+````dockerfile`
+ENTRYPOINT ["exec", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+```
+Or in cerebrium.toml:
+````toml`
+[cerebrium.runtime.custom]
+entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 In bash scripts:
 
-```bash
+````bash`
 exec fastapi run app.py --port ${PORT:-8000}
 ```
 Without exec, SIGTERM is sent to the bash script (PID 1) instead of FastAPI, so your shutdown code never runs and Cerebrium force-kills the container after the grace period.
@@ -140,4 +161,7 @@ Test SIGTERM handling locally before deploying: start your app, send SIGTERM wit
 Custom runtimes require three components: `response_grace_period` configuration + SIGTERM handling code + `exec` in entrypoint. Missing any of these causes 502 errors.
 </Note>
 
-```
+## Related Resources 
+
+For general instance management and scaling configuration, see [Instance Management](/cerebrium/scaling/scaling-apps#instance-management).
+
