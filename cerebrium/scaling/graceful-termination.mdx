@@ -133,27 +133,26 @@ async def lifespan(app: FastAPI):
 
 ## Troubleshooting
 
-<Accordion title="502 errors during scaling events">
-**Cause:** `response_grace_period` not configured or too short
+**502 errors during scaling events**
 
-**Solution:** Add to `cerebrium.toml` and set to 1.5x your longest request duration
-</Accordion>
+Cause: `response_grace_period` not configured or too short
 
-<Accordion title="Shutdown code never executes">
-**Cause:** SIGTERM not reaching your application
+Solution: Add to `cerebrium.toml` and set to 1.5x your longest request duration
 
-**Solution:**
+**Shutdown code never executes**
+
+Cause: SIGTERM not reaching your application
+
+Solution:
 - Add `exec` to your entrypoint command
 - Test locally: Run your app and press `Ctrl+C` - you should see shutdown logs
 - Remove unnecessary process wrappers (dumb-init, etc.) that may block signals
-</Accordion>
 
-<Accordion title="Containers don't terminate automatically">
-**Cause:** Shutdown code takes longer than `response_grace_period` or has infinite loops
+**Containers don't terminate automatically**
 
-**Solution:** Ensure cleanup completes within the grace period and verify no blocking operations
-</Accordion>
+Cause: Shutdown code takes longer than `response_grace_period` or has infinite loops
 
+Solution: Ensure cleanup completes within the grace period and verify no blocking operations
 <Tip>
 Test SIGTERM handling locally before deploying: start your app, send SIGTERM with `Ctrl+C`, and verify you see graceful shutdown logs.
 </Tip>
