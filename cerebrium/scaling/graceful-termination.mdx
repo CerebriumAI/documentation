@@ -5,7 +5,7 @@ description: "Prevent 502 errors by handling SIGTERM signals during instance shu
 
 ## Graceful Termination
 
-Cerebrium is a shared-compute, multi-tenant environment. As such, to scale out, optimise compute packing, and conduct updates, Cerebrium will dynamically change our capacity; shutting down nodes as well as bringing on new nodes throughout the day. As we do this, we will shift user workloads to new nodes. In addition, your application has its own metric-based autoscaling criteria, dictating when application instances should remain or scale, as well as instance shifting when deploying a new app revision. As such, you may need to implement graceful shutdown to prevent requests from prematurely ending when app instances start to terminate, commonly preventing 502 errors.
+Cerebrium is a shared-compute, multi-tenant environment. To scale out, optimize compute packing, and perform updates, Cerebrium dynamically adjusts its capacity—shutting down nodes and bringing up new ones throughout the day. As this happens, user workloads are shifted to new nodes. In addition, your application has its own metric-based autoscaling criteria that dictate when instances should scale or remain active, as well as handle instance shifting during new app deployments. You may need to implement graceful shutdown to prevent requests from ending prematurely when app instances terminate, which commonly helps avoid 502 errors.
 
 ## Understanding Instance Termination
 
