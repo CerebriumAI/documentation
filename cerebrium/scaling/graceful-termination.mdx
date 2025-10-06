@@ -57,6 +57,7 @@ Without `response_grace_period` configured, Cerebrium terminates instances immed
 If `response_grace_period` is **unset or set to 0**, requests may end abruptly during scale-down or redeploys, resulting in failed responses. Set this to roughly **1.5 × your longest expected request duration**.
 </Warning>
 
+
 ```toml
 [cerebrium.scaling]
 # Example: 300 seconds allows long-running requests to complete
