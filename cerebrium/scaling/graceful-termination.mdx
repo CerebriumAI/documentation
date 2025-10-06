@@ -15,10 +15,10 @@ stateDiagram-v2
     Running --> SIGTERMSent: Scale down event or redeployment
     
     SIGTERMSent --> WaitingGracePeriod: response_grace_period configured
-    SIGTERMSent --> ForceKilled: No response_grace_period ❌
+    SIGTERMSent --> ForceKilled: No response_grace_period 
     
-    WaitingGracePeriod --> GracefulShutdown: All requests complete ✓
-    WaitingGracePeriod --> ForceKilled: Grace period timeout ❌
+    WaitingGracePeriod --> GracefulShutdown: All requests complete 
+    WaitingGracePeriod --> ForceKilled: Grace period timeout 
     
     ForceKilled --> [*]: 502 errors
     GracefulShutdown --> [*]: Clean shutdown
