@@ -29,10 +29,10 @@ Set `response_grace_period` in `cerebrium.toml` to give your application time to
 response_grace_period = 300  # Seconds to wait before SIGKILL
 ```
 
-:::warning
+<Warning>
 Missing this configuration is the most common cause of 502 errors during scaling.  
-Set this to **1.5× your longest expected request duration**.
-:::
+Set this to 1.5× your longest expected request duration**.
+</Warning>
 
 ## Runtime Requirements
 
@@ -156,13 +156,13 @@ Cause: Shutdown code takes longer than response_grace_period or has infinite loo
 
 Solution: Ensure cleanup completes within the grace period and verify no blocking operations
 
-:::Tip
+<Tip>
 Test SIGTERM handling locally before deploying: start your app, send SIGTERM with `Ctrl+C`, and verify you see graceful shutdown logs.
-:::
+</Tip>
 
-:::Note
+<Note>
 Custom runtimes require three components: `response_grace_period` configuration + SIGTERM handling code + `exec` in entrypoint. Missing any of these causes 502 errors.
-:::
+</Note>
 
 ## Related Resources 
 
