@@ -9,6 +9,7 @@ Cerebrium is a shared-compute, multi-tenant environment. As such, to scale out, 
 
 ## Understanding Instance Termination
 
+```mermaid
 stateDiagram-v2
   direction LR
 
@@ -39,6 +40,7 @@ stateDiagram-v2
     Application waits for
     active requests to complete
   end note
+```
 
 For both application autoscaling and our own internal node scaling, we will send your application a SIGTERM signal, as a warning to the application that we are intending to shut down this instance. For Cortex applications, this is handled. On custom runtimes, should you wish to gracefully shut down, you will need to catch and handle this signal. Once at least responseGracePeriod has elapsed, we will send your application a SIGKILL signal, terminating the instance immediately.
 
