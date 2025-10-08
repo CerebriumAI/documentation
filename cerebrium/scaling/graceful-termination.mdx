@@ -19,36 +19,24 @@ When Cerebrium needs to terminate an instance:
 4. Sends SIGKILL if the instance hasn't stopped
 
 ```mermaid
-stateDiagram-v2
-  direction LR
-
-  [*] --> Running
-
-  Running --> SIGTERM: scale down / redeploy
-  state "SIGTERM sent" as SIGTERM
-
-  SIGTERM --> ifGrace
-  state ifGrace <<choice>>
-
-  ifGrace --> Waiting: response_grace_period configured
-  ifGrace --> ForceKilled: no response_grace_period
-
-  state "Waiting (grace period)" as Waiting
-  Waiting --> GracefulShutdown: all requests complete
-  Waiting --> ForceKilled: grace period timeout
-
-  GracefulShutdown --> [*]: clean shutdown
-  ForceKilled --> [*]: 502 errors
-
-  note right of SIGTERM
-    Cortex: Automatic
-    Custom: Must implement
-  end note
-
-  note right of Waiting
-    Application waits for
-    active requests to complete
-  end note
+flowchart TD
+    A[Scale down event] --> B[Cortex]
+    A --> C[Custom Runtime]
+    
+    B --> D[(automatically captured)]
+    C --> E[(through user capture)]
+    
+    D --> F[SIGTERM sent]
+    E --> F
+    
+    F --> G[wait for response_grace_period<br/>to force terminate]
+    
+    G --> H[exits]
+    G --> I[timeout]
+    
+    H --> J[Graceful termination]
+    I --> K[SIGKILL]
+    K --> L[Gateway Timeout Errors]
 ```
 
 Without `response_grace_period` configured, Cerebrium terminates instances immediately after sending `SIGTERM`, which can interrupt in-flight requests and cause **502 errors**.
