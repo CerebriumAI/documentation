@@ -20,8 +20,8 @@ When Cerebrium needs to terminate an instance:
 
 ```mermaid
 flowchart TD
-    A[Scale down event] --> B[Cortex]
-    A --> C[Custom Runtime]
+    A[scale down event] --> B[Cortex]
+    A --> C[custom runtime]
     
     B --> D[(automatically captured)]
     C --> E[(through user capture)]
@@ -34,9 +34,9 @@ flowchart TD
     G --> H[exits]
     G --> I[timeout]
     
-    H --> J[Graceful termination]
+    H --> J[graceful termination]
     I --> K[SIGKILL]
-    K --> L[Gateway Timeout Errors]
+    K --> L[gateway timeout errors]
 ```
 
 Without `response_grace_period` configured, Cerebrium terminates instances immediately after sending `SIGTERM`, which can interrupt in-flight requests and cause **502 errors**.
