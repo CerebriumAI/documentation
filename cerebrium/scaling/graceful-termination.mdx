@@ -1,0 +1,171 @@
+---
+title: "Preemption and Graceful Termination"
+description: "Implementing Graceful Termination of Instances by Handling Termination Signals"
+---
+
+## Graceful Termination
+
+Cerebrium runs in a shared, multi-tenant environment. To efficiently scale, optimize compute usage, and roll out updates, the platform continuously adjusts its capacity - spinning down nodes and launching new ones as needed. During this process, workloads are seamlessly migrated to new nodes. In addition, your application has its own metric-based autoscaling criteria that dictate when instances should scale or remain active, as well as handle instance shifting during new app deployments. Therefore, in order to prevent requests from ending prematurely when we mark app instances for termination, you need to implement graceful termination.
+
+## Understanding Instance Termination
+
+For both application autoscaling and our own internal node scaling, we will send your application a SIGTERM signal, as a warning to the application that we are intending to shut down this instance. For Cortex applications, this is handled. On custom runtimes, should you wish to gracefully shut down, you will need to catch and handle this signal. Once at least responseGracePeriod has elapsed, we will send your application a SIGKILL signal, terminating the instance immediately.
+
+When Cerebrium needs to terminate an instance:
+
+1. Stops routing new requests to the instance
+2. Sends SIGTERM signal to your container
+3. Waits for `response_grace_period` seconds (if configured)
+4. Sends SIGKILL if the instance hasn't stopped
+
+```mermaid
+flowchart TD
+    A[SIGTERM sent] --> B[Cortex]
+    A --> C[custom runtime]
+    
+    B --> D[automatically captured]
+    C --> E[user needs to capture]
+    
+    D --> F{request finishes}
+    D --> G{response_grace_period reached}
+    
+    E --> H{request busy}
+    E --> I{container idle}
+    
+    F --> J[graceful termination]
+    G --> K[SIGKILL]
+    K --> L[gateway timeout error]
+    
+    H --> M[Return 503]
+    I --> N[Return 200]
+    
+    M --> O{response_grace_period reached}
+    M --> P{request finishes - mark as}
+    
+    O --> Q[SIGKILL]
+    Q --> R[gateway timeout error]
+    
+    P --> S[Return 200]
+    N --> T[graceful termination]
+    S --> T
+```
+
+Without `response_grace_period` configured, Cerebrium terminates instances immediately after sending `SIGTERM`, which can interrupt in-flight requests and cause **502 errors**.
+
+<Warning>
+If `response_grace_period` is **unset or set to 0**, requests may end abruptly during scale-down or redeploys, resulting in failed responses. Set this to roughly **1.5 × your longest expected request duration**.
+</Warning>
+
+
+```toml
+[cerebrium.scaling]
+# Example: 300 seconds allows long-running requests to complete
+response_grace_period = 300
+```
+
+## Runtime Requirements
+
+Cortex runtime (default):
+SIGTERM is handled automatically. Configure response_grace_period only — no code changes required.
+
+Custom runtimes (FastAPI, Flask, etc.):
+You must implement SIGTERM handling and configure response_grace_period. Both are required.
+
+```toml
+[cerebrium.scaling]
+response_grace_period = 300
+
+[cerebrium.runtime.custom]
+port = 8000
+entrypoint = ["fastapi", "run", "app.py"]
+```
+
+## FastAPI Implementation
+
+For custom runtimes using FastAPI, implement the [`lifespan` pattern](https://fastapi.tiangolo.com/advanced/events/) to respond to SIGTERM. 
+
+The code below tracks active requests using a counter and prevents new requests during shutdown. When SIGTERM is received, it sets a shutdown flag and waits for all active requests to complete before the application terminates.
+
+```python
+from fastapi import FastAPI, HTTPException
+from contextlib import asynccontextmanager
+import asyncio
+
+active_requests = 0
+shutting_down = False
+lock = asyncio.Lock()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    yield  # Application startup complete
+    
+    # Shutdown: runs when Cerebrium sends SIGTERM
+    global shutting_down
+    shutting_down = True
+    
+    # Wait for active requests to complete
+    while active_requests > 0:
+        await asyncio.sleep(1)
+
+app = FastAPI(lifespan=lifespan)
+
+@app.middleware("http")
+async def track_requests(request, call_next):
+    global active_requests
+    if shutting_down:
+        raise HTTPException(503, "Shutting down")
+    
+    async with lock:
+        active_requests += 1
+    try:
+        return await call_next(request)
+    finally:
+        async with lock:
+            active_requests -= 1
+```
+
+## Critical: Use exec in Entrypoint
+
+Your entrypoint must use exec or SIGTERM won't reach your application:
+
+In your Dockerfile:
+
+```dockerfile
+ENTRYPOINT ["exec", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+```
+Or in cerebrium.toml:
+```toml
+[cerebrium.runtime.custom]
+entrypoint = ["fastapi", "run", "app.py", "--port", "8000"]
+
+```
+In bash scripts:
+
+```bash
+exec fastapi run app.py --port ${PORT:-8000}
+```
+
+Without exec, SIGTERM is sent to the bash script (PID 1) instead of FastAPI, so your shutdown code never runs and Cerebrium force-kills the container after the grace period.
+
+<Tip>
+Test SIGTERM handling locally before deploying: start your app, send SIGTERM with `Ctrl+C`, and verify you see graceful shutdown logs.
+</Tip>
+
+## GPU Resource Cleanup
+
+For GPU applications, explicitly release resources during shutdown:
+
+```python
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    model = load_model()
+    yield
+    # Cleanup when SIGTERM received
+    del model
+    torch.cuda.empty_cache()
+```
+
+## Related Resources 
+
+For general instance management and scaling configuration, see [Instance Management](https://docs.cerebrium.ai/cerebrium/scaling/scaling-apps#instance-management).
+
