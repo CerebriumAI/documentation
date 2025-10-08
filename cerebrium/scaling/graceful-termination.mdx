@@ -48,6 +48,7 @@ flowchart TD
     P --> S[Return 200]
     N --> T[graceful termination]
     S --> T
+```
 
 Without `response_grace_period` configured, Cerebrium terminates instances immediately after sending `SIGTERM`, which can interrupt in-flight requests and cause **502 errors**.
 
