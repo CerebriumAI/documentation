@@ -79,11 +79,7 @@ During normal replica operation, this simply corresponds to a request timeout va
 waits for the specified grace period, issues a SIGKILL command if the instance has not stopped, and kills any active requests with a GatewayTimeout error.
 
 <Note>
-  When using the cortex runtime (default) the SIGTERM signal is captured and the
-  app is given a chance to complete requests before being terminated. When using
-  a custom runtime, it is the responsibility of the user to handle the SIGTERM
-  signal and ensure that the app is given a chance to complete requests before
-  being terminated.
+  When using the Cortex runtime (default), SIGTERM signals are automatically handled to allow graceful termination of requests. For custom runtimes, you'll need to implement SIGTERM handling yourself to ensure requests complete gracefully before termination. See our [Graceful Termination guide](/cerebrium/scaling/graceful-termination) for detailed implementation examples, including FastAPI patterns for tracking and completing in-flight requests during shutdown.
 </Note>
 
 Performance metrics available through the dashboard help monitor scaling behavior:

@@ -47,6 +47,7 @@
                 "group": "Scaling apps",
                 "pages": [
                   "cerebrium/scaling/scaling-apps",
+                  "cerebrium/scaling/graceful-termination",
                   "cerebrium/scaling/batching-concurrency"
                 ]
               },
