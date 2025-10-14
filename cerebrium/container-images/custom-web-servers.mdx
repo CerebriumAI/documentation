@@ -11,7 +11,6 @@ Here's a simple FastAPI server implementation that shows how custom servers work
 
 ```python
 from fastapi import FastAPI
-
 app = FastAPI()
 
 @app.post("/hello")
@@ -53,9 +52,7 @@ The configuration requires three key parameters:
 <Info>
   For ASGI applications like FastAPI, include the appropriate server package
   (like `uvicorn`) in your dependencies. After deployment, your endpoints become
-  available at `https://api.aws.us-east-1.cerebrium.ai/v4/{project - id}/
-  {app - name}
-  /your/endpoint`.
+  available at `https://api.aws.us-east-1.cerebrium.ai/v4/[project-id]/[app-name]/your/endpoint`.
 </Info>
 
 Our [FastAPI Server Example](https://github.com/CerebriumAI/examples) provides a complete implementation.
