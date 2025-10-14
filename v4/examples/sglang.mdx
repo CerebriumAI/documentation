@@ -11,19 +11,18 @@ SGLang is being used in production by teams at xAI and Deepseek to power their c
 
 ### Key Advantages Over Traditional Inference Engines
 
-| Feature | Traditional Engines (vLLM, TGI) | SGLang |
-|---------|--------------------------------|---------|
-| **Programming Model** | Sequential API calls with manual prompt chaining | Native structured logic with `gen()`, `fork()`, `join()`, `select()` |
-| **Memory Management** | Basic KV caching, often discarded between calls | **RadixAttention**: Intelligent prefix-aware cache reuse (up to 6x faster) |
-| **Output Control** | Hope and pray for correct formatting | **Compressed FSMs**: Guaranteed structured output (JSON, XML, etc.) |
-| **Parallel Processing** | Manual batching and coordination | Built-in `fork()` and `join()` for parallel execution |
-| **Performance** | Standard inference optimization | PyTorch-native with `torch.compile()`, quantization, sparse inference |
-
-
+| Feature                 | Traditional Engines (vLLM, TGI)                  | SGLang                                                                     |
+| ----------------------- | ------------------------------------------------ | -------------------------------------------------------------------------- |
+| **Programming Model**   | Sequential API calls with manual prompt chaining | Native structured logic with `gen()`, `fork()`, `join()`, `select()`       |
+| **Memory Management**   | Basic KV caching, often discarded between calls  | **RadixAttention**: Intelligent prefix-aware cache reuse (up to 6x faster) |
+| **Output Control**      | Hope and pray for correct formatting             | **Compressed FSMs**: Guaranteed structured output (JSON, XML, etc.)        |
+| **Parallel Processing** | Manual batching and coordination                 | Built-in `fork()` and `join()` for parallel execution                      |
+| **Performance**         | Standard inference optimization                  | PyTorch-native with `torch.compile()`, quantization, sparse inference      |
 
 ### Production-Proven Performance
 
 SGLang isn't just theoretical—it's powering real applications at scale:
+
 - **xAI's Grok**: Uses SGLang for core conversational logic
 - **DeepSeek V3**: Official SGLang support across multiple hardware platforms
 - **PyTorch Ecosystem**: Now an official part of PyTorch with LMSYS backing
@@ -31,6 +30,7 @@ SGLang isn't just theoretical—it's powering real applications at scale:
 ## What We're Building: Intelligent Ad Analysis System
 
 Our application will:
+
 1. Accept an advertisement image and business context
 2. Analyze three key dimensions in parallel:
    - **Message Clarity**: How clear and understandable is the message?
@@ -41,6 +41,7 @@ Our application will:
 ## Prerequisites
 
 Before we begin, ensure you have:
+
 - Cerebrium CLI installed and configured
 - Basic Python knowledge
 - Understanding of vision-language models
@@ -127,12 +128,12 @@ class AdAnalysisResponse(BaseModel):
 @sgl.function
 def analyze_ad_aspect(s, image, aspect, business_context, target_audience, campaign_goals):
     """Analyze a specific aspect of an advertisement"""
-    
+
     s += sgl.user(f"""
 You are an expert marketing analyst. Analyze this advertisement image focusing specifically on {aspect}.
 
 Business Context: {business_context}
-Target Audience: {target_audience}  
+Target Audience: {target_audience}
 Campaign Goals: {campaign_goals}
 
 Please provide:
@@ -142,7 +143,7 @@ Please provide:
 
 Focus only on {aspect} in your analysis.
 """)
-    
+
     s += sgl.assistant_begin()
     s += "Score: "
     s += gen("score", regex=r"[1-9]|10")
@@ -152,20 +153,20 @@ Focus only on {aspect} in your analysis.
     s += gen("recommendations", max_tokens=150)
     s += sgl.assistant_end()
 
-@sgl.function  
+@sgl.function
 def comprehensive_ad_analysis(s, image, business_context, target_audience, campaign_goals):
     """Perform comprehensive ad analysis across multiple dimensions"""
-    
+
     # Define analysis aspects
     aspects = [
         "message clarity and communication effectiveness",
-        "visual design and aesthetic appeal", 
+        "visual design and aesthetic appeal",
         "call-to-action strength and conversion potential"
     ]
-    
+
     # Fork execution for parallel analysis
     forks = s.fork(len(aspects))
-    
+
     # Analyze each aspect in parallel
     for i, (fork, aspect) in enumerate(zip(forks, aspects)):
         fork += analyze_ad_aspect.run(
@@ -175,10 +176,10 @@ def comprehensive_ad_analysis(s, image, business_context, target_audience, campa
             target_audience=target_audience,
             campaign_goals=campaign_goals
         )
-    
+
     # Join results
     s += s.join(forks)
-    
+
     # Generate overall summary
     s += sgl.user("""
 Based on the three analyses above, provide:
@@ -193,13 +194,13 @@ Format as JSON:
     "actionable_insights": ["<insight1>", "<insight2>", "<insight3>"]
 }
 """)
-    
+
     s += sgl.assistant(gen("final_analysis", max_tokens=300))
 
 # Model initialization (runs once at startup)
 def load_model():
     """Initialize the SGLang runtime with Qwen3-VL model"""
-    
+
     # Set up SGLang runtime
     runtime = sgl.Runtime(
         model_path="Qwen/Qwen3-VL-30B-A3B-Instruct-FP8",
@@ -207,7 +208,7 @@ def load_model():
         tp_size=1,  # Tensor parallelism size
         trust_remote_code=True,
     )
-    
+
     sgl.set_default_backend(runtime)
     return runtime
 
@@ -223,23 +224,23 @@ def process_image(image_base64: str) -> Image.Image:
 def parse_analysis_result(result_text: str, aspect: str) -> AnalysisResult:
     """Parse SGLang output into structured result"""
     lines = result_text.strip().split('\n')
-    
+
     # Extract score
     score_line = next((line for line in lines if line.startswith('Score:')), '')
     score = int(score_line.split(':')[1].strip()) if score_line else 5
-    
+
     # Extract explanation
     explanation_start = next((i for i, line in enumerate(lines) if 'Explanation:' in line), -1)
     rec_start = next((i for i, line in enumerate(lines) if 'Recommendations:' in line), len(lines))
-    
+
     explanation = ' '.join(lines[explanation_start+1:rec_start]).strip() if explanation_start != -1 else ""
-    
+
     # Extract recommendations
     recommendations = []
     if rec_start < len(lines):
         rec_text = ' '.join(lines[rec_start+1:]).strip()
         recommendations = [rec.strip('- ').strip() for rec in rec_text.split('\n') if rec.strip()]
-    
+
     return AnalysisResult(
         aspect=aspect,
         score=score,
@@ -249,10 +250,10 @@ def parse_analysis_result(result_text: str, aspect: str) -> AnalysisResult:
 
 def analyze_ad(request: AdAnalysisRequest) -> AdAnalysisResponse:
     """Main analysis function"""
-    
+
     # Process image
     image = process_image(request.image_base64)
-    
+
     # Run comprehensive analysis
     state = comprehensive_ad_analysis.run(
         image=image,
@@ -260,18 +261,18 @@ def analyze_ad(request: AdAnalysisRequest) -> AdAnalysisResponse:
         target_audience=request.target_audience,
         campaign_goals=request.campaign_goals
     )
-    
+
     # Parse results
     aspects = ["message clarity", "visual appearance", "call-to-action"]
     analyses = []
-    
+
     # Extract individual analysis results
     for i, aspect in enumerate(aspects):
         if i < len(state.messages):
             result_text = state.messages[i].get('content', '')
             analysis = parse_analysis_result(result_text, aspect)
             analyses.append(analysis)
-    
+
     # Parse final analysis
     final_analysis_text = state.messages[-1].get('content', '{}')
     try:
@@ -283,7 +284,7 @@ def analyze_ad(request: AdAnalysisRequest) -> AdAnalysisResponse:
         overall_score = sum(a.score for a in analyses) / len(analyses) if analyses else 0
         summary = "Analysis completed successfully."
         actionable_insights = ["Review the detailed analysis for specific recommendations."]
-    
+
     return AdAnalysisResponse(
         overall_score=overall_score,
         analyses=analyses,
@@ -401,7 +402,7 @@ curl -X POST "https://api.aws.us-east-1.cerebrium.ai/v4/p-<YOUR-PROJECT-ID>/sgla
       ]
     },
     {
-      "aspect": "visual appearance", 
+      "aspect": "visual appearance",
       "score": 7,
       "explanation": "The design is modern and appealing with good use of color and typography...",
       "recommendations": [
@@ -424,7 +425,7 @@ curl -X POST "https://api.aws.us-east-1.cerebrium.ai/v4/p-<YOUR-PROJECT-ID>/sgla
   "summary": "This ad shows strong message clarity but has room for improvement in visual design and CTA optimization. The overall concept is solid with clear targeting.",
   "actionable_insights": [
     "Enhance CTA visibility with contrasting colors and urgent language",
-    "Improve visual hierarchy to guide viewer attention better", 
+    "Improve visual hierarchy to guide viewer attention better",
     "Add social proof elements to increase credibility"
   ]
 }
@@ -441,7 +442,7 @@ For analyzing multiple ads simultaneously:
 def batch_analyze_ads(s, images, business_contexts):
     """Analyze multiple ads in parallel"""
     forks = s.fork(len(images))
-    
+
     for fork, image, context in zip(forks, images, business_contexts):
         fork += comprehensive_ad_analysis.run(
             image=image,
@@ -449,7 +450,7 @@ def batch_analyze_ads(s, images, business_contexts):
             target_audience="general",
             campaign_goals="increase engagement"
         )
-    
+
     return s.join(forks)
 ```
 
@@ -462,14 +463,14 @@ Extend the analysis with custom business metrics:
 def analyze_with_custom_criteria(s, image, criteria_list):
     """Analyze ad against custom business criteria"""
     forks = s.fork(len(criteria_list))
-    
+
     for fork, criterion in zip(forks, criteria_list):
         fork += f"Evaluate this ad specifically for: {criterion}\n"
         fork += "Score (1-10): "
         fork += gen("score", regex=r"[1-9]|10")
         fork += "\nReasoning: "
         fork += gen("reasoning", max_tokens=100)
-    
+
     return s.join(forks)
 ```
 
@@ -483,14 +484,14 @@ import logging
 
 def predict(request: AdAnalysisRequest) -> Dict[str, Any]:
     start_time = time.time()
-    
+
     try:
         result = analyze_ad(request)
-        
+
         # Log performance metrics
         processing_time = time.time() - start_time
         logging.info(f"Ad analysis completed in {processing_time:.2f}s")
-        
+
         return {
             **result.dict(),
             "processing_time": processing_time
@@ -511,17 +512,21 @@ def predict(request: AdAnalysisRequest) -> Dict[str, Any]:
 ## Troubleshooting Common Issues
 
 ### Memory Issues
+
 If you encounter CUDA out of memory errors:
+
 - Reduce `max_tokens` in generation calls
 - Use model quantization (FP8 is already optimized)
 - Consider using multiple smaller GPUs with tensor parallelism
 
 ### Slow Cold Starts
+
 - Increase `min_replicas` to 1 for faster response times
 - Use smaller models for development/testing
 - Implement model caching strategies
 
 ### Output Formatting Issues
+
 - Verify your regex patterns in `gen()` calls
 - Use more specific stop tokens
 - Implement fallback parsing logic
