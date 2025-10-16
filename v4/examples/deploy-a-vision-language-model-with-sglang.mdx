@@ -153,7 +153,7 @@ def health():
 In order to score the advertisement, we will be using one of the core differentiators of SGLang, `fork`, which allows us to run many prompts in parallel and bring the results together in the end. This
 allows us to execute alot of simulaneous requests with no increase in total latency. Lastly, we bring these results together and structure them in a specific format to return to the user.
 
-````python
+```python
 @function
 def analyze_ad(s, image, ad_description, dimensions):
     s += sgl.system("Evaluate an advertisement about an company's description.")
