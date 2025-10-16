@@ -153,7 +153,7 @@ def health():
 In order to score the advertisement, we will be using one of the core differentiators of SGLang, `fork`, which allows us to run many prompts in parallel and bring the results together in the end. This
 allows us to execute alot of simulaneous requests with no increase in total latency. Lastly, we bring these results together and structure them in a specific format to return to the user.
 
-````python
+```python
 @function
 def analyze_ad(s, image, ad_description, dimensions):
     s += sgl.system("Evaluate an advertisement about an company's description.")
@@ -256,21 +256,19 @@ curl -X POST "https://api.aws.us-east-1.cerebrium.ai/v4/p-<YOUR-PROJECT-ID>/7-vi
 
 ```json
 {
-    "success": true,
-    "analysis": {
-        "summary": "The company description is relevant to the image because it accurately reflects Nike's branding, which is showcased through the advertised sneaker and logo. The ad promotes Nike's core products—athletic footwear—and its values of performance, style, and inspiration, aligning with the brand's identity. The collaboration with a superhero theme further emphasizes innovation and empowerment, core ",
-        "grade": "A"
-    },
-    "dimensions_evaluated": [
-        "Effectiveness",
-        "Clarity",
-        "Appeal",
-        "Credibility"
-    ]
+  "success": true,
+  "analysis": {
+    "summary": "The company description is relevant to the image because it accurately reflects Nike's branding, which is showcased through the advertised sneaker and logo. The ad promotes Nike's core products—athletic footwear—and its values of performance, style, and inspiration, aligning with the brand's identity. The collaboration with a superhero theme further emphasizes innovation and empowerment, core ",
+    "grade": "A"
+  },
+  "dimensions_evaluated": ["Effectiveness", "Clarity", "Appeal", "Credibility"]
 }
 ```
 
 We've demonstrated a simple application how to leverage SGLang's powerful structured generation capabilities to build a naive ad analysis system. By using features like `fork()` for parallel processing and SGLang's built-in output control.
 
 You can find the complete code for this tutorial in our [examples repository](https://github.com/CerebriumAI/examples/tree/master/5-large-language-models/7-vision-language-sglang).
-````
+
+```
+
+```
