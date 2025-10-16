@@ -28,7 +28,7 @@ To give you quick example, here are some primitives on the frontend you can use 
 | `select()` | Chooses one option from many | For controlled logic, like multiple choice |
 
 
-![SGLang Architecture](/images/examples/sglang-arch.png)
+![SGLang Architecture](/images/sglang-arch.png)
 
 
 Here is a summary of key advantages over traditional inference engines
@@ -43,7 +43,7 @@ Here is a summary of key advantages over traditional inference engines
 
 
 If you would like to read more, checkout this [article](https://huggingface.co/blog/paresh2806/sglang-efficient-llm-workflows). Let us show this in practice with our tutorial.
-You can see the final code sample [here]()
+You can see the final code sample [here](https://github.com/CerebriumAI/examples/tree/master/5-large-language-models/7-vision-language-sglang)
 
 ## Tutorial
 
@@ -79,6 +79,7 @@ Update your cerebrium.toml with:
 name = "7-vision-language-sglang"
 python_version = "3.11"
 docker_base_image_url = "nvidia/cuda:12.8.0-devel-ubuntu22.04"
+deployment_initialization_timeout = 860
 
 [cerebrium.hardware]
 cpu = 6.0
@@ -158,29 +159,28 @@ allows us to execute alot of simulaneous requests with no increase in total late
 ```python
 @function
 def analyze_ad(s, image, ad_description, dimensions):
-    s += sgl.system("Evaluate an advertisement about an image.")
-    s += sgl.user(sgl.image(image) + "Advertisement: " + ad_description)
+    s += sgl.system("Evaluate an advertisement about an company's description.")
+    s += sgl.user(sgl.image(image) + "Company Description: " + ad_description)
     s += sgl.assistant("Sure!")
 
-    s += sgl.user("Is the advertisement related to the image?")
+    s += sgl.user("Is the company description related to the image?")
     s += sgl.assistant(sgl.select("related", choices=["yes", "no"]))
     if s["related"] == "no":
         return
 
     forks = s.fork(len(dimensions))
-    for f, dim in zip(forks, dimensions):
+    for i, (f, dim) in enumerate(zip(forks, dimensions)):
         f += sgl.user("Evaluate based on the following dimension: " +
                       dim + ". End your judgment with the word 'END'")
-        f += sgl.assistant("Judgment: " + sgl.gen("judgment", stop="END"))
+        # Use unique slot names per dimension to avoid collisions
+        f += sgl.assistant("Judgment: " + sgl.gen(f"judgment_{i}", stop="END"))
 
-    s += sgl.user("Provide the judgment, summary, and a letter grade")
-    s += sgl.assistant(sgl.gen("judgment", stop=".") +
-                       " The grade of it is" + sgl.gen("grade"))
+    s += sgl.user("Provide a one-sentence synthesis of the overall evaluation, then we will output JSON.")
+    s += sgl.assistant(sgl.gen("summary_one_liner", stop="."))
 
-    # Constrain output to a simple JSON object with literal braces; escape braces and period
-    schema = r'^\{"summary": "[\w\d\s]+\.", "grade": "[ABCD][+\-]?"\}$'
-    s += sgl.user("Return in the JSON format.")
-    s += sgl.assistant("```json\n" + sgl.gen("output", regex=schema))
+    schema = r'^\{"summary": ".{1,400}", "grade": "[ABCD][+\-]?"\}$'
+    s += sgl.user("Return only a 3 line parapgrah JSON object with keys summary and grade (A, B, C, D, +, -), where summary briefly synthesizes the above judgments.")
+    s += sgl.assistant(sgl.gen("output", regex=schema))
 ```
 
 To end, let us bring it all together in an endpoint and 
@@ -205,9 +205,7 @@ def process_image(image_base64: str) -> Image.Image:
 def analyze_advertisement(req: AnalyzeRequest):
     try:
         image = process_image(req.image_base64)
-        # Ensure engine exists before running program (sets default engine)
-        state = analyze_ad.run(image, req.ad_description)
-        # The program emitted fenced JSON; extract and parse it if present
+        state = analyze_ad.run(image, req.ad_description, req.dimensions)
         try:
             print(state)
             output = state["output"]
@@ -222,7 +220,6 @@ def analyze_advertisement(req: AnalyzeRequest):
                     "analysis": json.loads(output[start:end]),
                     "dimensions_evaluated": req.dimensions
                 }
-        # Fallback: return raw
         return {
             "success": True,
             "analysis": output,
@@ -250,58 +247,32 @@ Once deployed, test your application with a sample request:
 curl -X POST "https://api.aws.us-east-1.cerebrium.ai/v4/p-<YOUR-PROJECT-ID>/7-vision-language-sglang/analyze" \
   -H "Content-Type: application/json" \
   -d '{
-    "ad_description": "",
-    "image_base64": "<BASE^$_ENCODED_IMAGE>",
-    "dimensions": [""]
+    "company_description": "Nike is a global leader in athletic footwear, apparel, and sports equipment known for its innovative designs and the iconic “swoosh” logo. The brand embodies performance, style, and inspiration, empowering athletes worldwide to Just Do It."",
+    "image_base64": "<BASE64_ENCODED_IMAGE>",
+    "dimensions": ["Effectiveness","Clarity", "Appeal","Credibility"]
   }'
 ```
+
+<img src="/images/sglang_advertisement.jpg" alt="Nike AD" width="400" />
 
 ### Example Response
 
 ```json
 {
-  "overall_score": 7.3,
-  "analyses": [
-    {
-      "aspect": "message clarity",
-      "score": 8,
-      "explanation": "The headline is clear and compelling, directly addressing the target audience's pain point...",
-      "recommendations": [
-        "Consider adding a subheadline for additional context",
-        "Use more action-oriented language",
-        "Highlight the unique value proposition more prominently"
-      ]
+    "success": true,
+    "analysis": {
+        "summary": "The company description is relevant to the image because it accurately reflects Nike's branding, which is showcased through the advertised sneaker and logo. The ad promotes Nike's core products—athletic footwear—and its values of performance, style, and inspiration, aligning with the brand's identity. The collaboration with a superhero theme further emphasizes innovation and empowerment, core ",
+        "grade": "A"
     },
-    {
-      "aspect": "visual appearance",
-      "score": 7,
-      "explanation": "The design is modern and appealing with good use of color and typography...",
-      "recommendations": [
-        "Improve contrast for better readability",
-        "Consider using higher quality product images",
-        "Add more white space for cleaner look"
-      ]
-    },
-    {
-      "aspect": "call-to-action",
-      "score": 7,
-      "explanation": "The CTA button is visible but could be more prominent...",
-      "recommendations": [
-        "Use more contrasting colors for the CTA button",
-        "Make the CTA text more specific and urgent",
-        "Consider adding a secondary CTA option"
-      ]
-    }
-  ],
-  "summary": "This ad shows strong message clarity but has room for improvement in visual design and CTA optimization. The overall concept is solid with clear targeting.",
-  "actionable_insights": [
-    "Enhance CTA visibility with contrasting colors and urgent language",
-    "Improve visual hierarchy to guide viewer attention better",
-    "Add social proof elements to increase credibility"
-  ]
+    "dimensions_evaluated": [
+        "Effectiveness",
+        "Clarity",
+        "Appeal",
+        "Credibility"
+    ]
 }
 ```
 
 We've demonstrated a simple application how to leverage SGLang's powerful structured generation capabilities to build a naive ad analysis system. By using features like `fork()` for parallel processing and SGLang's built-in output control. 
 
-You can find the complete code for this tutorial in our [examples repository](https://github.com/CerebriumAI/examples/tree/main/7-vision-language-sglang).
+You can find the complete code for this tutorial in our [examples repository](https://github.com/CerebriumAI/examples/tree/master/5-large-language-models/7-vision-language-sglang).
