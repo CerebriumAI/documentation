@@ -15,7 +15,7 @@ When Cerebrium needs to terminate an contanier, we do the following:
 
 1. Stop routing new requests to the container.
 2. Send a SIGTERM signal to your container.
-3. Waits for `response_grace_period` seconds to elaspse. 
+3. Waits for `response_grace_period` seconds to elaspse.
 4. Sends SIGKILL if the container hasn't stopped
 
 Below is a chart that shows it more eloquently:
@@ -24,30 +24,29 @@ Below is a chart that shows it more eloquently:
 flowchart TD
     A[SIGTERM sent] --> B[Cortex]
     A --> C[Custom Runtime]
-    
+
     B --> D[automatically captured]
     C --> E[User needs to capture]
-    
+
     D --> F[request finishes]
     D --> G[response_grace_period reached]
-    
+
     E --> H[User logic]
-    
+
     F --> I[Graceful termination]
     G --> J[SIGKILL]
-    
+
     H --> O[Graceful termination]
     H --> G[response_grace_period reached]
-    
+
     J --> K[Gateway Timeout Error]
 ```
 
 If you do not handle SIGTERM in the custom runtime, Cerebrium terminates containers immediately after sending `SIGTERM`, which can interrupt in-flight requests and cause **502 errors**.
 
-
 ## Example: FastAPI Implementation
 
-For custom runtimes using FastAPI, implement the [`lifespan` pattern](https://fastapi.tiangolo.com/advanced/events/) to respond to SIGTERM. 
+For custom runtimes using FastAPI, implement the [`lifespan` pattern](https://fastapi.tiangolo.com/advanced/events/) to respond to SIGTERM.
 
 The code below tracks active requests using a counter and prevents new requests during shutdown. When SIGTERM is received, it sets a shutdown flag and waits for all active requests to complete before the application terminates.
 
@@ -63,11 +62,11 @@ lock = asyncio.Lock()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     yield  # Application startup complete
-    
+
     # Shutdown: runs when Cerebrium sends SIGTERM
     global shutting_down
     shutting_down = True
-    
+
     # Wait for active requests to complete
     while active_requests > 0:
         await asyncio.sleep(1)
@@ -79,7 +78,7 @@ async def track_requests(request, call_next):
     global active_requests
     if shutting_down:
         raise HTTPException(503, "Shutting down")
-    
+
     async with lock:
         active_requests += 1
     try:
@@ -96,12 +95,15 @@ In your Dockerfile:
 ```dockerfile
 ENTRYPOINT ["exec", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
+
 Or in cerebrium.toml:
+
 ```toml
 [cerebrium.runtime.custom]
 entrypoint = ["fastapi", "run", "app.py", "--port", "8000"]
 
 ```
+
 In bash scripts:
 
 ```bash
@@ -111,5 +113,6 @@ exec fastapi run app.py --port ${PORT:-8000}
 Without exec, SIGTERM is sent to the bash script (PID 1) instead of FastAPI, so your shutdown code never runs and Cerebrium force-kills the container after the grace period.
 
 <Tip>
-Test SIGTERM handling locally before deploying: start your app, send SIGTERM with `Ctrl+C`, and verify you see graceful shutdown logs.
+  Test SIGTERM handling locally before deploying: start your app, send SIGTERM
+  with `Ctrl+C`, and verify you see graceful shutdown logs.
 </Tip>
