@@ -80,7 +80,8 @@
                 "pages": [
                   "cerebrium/partner-services/index",
                   "cerebrium/partner-services/deepgram",
-                  "cerebrium/partner-services/rime"
+                  "cerebrium/partner-services/rime",
+                  "cerebrium/partner-services/assemblyai"
                 ]
               },
               {

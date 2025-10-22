@@ -1,0 +1,94 @@
+---
+title: AssemblyAI
+description: Deploy AssemblyAI speech-to-text services on Cerebrium
+---
+
+<Note>
+  AssemblyAI Partner Service is available from CLI version 1.51.0 and greater
+</Note>
+
+Cerebrium's partnership with [AssemblyAI](https://www.assemblyai.com/) helps teams deliver speech-to-text (STT) services with efficient deployment, minimized latency, and region selection for data privacy compliance needs.
+
+## Setup
+
+1. Contact the AssemblyAI team in order to get a self-hosted Contract. You can contact them [here](support@assemblyai.com)
+
+2. Create a simple cerebrium app with the CLI:
+
+```bash
+cerebrium init assembly-ai
+```
+
+3. AssemblyAI services use a simplified TOML configuration with the `[cerebrium.runtime.assemblyai]` section. Create a `cerebrium.toml` file with the following:
+
+```toml
+[cerebrium.deployment]
+name = "assembly-ai"
+disable_auth = true
+
+[cerebrium.runtime.assemblyai]
+port = 8080
+model_name = "english"
+
+[cerebrium.hardware]
+cpu = 4
+memory = 16
+compute = "AMPERE_A10"
+gpu_count = 1
+region = "us-east-1"
+
+[cerebrium.scaling]
+min_replicas = 1
+max_replicas = 3
+cooldown = 120
+replica_concurrency = 32
+scaling_metric = "concurrency_utilization"
+scaling_target = 70
+```
+
+<Note>
+  The above disables auth meaning anyone can make requests to your endpoint. If you set disable_auth=false, then
+  you need to use the API key from your Cerebrium Dashboard.
+  key
+</Note>
+
+4. Run `cerebrium deploy` to deploy the AssemblyAI service - the output of which should appear as follows:
+
+```
+App Dashboard: https://dashboard.cerebrium.ai/projects/p-xxxxxxxx/apps/p-xxxxxxxx-assembly-ai
+```
+
+5. Use the Deployment url from the output to send requests to the <b>WS</b> AssemblyAI service. We can use their [example repo](https://github.com/AssemblyAI/streaming-self-hosting-stack) to test its working
+
+```
+1. git clone https://github.com/AssemblyAI/streaming-self-hosting-stack.git
+2. cd streaming_example && python example_with_prerecorded_audio_file.py --audio-file example_audio_file.wav --endpoint wss://api.aws.us-east-1.cerebrium.ai/v4/p-xxxxxx/assembly-ai --language english
+```
+You should then see the following output:
+```
+0:00:01.040000-0:00:01.200000, end-of-turn: False: it's true
+0:00:01.040000-0:00:01.280000, end-of-turn: False: it's true that
+0:00:01.040000-0:00:01.600000, end-of-turn: False: it's true that assem
+0:00:01.040000-0:00:01.680000, end-of-turn: False: it's true that assembly
+0:00:01.040000-0:00:02.080000, end-of-turn: False: it's true that assembly a
+0:00:01.040000-0:00:02.160000, end-of-turn: False: it's true that assembly ai
+0:00:01.040000-0:00:02.320000, end-of-turn: False: it's true that assembly ai lets
+0:00:01.040000-0:00:02.400000, end-of-turn: False: it's true that assembly ai lets you
+0:00:01.040000-0:00:02.560000, end-of-turn: False: it's true that assembly ai lets you build
+```
+
+
+## Scaling and Concurrency
+
+AssemblyAI services support independent scaling configurations:
+
+- **min_replicas**: Minimum instances to maintain (0 for scale-to-zero). Recommended: 1.
+- **max_replicas**: Maximum instances during high load.
+- **replica_concurrency**: Concurrent requests per instance. Recommended: 3.
+- **cooldown**: Seconds an instance remains active after last request. Recommended: 32.
+- **compute**: Instance type. Recommended: `AMPERE_A10`.
+
+Adjust these parameters based on traffic patterns and latency requirements. Best would be to consult the Rime team
+about concurrency and scalability
+
+For further documentation on AssemblyAI, see the [AssemblyAI documentation](https://www.assemblyai.com/docs/deployment/self-hosted-streaming#getting-the-latest-instructions).
