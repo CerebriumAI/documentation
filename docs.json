@@ -72,6 +72,10 @@
                 ]
               },
               {
+                "group": "Networking",
+                "pages": ["cerebrium/networking/custom-domains", "cerebrium/networking/inter-cluster-routing"]
+              },
+              {
                 "group": "Storage",
                 "pages": ["cerebrium/storage/managing-files"]
               },

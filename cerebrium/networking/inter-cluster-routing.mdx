@@ -1,0 +1,29 @@
+---
+title: "Inter-cluster routing"
+description: "Route to your apps privately in cluster with minimal latency"
+---
+
+Inter-cluster routing enables direct, low-latency communication between your Cerebrium apps within the same region. This private networking feature allows apps to communicate without traversing the public internet, reducing latency and improving performance.
+This is ideal for low-latency use cases and allows your applications/services to scale independently based on your configured scaling parameters.
+
+Inter-cluster routing provides:
+
+- **Low latency**: Direct container-to-container communication within the same region (~0.3–1 ms typical)
+- **High bandwidth**: Up to 50 Gbps between containers
+- **No public internet**: Apps communicate directly without external routing
+- **Observablity**: All requests appear in your Cerebrium dashboard with full logs, payloads, and latency metrics
+
+
+## How It Works
+
+![Inter-cluster Routing](/images/inter-cluster-routing.png)
+
+When one app communicates with another within the same region, the request is routed through Cerebrium’s local proxy layer. This proxy acts as the bridge between applications, ensuring every request remains inside the regional cluster while still benefiting from authentication, observability, and scaling enforcement. All communication follows the same security standards as our public API server — every request is authenticated unless you’ve explicitly disabled authentication. If authentication is disabled without custom security in place, other apps within the same cluster will be able to access your endpoint.
+
+The proxy ensures that requests adhere to the [scaling parameters](../../scaling/scaling-apps) you’ve configured, including concurrency and RPS-based autoscaling, so your services continue to scale predictably and efficiently as traffic grows. It also supports multiple communication protocols, allowing apps to interact over HTTP, WebSocket, or batch job execution depending on the use case — whether you’re streaming data, chaining models, or triggering asynchronous workloads.
+
+Apps communicate using a consistent internal endpoint format: ```http://api.aws/v4/<project_id>/<app_name>/<func_name>```
+
+This endpoint pattern remains the same across all regions, so you don’t need to update URLs when deploying to multiple locations. Inter-cluster routing only works between applications deployed within the same region, ensuring that traffic remains private and low latency. Despite passing through the local proxy for authentication and routing, requests never traverse the public internet — they stay fully contained within the cluster network, achieving typical latencies of 0.3–1 ms and bandwidth up to 50 Gbps between containers.
+
+<Note>Currently gRPC is unsupported but is on our roadmap</Note>
