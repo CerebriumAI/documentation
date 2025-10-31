@@ -44,73 +44,142 @@ flowchart TD
 
 If you do not handle SIGTERM in the custom runtime, Cerebrium terminates containers immediately after sending `SIGTERM`, which can interrupt in-flight requests and cause **502 errors**.
 
-## Example: FastAPI Implementation
+## Implementation
 
 For custom runtimes using FastAPI, implement the [`lifespan` pattern](https://fastapi.tiangolo.com/advanced/events/) to respond to SIGTERM.
 
-The code below tracks active requests using a counter and prevents new requests during shutdown. When SIGTERM is received, it sets a shutdown flag and waits for all active requests to complete before the application terminates.
+### main.py
+
+Create a new file named `main.py` with the following:
 
 ```python
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from contextlib import asynccontextmanager
 import asyncio
+from dataclasses import dataclass
 
-active_requests = 0
-shutting_down = False
-lock = asyncio.Lock()
+@dataclass
+class AppState:
+    active_requests: int = 0
+    shutting_down: bool = False
+    shutdown_event: asyncio.Event = None
+    lock: asyncio.Lock = None
+
+    def __post_init__(self):
+        if self.shutdown_event is None:
+            self.shutdown_event = asyncio.Event()
+        if self.lock is None:
+            self.lock = asyncio.Lock()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    yield  # Application startup complete
+    app.state.app_state = AppState()
+    yield
 
-    # Shutdown: runs when Cerebrium sends SIGTERM
-    global shutting_down
-    shutting_down = True
+    state = app.state.app_state
+    state.shutting_down = True
 
-    # Wait for active requests to complete
-    while active_requests > 0:
-        await asyncio.sleep(1)
+    if state.active_requests > 0:
+        try:
+            await asyncio.wait_for(state.shutdown_event.wait(), timeout=30.0)
+        except asyncio.TimeoutError:
+            pass
 
 app = FastAPI(lifespan=lifespan)
 
 @app.middleware("http")
-async def track_requests(request, call_next):
-    global active_requests
-    if shutting_down:
-        raise HTTPException(503, "Shutting down")
+async def track_requests(request: Request, call_next):
+    state: AppState = request.app.state.app_state
 
-    async with lock:
-        active_requests += 1
+    async with state.lock:
+        if state.shutting_down:
+            raise HTTPException(status_code=503, detail="Service shutting down")
+        state.active_requests += 1
+
     try:
-        return await call_next(request)
+        response = await call_next(request)
+        return response
     finally:
-        async with lock:
-            active_requests -= 1
+        async with state.lock:
+            state.active_requests -= 1
+            if state.shutting_down and state.active_requests == 0:
+                state.shutdown_event.set()
+
+@app.get("/ready")
+async def ready(request: Request):
+    state: AppState = request.app.state.app_state
+
+    async with state.lock:
+        if state.shutting_down:
+            raise HTTPException(status_code=503, detail="Not ready - shutting down")
+
+    return {"status": "ready", "active_requests": state.active_requests}
+
+@app.post("/hello")
+def hello():
+    return {"message": "Hello Cerebrium!"}
 ```
 
-Your entrypoint must use exec or SIGTERM won't reach your application:
+### cerebrium.toml
 
-In your Dockerfile:
-
-```dockerfile
-ENTRYPOINT ["exec", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
-```
-
-Or in cerebrium.toml:
+If you already have a `cerebrium.toml` file, add or update these sections. If you don't have one, create a new file with the following:
 
 ```toml
+[cerebrium.deployment]
+name = "your-app-name"
+include = ["./*"]
+exclude = [".*"]
+
+[cerebrium.hardware]
+cpu = 1
+memory = 1.0
+compute = "CPU"
+gpu_count = 0
+provider = "aws"
+region = "us-east-1"
+
+[cerebrium.scaling]
+min_replicas = 0
+max_replicas = 2
+cooldown = 30
+replica_concurrency = 1  # Must match max_concurrency in your AppState
+
 [cerebrium.runtime.custom]
-entrypoint = ["fastapi", "run", "app.py", "--port", "8000"]
-
+port = 8000
+dockerfile_path = "./Dockerfile"
 ```
 
-In bash scripts:
+**Key configuration notes:**
+- `replica_concurrency` should match `max_concurrency` in your `AppState` class (if you add that field)
+- `port` must match the port in your Dockerfile CMD
+- Adjust hardware settings based on your application needs
 
-```bash
-exec fastapi run app.py --port ${PORT:-8000}
+### Dockerfile
+
+Create a new file named `Dockerfile` with the following:
+
+```dockerfile
+FROM python:3.12-bookworm
+COPY . .
+RUN pip install -r requirements.txt
+EXPOSE 8000
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
-Without exec, SIGTERM is sent to the bash script (PID 1) instead of FastAPI, so your shutdown code never runs and Cerebrium force-kills the container after the grace period.
+### requirements.txt
+
+Add to your existing `requirements.txt` or create a new file with:
+
+```
+fastapi[standard]
+```
+
+## Key Points
+
+- The `/ready` endpoint is essential for proper load balancing during scaling events
+- Without a proper `/ready` endpoint, Cerebrium uses TCP ping which only checks if the port is open, potentially routing traffic to replicas that are shutting down
+- The 30-second shutdown timeout in the lifespan function is configurable
+- All request tracking uses asyncio locks to ensure thread safety
 
 <Tip>
   Test SIGTERM handling locally before deploying: start your app, send SIGTERM
