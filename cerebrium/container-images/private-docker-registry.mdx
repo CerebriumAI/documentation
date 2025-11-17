@@ -1,0 +1,372 @@
+---
+title: "Private Docker Registry Guide"
+description: "Use private Docker images from Docker Hub, AWS ECR, GCR, and other registries as base images for your deployments."
+---
+
+## Overview
+
+Cerebrium now supports using private Docker images as base images for your deployments. This means you can use custom images from Docker Hub, AWS ECR, Google Container Registry, or any Docker-compatible private registry.
+
+## How It Works
+
+When you deploy with Cerebrium:
+
+1. You specify your base image in cerebrium.toml
+2. Cerebrium reads your Docker credentials from ~/.docker/config.json
+3. The build system uses these credentials to pull your private image
+4. Your app is built on top of your custom base image
+
+## Prerequisites
+
+### Required:
+
+- Cerebrium CLI (latest version)
+- Docker installed locally
+- Access to a private Docker registry
+
+### Platform Architecture Requirement:
+<Warning>
+**Important:** Your Docker images MUST support `linux/amd64` architecture. This is required for Cerebrium's build environment.
+</Warning>
+
+### Supported Registries:
+
+- Docker Hub
+- AWS ECR (Elastic Container Registry)
+- Google Container Registry (GCR)
+- Azure Container Registry (ACR)
+- GitLab Container Registry
+- Any Docker-compatible registry
+
+## Step-by-Step Setup
+
+### Step 1: Login to Your Registry
+
+Choose your registry type and login:
+
+**Docker Hub:**
+
+```bash
+docker login
+# Enter username and password/token when prompted
+```
+
+**AWS ECR:**
+
+```bash
+aws ecr get-login-password --region us-east-1 | \
+  docker login --username AWS --password-stdin \
+  123456789.dkr.ecr.us-east-1.amazonaws.com
+```
+
+**Google Container Registry:**
+
+```bash
+gcloud auth configure-docker
+```
+
+**Generic Registry:**
+
+```bash
+docker login registry.company.com
+# Enter credentials when prompted
+```
+
+### Step 2: Verify Login
+
+Check that your credentials are saved:
+
+```bash
+cat ~/.docker/config.json | jq '.auths | keys'
+```
+
+You should see your registry URL(s) listed.
+
+### Step 3: Configure Your Project
+
+Edit your cerebrium.toml:
+
+```toml
+[cerebrium.deployment]
+name = "my-app"
+python_version = "3.11"
+docker_base_image_url = "your-registry.com/your-org/your-image:tag"
+
+# Examples:
+# docker_base_image_url = "mycompany/ml-base:v2.1"  # Docker Hub
+# docker_base_image_url = "123456.dkr.ecr.us-east-1.amazonaws.com/ml-base:latest"  # ECR
+# docker_base_image_url = "gcr.io/project-id/ml-base:latest"  # GCR
+```
+
+### Step 4: Deploy
+
+Simply run:
+
+```bash
+cerebrium deploy
+```
+
+Cerebrium will automatically:
+- Detect your Docker credentials
+- Send them securely with your deployment
+- Use them to pull your private base image
+- Build your application on top
+
+## Security Notes
+
+### How Your Credentials Are Protected:
+
+1. **In Transit:** Credentials are sent over HTTPS
+2. **In Storage:** Stored in DynamoDB with automatic TTL-based deletion after build completion
+3. **In Logs:** Never logged or displayed (using obfuscated.String type)
+4. **In Build:** Only accessible during build, then discarded
+
+### Best Practices:
+
+- Use access tokens instead of passwords
+- Rotate tokens regularly
+- Use read-only tokens when possible
+- For teams, consider using shared organization credentials
+
+## Troubleshooting
+
+### Error: "Invalid baseImage"
+
+```
+API error (400): Invalid baseImage 'mycompany/ml-base:latest'
+```
+
+**Solution:** Make sure you're logged into your registry before deploying.
+
+### Error: "pull access denied"
+
+**Full Error:**
+```
+Build failed - Authentication failed for private registry. 
+Please verify your Docker credentials and ensure you're logged in.
+```
+
+**Solution:**
+1. Verify your Docker login: `docker pull your-image:tag`
+2. Re-login to your registry
+3. Try deploying again
+
+### Error: "no match for platform in manifest"
+
+**Full Error:**
+```
+Build failed - Your Docker image doesn't support linux/amd64 platform. 
+Please rebuild your image with: docker buildx build --platform linux/amd64
+```
+
+**Solution:** Your image needs to support linux/amd64. Build multi-platform:
+
+```bash
+docker buildx build --platform linux/amd64,linux/arm64 \
+  -t your-image:tag --push .
+```
+
+### Error: "manifest unknown" or "not found"
+
+**Full Error:**
+```
+Build failed - Docker image not found. 
+Please verify the image name and tag exist in your registry.
+```
+
+**Solution:** Double-check your image name and tag in cerebrium.toml match exactly what's in your registry.
+
+## Real-World Example: Custom vLLM Image
+
+### Scenario:
+
+> "We have a custom docker image that we've already built based on nvidia/cuda:12.8.0-devel-ubuntu22.04 to run a slightly modified vLLM setup, but it's a private image. Is there a way to specify credentials for a docker registry so we can specify it in the base image url?"
+
+### Solution Walkthrough:
+
+### 1. First, login to your registry where the image is hosted:
+
+If it's on Docker Hub:
+
+```bash
+docker login
+Username: yourcompany
+Password: <your-access-token>
+# ✓ Login Succeeded
+```
+
+If it's on AWS ECR:
+
+```bash
+# For ECR, always build with the correct platform:
+aws ecr get-login-password --region us-east-1 | \
+  docker login --username AWS --password-stdin \
+  123456789.dkr.ecr.us-east-1.amazonaws.com
+
+# When building your image for ECR:
+docker buildx build --platform linux/amd64 \
+  -t 123456789.dkr.ecr.us-east-1.amazonaws.com/vllm-custom:latest \
+  --push .
+```
+
+### 2. Verify you can pull your image locally:
+
+```bash
+docker pull yourcompany/vllm-custom:latest
+# Should successfully download
+```
+
+### 3. Create your Cerebrium project:
+
+```bash
+cerebrium init
+```
+
+### 4. Configure cerebrium.toml with your private image:
+
+```toml
+[cerebrium]
+name = "vllm-api"
+python_version = "3.11"
+docker_base_image_url = "yourcompany/vllm-custom:latest"  # Your private image
+region = "us-east-1"
+provider = "aws"
+
+[cerebrium.hardware]
+compute = "AMPERE_A10"
+gpu_count = 1
+cpu = 4
+memory = 16.0
+
+[cerebrium.scaling]
+min_replicas = 0
+max_replicas = 2
+```
+
+### 5. Add your vLLM inference code:
+
+main.py:
+
+```python
+from vllm import LLM, SamplingParams
+from cerebrium import get_secret
+
+# Your custom vLLM setup is already in the base image
+llm = LLM(model="meta-llama/Llama-2-7b-hf")
+
+def generate(prompt: str, max_tokens: int = 100):
+    sampling_params = SamplingParams(
+        temperature=0.8,
+        max_tokens=max_tokens
+    )
+    outputs = llm.generate([prompt], sampling_params)
+    return {"text": outputs[0].outputs[0].text}
+```
+
+### 6. Deploy:
+
+```bash
+cerebrium deploy
+# Output:
+# ✓ Loaded 3 files
+# ✓ Created app (Build ID: build-abc123)
+# Building app...
+# [Docker auth detected for private registry]
+# [Pulling yourcompany/vllm-custom:latest...]
+# ✓ Build complete!
+# ✓ vllm-api is now live!
+```
+
+### 7. Test your deployment:
+
+```bash
+curl -X POST https://api.cerebrium.ai/v4/your-project/vllm-api/generate \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"prompt": "Hello, world!"}'
+```
+
+### What Just Happened:
+
+1. Cerebrium detected your Docker credentials from ~/.docker/config.json
+2. Sent them securely with your deployment request
+3. The build system authenticated with your registry
+4. Pulled your custom vllm-custom:latest image
+5. Built your application on top of it
+6. Deployed successfully!
+
+## Advanced Usage
+
+### Multiple Registries
+
+You can authenticate to multiple registries simultaneously. Each registry's credentials are isolated:
+- Cerebrium's own registry credentials are never overwritten
+- Each private registry maintains its own authentication
+
+```bash
+# Login to Docker Hub
+docker login
+
+# Also login to ECR
+aws ecr get-login-password | docker login --username AWS ...
+
+# Also login to GCR  
+gcloud auth configure-docker
+
+# All credentials will be available during build!
+```
+
+### Using Custom Dockerfile
+
+If you need full control, provide your own Dockerfile:
+
+1. Create a Dockerfile in your project root:
+
+```dockerfile
+FROM yourcompany/vllm-custom:latest
+
+# Your custom setup
+COPY . /app
+ENTRYPOINT ["python", "main.py"]
+```
+
+2. Reference it in cerebrium.toml:
+
+```toml
+[cerebrium.deployment]
+dockerfile_path = "./Dockerfile"
+```
+
+3. The Dockerfile will be included automatically during deployment
+
+### How Custom Dockerfiles Work:
+
+1. When you specify `dockerfile_path` in the `[cerebrium.deployment]` section
+2. The CLI automatically includes and uses that Dockerfile
+3. The backend looks for CustomDockerfilePath in the build details
+4. If found, it uses your Dockerfile instead of generating one
+
+## FAQ
+
+### Q: Can I use images from multiple private registries in one deployment?
+
+A: Yes! As long as you're logged into all the registries locally, Cerebrium will send all credentials and can pull from any of them.
+
+### Q: What happens to my credentials after deployment?
+
+A: Credentials are temporarily stored with encryption during the build process and automatically deleted via TTL (Time-To-Live) after build completion.
+
+### Q: Do I need to specify credentials every time I deploy?
+
+A: No, as long as you remain logged into your registry locally (check with `docker login`), the credentials will be read from ~/.docker/config.json automatically.
+
+### Q: Can I use credential helpers like docker-credential-desktop?
+
+A: Currently, Cerebrium reads credentials directly from ~/.docker/config.json. If you use credential helpers, you may need to login directly with `docker login` to ensure credentials are stored in the config file.
+
+## Support
+
+If you encounter any issues with private registries, please reach out to support with:
+1. Your cerebrium.toml configuration (without sensitive data)
+2. The error message you're seeing
+3. The type of registry you're using (Docker Hub, ECR, etc.)
