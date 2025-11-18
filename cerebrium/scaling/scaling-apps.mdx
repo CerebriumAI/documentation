@@ -169,7 +169,7 @@ The buffer can be added to the `cerebrium.scaling` section as such, by specifyin
 
 ```toml
 [cerebrium.scaling]
-min_replicas = 0
+min_replicas = 1
 cooldown = 600
 max_replicas = 10
 response_grace_period = 120
@@ -179,9 +179,8 @@ scaling_target = 100
 scaling_buffer = 3
 ```
 
-To illustrate how this works using the above config, if this application receives no traffic, it will buffer out to **3 replicas** of capacity as a baseline.
-This is the case even though `min_replicas=0`, since `scaling_buffer` is actually modifying the suggested replica count from the autoscaler of 0, and **0+3=3**.
+To illustrate how this works using the above config, if this application receives no traffic, it will buffer out to **1 replica** of capacity as a baseline - the buffer scales based on requests.
 Since the config has specified `100` as a target for `concurrency_utilization` and `replica_concurrency=1`, if the application now receives 1 request
 the autoscaler will suggest a value of 1 replica for scale out. Since however, we have `scale_buffer=3`, the application will actually scale one more replica to **(1+3)=4**.
 In other words, the scale buffer will simply add a static amount of replicas to the number of replicas the autoscaler suggests using the scale target.
-Once this request has completed, the usual `cooldown` period will apply, and the app replica count will scale down back to the baseline of **3 replicas**.
+Once this request has completed, the usual `cooldown` period will apply, and the app replica count will scale down back to the baseline of **1 replica**.
