@@ -1,0 +1,403 @@
+# Llama 3.2 with TensorRT-LLM on Triton
+
+
+In this tutorial, we'll show you how to deploy Llama 3.2 3B using TensorRT-LLM's PyTorch backend served through Nvidia Triton Inference Server.
+
+To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/tensorrt-triton-demo)
+
+## Why TensorRT-LLM + Triton
+
+**TensorRT-LLM (PyTorch Backend)** loads HuggingFace models directly while applying TensorRT's kernel-level optimizations—custom CUDA operations, paged KV cache, and optional FP8/INT8 quantization. No separate engine building required.
+
+**Triton Inference Server** handles production concerns: dynamic batching, health checks, concurrent request processing, and standardized HTTP/gRPC APIs.
+
+**When to use this over vLLM:**
+- You need Triton's enterprise features (metrics, multi-model serving)
+- You want easy quantization integration (FP8/FP4 from TensorRT Model Optimizer)
+- You're already using Triton infrastructure
+
+This setup gives you TensorRT performance with HuggingFace model simplicity, served through Triton's production-ready infrastructure.
+
+## Basic Setup
+
+Install the Cerebrium CLI:
+
+```bash
+pip install cerebrium
+```
+
+Create your project:
+
+```bash
+cerebrium init tensorrt-triton-demo
+cd tensorrt-triton-demo
+```
+
+Add your HuggingFace token to project secrets:
+
+```bash
+cerebrium secrets set HF_AUTH_TOKEN your_token_here
+```
+
+## Implementation
+
+### Triton Model Configuration
+
+Create `config.pbtxt` to define Triton's model interface:
+
+```protobuf
+name: "llama3_2"
+backend: "python"
+max_batch_size: 0
+
+instance_group [
+  {
+    count: 1
+    kind: KIND_GPU
+  }
+]
+
+input [
+  {
+    name: "text_input"
+    data_type: TYPE_STRING
+    dims: [ 1 ]
+  },
+  {
+    name: "max_tokens"
+    data_type: TYPE_INT32
+    dims: [ 1 ]
+    optional: true
+  },
+  {
+    name: "temperature"
+    data_type: TYPE_FP32
+    dims: [ 1 ]
+    optional: true
+  },
+  {
+    name: "top_p"
+    data_type: TYPE_FP32
+    dims: [ 1 ]
+    optional: true
+  }
+]
+
+output [
+  {
+    name: "text_output"
+    data_type: TYPE_STRING
+    dims: [ 1 ]
+  }
+]
+```
+
+This configuration tells Triton:
+- Use Python backend (runs our model.py)
+- Accept text input with optional sampling parameters
+- Run on a single GPU instance
+- Return generated text as output
+
+### Python Backend Implementation
+
+Create `model.py` implementing Triton's Python backend interface:
+
+```python
+"""
+Triton Python Backend for TensorRT-LLM.
+"""
+
+import numpy as np
+import triton_python_backend_utils as pb_utils
+import torch
+from tensorrt_llm import LLM, SamplingParams, BuildConfig
+from tensorrt_llm.plugin.plugin import PluginConfig
+from transformers import AutoTokenizer
+
+MODEL_ID = "meta-llama/Llama-3.2-3B-Instruct"
+MODEL_DIR = f"/persistent-storage/models/{MODEL_ID}"
+
+
+class TritonPythonModel:
+    def initialize(self, args):
+        """Initialize TensorRT-LLM with PyTorch backend."""
+        print("Loading tokenizer...")
+        self.tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR)
+        
+        print("Initializing TensorRT-LLM...")
+        plugin_config = PluginConfig.from_dict({
+            "paged_kv_cache": True,
+        })
+        
+        build_config = BuildConfig(
+            plugin_config=plugin_config,
+            max_input_len=4096,
+            max_batch_size=1,
+        )
+        
+        self.llm = LLM(
+            model=MODEL_DIR,
+            build_config=build_config,
+            tensor_parallel_size=torch.cuda.device_count(),
+        )
+        print("✓ Model ready")
+    
+    def execute(self, requests):
+        """Process inference requests."""
+        responses = []
+        
+        for request in requests:
+            try:
+                # Extract inputs
+                input_tensor = pb_utils.get_input_tensor_by_name(request, "text_input")
+                text = input_tensor.as_numpy()[0].decode('utf-8')
+                
+                # Get optional parameters with defaults
+                max_tokens = 1024
+                temperature = 0.8
+                top_p = 0.95
+                
+                max_tokens_tensor = pb_utils.get_input_tensor_by_name(request, "max_tokens")
+                if max_tokens_tensor is not None:
+                    max_tokens = int(max_tokens_tensor.as_numpy()[0])
+                
+                temp_tensor = pb_utils.get_input_tensor_by_name(request, "temperature")
+                if temp_tensor is not None:
+                    temperature = float(temp_tensor.as_numpy()[0])
+                
+                top_p_tensor = pb_utils.get_input_tensor_by_name(request, "top_p")
+                if top_p_tensor is not None:
+                    top_p = float(top_p_tensor.as_numpy()[0])
+                
+                # Format prompt
+                messages = [{"role": "user", "content": text}]
+                prompt = self.tokenizer.apply_chat_template(
+                    messages,
+                    tokenize=False,
+                    add_generation_prompt=True
+                )
+                
+                # Generate
+                sampling_params = SamplingParams(
+                    temperature=temperature,
+                    top_p=top_p,
+                    max_tokens=max_tokens,
+                )
+                
+                output = self.llm.generate(prompt, sampling_params)
+                generated_text = output.outputs[0].text
+                
+                # Create response
+                output_tensor = pb_utils.Tensor(
+                    "text_output",
+                    np.array([generated_text.encode('utf-8')], dtype=object)
+                )
+                
+                inference_response = pb_utils.InferenceResponse(
+                    output_tensors=[output_tensor]
+                )
+                responses.append(inference_response)
+                
+            except Exception as e:
+                error_response = pb_utils.InferenceResponse(
+                    output_tensors=[],
+                    error=pb_utils.TritonError(f"Error: {str(e)}")
+                )
+                responses.append(error_response)
+        
+        return responses
+    
+    def finalize(self):
+        """Cleanup on shutdown."""
+        if hasattr(self, 'llm'):
+            self.llm.shutdown()
+            torch.cuda.empty_cache()
+```
+
+The `initialize()` method loads the model once at startup using TensorRT-LLM's PyTorch backend. The `LLM` class loads HuggingFace models directly without pre-building TensorRT engines. The `execute()` method processes each request by extracting parameters, formatting the prompt with Llama's chat template, and generating text.
+
+### Model Download Script
+
+Create `download_model.py` to handle model downloads:
+
+```python
+#!/usr/bin/env python3
+"""Download HuggingFace model to persistent storage."""
+
+import os
+from pathlib import Path
+from huggingface_hub import snapshot_download, login
+
+MODEL_ID = "meta-llama/Llama-3.2-3B-Instruct"
+MODEL_DIR = Path("/persistent-storage/models") / MODEL_ID
+
+
+def download_model():
+    """Download model if not already present."""
+    hf_token = os.environ.get("HF_AUTH_TOKEN")
+    
+    if not hf_token:
+        print("WARNING: HF_AUTH_TOKEN not set")
+        return
+    
+    if MODEL_DIR.exists() and any(MODEL_DIR.iterdir()):
+        print("✓ Model already exists")
+        return
+    
+    print("Downloading model...")
+    login(token=hf_token)
+    snapshot_download(
+        MODEL_ID,
+        local_dir=str(MODEL_DIR),
+        token=hf_token
+    )
+    print("✓ Model downloaded")
+
+
+if __name__ == "__main__":
+    download_model()
+```
+
+This script checks if the model exists in persistent storage before downloading to avoid redundant downloads on subsequent deployments.
+
+### Container Setup
+
+Create `Dockerfile` extending Nvidia's Triton container:
+
+```dockerfile
+FROM nvcr.io/nvidia/tritonserver:25.10-trtllm-python-py3
+
+ENV PYTHONPATH=/usr/local/lib/python3.12/dist-packages:$PYTHONPATH
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV DEBIAN_FRONTEND=noninteractive
+ENV HF_HOME=/persistent-storage/models
+ENV TORCH_CUDA_ARCH_LIST=8.6
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    git-lfs \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+RUN pip install --break-system-packages \
+    huggingface_hub \
+    transformers \
+    || true
+
+# Create directories
+RUN mkdir -p \
+    /app/model_repository/llama3_2/1 \
+    /persistent-storage/models \
+    /persistent-storage/engines
+
+# Copy files
+COPY --chmod=755 download_model.py start_triton.sh /app/
+COPY model.py /app/model_repository/llama3_2/1/
+COPY config.pbtxt /app/model_repository/llama3_2/
+
+EXPOSE 8000 8001 8002
+
+CMD ["/app/start_triton.sh"]
+```
+
+The Dockerfile uses Nvidia's official Triton container with TensorRT-LLM pre-installed, creates the model repository structure that Triton expects, and copies our application files to the correct locations.
+
+Create `start_triton.sh` as the container entrypoint:
+
+```bash
+#!/bin/bash
+set -e
+
+echo "Checking for model..."
+python3 /app/download_model.py
+
+echo "Starting Triton Inference Server..."
+exec tritonserver \
+    --model-repository=/app/model_repository \
+    --http-port=8000 \
+    --grpc-port=8001 \
+    --metrics-port=8002
+```
+
+This script ensures the model is downloaded before starting Triton server.
+
+## Deploy
+
+Configure your deployment in `cerebrium.toml`:
+
+```toml
+[cerebrium.deployment]
+name = "tensorrt-triton-demo"
+python_version = "3.12"
+disable_auth = true
+include = ['./*', 'cerebrium.toml']
+exclude = ['.*']
+deployment_initialization_timeout = 830
+
+[cerebrium.hardware]
+cpu = 4.0
+memory = 40.0
+compute = "AMPERE_A10"
+gpu_count = 1
+provider = "aws"
+region = "us-east-1"
+
+[cerebrium.scaling]
+min_replicas = 0
+max_replicas = 2
+cooldown = 60
+replica_concurrency = 5
+scaling_metric = "concurrency_utilization"
+
+[cerebrium.runtime.custom]
+port = 8000
+healthcheck_endpoint = "/v2/health/live"
+readycheck_endpoint = "/v2/health/ready"
+dockerfile_path = "./Dockerfile"
+```
+
+The `deployment_initialization_timeout = 830` allows time for TensorRT-LLM to load and optimize the model on first deployment. The custom runtime configuration points to our Dockerfile and Triton's health check endpoints.
+
+Deploy the model:
+
+```bash
+cerebrium deploy
+```
+
+First deployment takes 5-10 minutes as TensorRT-LLM loads the model. Subsequent deploys are faster since the model is cached in persistent storage.
+
+## Test
+
+Send a request to your deployed endpoint:
+
+```bash
+curl -X POST https://api.aws.us-east-1.cerebrium.ai/v4/<project-id>/<name>/v2/models/llama3_2/infer \
+  -H "Content-Type: application/json" \
+  -d '{
+    "inputs": [
+      {"name": "text_input", "shape": [1], "datatype": "BYTES", "data": ["Hello!"]}
+    ],
+    "outputs": [{"name": "text_output"}]
+  }'
+```
+
+The endpoint returns results in this format:
+
+```json
+{
+  "model_name": "llama3_2",
+  "model_version": "1",
+  "outputs": [
+    {
+      "name": "text_output",
+      "datatype": "BYTES",
+      "shape": [1],
+      "data": ["Hello! How can I assist you today?"]
+    }
+  ]
+}
+```
+
+The response follows Triton's standard inference protocol format with the generated text in the `data` field of the output tensor.
