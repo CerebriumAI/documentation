@@ -12,28 +12,32 @@ Cerebrium supports using your own private docker images as base images for your 
 When you deploy with Cerebrium, the process is straightforward and secure:
 
 **Deployment Process:**
+
 - You specify your base image in cerebrium.toml
 - Cerebrium reads your Docker credentials from ~/.docker/config.json
 - The build system uses these credentials to pull your private image
 - Your app is built on top of your custom base image
 
 **Security:**
+
 - **In Transit:** Credentials are sent over HTTPS
 - **In Storage:** Stored in DynamoDB with automatic TTL-based deletion after build completion
 - **In Logs:** Never logged or displayed (using obfuscated.String type)
 - **In Build:** Only accessible during build, then discarded
 
 **Best Practices:**
+
 - Use access tokens instead of passwords
 - Rotate tokens regularly
 - Use read-only tokens when possible
 - For teams, consider using shared organization credentials
 
 ### Platform Architecture Requirement:
-<Warning>
-**Important:** Your Docker images MUST support `linux/amd64` architecture. This is required for Cerebrium's build environment.
-</Warning>
 
+<Warning>
+  **Important:** Your Docker images MUST support `linux/amd64` architecture.
+  This is required for Cerebrium's build environment.
+</Warning>
 
 ## Step-by-Step Setup
 
@@ -104,6 +108,7 @@ cerebrium deploy
 ```
 
 Cerebrium will automatically:
+
 - Detect your Docker credentials
 - Send them securely with your deployment
 - Use them to pull your private base image
