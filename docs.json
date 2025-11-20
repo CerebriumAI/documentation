@@ -32,7 +32,8 @@
                 "pages": [
                   "cerebrium/container-images/defining-container-images",
                   "cerebrium/container-images/custom-web-servers",
-                  "cerebrium/container-images/custom-dockerfiles"
+                  "cerebrium/container-images/custom-dockerfiles",
+                  "cerebrium/container-images/private-docker-registry"
                 ]
               },
               {

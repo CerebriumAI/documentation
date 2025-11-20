@@ -1,0 +1,92 @@
+---
+title: "Using Private Docker Registries"
+description: "How to authenticate, pull, and use private Docker images as base images in your deployments."
+---
+
+Cerebrium supports using your own private Docker images as base images for your deployments - including images from Docker Hub, AWS ECR, Google Container Registry, or any Docker-compatible private registry.
+
+Our build system securely pulls your private image using the Docker credentials stored in your ~/.docker/config.json, and then builds your app on top of that image. Since these credentials are used during deployment, they should be team-accessible rather than tied to a single individual.
+
+<Note>
+  Your Docker images MUST support `linux/amd64` architecture. This is required
+  for Cerebrium's build environment.
+</Note>
+
+## Step-by-Step Setup
+
+### Step 1: Login to Your Registry
+
+Based on your registry, login using one of the following commands:
+
+**Docker Hub:**
+
+```bash
+docker login
+# Enter username and password/token when prompted
+```
+
+**AWS ECR:**
+
+```bash
+aws ecr get-login-password --region us-east-1 | \
+  docker login --username AWS --password-stdin \
+  123456789.dkr.ecr.us-east-1.amazonaws.com
+```
+
+**Google Container Registry:**
+
+```bash
+gcloud auth configure-docker
+```
+
+**Generic Registry:**
+
+```bash
+docker login registry.company.com
+# Enter credentials when prompted
+```
+
+### Step 2: Verify Login
+
+Check that your credentials are saved:
+
+```bash
+cat ~/.docker/config.json | jq '.auths | keys'
+```
+
+You should see your registry URL(s) listed.
+
+### Step 3: Configure Your Project
+
+Edit your cerebrium.toml and enter the url of the registry image from the step 2:
+
+```toml
+[cerebrium.deployment]
+name = "my-app"
+python_version = "3.11"
+docker_base_image_url = "your-registry.com/your-org/your-image:tag"
+
+# Examples:
+# docker_base_image_url = "mycompany/ml-base:v2.1"  # Docker Hub
+# docker_base_image_url = "123456.dkr.ecr.us-east-1.amazonaws.com/ml-base:latest"  # ECR
+# docker_base_image_url = "gcr.io/project-id/ml-base:latest"  # GCR
+```
+
+### Step 4: Deploy
+
+Simply run:
+
+```bash
+cerebrium deploy
+```
+
+Your application should then proceed to build as normal.
+
+## Security Notes
+
+You might be wondering what security measures Cerebrium follows in order to keep your credentials safe - we take the following precaustions:
+
+1. **In Transit:** Credentials are sent over HTTPS
+2. **In Storage:** Stored in DynamoDB with automatic TTL-based deletion after build completion
+3. **In Logs:** Never logged or displayed (using obfuscated.String type)
+4. **In Build:** Only accessible during build, then discarded
