@@ -210,7 +210,7 @@ class GradioServer:
         interface.launch(
             server_name=self.host,
             server_port=self.port,
-            root_path=f"https://api.cortex.cerebrium.ai/v4/{os.getenv('PROJECT_ID')}/{os.getenv('APP_NAME')}/",
+            root_path=f"https://api.aws.us-east-1.cerebrium.ai/v4/{os.getenv('PROJECT_ID')}/{os.getenv('APP_NAME')}/",
             quiet=True
         )
 
@@ -350,7 +350,7 @@ class GradioServer:
         interface.launch(
             server_name=self.host,
             server_port=self.port,
-            root_path=f"https://api.cortex.cerebrium.ai/v4/{os.getenv('PROJECT_ID')}/{os.getenv('APP_NAME')}/",
+            root_path=f"https://api.aws.us-east-1.cerebrium.ai/v4/{os.getenv('PROJECT_ID')}/{os.getenv('APP_NAME')}/",
             quiet=True
         )
 
@@ -445,7 +445,7 @@ cerebrium deploy -y
 Once deployed, navigate to the following URL in your browser:
 
 ```
-https://api.cortex.cerebrium.ai/v4/p-<YOUR_PROJECT_ID>/2-gradio-interface/
+https://api.aws.us-east-1.cerebrium.ai/v4/p-<YOUR_PROJECT_ID>/2-gradio-interface/
 ```
 
 You should see the Gradio chat interface.

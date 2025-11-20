@@ -10,7 +10,7 @@ responsibility, while you as the developer are responsible for ensuring that dat
 You can enable your function to execute asynchronously by adding the `async` query parameter to your request and setting it to `true`. This would look something like this:
 
 ```bash
-curl -X POST https://api.cortex.cerebrium.ai/v4/<YOUR-PROJECT-ID>/<YOUR-APP>/run?async=true'\
+curl -X POST https://api.aws.us-east-1.cerebrium.ai/v4/<YOUR-PROJECT-ID>/<YOUR-APP>/run?async=true'\
        -H 'Content-Type: application/json'\
        -H 'Authorization: Bearer <YOUR-JWT-TOKEN>\
        --data '{"param": "hello world"}'
@@ -47,7 +47,7 @@ async execution with a specified `webhookEndpoint`, to have Cerebrium automatica
 the function response once it has returned:
 
 ```bash
-curl -X POST <https://api.cortex.cerebrium.ai/v4/><YOUR-PROJECT-ID>/<YOUR-APP>/run?async=true&webhookEndpoint=https%3A%2F%2Fwebhook.site%2F'\
+curl -X POST <https://api.aws.us-east-1.cerebrium.ai/v4/><YOUR-PROJECT-ID>/<YOUR-APP>/run?async=true&webhookEndpoint=https%3A%2F%2Fwebhook.site%2F'\
  -H 'Content-Type: application/json'\
  -H 'Authorization: Bearer <YOUR-JWT-TOKEN>\
  --data '{"param": "hello world"}'

@@ -320,7 +320,7 @@ Now that our code is ready, deploy the app with the command: `cerebrium deploy`.
 Initial deployment takes about 15-20 minutes to install packages, download the model, and convert it to the TensorRT-LLM format. Once completed, it outputs a curl command you can use to test your inference endpoint.
 
 ```
-curl --location 'https://api.cortex.cerebrium.ai/v4/p-xxxxxx/predict' \\
+curl --location 'https://api.aws.us-east-1.cerebrium.ai/v4/p-xxxxxx/predict' \\
 --header 'Content-Type: application/json' \\
 --header 'Authorization: Bearer <YOUR TOKEN HERE>' \\
 --data '{"prompt": "Tell me about yourself?"}'

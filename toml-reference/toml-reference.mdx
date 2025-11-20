@@ -1,6 +1,6 @@
 ---
 title: TOML Reference
-description: Complete reference for all parameters available in Cerebrium's default`cerebrium.toml` configuration file.
+description: Complete reference for all parameters available in Cerebrium's default `cerebrium.toml` configuration file.
 ---
 
 The configuration is organized into the following main sections:
@@ -25,11 +25,68 @@ The `[cerebrium.deployment]` section defines core deployment settings.
 | shell_commands        | string[] | []                     | Commands to run at the end of the build                     |
 | pre_build_commands    | string[] | []                     | Commands to run before dependencies install                 |
 | docker_base_image_url | string   | "debian:bookworm-slim" | Base Docker image                                           |
+| use_uv                | boolean  | false                  | Use UV for faster Python package installation               |
 
 <Info>
   Changes to python_version or docker_base_image_url trigger full rebuilds since
   they affect the base environment.
 </Info>
+
+### UV Package Manager
+
+UV is a fast Python package installer written in Rust that can significantly speed up deployment times. When enabled, UV will be used instead of pip for installing Python dependencies.
+
+<Info>
+UV typically installs packages 10-100x faster than pip, especially beneficial for:
+
+- Large dependency trees
+- Multiple packages
+- Clean builds without cache
+
+</Info>
+
+**Example with UV enabled:**
+
+```toml
+[cerebrium.deployment]
+use_uv = true
+```
+
+### Monitoring UV Usage
+
+Check your build logs for these indicators:
+
+- **UV_PIP_INSTALL_STARTED** - UV is successfully being used
+- **PIP_INSTALL_STARTED** - Standard pip installation (when `use_uv=false`)
+
+<Warning>
+  While UV is compatible with most packages, some edge cases may cause build
+  failures, such as legacy packages with non-standard metadata.
+</Warning>
+
+### Deploying with UV Lock Files
+
+<Info>read only if you're using `pyproject.toml` and `uv.lock`</Info>
+
+Generate your lock file locally. This creates a uv.lock file with exact dependency versions.
+
+```bash
+# In your project directory with pyproject.toml
+uv sync
+```
+
+Export your locked dependencies to requirements.txt
+
+```bash
+uv pip compile pyproject.toml -o requirements.txt
+# Or if you want to use the lock file:
+uv pip compile uv.lock -o requirements.txt
+```
+
+Include in your deployment:
+
+- Ensure requirements.txt is in your project directory
+- Deploy with UV enabled
 
 ## Runtime Configuration
 
@@ -44,8 +101,8 @@ The `[cerebrium.runtime.custom]` section configures custom web servers and runti
 
 <Info>
   The port specified in entrypoint must match the port parameter. All endpoints
-  will be available at `https://api.cortex.cerebrium.ai/v4/{project - id}/
-  {app - name}/your/endpoint`
+  will be available at `https://api.aws.us-east-1.cerebrium.ai/v4/{project - id}
+  /{app - name}/your/endpoint`
 </Info>
 
 ## Hardware Configuration
@@ -158,6 +215,8 @@ exclude = [".*"]
 shell_commands = []
 pre_build_commands = []
 docker_base_image_url = "debian:bookworm-slim"
+use_uv = true
+# Enable fast package installation with UV (omit or set to false if you want to use pip)
 
 [cerebrium.runtime.custom]
 port = 8000

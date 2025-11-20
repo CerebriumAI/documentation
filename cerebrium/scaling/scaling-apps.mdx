@@ -79,11 +79,13 @@ During normal replica operation, this simply corresponds to a request timeout va
 waits for the specified grace period, issues a SIGKILL command if the instance has not stopped, and kills any active requests with a GatewayTimeout error.
 
 <Note>
-  When using the cortex runtime (default) the SIGTERM signal is captured and the
-  app is given a chance to complete requests before being terminated. When using
-  a custom runtime, it is the responsibility of the user to handle the SIGTERM
-  signal and ensure that the app is given a chance to complete requests before
-  being terminated.
+  When using the Cortex runtime (default), SIGTERM signals are automatically
+  handled to allow graceful termination of requests. For custom runtimes, you'll
+  need to implement SIGTERM handling yourself to ensure requests complete
+  gracefully before termination. See our [Graceful Termination
+  guide](/cerebrium/scaling/graceful-termination) for detailed implementation
+  examples, including FastAPI patterns for tracking and completing in-flight
+  requests during shutdown.
 </Note>
 
 Performance metrics available through the dashboard help monitor scaling behavior:
@@ -167,7 +169,7 @@ The buffer can be added to the `cerebrium.scaling` section as such, by specifyin
 
 ```toml
 [cerebrium.scaling]
-min_replicas = 0
+min_replicas = 1
 cooldown = 600
 max_replicas = 10
 response_grace_period = 120
@@ -177,9 +179,8 @@ scaling_target = 100
 scaling_buffer = 3
 ```
 
-To illustrate how this works using the above config, if this application receives no traffic, it will buffer out to **3 replicas** of capacity as a baseline.
-This is the case even though `min_replicas=0`, since `scaling_buffer` is actually modifying the suggested replica count from the autoscaler of 0, and **0+3=3**.
+To illustrate how this works using the above config, if this application receives no traffic, it will buffer out to **1 replica** of capacity as a baseline - the buffer scales based on requests.
 Since the config has specified `100` as a target for `concurrency_utilization` and `replica_concurrency=1`, if the application now receives 1 request
 the autoscaler will suggest a value of 1 replica for scale out. Since however, we have `scale_buffer=3`, the application will actually scale one more replica to **(1+3)=4**.
 In other words, the scale buffer will simply add a static amount of replicas to the number of replicas the autoscaler suggests using the scale target.
-Once this request has completed, the usual `cooldown` period will apply, and the app replica count will scale down back to the baseline of **3 replicas**.
+Once this request has completed, the usual `cooldown` period will apply, and the app replica count will scale down back to the baseline of **1 replica**.
