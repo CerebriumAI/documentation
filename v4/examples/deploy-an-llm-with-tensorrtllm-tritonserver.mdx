@@ -1,0 +1,463 @@
+# Llama 3.2 with TensorRT-LLM on Triton
+
+In this tutorial, we'll show you how to deploy Llama 3.2 3B using TensorRT-LLM's PyTorch backend served through Nvidia Triton Inference Server.
+
+To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/tensorrt-triton-demo)
+
+## Why TensorRT-LLM + Triton
+
+**TensorRT-LLM (PyTorch Backend)** loads HuggingFace models directly while applying TensorRT's kernel-level optimizations—custom CUDA operations, paged KV cache, and optional FP8/INT8 quantization. No separate engine building required.
+
+**Triton Inference Server** handles production concerns here: automatic request batching (up to 32 concurrent requests), health checks, concurrent request processing, and standardized HTTP/gRPC APIs.
+
+**When to use this over vLLM:**
+- You need Triton's enterprise features (model versioning, metrics, multi-model serving)
+- You want easy quantization integration (FP8/FP4 from TensorRT Model Optimizer)
+- You're already using Triton infrastructure
+- You need automatic batching with fine-grained control
+
+**When vLLM might be simpler:**
+- Single model deployment with basic API needs
+- You want PagedAttention with minimal configuration
+
+This setup gives you TensorRT performance with HuggingFace model simplicity, served through Triton's production-ready infrastructure. Triton's automatic batching means multiple concurrent requests are processed together on the GPU for maximum throughput.
+
+## Basic Setup
+
+Install the Cerebrium CLI:
+
+```bash
+pip install cerebrium
+```
+
+Create your project:
+
+```bash
+cerebrium init tensorrt-triton-demo
+cd tensorrt-triton-demo
+```
+
+Add your HuggingFace token to project secrets:
+
+```bash
+cerebrium secrets set HF_AUTH_TOKEN your_token_here
+```
+
+## Implementation
+
+Keep all the files under the same folder. 
+
+### Triton Model Configuration
+
+Create `config.pbtxt` to define Triton's model interface:
+
+```protobuf
+name: "llama3_2"
+backend: "python"
+max_batch_size: 32
+
+instance_group [
+  {
+    count: 1
+    kind: KIND_GPU
+  }
+]
+
+input [
+  {
+    name: "text_input"
+    data_type: TYPE_STRING
+    dims: [ 1 ]
+  },
+  {
+    name: "max_tokens"
+    data_type: TYPE_INT32
+    dims: [ 1 ]
+    optional: true
+  },
+  {
+    name: "temperature"
+    data_type: TYPE_FP32
+    dims: [ 1 ]
+    optional: true
+  },
+  {
+    name: "top_p"
+    data_type: TYPE_FP32
+    dims: [ 1 ]
+    optional: true
+  }
+]
+
+output [
+  {
+    name: "text_output"
+    data_type: TYPE_STRING
+    dims: [ 1 ]
+  }
+]
+```
+
+This configuration tells Triton:
+- Use Python backend (runs our model.py)
+- Automatically batch up to 32 requests together for efficient GPU utilization
+- Accept text input with optional sampling parameters
+- Run on a single GPU instance
+- Return generated text as output
+
+### Python Backend Implementation
+
+Create `model.py` implementing Triton's Python backend interface:
+
+```python
+"""
+Triton Python Backend for TensorRT-LLM.
+"""
+
+import numpy as np
+import triton_python_backend_utils as pb_utils
+import torch
+from tensorrt_llm import LLM, SamplingParams, BuildConfig
+from tensorrt_llm.plugin.plugin import PluginConfig
+from transformers import AutoTokenizer
+
+MODEL_ID = "meta-llama/Llama-3.2-3B-Instruct"
+MODEL_DIR = f"/persistent-storage/models/{MODEL_ID}"
+
+
+class TritonPythonModel:
+    def initialize(self, args):
+        """Initialize TensorRT-LLM with PyTorch backend."""
+        print("Loading tokenizer...")
+        self.tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR)
+        
+        print("Initializing TensorRT-LLM...")
+        plugin_config = PluginConfig.from_dict({
+            "paged_kv_cache": True,
+        })
+        
+        build_config = BuildConfig(
+            plugin_config=plugin_config,
+            max_input_len=4096,
+            max_batch_size=32,  # Matches Triton max_batch_size
+        )
+        
+        self.llm = LLM(
+            model=MODEL_DIR,
+            build_config=build_config,
+            tensor_parallel_size=torch.cuda.device_count(),
+        )
+        print("✓ Model ready")
+    
+    def execute(self, requests):
+        """
+        Execute inference on batched requests.
+        
+        Triton automatically batches up to 32 requests and passes them here.
+        """
+        try:
+            prompts = []
+            sampling_params_list = []
+            original_prompts = []
+            
+            # Extract data from each request in the batch
+            for request in requests:
+                try:
+                    # Get input text - handle batched tensor structures
+                    input_tensor = pb_utils.get_input_tensor_by_name(request, "text_input")
+                    text_array = input_tensor.as_numpy()
+                    
+                    # Extract text handling different array structures
+                    if text_array.ndim == 0:
+                        text = text_array.item()
+                    elif text_array.dtype == object:
+                        text = text_array.flat[0] if text_array.size > 0 else text_array.item()
+                    else:
+                        text = text_array.flat[0] if text_array.size > 0 else text_array.item()
+                    
+                    # Decode if bytes
+                    if isinstance(text, bytes):
+                        text = text.decode('utf-8')
+                    elif isinstance(text, np.str_):
+                        text = str(text)
+                    
+                    # Get optional parameters with defaults
+                    max_tokens = 1024
+                    if pb_utils.get_input_tensor_by_name(request, "max_tokens") is not None:
+                        max_tokens_array = pb_utils.get_input_tensor_by_name(request, "max_tokens").as_numpy()
+                        max_tokens = int(max_tokens_array.item() if max_tokens_array.ndim == 0 else max_tokens_array.flat[0])
+                    
+                    temperature = 0.8
+                    if pb_utils.get_input_tensor_by_name(request, "temperature") is not None:
+                        temp_array = pb_utils.get_input_tensor_by_name(request, "temperature").as_numpy()
+                        temperature = float(temp_array.item() if temp_array.ndim == 0 else temp_array.flat[0])
+                    
+                    top_p = 0.95
+                    if pb_utils.get_input_tensor_by_name(request, "top_p") is not None:
+                        top_p_array = pb_utils.get_input_tensor_by_name(request, "top_p").as_numpy()
+                        top_p = float(top_p_array.item() if top_p_array.ndim == 0 else top_p_array.flat[0])
+                    
+                    # Format prompt using chat template
+                    prompt = self.tokenizer.apply_chat_template(
+                        [{"role": "user", "content": text}],
+                        tokenize=False,
+                        add_generation_prompt=True
+                    )
+                    
+                    prompts.append(prompt)
+                    original_prompts.append(prompt)
+                    sampling_params_list.append(SamplingParams(
+                        temperature=temperature,
+                        top_p=top_p,
+                        max_tokens=max_tokens,
+                    ))
+                except Exception as e:
+                    print(f"Error processing request: {e}", flush=True)
+                    prompts.append("")
+                    original_prompts.append("")
+                    sampling_params_list.append(SamplingParams(max_tokens=1024))
+            
+            # Batch inference
+            if not prompts:
+                return []
+            
+            outputs = self.llm.generate(prompts, sampling_params_list)
+
+            # Create responses
+            responses = []
+            for i, output in enumerate(outputs):
+                try:
+                    generated_text = output.outputs[0].text
+                    
+                    # Strip prompt from output if included
+                    if original_prompts[i] and original_prompts[i] in generated_text:
+                        generated_text = generated_text.replace(original_prompts[i], "").strip()
+                    
+                    responses.append(pb_utils.InferenceResponse(
+                        output_tensors=[pb_utils.Tensor(
+                            "text_output",
+                            np.array([generated_text.encode('utf-8')], dtype=object)
+                        )]
+                    ))
+                except Exception as e:
+                    print(f"Error creating response {i}: {e}", flush=True)
+                    responses.append(pb_utils.InferenceResponse(
+                        output_tensors=[pb_utils.Tensor(
+                            "text_output",
+                            np.array([f"Error: {str(e)}".encode('utf-8')], dtype=object)
+                        )]
+                    ))
+            
+            return responses
+            
+        except Exception as e:
+            print(f"Error in execute: {e}", flush=True)
+            return [
+                pb_utils.InferenceResponse(
+                    output_tensors=[pb_utils.Tensor(
+                        "text_output",
+                        np.array([f"Batch error: {str(e)}".encode('utf-8')], dtype=object)
+                    )]
+                )
+                for _ in requests
+            ]
+    
+    def finalize(self):
+        """Cleanup on shutdown."""
+        if hasattr(self, 'llm'):
+            self.llm.shutdown()
+            torch.cuda.empty_cache()
+```
+
+The `initialize()` method loads the model once at startup using TensorRT-LLM's PyTorch backend. The `max_batch_size=32` must match the value in `config.pbtxt` to enable Triton's automatic batching.
+
+The `execute()` method processes batched requests from Triton. It extracts text and parameters from each request, formats prompts with Llama's chat template, and calls `llm.generate()` once for the entire batch. 
+
+### Model Download Script
+
+Create `download_model.py` to handle model downloads:
+
+```python
+#!/usr/bin/env python3
+"""Download HuggingFace model to persistent storage."""
+
+import os
+from pathlib import Path
+from huggingface_hub import snapshot_download, login
+
+MODEL_ID = "meta-llama/Llama-3.2-3B-Instruct"
+MODEL_DIR = Path("/persistent-storage/models") / MODEL_ID
+
+
+def download_model():
+    """Download model if not already present."""
+    hf_token = os.environ.get("HF_AUTH_TOKEN")
+    
+    if not hf_token:
+        print("WARNING: HF_AUTH_TOKEN not set")
+        return
+    
+    if MODEL_DIR.exists() and any(MODEL_DIR.iterdir()):
+        print("✓ Model already exists")
+        return
+    
+    print("Downloading model...")
+    login(token=hf_token)
+    snapshot_download(
+        MODEL_ID,
+        local_dir=str(MODEL_DIR),
+        token=hf_token
+    )
+    print("✓ Model downloaded")
+
+
+if __name__ == "__main__":
+    download_model()
+```
+
+This script checks if the model exists in persistent storage before downloading to avoid redundant downloads on subsequent deployments.
+
+### Container Setup
+
+Create `Dockerfile` extending Nvidia's Triton container:
+
+```dockerfile
+FROM nvcr.io/nvidia/tritonserver:25.10-trtllm-python-py3
+
+ENV PYTHONPATH=/usr/local/lib/python3.12/dist-packages:$PYTHONPATH
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV DEBIAN_FRONTEND=noninteractive
+ENV HF_HOME=/persistent-storage/models
+ENV TORCH_CUDA_ARCH_LIST=8.6
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    git-lfs \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+RUN pip install --break-system-packages \
+    huggingface_hub \
+    transformers \
+    || true
+
+# Create directories
+RUN mkdir -p \
+    /app/model_repository/llama3_2/1 \
+    /persistent-storage/models \
+    /persistent-storage/engines
+
+# Copy files
+COPY --chmod=755 download_model.py start_triton.sh /app/
+COPY model.py /app/model_repository/llama3_2/1/
+COPY config.pbtxt /app/model_repository/llama3_2/
+
+EXPOSE 8000 8001 8002
+
+CMD ["/app/start_triton.sh"]
+```
+
+The Dockerfile uses Nvidia's official Triton container with TensorRT-LLM pre-installed, creates the model repository structure that Triton expects, and copies our application files to the correct locations.
+
+Create `start_triton.sh` as the container entrypoint:
+
+```bash
+#!/bin/bash
+set -e
+
+echo "Checking for model..."
+python3 /app/download_model.py
+
+echo "Starting Triton Inference Server..."
+exec tritonserver \
+    --model-repository=/app/model_repository \
+    --http-port=8000 \
+    --grpc-port=8001 \
+    --metrics-port=8002
+```
+
+This script ensures the model is downloaded before starting Triton server.
+
+## Deploy
+
+Configure your deployment in `cerebrium.toml`:
+
+```toml
+[cerebrium.deployment]
+name = "tensorrt-triton-demo"
+python_version = "3.12"
+disable_auth = true
+include = ['./*', 'cerebrium.toml']
+exclude = ['.*']
+deployment_initialization_timeout = 830
+
+[cerebrium.hardware]
+cpu = 4.0
+memory = 40.0
+compute = "AMPERE_A10"
+gpu_count = 1
+provider = "aws"
+region = "us-east-1"
+
+[cerebrium.scaling]
+min_replicas = 0
+max_replicas = 2
+cooldown = 60
+replica_concurrency = 5
+scaling_metric = "concurrency_utilization"
+
+[cerebrium.runtime.custom]
+port = 8000
+healthcheck_endpoint = "/v2/health/live"
+readycheck_endpoint = "/v2/health/ready"
+dockerfile_path = "./Dockerfile"
+```
+
+The `deployment_initialization_timeout = 830` allows time for TensorRT-LLM to load and optimize the model on first deployment. The custom runtime configuration points to our Dockerfile and Triton's health check endpoints.
+
+Deploy the model:
+
+```bash
+cerebrium deploy
+```
+
+First deployment takes 5-10 minutes as TensorRT-LLM loads the model. Subsequent deploys are faster since the model is cached in persistent storage.
+
+## Test
+
+Send a request to your deployed endpoint:
+
+```bash
+curl -X POST https://api.aws.us-east-1.cerebrium.ai/v4/p-2f5e4b5c/tensorrt-triton-demo/v2/models/llama3_2/infer \      
+  -H "Content-Type: application/json" \
+  -d '{
+    "inputs": [              
+      {                 
+        "name": "text_input",
+        "shape": [1, 1],                     
+        "datatype": "BYTES",
+        "data": ["What is machine learning?"]
+      }                                 
+    ],
+    "outputs": [{"name": "text_output"}]
+  }'                                    
+```
+
+The endpoint returns results in this format:
+
+```json
+{
+  "outputs": [
+    {
+      "name": "text_output",
+      "datatype": "BYTES",
+      "shape": [1],
+      "data": ["Machine learning is a subset of artificial intelligence (AI) that involves training algorithms..."]
+    }
+  ]
+}
+```
+
+The response follows Triton's standard inference protocol format with the generated text in the `data` field of the output tensor.
