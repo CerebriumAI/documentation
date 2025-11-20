@@ -3,41 +3,14 @@ title: "Using Private Docker Registries"
 description: "Use private Docker images from Docker Hub, AWS ECR, GCR, and other registries as base images for your deployments."
 ---
 
-## Overview
+Cerebrium supports using your own private Docker images as base images for your deployments - including images from Docker Hub, AWS ECR, Google Container Registry, or any Docker-compatible private registry. 
 
-Cerebrium supports using your own private docker images as base images for your deployments - including images from Docker Hub, AWS ECR, Google Container Registry, or any Docker-compatible private registry.
+Our build system securely pulls your private image using the Docker credentials stored in your ~/.docker/config.json, and then builds your app on top of that image. Since these credentials are used during deployment, they should be team-accessible rather than tied to a single individual.
 
-## How It Works & Security
-
-When you deploy with Cerebrium, the process is straightforward and secure:
-
-**Deployment Process:**
-
-- You specify your base image in cerebrium.toml
-- Cerebrium reads your Docker credentials from ~/.docker/config.json
-- The build system uses these credentials to pull your private image
-- Your app is built on top of your custom base image
-
-**Security:**
-
-- **In Transit:** Credentials are sent over HTTPS
-- **In Storage:** Stored in DynamoDB with automatic TTL-based deletion after build completion
-- **In Logs:** Never logged or displayed (using obfuscated.String type)
-- **In Build:** Only accessible during build, then discarded
-
-**Best Practices:**
-
-- Use access tokens instead of passwords
-- Rotate tokens regularly
-- Use read-only tokens when possible
-- For teams, consider using shared organization credentials
-
-### Platform Architecture Requirement:
-
-<Warning>
-  **Important:** Your Docker images MUST support `linux/amd64` architecture.
+<Note>
+  Your Docker images MUST support `linux/amd64` architecture.
   This is required for Cerebrium's build environment.
-</Warning>
+</Note>
 
 ## Step-by-Step Setup
 
@@ -85,7 +58,7 @@ You should see your registry URL(s) listed.
 
 ### Step 3: Configure Your Project
 
-Edit your cerebrium.toml:
+Edit your cerebrium.toml and enter the url of the registry image from the step 2:
 
 ```toml
 [cerebrium.deployment]
@@ -107,9 +80,14 @@ Simply run:
 cerebrium deploy
 ```
 
-Cerebrium will automatically:
+Your application should then proceed to build as normal.
 
-- Detect your Docker credentials
-- Send them securely with your deployment
-- Use them to pull your private base image
-- Build your application on top
+## Security Notes
+
+You might be wondering what security measures Cerebrium follows in order to keep your credentials safe - we take the following precaustions: 
+
+1. **In Transit:** Credentials are sent over HTTPS
+2. **In Storage:** Stored in DynamoDB with automatic TTL-based deletion after build completion
+3. **In Logs:** Never logged or displayed (using obfuscated.String type)
+4. **In Build:** Only accessible during build, then discarded
+
