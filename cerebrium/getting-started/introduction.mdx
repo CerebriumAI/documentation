@@ -21,10 +21,51 @@ Setting up and deploying an app on Cerebrium takes just a few steps:
 
 ### 1. Install the CLI
 
+**Python (pip) - Recommended:**
 ```bash
 pip install cerebrium
 cerebrium login  # Redirects to your browser for authentication
 ```
+
+**Alternative installation methods:**
+
+<details>
+<summary>macOS (Homebrew)</summary>
+
+```bash
+brew tap cerebriumai/tap
+brew install cerebrium
+cerebrium login
+```
+</details>
+
+<details>
+<summary>Linux</summary>
+
+```bash
+# Ubuntu/Debian
+wget https://github.com/CerebriumAI/cerebrium/releases/latest/download/cerebrium_linux_amd64.deb
+sudo dpkg -i cerebrium_linux_amd64.deb
+cerebrium login
+
+# Or binary installation
+curl -L https://github.com/CerebriumAI/cerebrium/releases/latest/download/cerebrium_cli_linux_amd64.tar.gz | tar xz
+sudo mv cerebrium /usr/local/bin/
+cerebrium login
+```
+</details>
+
+<details>
+<summary>Windows</summary>
+
+```powershell
+# PowerShell (Run as Administrator)
+Invoke-WebRequest -Uri "https://github.com/CerebriumAI/cerebrium/releases/latest/download/cerebrium_cli_windows_amd64.zip" -OutFile "cerebrium.zip"
+Expand-Archive -Path "cerebrium.zip" -DestinationPath "."
+# Add cerebrium.exe to PATH, then:
+cerebrium login
+```
+</details>
 
 ### 2. Initialize a Project
 
