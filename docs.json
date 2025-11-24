@@ -109,7 +109,8 @@
                     "pages": [
                       "v4/examples/gpt-oss",
                       "v4/examples/openai-compatible-endpoint-vllm",
-                      "v4/examples/deploy-a-vision-language-model-with-sglang"
+                      "v4/examples/deploy-a-vision-language-model-with-sglang",
+                      "v4/examples/deploy-an-llm-with-tensorrtllm-tritonserver"
                     ]
                   },
                   {
