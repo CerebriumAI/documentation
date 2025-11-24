@@ -2,25 +2,66 @@
 
 In this tutorial, we'll show you how to deploy Llama 3.2 3B using TensorRT-LLM's PyTorch backend served through Nvidia Triton Inference Server.
 
-To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/tensorrt-triton-demo)
+You can view the final implementation [here](https://github.com/CerebriumAI/examples/tree/master/tensorrt-triton-demo).
 
-## Why TensorRT-LLM + Triton
+## Performance Results
 
-**TensorRT-LLM (PyTorch Backend)** loads HuggingFace models directly while applying TensorRT's kernel-level optimizations—custom CUDA operations, paged KV cache, and optional FP8/INT8 quantization. No separate engine building required.
+We benchmarked this setup against a vanilla HuggingFace baseline serving the same Llama 3.2 3B model. The results demonstrate significant improvements across all metrics:
 
-**Triton Inference Server** handles production concerns here: automatic request batching (up to 32 concurrent requests), health checks, concurrent request processing, and standardized HTTP/gRPC APIs.
+| Metric | Vanilla Baseline | TensorRT + Triton | Improvement |
+|--------|------------------|-------------------|-------------|
+| **Requests Per Second (RPS)** | 0.83 | 12.46 | **15x faster** |
+| **Success Rate** | 61.6% | 100.0% | **38.4% increase** |
+| **P50 Latency** | 297.7s | 41.7s | **7.1x faster** |
+| **P99 Latency** | 593.2s | 79.3s | **7.5x faster** |
+| **Average Latency** | 376.2s | 42.4s | **8.9x faster** |
 
-**When to use this over vLLM:**
-- You need Triton's enterprise features (model versioning, metrics, multi-model serving)
-- You want easy quantization integration (FP8/FP4 from TensorRT Model Optimizer)
-- You're already using Triton infrastructure
-- You need automatic batching with fine-grained control
+The TensorRT + Triton setup delivers **15x higher throughput** with **100% reliability** compared to the baseline, while reducing latency by **7-9x** across all percentiles. See the [Performance Analysis](#performance-analysis) section for detailed test methodology and results.
 
-**When vLLM might be simpler:**
-- Single model deployment with basic API needs
-- You want PagedAttention with minimal configuration
+## Why TensorRT + Triton?
 
-This setup gives you TensorRT performance with HuggingFace model simplicity, served through Triton's production-ready infrastructure. Triton's automatic batching means multiple concurrent requests are processed together on the GPU for maximum throughput.
+### Why TensorRT?
+
+NVIDIA TensorRT is a software development kit for high-performance deep learning inference. It compiles model weights into optimized engines that run more efficiently on specific GPU hardware through CUDA-level optimizations, custom kernels, and optional quantization.
+
+TensorRT requires you to specify optimization parameters upfront—GPU architecture, batch size, precision (FP8, INT8, etc.), and input/output shapes. This specialization allows TensorRT to generate highly optimized inference engines that maximize GPU utilization, reduce latency, and lower inference costs compared to serving raw model weights.
+
+### Why Triton?
+
+NVIDIA Triton Inference Server streamlines production AI deployment by handling operational concerns that are critical for serving models at scale. It provides automatic request batching, health checks, metrics collection, and standardized HTTP/gRPC APIs out of the box.
+
+Triton supports multiple frameworks (TensorRT, PyTorch, TensorFlow, ONNX, etc.), offers built-in Prometheus metrics for observability, and integrates seamlessly with Kubernetes for auto-scaling. It also supports model versioning, A/B testing, and can chain multiple models into pipelines.
+
+![Triton Server Architecture](https://substackcdn.com/image/fetch/$s_!FEPb!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F9d4460ad-0e7e-4545-aee6-274b93dd5959_2300x2304.gif)
+
+*Image source: [How to Use NVIDIA Triton Server](https://multimodalai.substack.com/p/how-to-use-nvidia-triton-server-the)*
+
+Now let's combine them together and see how it works :)
+
+
+## Architecture Overview
+
+**TensorRT-LLM (PyTorch Backend)** optimizes model inference on the GPU through:
+- Custom CUDA kernels for attention operations
+- Paged KV cache for efficient memory usage during batching
+- Optional quantization (FP8, INT8) for speed and memory savings
+
+**Triton Inference Server** coordinates inference through:
+- Request queuing and batching
+- Automatic batching of requests for maximum GPU utilization
+- Model scheduling and versioning
+- Health checks and metrics collection
+- Standardized HTTP/gRPC inference protocols
+
+**Request Flow:**
+1. Client sends text via HTTP/gRPC to Triton
+2. Triton queues the request in the scheduler
+3. Triton batches incoming requests (waits for more or timeout)
+4. When batch is ready, Triton calls your Python backend
+5. TensorRT-LLM generates tokens for the entire batch in parallel on GPU
+6. Triton returns responses to clients
+
+This setup allows multiple concurrent requests to be processed together on the GPU for maximum throughput.
 
 ## Basic Setup
 
@@ -37,15 +78,11 @@ cerebrium init tensorrt-triton-demo
 cd tensorrt-triton-demo
 ```
 
-Add your HuggingFace token to project secrets:
-
-```bash
-cerebrium secrets set HF_AUTH_TOKEN your_token_here
-```
+Add your HuggingFace token to project secrets through the dashboard.
 
 ## Implementation
 
-Keep all the files under the same folder. 
+All files should be placed in the same project directory. 
 
 ### Triton Model Configuration
 
@@ -54,7 +91,11 @@ Create `config.pbtxt` to define Triton's model interface:
 ```protobuf
 name: "llama3_2"
 backend: "python"
-max_batch_size: 32
+max_batch_size: 128
+
+dynamic_batching {
+  max_queue_delay_microseconds: 800
+}
 
 instance_group [
   {
@@ -100,12 +141,21 @@ output [
 
 This configuration tells Triton:
 - Use Python backend (runs our model.py)
-- Automatically batch up to 32 requests together for efficient GPU utilization
+- Automatically batch up to 128 requests together for efficient GPU utilization
+- Use dynamic batching with a 100 microsecond queue delay to maximize batch sizes
 - Accept text input with optional sampling parameters
 - Run on a single GPU instance
 - Return generated text as output
 
 ### Python Backend Implementation
+
+Triton's Python backend requires implementing a `TritonPythonModel` class with three key methods:
+
+- **`initialize(args)`**: Called once when Triton loads the model. This is where you load the tokenizer and initialize TensorRT-LLM with your build configuration. 
+
+- **`execute(requests)`**: Called every time Triton has a batch ready. Triton automatically batches incoming requests (up to your configured `max_batch_size`) and passes them here. This method extracts prompts from each request, runs batch inference with TensorRT-LLM, and returns responses.
+
+- **`finalize()`**: Called when the model is being unloaded. Use this to clean up GPU memory and shut down the TensorRT-LLM engine.
 
 Create `model.py` implementing Triton's Python backend interface:
 
@@ -139,7 +189,7 @@ class TritonPythonModel:
         build_config = BuildConfig(
             plugin_config=plugin_config,
             max_input_len=4096,
-            max_batch_size=32,  # Matches Triton max_batch_size
+            max_batch_size=128,  # Matches Triton max_batch_size in config.pbtxt
         )
         
         self.llm = LLM(
@@ -153,7 +203,8 @@ class TritonPythonModel:
         """
         Execute inference on batched requests.
         
-        Triton automatically batches up to 32 requests and passes them here.
+        Triton automatically batches requests (up to max_batch_size: 128).
+        This function processes the batch that Triton provides.
         """
         try:
             prompts = []
@@ -269,9 +320,6 @@ class TritonPythonModel:
             torch.cuda.empty_cache()
 ```
 
-The `initialize()` method loads the model once at startup using TensorRT-LLM's PyTorch backend. The `max_batch_size=32` must match the value in `config.pbtxt` to enable Triton's automatic batching.
-
-The `execute()` method processes batched requests from Triton. It extracts text and parameters from each request, formats prompts with Llama's chat template, and calls `llm.generate()` once for the entire batch. 
 
 ### Model Download Script
 
@@ -317,6 +365,45 @@ if __name__ == "__main__":
 
 This script checks if the model exists in persistent storage before downloading to avoid redundant downloads on subsequent deployments.
 
+### Deployment Configuration
+
+We now configure our container and autoscaling environment in `cerebrium.toml`. This file defines the hardware resources and scaling behavior:
+
+```toml
+[cerebrium.deployment]
+name = "tensorrt-triton-demo"
+python_version = "3.12"
+disable_auth = true
+include = ['./*', 'cerebrium.toml']
+exclude = ['.*']
+deployment_initialization_timeout = 830
+
+[cerebrium.hardware]
+cpu = 4.0
+memory = 40.0
+compute = "AMPERE_A10"
+gpu_count = 1
+provider = "aws"
+region = "us-east-1"
+
+[cerebrium.scaling]
+min_replicas = 0
+max_replicas = 5
+cooldown = 300
+replica_concurrency = 128
+scaling_metric = "concurrency_utilization"
+
+[cerebrium.runtime.custom]
+port = 8000
+healthcheck_endpoint = "/v2/health/live"
+readycheck_endpoint = "/v2/health/ready"
+dockerfile_path = "./Dockerfile"
+```
+
+Key configuration details:
+- `replica_concurrency = 128`: Each replica can handle up to 128 concurrent requests, matching our Triton batch size
+- `max_replicas = 5`: Scale up to 5 replicas for peak load
+
 ### Container Setup
 
 Create `Dockerfile` extending Nvidia's Triton container:
@@ -350,72 +437,37 @@ RUN mkdir -p \
     /persistent-storage/engines
 
 # Copy files
-COPY --chmod=755 download_model.py start_triton.sh /app/
 COPY model.py /app/model_repository/llama3_2/1/
 COPY config.pbtxt /app/model_repository/llama3_2/
 
 EXPOSE 8000 8001 8002
 
-CMD ["/app/start_triton.sh"]
+CMD ["tritonserver", "--model-repository=/app/model_repository", "--http-port=8000", "--grpc-port=8001", "--metrics-port=8002"]
 ```
 
-The Dockerfile uses Nvidia's official Triton container with TensorRT-LLM pre-installed, creates the model repository structure that Triton expects, and copies our application files to the correct locations.
-
-Create `start_triton.sh` as the container entrypoint:
-
-```bash
-#!/bin/bash
-set -e
-
-echo "Checking for model..."
-python3 /app/download_model.py
-
-echo "Starting Triton Inference Server..."
-exec tritonserver \
-    --model-repository=/app/model_repository \
-    --http-port=8000 \
-    --grpc-port=8001 \
-    --metrics-port=8002
-```
-
-This script ensures the model is downloaded before starting Triton server.
+The Dockerfile uses Nvidia's official Triton container with TensorRT-LLM pre-installed, creates the model repository structure that Triton expects, and copies our application files to the correct locations. 
 
 ## Deploy
 
-Configure your deployment in `cerebrium.toml`:
+### Download Model to Persistent Storage
 
-```toml
-[cerebrium.deployment]
-name = "tensorrt-triton-demo"
-python_version = "3.12"
-disable_auth = true
-include = ['./*', 'cerebrium.toml']
-exclude = ['.*']
-deployment_initialization_timeout = 830
+Before deploying, we need to download the model to Cerebrium's persistent storage. This ensures the model is available across all deployments and avoids redundant downloads during container startup.
 
-[cerebrium.hardware]
-cpu = 4.0
-memory = 40.0
-compute = "AMPERE_A10"
-gpu_count = 1
-provider = "aws"
-region = "us-east-1"
+The `cerebrium run` command executes a Python script in a temporary container with the same environment and hardware configuration as your deployment. It has access to persistent storage at `/persistent-storage`, so any files written there will be available to your deployed containers.
 
-[cerebrium.scaling]
-min_replicas = 0
-max_replicas = 2
-cooldown = 60
-replica_concurrency = 5
-scaling_metric = "concurrency_utilization"
+Run the download script:
 
-[cerebrium.runtime.custom]
-port = 8000
-healthcheck_endpoint = "/v2/health/live"
-readycheck_endpoint = "/v2/health/ready"
-dockerfile_path = "./Dockerfile"
+```bash
+cerebrium run download_model.py
 ```
 
-The `deployment_initialization_timeout = 830` allows time for TensorRT-LLM to load and optimize the model on first deployment. The custom runtime configuration points to our Dockerfile and Triton's health check endpoints.
+This command:
+- Spins up a temporary container with your configured hardware (A10 GPU)
+- Executes `download_model.py` which downloads the model to `/persistent-storage/models`
+- The downloaded model persists across all future deployments
+- Saves time on subsequent deployments since the model is already cached
+
+### Deploy the Model
 
 Deploy the model:
 
@@ -423,26 +475,25 @@ Deploy the model:
 cerebrium deploy
 ```
 
-First deployment takes 5-10 minutes as TensorRT-LLM loads the model. Subsequent deploys are faster since the model is cached in persistent storage.
 
 ## Test
 
 Send a request to your deployed endpoint:
 
 ```bash
-curl -X POST https://api.aws.us-east-1.cerebrium.ai/v4/p-2f5e4b5c/tensorrt-triton-demo/v2/models/llama3_2/infer \      
+curl -X POST https://api.aws.us-east-1.cerebrium.ai/v4/<project-id>/<name>/v2/models/llama3_2/infer \
   -H "Content-Type: application/json" \
   -d '{
-    "inputs": [              
-      {                 
+    "inputs": [
+      {
         "name": "text_input",
-        "shape": [1, 1],                     
+        "shape": [1, 1],
         "datatype": "BYTES",
         "data": ["What is machine learning?"]
-      }                                 
+      }
     ],
     "outputs": [{"name": "text_output"}]
-  }'                                    
+  }'
 ```
 
 The endpoint returns results in this format:
@@ -461,3 +512,90 @@ The endpoint returns results in this format:
 ```
 
 The response follows Triton's standard inference protocol format with the generated text in the `data` field of the output tensor.
+
+## Performance Analysis
+
+### Test Setup
+
+To validate the performance improvements of TensorRT + Triton, we compared it against a vanilla HuggingFace baseline serving the same Llama 3.2 3B Instruct model. Both deployments used identical hardware (NVIDIA A10 GPU) and were tested under the same load conditions.
+
+**Vanilla Baseline Setup:**
+- Model served directly using HuggingFace Transformers with PyTorch
+- Single request processing (no batching)
+- Standard FastAPI endpoint
+- Same hardware configuration (A10 GPU, 4 CPU cores, 40GB memory)
+
+**TensorRT + Triton Setup:**
+- TensorRT-LLM with PyTorch backend
+- Triton Inference Server with dynamic batching (max batch size: 128)
+- Automatic request queuing and batching
+- Same hardware configuration (A10 GPU, 4 CPU cores, 40GB memory)
+
+Both deployments were tested with the same load testing parameters to ensure fair comparison.
+
+### Results
+
+| Metric | Vanilla Baseline | TensorRT + Triton | Improvement |
+|--------|------------------|-------------------|-------------|
+| **Requests Per Second (RPS)** | 0.83 | 12.46 | **15x faster** |
+| **Success Rate** | 61.6% | 100.0% | **38.4% increase** |
+| **P50 Latency** | 297.7s | 41.7s | **7.1x faster** |
+| **P99 Latency** | 593.2s | 79.3s | **7.5x faster** |
+| **Average Latency** | 376.2s | 42.4s | **8.9x faster** |
+
+### Key Insights
+
+1. **Throughput**: The TensorRT + Triton setup handles **15x more requests per second** (12.46 vs 0.83 RPS), enabling significantly higher capacity on the same hardware.
+
+2. **Reliability**: The baseline achieved only 61.6% success rate, with many requests timing out after 600 seconds. The TensorRT + Triton setup achieved **100% success rate**, demonstrating production-ready reliability.
+
+3. **Latency**: Across all percentiles, TensorRT + Triton reduces latency by **7-9x**:
+   - Median (P50) requests complete in 41.7s vs 297.7s
+   - 99th percentile requests complete in 79.3s vs 593.2s
+   - Average latency reduced from 376.2s to 42.4s
+
+4. **Consistency**: The TensorRT + Triton setup shows much tighter latency distribution—the difference between P50 and P99 is only 37.6 seconds, compared to 295.5 seconds for the baseline. This predictability is crucial for production workloads.
+
+5. **Cost Efficiency**: With 15x higher throughput and 8.9x lower average latency, the same GPU can handle significantly more traffic, reducing cost per request.
+
+### Why These Performance Improvements?
+
+The dramatic performance gains come from the underlying characteristics of TensorRT and Triton working together:
+
+**TensorRT's GPU-Level Optimizations:**
+
+1. **Custom CUDA Kernels**: TensorRT generates specialized CUDA kernels optimized for the specific GPU architecture (A10 in this case). These kernels are hand-tuned for the exact operations in the model, avoiding the overhead of generic PyTorch operations.
+
+2. **Kernel Fusion**: TensorRT combines multiple operations into single GPU kernels, reducing memory transfers and kernel launch overhead. For transformer models, this means attention operations, layer normalization, and activation functions are fused together, dramatically reducing the number of GPU kernel calls.
+
+3. **Paged KV Cache**: TensorRT-LLM uses a paged attention mechanism that efficiently manages the key-value cache across batches. This allows processing multiple requests simultaneously without memory fragmentation, enabling the 128-request batch size we configured.
+
+4. **Memory Optimization**: TensorRT pre-allocates and reuses GPU memory buffers based on the specified batch size and sequence lengths, eliminating dynamic memory allocation overhead during inference.
+
+**Triton's Request Management:**
+
+1. **Dynamic Batching**: Triton automatically queues incoming requests and batches them together (up to 128 in our configuration). This maximizes GPU utilization—instead of processing one request at a time like the baseline, Triton processes up to 128 requests in parallel, amortizing the GPU overhead across many requests.
+
+2. **Request Queuing**: Triton's scheduler intelligently queues requests and waits for a configurable delay (100 microseconds in our setup) to form larger batches. This ensures the GPU is always processing full batches rather than waiting for requests to arrive.
+
+3. **Concurrent Processing**: Triton handles multiple concurrent requests efficiently, managing the request lifecycle from arrival through batching to response delivery. This eliminates the serialization bottleneck present in the vanilla baseline.
+
+4. **Resource Management**: Triton manages GPU memory and compute resources at the server level, preventing resource contention and ensuring consistent performance even under high load.
+
+**How They Work Together:**
+
+- **TensorRT optimizes the computation**: Each individual inference is faster due to CUDA-level optimizations and kernel fusion
+- **Triton optimizes the workload**: Batching multiple requests together means TensorRT processes 128 requests in roughly the same time it would take to process one, dramatically improving throughput
+- **The combination multiplies the benefits**: TensorRT's per-request speedup (7-9x) combined with Triton's batching (up to 128x parallelism) results in the observed 15x overall throughput improvement
+
+The baseline's 61.6% success rate and high latency come from processing requests sequentially without batching, leading to GPU underutilization and request timeouts. TensorRT + Triton eliminates these issues by keeping the GPU fully utilized with batched, optimized inference, resulting in 100% success rate and consistent, predictable latency.
+
+These results demonstrate that TensorRT + Triton is not just faster, but also more reliable and cost-effective for production LLM serving at scale.
+
+---
+
+## Get Started
+
+Ready to deploy your own optimized LLM serving setup? The complete implementation, including all configuration files and deployment scripts, is available in our [GitHub repository](https://github.com/CerebriumAI/examples/tree/master/tensorrt-triton-demo). 
+
+Clone the repository and follow this tutorial to deploy Llama 3.2 3B (or adapt it for your own models) with TensorRT-LLM and Triton Inference Server. You'll have a production-ready, high-performance LLM serving endpoint in minutes.
