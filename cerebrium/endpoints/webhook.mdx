@@ -28,6 +28,7 @@ we automatically retry with the following behavior:
 - **Delay between retries**: Up to 5 seconds between attempts
 
 **Retry conditions:**
+
 - Network errors (connection failures, timeouts) will trigger retries
 - `404 Not Found` responses will trigger retries (endpoint may be temporarily unreachable)
 - Other `4xx` client errors will **not** be retried (considered permanent failures)
@@ -37,7 +38,10 @@ we automatically retry with the following behavior:
 If all attempts fail, the error is logged but will not affect your function's response to the original caller.
 
 <Warning>
-  **Your webhook endpoint should be idempotent.** In some cases, we may retry a webhook even if it was processed successfully—for example, if our backend doesn't receive the success response from your webhook server due to network issues. Design your endpoint to handle duplicate deliveries gracefully.
+  **Your webhook endpoint should be idempotent.** In some cases, we may retry a
+  webhook even if it was processed successfully—for example, if our backend
+  doesn't receive the success response from your webhook server due to network
+  issues. Design your endpoint to handle duplicate deliveries gracefully.
 </Warning>
 
 To illustrate this, suppose your function returns `{"smile": "wave"}`. We would then make a POST call from
