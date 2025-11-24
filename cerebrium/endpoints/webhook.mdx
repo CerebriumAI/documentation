@@ -19,6 +19,31 @@ a feature of our proxy, you will not need to modify any part of your code to use
 functionality. You should, however, ensure that your endpoint is able to receive POST requests. While
 this will work for both Cortex and Custom runtimes, it will only work for HTTP requests, and not websockets.
 
+## Retry Behavior
+
+Webhook requests are sent asynchronously and will not block your function's response. If a webhook delivery fails,
+we automatically retry with the following behavior:
+
+- **Maximum attempts**: 3 attempts total
+- **Delay between retries**: Up to 5 seconds between attempts
+
+**Retry conditions:**
+
+- Network errors (connection failures, timeouts) will trigger retries
+- `404 Not Found` responses will trigger retries (endpoint may be temporarily unreachable)
+- Other `4xx` client errors will **not** be retried (considered permanent failures)
+- `5xx` server errors will **not** be retried (to avoid potential duplicate side effects)
+- Non-2xx responses (excluding the above) will trigger retries
+
+If all attempts fail, the error is logged but will not affect your function's response to the original caller.
+
+<Warning>
+  **Your webhook endpoint should be idempotent.** In some cases, we may retry a
+  webhook even if it was processed successfully—for example, if our backend
+  doesn't receive the success response from your webhook server due to network
+  issues. Design your endpoint to handle duplicate deliveries gracefully.
+</Warning>
+
 To illustrate this, suppose your function returns `{"smile": "wave"}`. We would then make a POST call from
 our proxy that would look like this to your webhook:
 
