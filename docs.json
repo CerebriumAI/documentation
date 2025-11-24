@@ -22,10 +22,7 @@
             "groups": [
               {
                 "group": "Getting Started",
-                "pages": [
-                  "cerebrium/getting-started/introduction",
-                  "cerebrium/getting-started/collaborating"
-                ]
+                "pages": ["cerebrium/getting-started/introduction"]
               },
               {
                 "group": "Container Images",

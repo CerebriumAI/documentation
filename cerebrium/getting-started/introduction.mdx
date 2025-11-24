@@ -21,19 +21,61 @@ Setting up and deploying an app on Cerebrium takes just a few steps:
 
 ### 1. Install the CLI
 
+<Tabs>
+<Tab title="Python (pip)">
+
 ```bash
 pip install cerebrium
+```
+
+</Tab>
+<Tab title="macOS (Homebrew)">
+
+```bash
+brew tap cerebriumai/tap
+brew install cerebrium
+```
+
+</Tab>
+<Tab title="Linux">
+
+```bash
+# Ubuntu/Debian
+wget https://github.com/CerebriumAI/cerebrium/releases/latest/download/cerebrium_linux_amd64.deb
+sudo dpkg -i cerebrium_linux_amd64.deb
+
+# Or binary installation
+curl -L https://github.com/CerebriumAI/cerebrium/releases/latest/download/cerebrium_cli_linux_amd64.tar.gz | tar xz
+sudo mv cerebrium /usr/local/bin/
+```
+
+</Tab>
+<Tab title="Windows">
+
+```powershell
+# PowerShell (Run as Administrator)
+Invoke-WebRequest -Uri "https://github.com/CerebriumAI/cerebrium/releases/latest/download/cerebrium_cli_windows_amd64.zip" -OutFile "cerebrium.zip"
+Expand-Archive -Path "cerebrium.zip" -DestinationPath "."
+# Add cerebrium.exe to PATH
+```
+
+</Tab>
+</Tabs>
+
+### 2. Login to CLI
+
+```bash
 cerebrium login  # Redirects to your browser for authentication
 ```
 
-### 2. Initialize a Project
+### 3. Initialize a Project
 
 ```bash
 cerebrium init my-first-app
 cd my-first-app
 ```
 
-This creates a basic project with `main.py` for app code and `cerebrium.toml` for configuration. This is was the main.py file contains:
+This creates a basic project with `main.py` for app code and `cerebrium.toml` for configuration. This is what the main.py file contains:
 
 ```python
 def run(prompt: str):
@@ -42,7 +84,7 @@ def run(prompt: str):
     return {"my_result": prompt}
 ```
 
-### 3. Run code remotely
+### 4. Run code remotely
 
 We can then run this function in the cloud and pass it a prompt.
 
@@ -56,7 +98,7 @@ Use the `run` functionality for quick code iteration and testing snippets or onc
 
 Let us now turn this into a scalable REST endpoint - something we could put in production!
 
-### 4. Deploy your app
+### 5. Deploy your app
 
 Run the following command:
 
@@ -85,3 +127,12 @@ For a detailed explanation of how Cerebrium builds and manages container images,
   This targeted approach significantly reduces cold start times and optimizes
   resource usage.
 </Info>
+
+## Further Examples
+
+Below are a few tutorials to explore in order to learn more about the functionality Cerebrium has to offer:
+
+- [Serve a OpenAI Compatible LLM with vLLM](/v4/examples/gpt-oss)
+- [Deploy a Twilio Voice Agent with Pipecat](/v4/examples/twilio-voice-agent)
+- [Run a Hyper-Parameter Sweep Training Llama 3.2](/v4/examples/wandb-sweep)
+- [Run a Gradio Chat Inferface](/v4/examples/asgi-gradio-interface)
