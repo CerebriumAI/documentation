@@ -231,6 +231,38 @@ docker_base_image_url = "python:3.11-bookworm"
   add only essential components as needed.
 </Tip>
 
+#### Public Docker Hub Images with Namespaces
+
+When using public Docker Hub images that include a namespace (e.g., `michaelf34/infinity`, `huggingface/transformers`), you need to be logged in to Docker Hub locally, even though the image is public. This is because Cerebrium reads your `~/.docker/config.json` to authenticate image pulls.
+
+```bash
+# Login to Docker Hub (required for namespace/image format)
+docker login
+```
+
+After logging in, you can use the image in your configuration:
+
+```toml
+[cerebrium.deployment]
+docker_base_image_url = "michaelf34/infinity:latest"
+```
+
+<Note>
+  Official Docker Hub images without a namespace (like `python:3.11`, `debian:bookworm`, `ubuntu:22.04`) 
+  work without requiring a Docker login. Only images in the `namespace/image` format require authentication.
+</Note>
+
+#### Public AWS ECR Images
+
+Public ECR images from the `public.ecr.aws` registry work without authentication:
+
+```toml
+[cerebrium.deployment]
+docker_base_image_url = "public.ecr.aws/lambda/python:3.11"
+```
+
+However, **private ECR images** (e.g., `123456789.dkr.ecr.us-east-1.amazonaws.com/my-image`) require authentication. See [Using Private Docker Registries](/cerebrium/container-images/private-docker-registry) for setup instructions.
+
 ## Custom Runtimes
 
 While Cerebrium's default runtime works well for most apps, teams often need more control over their server implementation. Custom runtimes enable features like custom authentication, dynamic batching, public endpoints, or WebSocket connections.
