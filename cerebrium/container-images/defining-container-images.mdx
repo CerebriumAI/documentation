@@ -175,52 +175,13 @@ The base image selection shapes how an app runs in Cerebrium. While the default 
 
 ### Supported Base Images
 
-Cerebrium supports several categories of base images to ensure system compatibility:
+Cerebrium supports several categories of base images to ensure system compatibility such as nvidia, ubuntu and python images.
 
 ```toml
 [cerebrium.deployment]
-# Default minimal image
-docker_base_image_url = "debian:bookworm-slim"
-```
-
-```toml
-[cerebrium.deployment]
-# CUDA-enabled images
-docker_base_image_url = "nvidia/cuda:12.0.1-runtime-ubuntu22.04"
-```
-
-The system accepts these image types:
-
-#### Ubuntu-based CUDA Images
-
-All Ubuntu-based `nvidia/cuda` images that include Ubuntu are supported. These include the CUDA libraries necessary to provide GPU acceleration:
-
-```toml
-[cerebrium.deployment]
-docker_base_image_url = "nvidia/cuda:12.0.1-devel-ubuntu22.04"
-```
-
-#### Debian and Ubuntu Base Images
-
-Any Debian or Ubuntu base image works as a foundation:
-
-```toml
-[cerebrium.deployment]
-docker_base_image_url = "debian:bullseye"
-```
-
-```toml
-[cerebrium.deployment]
-docker_base_image_url = "ubuntu:22.04"
-```
-
-#### Python Images
-
-Python images based on Debian bullseye or bookworm provide pre-configured Python environments:
-
-```toml
-[cerebrium.deployment]
-docker_base_image_url = "python:3.11-bookworm"
+docker_base_image_url = "debian:bookworm-slim" # Default minimal image
+#docker_base_image_url = "nvidia/cuda:12.0.1-runtime-ubuntu22.04" # CUDA-enabled images
+#docker_base_image_url = "ubuntu:22.04"  # debian images
 ```
 
 <Tip>
@@ -230,6 +191,46 @@ docker_base_image_url = "python:3.11-bookworm"
   lead to longer cold-starts and build times. Begin with a lean base image and
   add only essential components as needed.
 </Tip>
+
+#### Public Docker Hub Images with Namespaces
+
+When using public Docker Hub images that include a namespace (e.g., `bob/infinity`, `huggingface/transformers`), you need to be logged in to Docker Hub locally, even though the image is public. This is because Cerebrium reads your `~/.docker/config.json` to authenticate image pulls.
+
+```bash
+# Login to Docker Hub with username (required for namespace/image format)
+docker login -u your-dockerhub-username
+# Enter your password or access token when prompted
+```
+
+After logging in, you can use the image in your configuration:
+
+```toml
+[cerebrium.deployment]
+docker_base_image_url = "bob/infinity:latest"
+```
+
+<Note>
+  Official Docker Hub images without a namespace (like `python:3.11`,
+  `debian:bookworm`, `ubuntu:22.04`) work without requiring a Docker login. Only
+  images in the `namespace/image` format require authentication.
+</Note>
+
+<Warning>
+  Use `docker login -u username` instead of just `docker login`. The latter may
+  use Docker's web-based OAuth flow which creates tokens that are incompatible
+  with our build system.
+</Warning>
+
+#### Public AWS ECR Images
+
+Public ECR images from the `public.ecr.aws` registry work without authentication:
+
+```toml
+[cerebrium.deployment]
+docker_base_image_url = "public.ecr.aws/lambda/python:3.11"
+```
+
+However, **private ECR images** require authentication. See [Using Private Docker Registries](/cerebrium/container-images/private-docker-registry) for setup instructions.
 
 ## Custom Runtimes
 
