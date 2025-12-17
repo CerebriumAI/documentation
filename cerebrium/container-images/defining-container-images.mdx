@@ -175,52 +175,13 @@ The base image selection shapes how an app runs in Cerebrium. While the default 
 
 ### Supported Base Images
 
-Cerebrium supports several categories of base images to ensure system compatibility:
+Cerebrium supports several categories of base images to ensure system compatibility such as nvidia, ubuntu and python images.
 
 ```toml
 [cerebrium.deployment]
-# Default minimal image
-docker_base_image_url = "debian:bookworm-slim"
-```
-
-```toml
-[cerebrium.deployment]
-# CUDA-enabled images
-docker_base_image_url = "nvidia/cuda:12.0.1-runtime-ubuntu22.04"
-```
-
-The system accepts these image types:
-
-#### Ubuntu-based CUDA Images
-
-All Ubuntu-based `nvidia/cuda` images that include Ubuntu are supported. These include the CUDA libraries necessary to provide GPU acceleration:
-
-```toml
-[cerebrium.deployment]
-docker_base_image_url = "nvidia/cuda:12.0.1-devel-ubuntu22.04"
-```
-
-#### Debian and Ubuntu Base Images
-
-Any Debian or Ubuntu base image works as a foundation:
-
-```toml
-[cerebrium.deployment]
-docker_base_image_url = "debian:bullseye"
-```
-
-```toml
-[cerebrium.deployment]
-docker_base_image_url = "ubuntu:22.04"
-```
-
-#### Python Images
-
-Python images based on Debian bullseye or bookworm provide pre-configured Python environments:
-
-```toml
-[cerebrium.deployment]
-docker_base_image_url = "python:3.11-bookworm"
+docker_base_image_url = "debian:bookworm-slim" # Default minimal image
+#docker_base_image_url = "nvidia/cuda:12.0.1-runtime-ubuntu22.04" # CUDA-enabled images
+#docker_base_image_url = "ubuntu:22.04"  # debian images
 ```
 
 <Tip>
