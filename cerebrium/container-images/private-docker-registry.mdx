@@ -21,9 +21,14 @@ Based on your registry, login using one of the following commands:
 **Docker Hub:**
 
 ```bash
-docker login
-# Enter username and password/token when prompted
+docker login -u your-dockerhub-username
+# Enter your password or access token when prompted
 ```
+
+<Warning>
+  Use `docker login -u username` instead of just `docker login`. The latter may use Docker's web-based OAuth 
+  flow which creates tokens that are incompatible with our build system.
+</Warning>
 
 **AWS ECR:**
 
@@ -36,7 +41,7 @@ aws ecr get-login-password --region us-east-1 | \
 **Generic Registry:**
 
 ```bash
-docker login registry.company.com
+docker login -u your-username registry.company.com
 # Enter credentials when prompted
 ```
 
