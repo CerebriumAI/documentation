@@ -184,3 +184,93 @@ Since the config has specified `100` as a target for `concurrency_utilization` a
 the autoscaler will suggest a value of 1 replica for scale out. Since however, we have `scale_buffer=3`, the application will actually scale one more replica to **(1+3)=4**.
 In other words, the scale buffer will simply add a static amount of replicas to the number of replicas the autoscaler suggests using the scale target.
 Once this request has completed, the usual `cooldown` period will apply, and the app replica count will scale down back to the baseline of **1 replica**.
+
+## Evaluation Interval
+
+The `evaluation_interval` parameter controls the time window (in seconds) over which the autoscaler evaluates metrics before making scaling decisions. The default is 30 seconds, with a valid range of 6-300 seconds.
+
+```toml
+[cerebrium.scaling]
+evaluation_interval = 30  # Evaluate metrics over 30-second windows
+```
+
+A shorter interval makes the autoscaler more responsive to traffic spikes but may cause more frequent scaling events. A longer interval smooths out transient spikes but may delay scaling responses.
+
+<Info>
+For bursty workloads, a shorter `evaluation_interval` (e.g., 10-15 seconds) helps the system respond quickly to demand. For steady workloads, a longer interval (e.g., 60 seconds) reduces unnecessary scaling churn.
+</Info>
+
+## Load Balancing
+
+The `load_balancing` parameter controls how incoming requests are distributed across your replicas. When not specified, the system automatically selects the best algorithm based on your `replica_concurrency` setting.
+
+```toml
+[cerebrium.scaling]
+load_balancing = "min-connections"  # Explicitly set load balancing algorithm
+```
+
+**Default behavior**: When `load_balancing` is not set, the system uses `first-available` for `replica_concurrency <= 3` (typical for GPU workloads) and `round-robin` for higher concurrency.
+
+### Available Algorithms
+
+#### round-robin
+
+Cycles through replicas starting from the last successful target. Each replica's concurrency limit is respected - if a replica is at capacity, the algorithm proceeds to the next one in rotation.
+
+| Characteristic | Value |
+| -------------- | ----- |
+| Selection complexity | O(1) typical, O(N) worst case when scanning for available capacity |
+| Latency profile | Consistent p50, good p90 under uniform load |
+| Strategy | Stateful index rotation with mutex synchronization; skips full replicas |
+
+**Best for**: Workloads with predictable request times where you want even distribution across replicas over time.
+
+#### first-available
+
+Scans replicas from the start of the list and selects the first one with available capacity.
+
+| Characteristic | Value |
+| -------------- | ----- |
+| Selection complexity | O(1) typical, O(N) worst case |
+| Latency profile | Optimal p50 when load is light, may degrade p90 under high load |
+| Strategy | Linear scan from list start; returns first replica that accepts via Reserve() |
+
+**Best for**: GPU workloads with low concurrency (`replica_concurrency <= 3`). Maximizes utilization of warm replicas before spreading load, reducing cold starts and keeping models in VRAM.
+
+**Tradeoff**: Earlier replicas in the list handle more traffic. This is desirable for GPU workloads but may cause uneven distribution for CPU workloads.
+
+#### min-connections
+
+Linear scan to find the replica with the fewest in-flight requests, then attempts to reserve it. If that replica cannot accept (at capacity), falls back to trying other replicas in iteration order.
+
+| Characteristic | Value |
+| -------------- | ----- |
+| Selection complexity | Θ(N) - always scans all replicas to find minimum |
+| Latency profile | Best p90/p99 tail latency |
+| Strategy | Single pass to find minimum in-flight; fallback in iteration order |
+
+**Best for**: Workloads with variable request times (e.g., LLM inference where output length varies). Routes new requests to the least busy replica, preventing fast requests from queuing behind slow ones.
+
+#### random-choice-2
+
+Implements the "Power of Two Choices" algorithm: randomly samples two replicas and routes to the one with lower weight (based on active request tracking). Ties are broken randomly.
+
+| Characteristic | Value |
+| -------------- | ----- |
+| Selection complexity | Θ(1) - constant time regardless of replica count |
+| Latency profile | Good balance of p50 and p90 |
+| Strategy | Sample 2 random replicas, compare weights, pick lighter one |
+
+**Best for**: High-throughput scenarios with many replicas where selection overhead matters. Research shows this achieves exponentially better load distribution than pure random selection.
+
+**Note**: Uses weight-based tracking rather than reservation-based concurrency limiting, making it suitable for unlimited concurrency scenarios.
+
+### Choosing an Algorithm
+
+| Scenario | Recommended | Reason |
+| -------- | ----------- | ------ |
+| GPU inference, `replica_concurrency=1` | `first-available` (default) | Maximizes GPU utilization, keeps models warm |
+| LLMs with variable output lengths | `min-connections` | Prevents head-of-line blocking, best tail latency |
+| High-throughput, many replicas | `random-choice-2` | Θ(1) selection with near-optimal distribution |
+| Uniform request times, even distribution | `round-robin` | Predictable rotation, no hot spots over time |
+| Latency-sensitive with variable load | `min-connections` | Minimizes p90/p99 by routing to least busy replica |
