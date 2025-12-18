@@ -187,9 +187,7 @@ Once this request has completed, the usual `cooldown` period will apply, and the
 
 ## Evaluation Interval
 
-<Warning>
-Requires CLI version 2.1.5 or higher.
-</Warning>
+<Warning>Requires CLI version 2.1.5 or higher.</Warning>
 
 The `evaluation_interval` parameter controls the time window (in seconds) over which the autoscaler evaluates metrics before making scaling decisions. The default is 30 seconds, with a valid range of 6-300 seconds.
 
@@ -208,9 +206,7 @@ A shorter interval makes the autoscaler more responsive to traffic spikes but ma
 
 ## Load Balancing
 
-<Warning>
-Requires CLI version 2.1.5 or higher.
-</Warning>
+<Warning>Requires CLI version 2.1.5 or higher.</Warning>
 
 The `load_balancing` parameter controls how incoming requests are distributed across your replicas. When not specified, the system automatically selects the best algorithm based on your `replica_concurrency` setting.
 
