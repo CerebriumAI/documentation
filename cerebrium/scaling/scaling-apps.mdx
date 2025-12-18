@@ -197,7 +197,9 @@ evaluation_interval = 30  # Evaluate metrics over 30-second windows
 A shorter interval makes the autoscaler more responsive to traffic spikes but may cause more frequent scaling events. A longer interval smooths out transient spikes but may delay scaling responses.
 
 <Info>
-For bursty workloads, a shorter `evaluation_interval` (e.g., 10-15 seconds) helps the system respond quickly to demand. For steady workloads, a longer interval (e.g., 60 seconds) reduces unnecessary scaling churn.
+  For bursty workloads, a shorter `evaluation_interval` (e.g., 10-15 seconds)
+  helps the system respond quickly to demand. For steady workloads, a longer
+  interval (e.g., 60 seconds) reduces unnecessary scaling churn.
 </Info>
 
 ## Load Balancing
@@ -217,11 +219,11 @@ load_balancing = "min-connections"  # Explicitly set load balancing algorithm
 
 Cycles through replicas starting from the last successful target. Each replica's concurrency limit is respected - if a replica is at capacity, the algorithm proceeds to the next one in rotation.
 
-| Characteristic | Value |
-| -------------- | ----- |
-| Selection complexity | O(1) typical, O(N) worst case when scanning for available capacity |
-| Latency profile | Consistent p50, good p90 under uniform load |
-| Strategy | Stateful index rotation with mutex synchronization; skips full replicas |
+| Characteristic       | Value                                                                   |
+| -------------------- | ----------------------------------------------------------------------- |
+| Selection complexity | O(1) typical, O(N) worst case when scanning for available capacity      |
+| Latency profile      | Consistent p50, good p90 under uniform load                             |
+| Strategy             | Stateful index rotation with mutex synchronization; skips full replicas |
 
 **Best for**: Workloads with predictable request times where you want even distribution across replicas over time.
 
@@ -229,11 +231,11 @@ Cycles through replicas starting from the last successful target. Each replica's
 
 Scans replicas from the start of the list and selects the first one with available capacity.
 
-| Characteristic | Value |
-| -------------- | ----- |
-| Selection complexity | O(1) typical, O(N) worst case |
-| Latency profile | Optimal p50 when load is light, may degrade p90 under high load |
-| Strategy | Linear scan from list start; returns first replica that accepts via Reserve() |
+| Characteristic       | Value                                                                         |
+| -------------------- | ----------------------------------------------------------------------------- |
+| Selection complexity | O(1) typical, O(N) worst case                                                 |
+| Latency profile      | Optimal p50 when load is light, may degrade p90 under high load               |
+| Strategy             | Linear scan from list start; returns first replica that accepts via Reserve() |
 
 **Best for**: GPU workloads with low concurrency (`replica_concurrency <= 3`). Maximizes utilization of warm replicas before spreading load, reducing cold starts and keeping models in VRAM.
 
@@ -243,11 +245,11 @@ Scans replicas from the start of the list and selects the first one with availab
 
 Linear scan to find the replica with the fewest in-flight requests, then attempts to reserve it. If that replica cannot accept (at capacity), falls back to trying other replicas in iteration order.
 
-| Characteristic | Value |
-| -------------- | ----- |
-| Selection complexity | Θ(N) - always scans all replicas to find minimum |
-| Latency profile | Best p90/p99 tail latency |
-| Strategy | Single pass to find minimum in-flight; fallback in iteration order |
+| Characteristic       | Value                                                              |
+| -------------------- | ------------------------------------------------------------------ |
+| Selection complexity | Θ(N) - always scans all replicas to find minimum                   |
+| Latency profile      | Best p90/p99 tail latency                                          |
+| Strategy             | Single pass to find minimum in-flight; fallback in iteration order |
 
 **Best for**: Workloads with variable request times (e.g., LLM inference where output length varies). Routes new requests to the least busy replica, preventing fast requests from queuing behind slow ones.
 
@@ -255,11 +257,11 @@ Linear scan to find the replica with the fewest in-flight requests, then attempt
 
 Implements the "Power of Two Choices" algorithm: randomly samples two replicas and routes to the one with lower weight (based on active request tracking). Ties are broken randomly.
 
-| Characteristic | Value |
-| -------------- | ----- |
-| Selection complexity | Θ(1) - constant time regardless of replica count |
-| Latency profile | Good balance of p50 and p90 |
-| Strategy | Sample 2 random replicas, compare weights, pick lighter one |
+| Characteristic       | Value                                                       |
+| -------------------- | ----------------------------------------------------------- |
+| Selection complexity | Θ(1) - constant time regardless of replica count            |
+| Latency profile      | Good balance of p50 and p90                                 |
+| Strategy             | Sample 2 random replicas, compare weights, pick lighter one |
 
 **Best for**: High-throughput scenarios with many replicas where selection overhead matters. Research shows this achieves exponentially better load distribution than pure random selection.
 
@@ -267,10 +269,10 @@ Implements the "Power of Two Choices" algorithm: randomly samples two replicas a
 
 ### Choosing an Algorithm
 
-| Scenario | Recommended | Reason |
-| -------- | ----------- | ------ |
-| GPU inference, `replica_concurrency=1` | `first-available` (default) | Maximizes GPU utilization, keeps models warm |
-| LLMs with variable output lengths | `min-connections` | Prevents head-of-line blocking, best tail latency |
-| High-throughput, many replicas | `random-choice-2` | Θ(1) selection with near-optimal distribution |
-| Uniform request times, even distribution | `round-robin` | Predictable rotation, no hot spots over time |
-| Latency-sensitive with variable load | `min-connections` | Minimizes p90/p99 by routing to least busy replica |
+| Scenario                                 | Recommended                 | Reason                                             |
+| ---------------------------------------- | --------------------------- | -------------------------------------------------- |
+| GPU inference, `replica_concurrency=1`   | `first-available` (default) | Maximizes GPU utilization, keeps models warm       |
+| LLMs with variable output lengths        | `min-connections`           | Prevents head-of-line blocking, best tail latency  |
+| High-throughput, many replicas           | `random-choice-2`           | Θ(1) selection with near-optimal distribution      |
+| Uniform request times, even distribution | `round-robin`               | Predictable rotation, no hot spots over time       |
+| Latency-sensitive with variable load     | `min-connections`           | Minimizes p90/p99 by routing to least busy replica |
