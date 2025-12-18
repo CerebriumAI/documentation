@@ -121,7 +121,30 @@ if os.path.exists("/persistent-storage/models/mymodel.pt"):
   at runtime.
 </Note>
 
-<Warning>
-  Should you require additional storage capacity, please reach out to us through
-  [support](mailto:support@cerebrium.ai).
-</Warning>
+## Increasing Storage Capacity
+
+The default 50GB persistent volume can be increased up to 100GB through self-service:
+
+1. **Via Dashboard**: Navigate to your project settings and find the storage/volumes section to resize your volume.
+
+2. **Via API**: Use the resize volume endpoint:
+
+```bash
+curl -X POST "https://api.cerebrium.ai/v4/projects/{project_id}/volumes/{volume_id}/resize" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"newSizeGb": 100}'
+```
+
+<Note>
+  Self-service resizing supports volumes between 50GB and 100GB. For storage needs beyond 100GB, 
+  please reach out to us through [support](mailto:support@cerebrium.ai).
+</Note>
+
+### Storage Quota Errors
+
+If you hit your storage quota, you'll see errors like `No space left on device` when trying to download or write files. To resolve this:
+
+1. Remove unnecessary files from `/persistent-storage` using `cerebrium rm`
+2. Resize your volume to a larger capacity (up to 100GB self-service)
+3. Contact support for storage beyond 100GB
