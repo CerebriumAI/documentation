@@ -16,7 +16,7 @@ The **number of requests** currently waiting for processing in the queue indicat
   See below for more information.
 </Info>
 
-As traffic decreases, instances enter a cooldown period after processing their last request. When no new requests arrive during cooldown, instances terminate to optimize resource usage. This automatic cycle ensures apps remain responsive while managing costs effectively.
+As traffic decreases, instances enter a cooldown period at reduced concurrency. If reduced concurrency is maintained for the cooldown duration, instances scale down to optimize resource usage. This automatic cycle ensures apps remain responsive while managing costs effectively.
 
 ## Scaling Configuration
 
@@ -40,7 +40,7 @@ The `max_replicas` parameter sets an upper limit on concurrent instances, contro
 
 ### Cooldown Period
 
-After processing a request, instances remain available for the duration specified by `cooldown`. Each new request resets this timer. A longer cooldown period helps handle bursty traffic patterns but increases instance running time and cost.
+The `cooldown` parameter specifies the time window (in seconds) that must pass at reduced concurrency before an instance scales down. This prevents premature scale-down during brief traffic dips that might be followed by more requests. A longer cooldown period helps handle bursty traffic patterns but increases instance running time and cost.
 
 ### Replica Concurrency
 
@@ -187,6 +187,10 @@ Once this request has completed, the usual `cooldown` period will apply, and the
 
 ## Evaluation Interval
 
+<Warning>
+Requires CLI version 2.1.5 or higher.
+</Warning>
+
 The `evaluation_interval` parameter controls the time window (in seconds) over which the autoscaler evaluates metrics before making scaling decisions. The default is 30 seconds, with a valid range of 6-300 seconds.
 
 ```toml
@@ -203,6 +207,10 @@ A shorter interval makes the autoscaler more responsive to traffic spikes but ma
 </Info>
 
 ## Load Balancing
+
+<Warning>
+Requires CLI version 2.1.5 or higher.
+</Warning>
 
 The `load_balancing` parameter controls how incoming requests are distributed across your replicas. When not specified, the system automatically selects the best algorithm based on your `replica_concurrency` setting.
 
