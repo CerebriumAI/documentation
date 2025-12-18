@@ -36,7 +36,7 @@ Partner Services support independent scaling configurations:
 
 - Use the `min_replicas` and `max_replicas` parameters to control the number of instances
 - The `replica_concurrency` parameter determines how many concurrent requests each instance can handle
-- Adjust the `cooldown` parameter to control how long instances remain active after processing requests
+- Adjust the `cooldown` parameter to control the time window that must pass at reduced concurrency before scaling down
 - Adjust the `hardware` section to control the instance type which affects performance and/or cost
 
 For more information on specific Partner Services, see:

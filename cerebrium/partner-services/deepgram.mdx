@@ -315,7 +315,7 @@ Deepgram services support independent scaling configurations:
 - **min_replicas**: Minimum number of instances to maintain (0 for scale-to-zero)
 - **max_replicas**: Maximum number of instances that can be created during high load
 - **replica_concurrency**: Number of concurrent requests each instance can handle
-- **cooldown**: Time in seconds that an instance remains active after processing its last request
+- **cooldown**: Time window (in seconds) that must pass at reduced concurrency before scaling down
 
 Adjust these parameters based on expected traffic patterns and latency requirements.
 

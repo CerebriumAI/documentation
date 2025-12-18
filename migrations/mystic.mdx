@@ -78,7 +78,7 @@ gpu_count = 1             # Number of GPUs
 [cerebrium.scaling]
 min_replicas = 0         # Save costs when inactive and scale down your app
 max_replicas = 2         # Handle increased traffic and scale up where necessary
-cooldown = 60            # Time to wait before scaling down an idle instance
+cooldown = 60            # Time window at reduced concurrency before scaling down
 replica_concurrency = 1  # The number of requests a single container can support
 
 [cerebrium.dependencies.pip]

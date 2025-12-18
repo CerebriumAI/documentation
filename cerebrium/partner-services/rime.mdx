@@ -99,7 +99,7 @@ Rime services support independent scaling configurations:
 - **min_replicas**: Minimum instances to maintain (0 for scale-to-zero). Recommended: 1.
 - **max_replicas**: Maximum instances during high load.
 - **replica_concurrency**: Concurrent requests per instance. Recommended: 3.
-- **cooldown**: Seconds an instance remains active after last request. Recommended: 50.
+- **cooldown**: Time window (in seconds) that must pass at reduced concurrency before scaling down. Recommended: 50.
 - **compute**: Instance type. Recommended: `AMPERE_A10`.
 
 Adjust these parameters based on traffic patterns and latency requirements. Best would be to consult the Rime team
