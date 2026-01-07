@@ -1,6 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
+  "css": "/custom.css",
   "name": "Cerebrium",
   "description": "Cerebrium developer documentation to help you build, deploy, and scale AI applications on serverless compute. Learn about serverless GPUs and CPUs, long-running jobs, fine-tuning, hosting LLMs and voice agents, observability, cold starts, and multi-region deployments.",
   "colors": {
@@ -108,11 +109,8 @@
                 "pages": [
                   "v4/examples/featured",
                   {
-                    "group": "Advanced Concepts",
-                    "pages": ["v4/examples/mistral-vllm"]
-                  },
-                  {
                     "group": "Large Language Models",
+                    "expanded": true,
                     "pages": [
                       "v4/examples/gpt-oss",
                       "v4/examples/openai-compatible-endpoint-vllm",
@@ -121,11 +119,8 @@
                     ]
                   },
                   {
-                    "group": "Integrations",
-                    "pages": ["v4/examples/langchain-langsmith"]
-                  },
-                  {
                     "group": "Voice",
+                    "expanded": true,
                     "pages": [
                       "v4/examples/transcribe-whisper",
                       "v4/examples/twilio-voice-agent",
@@ -135,15 +130,29 @@
                   },
                   {
                     "group": "Image & Video",
+                    "expanded": true,
                     "pages": ["v4/examples/comfyUI", "v4/examples/sdxl"]
                   },
                   {
-                    "group": "Python Apps",
-                    "pages": ["v4/examples/asgi-gradio-interface"]
+                    "group": "Embeddings",
+                    "expanded": true,
+                    "pages": ["v4/examples/high-throughput-embeddings"]
                   },
                   {
                     "group": "Training",
+                    "expanded": true,
                     "pages": ["v4/examples/wandb-sweep"]
+                  },
+                  {
+                    "group": "Python Apps",
+                    "expanded": true,
+                    "pages": ["v4/examples/asgi-gradio-interface"]
+                  },
+
+                  {
+                    "group": "Integrations",
+                    "expanded": true,
+                    "pages": ["v4/examples/langchain-langsmith"]
                   }
                 ]
               }
