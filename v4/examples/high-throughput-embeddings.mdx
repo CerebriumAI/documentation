@@ -5,11 +5,11 @@ description: "Deploy a a high-throughput, low-latency REST API for serving text-
 ---
 
 In this tutorial, we'll create a high-throughput, low-latency REST API for serving text-embeddings, reranking models, clip, clap and colpali. We will be using the open-source framework
-[infinity](https://github.com/michaelfeil/infinity/tree/main). 
+[infinity](https://github.com/michaelfeil/infinity/tree/main).
 
 Infinity is very versatile, with the ability to be used across different GPUs/CPUs as well as across different frameworks.
 The inference server is built on top of PyTorch, optimum (ONNX/TensorRT) and CTranslate2, using FlashAttention to get the most out of your NVIDIA CUDA, AMD ROCM, CPU, AWS INF2 or APPLE MPS accelerator.
-Infinity uses dynamic batching and tokenization dedicated in worker threads. 
+Infinity uses dynamic batching and tokenization dedicated in worker threads.
 
 ### Project Setup
 
@@ -18,8 +18,10 @@ Make sure you have completed our [quickstart]() to make sure you have our CLI in
 1. Run the command: `cerebrium init infinity-throughput`
 
 It would have created two files:
+
 - <b>main.py</b>: Where our entrypoint code lives
-- <b>cerebrium.toml</b>: Where we define our container image and auto-scaling parameters
+- <b>cerebrium.toml</b>: Where we define our container image and auto-scaling
+  parameters
 
 We will start with first defining our container environment in order to run our application. Infinity has a public docker image on [Dockerhub](https://hub.docker.com/r/michaelf34/infinity)
 that we will use. In order for Cerebrium to pull this image (even though its public), you need to be signed in to Dockerhub. You can run the following command:
@@ -68,11 +70,10 @@ uvicorn = "latest"
 pandas = "latest"
 ```
 
-We will run our model using a Ampere A10 which can handle up to 500 concurrent inputs. 
+We will run our model using a Ampere A10 which can handle up to 500 concurrent inputs.
 
 In our <b>main.py</b>, we will start by creating a class that will handle all our Embedding model functionality using the infintity framework. We are building this with a few models in mind in
 order for us to test the functionality/results on a wide array of models.
-
 
 ```python
 from infinity_emb import AsyncEngineArray, EngineArgs
@@ -81,18 +82,18 @@ class InfinityModel:
     def __init__(self):
         self.model_ids = [
             "jinaai/jina-clip-v1",
-            "michaelfeil/bge-small-en-v1.5", 
+            "michaelfeil/bge-small-en-v1.5",
             "mixedbread-ai/mxbai-rerank-xsmall-v1",
             "philschmid/tiny-bert-sst2-distilled"
         ]
         self.engine_array = None
-    
+
     def _get_array(self):
         return AsyncEngineArray.from_args([
             EngineArgs(model_name_or_path=model, model_warmup=False)
             for model in self.model_ids
         ])
-    
+
     async def setup(self):
         print(f"Setting up models: {self.model_ids}")
         self.engine_array = self._get_array()
@@ -139,7 +140,7 @@ async def embed(sentences: list[str] = Body(...), model_index: int = Body(1)):
     """Generate embeddings using the specified model."""
     engine = model.engine_array[model_index]
     embeddings, usage = await engine.embed(sentences=sentences)
-    
+
     return {
         "embeddings": to_json(embeddings),
         "usage": to_json(usage),
@@ -152,7 +153,7 @@ async def image_embed(image_urls: list[str] = Body(...), model_index: int = Body
     """Generate embeddings for images using CLIP model."""
     engine = model.engine_array[model_index]
     embeddings, usage = await engine.image_embed(images=image_urls)
-    
+
     return {
         "embeddings": to_json(embeddings),
         "usage": to_json(usage),
@@ -165,7 +166,7 @@ async def rerank(query: str = Body(...), docs: list[str] = Body(...), model_inde
     """Rerank documents based on query relevance."""
     engine = model.engine_array[model_index]
     rankings, usage = await engine.rerank(query=query, docs=docs)
-    
+
     return {
         "rankings": to_json(rankings),
         "usage": to_json(usage),
@@ -178,7 +179,7 @@ async def classify(sentences: list[str] = Body(...), model_index: int = Body(3))
     """Classify text sentiment."""
     engine = model.engine_array[model_index]
     classes, usage = await engine.classify(sentences=sentences)
-    
+
     return {
         "classifications": to_json(classes),
         "usage": to_json(usage),
@@ -223,4 +224,3 @@ You should get a response like:
 ```
 
 Great! Now you have a scalable, multi-purpose embedding/reranking server
-
