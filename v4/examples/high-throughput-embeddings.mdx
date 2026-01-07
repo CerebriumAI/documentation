@@ -11,6 +11,8 @@ Infinity is very versatile, with the ability to be used across different GPUs/CP
 The inference server is built on top of PyTorch, optimum (ONNX/TensorRT) and CTranslate2, using FlashAttention to get the most out of your NVIDIA CUDA, AMD ROCM, CPU, AWS INF2 or APPLE MPS accelerator.
 Infinity uses dynamic batching and tokenization dedicated in worker threads. 
 
+You can see the final working version [here](https://github.com/CerebriumAI/examples/tree/master/14-embeddings/1-high-throughput) on Github
+
 ### Project Setup
 
 Make sure you have completed our [quickstart]() to make sure you have our CLI installed and have created an account.
@@ -223,4 +225,6 @@ You should get a response like:
 ```
 
 Great! Now you have a scalable, multi-purpose embedding/reranking server
+
+You can see the final working version [here](https://github.com/CerebriumAI/examples/tree/master/14-embeddings/1-high-throughput) on Github
 
