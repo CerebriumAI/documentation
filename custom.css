@@ -1,0 +1,5 @@
+/* Make sidebar group titles bold */
+ul#sidebar-group > li > button.group {
+  font-weight: 700 !important;
+}
+
