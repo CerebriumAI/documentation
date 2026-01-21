@@ -76,9 +76,9 @@ The configuration requires the following parameters:
 
 <Info>
   The `entrypoint` parameter in `cerebrium.toml` **always takes precedence**
-  over the `CMD` or `ENTRYPOINT` instruction in your Dockerfile. If you specify an `entrypoint`
-  in your TOML configuration, it will be used regardless of what `CMD` or `ENTRYPOINT` is
-  defined in your Dockerfile.
+  over the `CMD` or `ENTRYPOINT` instruction in your Dockerfile. If you specify
+  an `entrypoint` in your TOML configuration, it will be used regardless of what
+  `CMD` or `ENTRYPOINT` is defined in your Dockerfile.
 </Info>
 
 If your Dockerfile does not contain a `CMD` or `ENTRYPOINT` instruction, you **must** specify the `entrypoint` parameter in your `cerebrium.toml`:
