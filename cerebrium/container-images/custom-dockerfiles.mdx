@@ -51,7 +51,7 @@ CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8192
 When creating a Dockerfile for Cerebrium, there are three key requirements:
 
 1. You must expose a port using the `EXPOSE` command - this port will be referenced later in your `cerebrium.toml` configuration
-2. Either a `CMD` command in your Dockerfile OR an `entrypoint` in your `cerebrium.toml` is required to specify what runs when the container starts
+2. Either a `CMD` or `ENTRYPOINT` directive must be defined in your Dockerfile OR the `entrypoint` key in your `cerebrium.toml` under `[cerebrium.runtime.custom]`. This specify what runs when the container starts. The TOML configuration will take precedence
 3. Set the working directory using `WORKDIR` to ensure your application runs from the correct location (defaults to root directory if not specified)
 
 Update cerebrium.toml to include a custom runtime section with the `dockerfile_path` parameter:
@@ -70,7 +70,7 @@ The configuration requires the following parameters:
 - `healthcheck_endpoint`: The endpoint used to confirm instance health. If unspecified, defaults to a TCP ping on the configured port. If the health check registers a non-200 response, it will be considered _unhealthy_, and be restarted should it not recover timely.
 - `readycheck_endpoint`: The endpoint used to confirm if the instance is ready to receive. If unspecified, defaults to a TCP ping on the configured port. If the ready check registers a non-200 response, it will not be a viable target for request routing.
 - `dockerfile_path`: The relative path to the Dockerfile used to build the app.
-- `entrypoint` (optional): The command to start the application.
+- `entrypoint` (optional): The command to start the application. Will be required if `CMD` or `ENTRYPOINT` is not defined in the given dockerfile.
 
 ### Entrypoint Precedence
 
