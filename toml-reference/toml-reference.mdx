@@ -96,14 +96,19 @@ The `[cerebrium.runtime.custom]` section configures custom web servers and runti
 | Option               | Type     | Default  | Description                                                                                                       |
 | -------------------- | -------- | -------- | ----------------------------------------------------------------------------------------------------------------- |
 | port                 | integer  | required | Port the application listens on                                                                                   |
-| entrypoint           | string[] | required | Command to start the application                                                                                  |
+| entrypoint           | string[] | -        | Command to start the application. Required for Python ASGI/WSGI apps or if Dockerfile has no CMD. **Always takes precedence over Dockerfile CMD when specified.** |
 | healthcheck_endpoint | string   | ""       | HTTP path for health checks (empty uses TCP). Failure causes the instance to restart                              |
 | readycheck_endpoint  | string   | ""       | HTTP path for readiness checks (empty uses TCP). Failure ensures the load balancer does not route to the instance |
+| dockerfile_path      | string   | -        | Relative path to a custom Dockerfile. When specified, your Dockerfile is used for building the container image   |
 
 <Info>
   The port specified in entrypoint must match the port parameter. All endpoints
   will be available at `https://api.aws.us-east-1.cerebrium.ai/v4/{project - id}
   /{app - name}/your/endpoint`
+</Info>
+
+<Info>
+  **Entrypoint Precedence:** When both `entrypoint` in `cerebrium.toml` and `CMD` in your Dockerfile are defined, the TOML `entrypoint` always takes precedence. This allows you to override your Dockerfile's default command at deploy time without modifying the Dockerfile itself.
 </Info>
 
 ## Hardware Configuration

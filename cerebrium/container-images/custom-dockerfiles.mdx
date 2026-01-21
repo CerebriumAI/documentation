@@ -51,7 +51,7 @@ CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8192
 When creating a Dockerfile for Cerebrium, there are three key requirements:
 
 1. You must expose a port using the `EXPOSE` command - this port will be referenced later in your `cerebrium.toml` configuration
-2. A `CMD` command is required to specify what runs when the container starts (typically your server process)
+2. Either a `CMD` command in your Dockerfile OR an `entrypoint` in your `cerebrium.toml` is required to specify what runs when the container starts
 3. Set the working directory using `WORKDIR` to ensure your application runs from the correct location (defaults to root directory if not specified)
 
 Update cerebrium.toml to include a custom runtime section with the `dockerfile_path` parameter:
@@ -64,19 +64,39 @@ readycheck_endpoint = "/ready"
 dockerfile_path = "./Dockerfile"
 ```
 
-The configuration requires three key parameters:
+The configuration requires the following parameters:
 
 - `port`: The port the server listens on.
 - `healthcheck_endpoint`: The endpoint used to confirm instance health. If unspecified, defaults to a TCP ping on the configured port. If the health check registers a non-200 response, it will be considered _unhealthy_, and be restarted should it not recover timely.
 - `readycheck_endpoint`: The endpoint used to confirm if the instance is ready to receive. If unspecified, defaults to a TCP ping on the configured port. If the ready check registers a non-200 response, it will not be a viable target for request routing.
 - `dockerfile_path`: The relative path to the Dockerfile used to build the app.
+- `entrypoint` (optional): The command to start the application.
 
-If a Dockerfile does not contain a `CMD` clause, specifying the `entrypoint` parameter in the `cerebrium.toml` file is required.
+### Entrypoint Precedence
+
+<Info>
+  The `entrypoint` parameter in `cerebrium.toml` **always takes precedence** over the `CMD` instruction in your Dockerfile. If you specify an `entrypoint` in your TOML configuration, it will be used regardless of what `CMD` is defined in your Dockerfile.
+</Info>
+
+If your Dockerfile does not contain a `CMD` clause, you **must** specify the `entrypoint` parameter in your `cerebrium.toml`:
 
 ```toml
 [cerebrium.runtime.custom]
 entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8192"]
-...
+dockerfile_path = "./Dockerfile"
+port = 8192
+healthcheck_endpoint = "/health"
+readycheck_endpoint = "/ready"
+```
+
+If you want to override your Dockerfile's `CMD` at deploy time without modifying the Dockerfile, simply add the `entrypoint` parameter to your TOML configuration:
+
+```toml
+[cerebrium.runtime.custom]
+# This will override any CMD in your Dockerfile
+entrypoint = ["python", "server.py", "--port", "8192"]
+dockerfile_path = "./Dockerfile"
+port = 8192
 ```
 
 <Warning>
