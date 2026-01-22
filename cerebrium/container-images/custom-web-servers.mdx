@@ -3,7 +3,7 @@ title: "Custom Python Web Servers"
 description: "Run ASGI/WSGI Python apps on Cerebrium"
 ---
 
-While Cerebrium's default runtime works well for most app needs, teams sometimes need more control over their web server implementation. Using ASGI or WSGI servers through Cerebrium's custom runtime feature enables capabilities like custom authentication, dynamic batching, frontend dashboards, public endpoints, and WebSocket connections.
+While Cerebrium's default runtime works well for most app needs, teams sometimes need more control over their web server implementation. Using ASGI or WSGI servers through Cerebrium's Python runtime feature enables capabilities like custom authentication, dynamic batching, frontend dashboards, public endpoints, and WebSocket connections.
 
 ## Setting Up Custom Servers
 
@@ -26,12 +26,15 @@ def ready():
     return "OK"
 ```
 
-Configure this server in `cerebrium.toml` by adding a custom runtime section:
+Configure this server in `cerebrium.toml` by adding a Python runtime section:
 
 ```toml
-[cerebrium.runtime.custom]
-port = 5000
+[cerebrium.deployment]
+name = "my-fastapi-app"
+
+[cerebrium.runtime.python]
 entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000"]
+port = 5000
 healthcheck_endpoint = "/health"
 readycheck_endpoint = "/ready"
 
@@ -40,14 +43,28 @@ pydantic = "latest"
 numpy = "latest"
 loguru = "latest"
 fastapi = "latest"
+uvicorn = "latest"
 ```
 
-The configuration requires three key parameters:
+The configuration requires the following key parameters:
 
 - `entrypoint`: The command that starts your server
 - `port`: The port your server listens on
 - `healthcheck_endpoint`: The endpoint used to confirm instance health. If unspecified, defaults to a TCP ping on the configured port. If the health check registers a non-200 response, it will be considered _unhealthy_, and be restarted should it not recover timely.
 - `readycheck_endpoint`: The endpoint used to confirm if the instance is ready to receive. If unspecified, defaults to a TCP ping on the configured port. If the ready check registers a non-200 response, it will not be a viable target for request routing.
+
+You can also configure build settings in the Python runtime section:
+
+```toml
+[cerebrium.runtime.python]
+python_version = "3.11"
+docker_base_image_url = "debian:bookworm-slim"
+use_uv = true
+entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+port = 8000
+healthcheck_endpoint = "/health"
+readycheck_endpoint = "/ready"
+```
 
 <Info>
   For ASGI applications like FastAPI, include the appropriate server package

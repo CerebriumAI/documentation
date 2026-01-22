@@ -51,25 +51,28 @@ CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8192
 When creating a Dockerfile for Cerebrium, there are three key requirements:
 
 1. You must expose a port using the `EXPOSE` command - this port will be referenced later in your `cerebrium.toml` configuration
-2. Either a `CMD` or `ENTRYPOINT` directive must be defined in your Dockerfile OR the `entrypoint` key in your `cerebrium.toml` under `[cerebrium.runtime.custom]`. This specify what runs when the container starts. The TOML configuration will take precedence
+2. Either a `CMD` or `ENTRYPOINT` directive must be defined in your Dockerfile OR the `entrypoint` key in your `cerebrium.toml` under `[cerebrium.runtime.docker]`. This specifies what runs when the container starts. The TOML configuration will take precedence
 3. Set the working directory using `WORKDIR` to ensure your application runs from the correct location (defaults to root directory if not specified)
 
-Update cerebrium.toml to include a custom runtime section with the `dockerfile_path` parameter:
+Update cerebrium.toml to include a docker runtime section with the `dockerfile_path` parameter:
 
 ```toml
-[cerebrium.runtime.custom]
+[cerebrium.deployment]
+name = "my-docker-app"
+
+[cerebrium.runtime.docker]
+dockerfile_path = "./Dockerfile"
 port = 8192
 healthcheck_endpoint = "/health"
 readycheck_endpoint = "/ready"
-dockerfile_path = "./Dockerfile"
 ```
 
 The configuration requires the following parameters:
 
+- `dockerfile_path`: The relative path to the Dockerfile used to build the app.
 - `port`: The port the server listens on.
 - `healthcheck_endpoint`: The endpoint used to confirm instance health. If unspecified, defaults to a TCP ping on the configured port. If the health check registers a non-200 response, it will be considered _unhealthy_, and be restarted should it not recover timely.
 - `readycheck_endpoint`: The endpoint used to confirm if the instance is ready to receive. If unspecified, defaults to a TCP ping on the configured port. If the ready check registers a non-200 response, it will not be a viable target for request routing.
-- `dockerfile_path`: The relative path to the Dockerfile used to build the app.
 - `entrypoint` (optional): The command to start the application. Will be required if `CMD` or `ENTRYPOINT` is not defined in the given dockerfile.
 
 ### Entrypoint Precedence
@@ -84,9 +87,12 @@ The configuration requires the following parameters:
 If your Dockerfile does not contain a `CMD` or `ENTRYPOINT` instruction, you **must** specify the `entrypoint` parameter in your `cerebrium.toml`:
 
 ```toml
-[cerebrium.runtime.custom]
-entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8192"]
+[cerebrium.deployment]
+name = "my-docker-app"
+
+[cerebrium.runtime.docker]
 dockerfile_path = "./Dockerfile"
+entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8192"]
 port = 8192
 healthcheck_endpoint = "/health"
 readycheck_endpoint = "/ready"
@@ -95,19 +101,21 @@ readycheck_endpoint = "/ready"
 If you want to override your Dockerfile's `CMD` at deploy time without modifying the Dockerfile, simply add the `entrypoint` parameter to your TOML configuration:
 
 ```toml
-[cerebrium.runtime.custom]
+[cerebrium.deployment]
+name = "my-docker-app"
+
+[cerebrium.runtime.docker]
+dockerfile_path = "./Dockerfile"
 # This will override any CMD in your Dockerfile
 entrypoint = ["python", "server.py", "--port", "8192"]
-dockerfile_path = "./Dockerfile"
 port = 8192
 ```
 
 <Warning>
   When specifying a `dockerfile_path`, all dependencies and necessary commands
   should be installed and executed within the Dockerfile. Dependencies listed
-  under `cerebrium.dependencies.*`, as well as
-  `cerebrium.deployment.shell_commands` and
-  `cerebrium.deployment.pre_build_commands`, will be ignored.
+  under `cerebrium.dependencies.*`, as well as `shell_commands` and
+  `pre_build_commands`, will be ignored.
 </Warning>
 
 ## Building Generic Dockerized Apps
@@ -188,9 +196,12 @@ CMD ["dumb-init", "--", "/rs_server"]
 Similarly to the FastAPI webserver, the application should be configured in the `cerebrium.toml` file:
 
 ```toml
-[cerebrium.runtime.custom]
+[cerebrium.deployment]
+name = "rust-server"
+
+[cerebrium.runtime.docker]
+dockerfile_path = "./Dockerfile"
 port = 8192
 healthcheck_endpoint = "/health"
 readycheck_endpoint = "/ready"
-dockerfile_path = "./Dockerfile"
 ```
