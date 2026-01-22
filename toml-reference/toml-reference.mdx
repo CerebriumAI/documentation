@@ -17,13 +17,13 @@ The configuration is organized into the following main sections:
 
 The `[cerebrium.deployment]` section defines core deployment settings that apply to all runtime types.
 
-| Option                            | Type     | Default                | Description                                                                                                  |
-| --------------------------------- | -------- | ---------------------- | ------------------------------------------------------------------------------------------------------------ |
-| name                              | string   | required               | Desired app name                                                                                             |
-| disable_auth                      | boolean  | false                  | Disable default token-based authentication on app endpoints                                                  |
-| include                           | string[] | ["*"]                  | Files/patterns to include in deployment                                                                      |
-| exclude                           | string[] | [".*"]                 | Files/patterns to exclude from deployment                                                                    |
-| deployment_initialization_timeout | integer  | 600 (10 minutes)       | The max time to wait for app initialisation during build before timing out. Value must be between 60 and 830 |
+| Option                            | Type     | Default          | Description                                                                                                  |
+| --------------------------------- | -------- | ---------------- | ------------------------------------------------------------------------------------------------------------ |
+| name                              | string   | required         | Desired app name                                                                                             |
+| disable_auth                      | boolean  | false            | Disable default token-based authentication on app endpoints                                                  |
+| include                           | string[] | ["*"]            | Files/patterns to include in deployment                                                                      |
+| exclude                           | string[] | [".*"]           | Files/patterns to exclude from deployment                                                                    |
+| deployment_initialization_timeout | integer  | 600 (10 minutes) | The max time to wait for app initialisation during build before timing out. Value must be between 60 and 830 |
 
 ## Runtime Configuration
 
@@ -33,13 +33,13 @@ Cerebrium supports three runtime types. You should only specify one runtime sect
 
 The `[cerebrium.runtime.cortex]` section configures the default Cerebrium-managed Python runtime. This is ideal for standard Python applications using the default Cortex framework.
 
-| Option               | Type     | Default                | Description                                       |
-| -------------------- | -------- | ---------------------- | ------------------------------------------------- |
-| python_version       | string   | "3.11"                 | Python version to use (3.10, 3.11, 3.12)          |
-| docker_base_image_url| string   | "debian:bookworm-slim" | Base Docker image                                 |
-| shell_commands       | string[] | []                     | Commands to run at the end of the build           |
-| pre_build_commands   | string[] | []                     | Commands to run before dependencies install       |
-| use_uv               | boolean  | false                  | Use UV for faster Python package installation     |
+| Option                | Type     | Default                | Description                                   |
+| --------------------- | -------- | ---------------------- | --------------------------------------------- |
+| python_version        | string   | "3.11"                 | Python version to use (3.10, 3.11, 3.12)      |
+| docker_base_image_url | string   | "debian:bookworm-slim" | Base Docker image                             |
+| shell_commands        | string[] | []                     | Commands to run at the end of the build       |
+| pre_build_commands    | string[] | []                     | Commands to run before dependencies install   |
+| use_uv                | boolean  | false                  | Use UV for faster Python package installation |
 
 **Example:**
 
@@ -62,17 +62,17 @@ use_uv = true
 
 The `[cerebrium.runtime.python]` section configures custom Python web servers (ASGI/WSGI). Use this when you need full control over your web server implementation for features like custom authentication, dynamic batching, or WebSocket connections.
 
-| Option               | Type     | Default                                                            | Description                                                                |
-| -------------------- | -------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------- |
-| python_version       | string   | "3.11"                                                             | Python version to use (3.10, 3.11, 3.12)                                   |
-| docker_base_image_url| string   | "debian:bookworm-slim"                                             | Base Docker image                                                          |
-| shell_commands       | string[] | []                                                                 | Commands to run at the end of the build                                    |
-| pre_build_commands   | string[] | []                                                                 | Commands to run before dependencies install                                |
-| use_uv               | boolean  | false                                                              | Use UV for faster Python package installation                              |
-| entrypoint           | string[] | ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"] | Command to start the application                                           |
-| port                 | integer  | 8000                                                               | Port the application listens on                                            |
-| healthcheck_endpoint | string   | ""                                                                 | HTTP path for health checks (empty uses TCP). Failure causes restart       |
-| readycheck_endpoint  | string   | ""                                                                 | HTTP path for readiness checks (empty uses TCP). Failure stops routing     |
+| Option                | Type     | Default                                                            | Description                                                            |
+| --------------------- | -------- | ------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| python_version        | string   | "3.11"                                                             | Python version to use (3.10, 3.11, 3.12)                               |
+| docker_base_image_url | string   | "debian:bookworm-slim"                                             | Base Docker image                                                      |
+| shell_commands        | string[] | []                                                                 | Commands to run at the end of the build                                |
+| pre_build_commands    | string[] | []                                                                 | Commands to run before dependencies install                            |
+| use_uv                | boolean  | false                                                              | Use UV for faster Python package installation                          |
+| entrypoint            | string[] | ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"] | Command to start the application                                       |
+| port                  | integer  | 8000                                                               | Port the application listens on                                        |
+| healthcheck_endpoint  | string   | ""                                                                 | HTTP path for health checks (empty uses TCP). Failure causes restart   |
+| readycheck_endpoint   | string   | ""                                                                 | HTTP path for readiness checks (empty uses TCP). Failure stops routing |
 
 **Example:**
 
@@ -94,20 +94,21 @@ uvicorn = "latest"
 
 <Info>
   The port specified in entrypoint must match the port parameter. All endpoints
-  will be available at `https://api.aws.us-east-1.cerebrium.ai/v4/{project-id}/{app-name}/your/endpoint`
+  will be available at `https://api.aws.us-east-1.cerebrium.ai/v4/{project - id}
+  /{app - name}/your/endpoint`
 </Info>
 
 ### Docker Runtime (Custom Dockerfile)
 
 The `[cerebrium.runtime.docker]` section configures deployments using custom Dockerfiles. Use this for non-Python applications or when you need complete control over the container build process.
 
-| Option               | Type     | Default  | Description                                                                                                                                                                             |
-| -------------------- | -------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| dockerfile_path      | string   | required | Relative path to a custom Dockerfile                                                                                                                                                    |
-| entrypoint           | string[] | []       | Command to start the application. Required if Dockerfile has no CMD/ENTRYPOINT. **Always takes precedence over Dockerfile CMD/ENTRYPOINT when specified.**                             |
-| port                 | integer  | 8000     | Port the application listens on                                                                                                                                                         |
-| healthcheck_endpoint | string   | ""       | HTTP path for health checks (empty uses TCP). Failure causes the instance to restart                                                                                                    |
-| readycheck_endpoint  | string   | ""       | HTTP path for readiness checks (empty uses TCP). Failure ensures the load balancer does not route to the instance                                                                       |
+| Option               | Type     | Default  | Description                                                                                                                                                |
+| -------------------- | -------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| dockerfile_path      | string   | required | Relative path to a custom Dockerfile                                                                                                                       |
+| entrypoint           | string[] | []       | Command to start the application. Required if Dockerfile has no CMD/ENTRYPOINT. **Always takes precedence over Dockerfile CMD/ENTRYPOINT when specified.** |
+| port                 | integer  | 8000     | Port the application listens on                                                                                                                            |
+| healthcheck_endpoint | string   | ""       | HTTP path for health checks (empty uses TCP). Failure causes the instance to restart                                                                       |
+| readycheck_endpoint  | string   | ""       | HTTP path for readiness checks (empty uses TCP). Failure ensures the load balancer does not route to the instance                                          |
 
 **Example:**
 
@@ -399,21 +400,21 @@ replica_concurrency = 10
 ## Backwards Compatibility
 
 <Warning>
-The following configuration patterns are deprecated but still supported for backwards compatibility.
-We recommend migrating to the new runtime sections.
+  The following configuration patterns are deprecated but still supported for
+  backwards compatibility. We recommend migrating to the new runtime sections.
 </Warning>
 
 ### Deprecated: Runtime fields in [cerebrium.deployment]
 
 The following fields in `[cerebrium.deployment]` are deprecated. Please move them to the appropriate runtime section:
 
-| Deprecated Field       | New Location                                                |
-| ---------------------- | ----------------------------------------------------------- |
-| python_version         | `[cerebrium.runtime.cortex]` or `[cerebrium.runtime.python]` |
-| docker_base_image_url  | `[cerebrium.runtime.cortex]` or `[cerebrium.runtime.python]` |
-| shell_commands         | `[cerebrium.runtime.cortex]` or `[cerebrium.runtime.python]` |
-| pre_build_commands     | `[cerebrium.runtime.cortex]` or `[cerebrium.runtime.python]` |
-| use_uv                 | `[cerebrium.runtime.cortex]` or `[cerebrium.runtime.python]` |
+| Deprecated Field      | New Location                                                 |
+| --------------------- | ------------------------------------------------------------ |
+| python_version        | `[cerebrium.runtime.cortex]` or `[cerebrium.runtime.python]` |
+| docker_base_image_url | `[cerebrium.runtime.cortex]` or `[cerebrium.runtime.python]` |
+| shell_commands        | `[cerebrium.runtime.cortex]` or `[cerebrium.runtime.python]` |
+| pre_build_commands    | `[cerebrium.runtime.cortex]` or `[cerebrium.runtime.python]` |
+| use_uv                | `[cerebrium.runtime.cortex]` or `[cerebrium.runtime.python]` |
 
 ### Deprecated: [cerebrium.runtime.custom]
 
