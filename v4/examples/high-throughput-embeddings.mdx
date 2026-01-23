@@ -36,7 +36,7 @@ docker login -u your-dockerhub-username
 Now that you are logged in, you can add the following to your <b>cerebrium.toml</b>
 
 ```
-[cerebrium.deployment]
+[deployment]
 name = "1-high-throughput"
 python_version = "3.11"
 docker_base_image_url = "michaelf34/infinity:0.0.77"
@@ -48,20 +48,20 @@ exclude = ['.*']
 Depending on your hardware type and model(s) you select you will have different autoscaling criteria. You can define this with the following sections in your cerebrium.toml:
 
 ```
-[cerebrium.hardware]
+[hardware]
 cpu = 6.0
 memory = 12.0
 compute = "AMPERE_A10"
 region = "us-east-1"
 
-[cerebrium.scaling]
+[scaling]
 min_replicas = 0
 max_replicas = 2
 cooldown = 30
 replica_concurrency = 500
 scaling_metric = "concurrency_utilization"
 
-[cerebrium.dependencies.pip]
+[dependencies.pip]
 numpy = "latest"
 "infinity-emb[all]" = "0.0.77"
 optimum = ">=1.24.0,<2.0.0"
@@ -193,7 +193,7 @@ async def classify(sentences: list[str] = Body(...), model_index: int = Body(3))
 Now you have a multi-purpose embedding server! Let us update our <b>cerebrium.toml</b> to point it to our FastAPI server. Add the following section:
 
 ```
-[cerebrium.runtime.custom]
+[runtime.custom]
 port = 5000
 entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000"]
 healthcheck_endpoint = "/health"

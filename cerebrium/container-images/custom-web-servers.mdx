@@ -29,16 +29,16 @@ def ready():
 Configure this server in `cerebrium.toml` by adding a Python runtime section:
 
 ```toml
-[cerebrium.deployment]
+[deployment]
 name = "my-fastapi-app"
 
-[cerebrium.runtime.python]
+[runtime.python]
 entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000"]
 port = 5000
 healthcheck_endpoint = "/health"
 readycheck_endpoint = "/ready"
 
-[cerebrium.dependencies.pip]
+[dependencies.pip]
 pydantic = "latest"
 numpy = "latest"
 loguru = "latest"
@@ -56,7 +56,7 @@ The configuration requires the following key parameters:
 You can also configure build settings in the Python runtime section:
 
 ```toml
-[cerebrium.runtime.python]
+[runtime.python]
 python_version = "3.11"
 docker_base_image_url = "debian:bookworm-slim"
 use_uv = true

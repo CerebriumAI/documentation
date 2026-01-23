@@ -9,7 +9,7 @@ description: Complete reference for all parameters available in Cerebrium's defa
 | Current (Deprecated)              | New Format            |
 | --------------------------------- | --------------------- |
 | `[cerebrium.deployment]`          | `[deployment]`        |
-| `[cerebrium.runtime.cortex]`      | `[runtime.cortex]`    |
+| `[cerebrium.runtime.cortex]`      | `[runtime.auto-py]`   |
 | `[cerebrium.hardware]`            | `[hardware]`          |
 | `[cerebrium.scaling]`             | `[scaling]`           |
 | `[cerebrium.dependencies]`        | `[dependencies]`      |
@@ -17,17 +17,17 @@ description: Complete reference for all parameters available in Cerebrium's defa
 
 The configuration is organized into the following main sections:
 
-- **[cerebrium.deployment]** Core settings like app name and file inclusion rules
-- **[cerebrium.runtime.cortex]** Default Cerebrium-managed Python runtime (build settings)
-- **[cerebrium.runtime.python]** Custom Python ASGI/WSGI web server settings
-- **[cerebrium.runtime.docker]** Custom Dockerfile settings
-- **[cerebrium.hardware]** Compute resources including CPU, memory, and GPU specifications
-- **[cerebrium.scaling]** Auto-scaling behavior and replica management
-- **[cerebrium.dependencies]** Package management for Python (pip), system (apt), and Conda dependencies
+- **[deployment]** Core settings like app name and file inclusion rules
+- **[runtime.auto-py]** Default Cerebrium-managed Python runtime (build settings)
+- **[runtime.python]** Custom Python ASGI/WSGI web server settings
+- **[runtime.docker]** Custom Dockerfile settings
+- **[hardware]** Compute resources including CPU, memory, and GPU specifications
+- **[scaling]** Auto-scaling behavior and replica management
+- **[dependencies]** Package management for Python (pip), system (apt), and Conda dependencies
 
 ## Deployment Configuration
 
-The `[cerebrium.deployment]` section defines core deployment settings that apply to all runtime types.
+The `[deployment]` section defines core deployment settings that apply to all runtime types.
 
 | Option                            | Type     | Default          | Description                                                                                                  |
 | --------------------------------- | -------- | ---------------- | ------------------------------------------------------------------------------------------------------------ |
@@ -41,9 +41,9 @@ The `[cerebrium.deployment]` section defines core deployment settings that apply
 
 Cerebrium supports three runtime types. You should only specify one runtime section in your configuration.
 
-### Cortex Runtime (Default)
+### Auto-Py Runtime (Default)
 
-The `[cerebrium.runtime.cortex]` section configures the default Cerebrium-managed Python runtime. This is ideal for standard Python applications using the default Cortex framework.
+The `[runtime.auto-py]` section configures the default Cerebrium-managed Python runtime. This is ideal for standard Python applications where Cerebrium automatically manages the web server.
 
 | Option                | Type     | Default                | Description                                   |
 | --------------------- | -------- | ---------------------- | --------------------------------------------- |
@@ -56,10 +56,10 @@ The `[cerebrium.runtime.cortex]` section configures the default Cerebrium-manage
 **Example:**
 
 ```toml
-[cerebrium.deployment]
-name = "my-cortex-app"
+[deployment]
+name = "my-app"
 
-[cerebrium.runtime.cortex]
+[runtime.auto-py]
 python_version = "3.12"
 docker_base_image_url = "debian:bookworm-slim"
 use_uv = true
@@ -72,7 +72,7 @@ use_uv = true
 
 ### Python Runtime (Custom ASGI/WSGI)
 
-The `[cerebrium.runtime.python]` section configures custom Python web servers (ASGI/WSGI). Use this when you need full control over your web server implementation for features like custom authentication, dynamic batching, or WebSocket connections.
+The `[runtime.python]` section configures custom Python ASGI/WSGI web servers. Use this when you need full control over your web server implementation for features like custom authentication, dynamic batching, or WebSocket connections.
 
 | Option                | Type     | Default                                                            | Description                                                            |
 | --------------------- | -------- | ------------------------------------------------------------------ | ---------------------------------------------------------------------- |
@@ -89,17 +89,17 @@ The `[cerebrium.runtime.python]` section configures custom Python web servers (A
 **Example:**
 
 ```toml
-[cerebrium.deployment]
+[deployment]
 name = "my-fastapi-app"
 
-[cerebrium.runtime.python]
+[runtime.python]
 python_version = "3.11"
 entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 port = 8000
 healthcheck_endpoint = "/health"
 readycheck_endpoint = "/ready"
 
-[cerebrium.runtime.python.dependencies.pip]
+[runtime.python.deps.pip]
 fastapi = "latest"
 uvicorn = "latest"
 ```
@@ -112,7 +112,7 @@ uvicorn = "latest"
 
 ### Docker Runtime (Custom Dockerfile)
 
-The `[cerebrium.runtime.docker]` section configures deployments using custom Dockerfiles. Use this for non-Python applications or when you need complete control over the container build process.
+The `[runtime.docker]` section configures deployments using custom Dockerfiles. Use this for non-Python applications or when you need complete control over the container build process.
 
 | Option               | Type     | Default  | Description                                                                                                                                                |
 | -------------------- | -------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -125,10 +125,10 @@ The `[cerebrium.runtime.docker]` section configures deployments using custom Doc
 **Example:**
 
 ```toml
-[cerebrium.deployment]
+[deployment]
 name = "my-docker-app"
 
-[cerebrium.runtime.docker]
+[runtime.docker]
 dockerfile_path = "./Dockerfile"
 port = 8080
 healthcheck_endpoint = "/health"
@@ -144,13 +144,13 @@ readycheck_endpoint = "/ready"
 
 <Warning>
   When using `dockerfile_path`, all dependencies and build commands should be
-  handled within the Dockerfile. The `[cerebrium.dependencies.*]` sections,
+  handled within the Dockerfile. The `[dependencies.*]` sections,
   `shell_commands`, and `pre_build_commands` will be ignored.
 </Warning>
 
 ### UV Package Manager
 
-UV is a fast Python package installer written in Rust that can significantly speed up deployment times. When enabled in `[cerebrium.runtime.cortex]` or `[cerebrium.runtime.python]`, UV will be used instead of pip for installing Python dependencies.
+UV is a fast Python package installer written in Rust that can significantly speed up deployment times. When enabled in `[runtime.auto-py]` or `[runtime.python]`, UV will be used instead of pip for installing Python dependencies.
 
 <Info>
 UV typically installs packages 10-100x faster than pip, especially beneficial for:
@@ -164,7 +164,7 @@ UV typically installs packages 10-100x faster than pip, especially beneficial fo
 **Example with UV enabled:**
 
 ```toml
-[cerebrium.runtime.cortex]
+[runtime.auto-py]
 use_uv = true
 ```
 
@@ -206,7 +206,7 @@ Include in your deployment:
 
 ## Hardware Configuration
 
-The `[cerebrium.hardware]` section defines compute resources.
+The `[hardware]` section defines compute resources.
 
 | Option    | Type    | Default     | Description                          |
 | --------- | ------- | ----------- | ------------------------------------ |
@@ -224,7 +224,7 @@ The `[cerebrium.hardware]` section defines compute resources.
 
 ## Scaling Configuration
 
-The `[cerebrium.scaling]` section controls auto-scaling behavior.
+The `[scaling]` section controls auto-scaling behavior.
 
 | Option                    | Type    | Default                   | CLI Requirement | Description                                                                                                                                                                                             |
 | ------------------------- | ------- | ------------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -249,8 +249,8 @@ The `scaling_metric` options are:
 
 - **concurrency_utilization**: Maintains a percentage of your replica_concurrency across instances. For example, with `replica_concurrency=200` and `scaling_target=80`, maintains 160 requests per instance.
 - **requests_per_second**: Maintains a specific request rate across all instances. For example, `scaling_target=5` maintains 5 requests/s average across instances.
-- **cpu_utilization**: Maintains CPU usage as a percentage of cerebrium.hardware.cpu. For example, with `cpu=2` and `scaling_target=80`, maintains 80% CPU utilization (1.6 CPUs) per instance.
-- **memory_utilization**: Maintains RAM usage as a percentage of cerebrium.hardware.memory. For example, with `memory=10` and `scaling_target=80`, maintains 80% memory utilization (8GB) per instance.
+- **cpu_utilization**: Maintains CPU usage as a percentage of hardware.cpu. For example, with `cpu=2` and `scaling_target=80`, maintains 80% CPU utilization (1.6 CPUs) per instance.
+- **memory_utilization**: Maintains RAM usage as a percentage of hardware.memory. For example, with `memory=10` and `scaling_target=80`, maintains 80% memory utilization (8GB) per instance.
 
 <Info>
 The scaling_buffer option is only available with concurrency_utilization and requests_per_second metrics.
@@ -269,31 +269,31 @@ Dependencies can be specified either at the runtime level (recommended) or at th
 Dependencies can be specified within the runtime section. This is the recommended approach:
 
 ```toml
-[cerebrium.runtime.cortex]
+[runtime.auto-py]
 python_version = "3.12"
 
-[cerebrium.runtime.cortex.dependencies.pip]
+[runtime.auto-py.deps.pip]
 torch = "==2.0.0"      # Exact version
 numpy = "latest"       # Latest version
 pandas = ">=1.5.0"     # Minimum version
 
-[cerebrium.runtime.cortex.dependencies.apt]
+[runtime.auto-py.deps.apt]
 ffmpeg = "latest"
 libopenblas-base = "latest"
 
-[cerebrium.runtime.cortex.dependencies.conda]
+[runtime.auto-py.deps.conda]
 cuda = ">=11.7"
 cudatoolkit = "11.7"
 
-[cerebrium.runtime.cortex.dependencies.paths]
+[runtime.auto-py.deps.paths]
 pip = "requirements.txt"  # Alternative: use a file instead of inline
 ```
 
-This approach works with any runtime type (`cortex`, `python`, or partner services).
+This approach works with any runtime type (`auto-py`, `python`, or partner services).
 
 <Warning>
-**Deprecated:** Top-level `[cerebrium.dependencies.*]` sections are deprecated.
-Please move your dependencies to `[cerebrium.runtime.{runtime_type}.dependencies.*]`.
+**Deprecated:** Top-level `[dependencies.*]` sections are deprecated.
+Please move your dependencies to `[runtime.{type}.deps.*]`.
 Dependencies specified at the runtime level take precedence over top-level dependencies when both are present.
 </Warning>
 
@@ -305,10 +305,10 @@ This approach is deprecated. Please migrate to runtime-specific dependencies abo
 
 #### Pip Dependencies
 
-The `[cerebrium.dependencies.pip]` section lists Python package requirements.
+The `[dependencies.pip]` section lists Python package requirements.
 
 ```toml
-[cerebrium.dependencies.pip]
+[dependencies.pip]
 torch = "==2.0.0"      # Exact version
 numpy = "latest"       # Latest version
 pandas = ">=1.5.0"     # Minimum version
@@ -316,30 +316,30 @@ pandas = ">=1.5.0"     # Minimum version
 
 #### APT Dependencies
 
-The `[cerebrium.dependencies.apt]` section specifies system packages.
+The `[dependencies.apt]` section specifies system packages.
 
 ```toml
-[cerebrium.dependencies.apt]
+[dependencies.apt]
 ffmpeg = "latest"
 libopenblas-base = "latest"
 ```
 
 #### Conda Dependencies
 
-The `[cerebrium.dependencies.conda]` section manages Conda packages.
+The `[dependencies.conda]` section manages Conda packages.
 
 ```toml
-[cerebrium.dependencies.conda]
+[dependencies.conda]
 cuda = ">=11.7"
 cudatoolkit = "11.7"
 ```
 
 #### Dependency Files
 
-The `[cerebrium.dependencies.paths]` section allows using requirement files.
+The `[dependencies.paths]` section allows using requirement files.
 
 ```toml
-[cerebrium.dependencies.paths]
+[dependencies.paths]
 pip = "requirements.txt"
 apt = "pkglist.txt"
 conda = "conda_pkglist.txt"
@@ -347,27 +347,27 @@ conda = "conda_pkglist.txt"
 
 ## Complete Examples
 
-### Cortex Runtime (Default)
+### Auto-Py Runtime (Default)
 
 ```toml
-[cerebrium.deployment]
+[deployment]
 name = "llm-inference"
 disable_auth = false
 include = ["*"]
 exclude = [".*"]
 
-[cerebrium.runtime.cortex]
+[runtime.auto-py]
 python_version = "3.12"
 docker_base_image_url = "debian:bookworm-slim"
 use_uv = true
 shell_commands = []
 pre_build_commands = []
 
-[cerebrium.runtime.cortex.dependencies.pip]
+[runtime.auto-py.deps.pip]
 torch = "latest"
 transformers = "latest"
 
-[cerebrium.hardware]
+[hardware]
 cpu = 4
 memory = 16.0
 compute = "AMPERE_A10"
@@ -375,7 +375,7 @@ gpu_count = 1
 provider = "aws"
 region = "us-east-1"
 
-[cerebrium.scaling]
+[scaling]
 min_replicas = 0
 max_replicas = 2
 replica_concurrency = 10
@@ -390,26 +390,26 @@ roll_out_duration_seconds = 0
 ### Python Runtime (FastAPI)
 
 ```toml
-[cerebrium.deployment]
+[deployment]
 name = "fastapi-server"
 disable_auth = false
 include = ["*"]
 exclude = [".*"]
 
-[cerebrium.runtime.python]
+[runtime.python]
 python_version = "3.11"
 entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 port = 8000
 healthcheck_endpoint = "/health"
 readycheck_endpoint = "/ready"
 
-[cerebrium.runtime.python.dependencies.pip]
+[runtime.python.deps.pip]
 torch = "latest"
 transformers = "latest"
 uvicorn = "latest"
 fastapi = "latest"
 
-[cerebrium.hardware]
+[hardware]
 cpu = 4
 memory = 16.0
 compute = "AMPERE_A10"
@@ -417,7 +417,7 @@ gpu_count = 1
 provider = "aws"
 region = "us-east-1"
 
-[cerebrium.scaling]
+[scaling]
 min_replicas = 0
 max_replicas = 2
 replica_concurrency = 10
@@ -426,25 +426,25 @@ replica_concurrency = 10
 ### Docker Runtime
 
 ```toml
-[cerebrium.deployment]
+[deployment]
 name = "rust-server"
 include = ["*"]
 exclude = [".*"]
 
-[cerebrium.runtime.docker]
+[runtime.docker]
 dockerfile_path = "./Dockerfile"
 port = 8192
 healthcheck_endpoint = "/health"
 readycheck_endpoint = "/ready"
 
-[cerebrium.hardware]
+[hardware]
 cpu = 4
 memory = 16.0
 compute = "CPU"
 provider = "aws"
 region = "us-east-1"
 
-[cerebrium.scaling]
+[scaling]
 min_replicas = 0
 max_replicas = 2
 replica_concurrency = 10
@@ -453,41 +453,64 @@ replica_concurrency = 10
 ## Backwards Compatibility
 
 <Warning>
-  The following configuration patterns are deprecated but still supported for
-  backwards compatibility. We recommend migrating to the new runtime sections.
+The following configuration patterns are deprecated but still supported for backwards compatibility.
+We recommend migrating to the new format.
 </Warning>
 
-### Deprecated: Runtime fields in [cerebrium.deployment]
+### Deprecated: cerebrium.* prefix
 
-The following fields in `[cerebrium.deployment]` are deprecated. Please move them to the appropriate runtime section:
+The `cerebrium.` prefix on all section names is deprecated. Please migrate to the new format:
 
-| Deprecated Field      | New Location                                                 |
-| --------------------- | ------------------------------------------------------------ |
-| python_version        | `[cerebrium.runtime.cortex]` or `[cerebrium.runtime.python]` |
-| docker_base_image_url | `[cerebrium.runtime.cortex]` or `[cerebrium.runtime.python]` |
-| shell_commands        | `[cerebrium.runtime.cortex]` or `[cerebrium.runtime.python]` |
-| pre_build_commands    | `[cerebrium.runtime.cortex]` or `[cerebrium.runtime.python]` |
-| use_uv                | `[cerebrium.runtime.cortex]` or `[cerebrium.runtime.python]` |
+| Deprecated Format                  | New Format                          |
+| ---------------------------------- | ----------------------------------- |
+| `[cerebrium.deployment]`           | `[deployment]`                      |
+| `[cerebrium.runtime.cortex]`       | `[runtime.auto-py]`                 |
+| `[cerebrium.runtime.python]`       | `[runtime.python]`                  |
+| `[cerebrium.runtime.docker]`       | `[runtime.docker]`                  |
+| `[cerebrium.hardware]`             | `[hardware]`                        |
+| `[cerebrium.scaling]`              | `[scaling]`                         |
+| `[cerebrium.deps.pip]`     | `[dependencies.pip]`                |
+| `[cerebrium.deps.apt]`     | `[dependencies.apt]`                |
 
-### Deprecated: [cerebrium.runtime.custom]
+### Deprecated: Runtime fields in [deployment]
 
-The `[cerebrium.runtime.custom]` section is deprecated. Please migrate to:
+The following fields in `[deployment]` are deprecated. Please move them to the appropriate runtime section:
 
-- `[cerebrium.runtime.python]` - For custom Python ASGI/WSGI applications
-- `[cerebrium.runtime.docker]` - For custom Dockerfile deployments (when using `dockerfile_path`)
+| Deprecated Field       | New Location                                  |
+| ---------------------- | --------------------------------------------- |
+| python_version         | `[runtime.auto-py]` or `[runtime.python]` |
+| docker_base_image_url  | `[runtime.auto-py]` or `[runtime.python]` |
+| shell_commands         | `[runtime.auto-py]` or `[runtime.python]` |
+| pre_build_commands     | `[runtime.auto-py]` or `[runtime.python]` |
+| use_uv                 | `[runtime.auto-py]` or `[runtime.python]` |
 
-### Deprecated: Top-level [cerebrium.dependencies.*]
+### Deprecated: [runtime.custom]
+
+The `[runtime.custom]` section is deprecated. Please migrate to:
+
+- `[runtime.python]` - For custom Python ASGI/WSGI applications
+- `[runtime.docker]` - For custom Dockerfile deployments (when using `dockerfile_path`)
+
+### Deprecated: Runtime names `cortex` and `python`
+
+The runtime names `cortex` and `python` are deprecated. The old names still work for backwards compatibility but will be removed in a future release.
+
+| Deprecated Name        | New Name             |
+| ---------------------- | -------------------- |
+| `[runtime.cortex]`     | `[runtime.auto-py]`  |
+
+### Deprecated: Top-level [dependencies.*]
 
 Top-level dependency sections are deprecated. Please move dependencies to runtime-specific sections:
 
-| Deprecated Location                | New Location                                           |
-| ---------------------------------- | ------------------------------------------------------ |
-| `[cerebrium.dependencies.pip]`     | `[cerebrium.runtime.{type}.dependencies.pip]`          |
-| `[cerebrium.dependencies.apt]`     | `[cerebrium.runtime.{type}.dependencies.apt]`          |
-| `[cerebrium.dependencies.conda]`   | `[cerebrium.runtime.{type}.dependencies.conda]`        |
-| `[cerebrium.dependencies.paths]`   | `[cerebrium.runtime.{type}.dependencies.paths]`        |
+| Deprecated Location      | New Location                              |
+| ------------------------ | ----------------------------------------- |
+| `[dependencies.pip]`     | `[runtime.{type}.deps.pip]`       |
+| `[dependencies.apt]`     | `[runtime.{type}.deps.apt]`       |
+| `[dependencies.conda]`   | `[runtime.{type}.deps.conda]`     |
+| `[dependencies.paths]`   | `[runtime.{type}.deps.paths]`     |
 
-Where `{type}` is your runtime type (e.g., `cortex`, `python`).
+Where `{type}` is your runtime type (e.g., `auto-py`, `python`).
 
 <Info>
 When both top-level and runtime-specific dependencies are present, runtime-specific dependencies take precedence on a per-package basis. This allows gradual migration.

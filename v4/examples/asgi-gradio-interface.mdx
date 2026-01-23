@@ -39,30 +39,30 @@ cerebrium init 2-gradio-interface
 Next, let us add the following configuration to our `cerebrium.toml` file:
 
 ```toml
-[cerebrium.deployment]
+[deployment]
 name = "2-gradio-interface"
 python_version = "3.12"
 disable_auth = true
 include = ['./*', 'main.py', 'cerebrium.toml']
 exclude = ['.*']
 
-[cerebrium.runtime.custom]
+[runtime.custom]
 entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
 port = 8080
 healthcheck_endpoint = "/health"
 
-[cerebrium.hardware]
+[hardware]
 cpu = 2
 memory = 4.0
 compute = "CPU"
 
-[cerebrium.scaling]
+[scaling]
 min_replicas = 0
 max_replicas = 2
 cooldown = 30
 replica_concurrency = 10
 
-[cerebrium.dependencies.pip]
+[dependencies.pip]
 gradio = "latest"
 fastapi = "latest"
 requests = "latest"

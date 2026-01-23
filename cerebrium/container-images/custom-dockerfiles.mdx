@@ -51,16 +51,16 @@ CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8192
 When creating a Dockerfile for Cerebrium, there are three key requirements:
 
 1. You must expose a port using the `EXPOSE` command - this port will be referenced later in your `cerebrium.toml` configuration
-2. Either a `CMD` or `ENTRYPOINT` directive must be defined in your Dockerfile OR the `entrypoint` key in your `cerebrium.toml` under `[cerebrium.runtime.docker]`. This specifies what runs when the container starts. The TOML configuration will take precedence
+2. Either a `CMD` or `ENTRYPOINT` directive must be defined in your Dockerfile OR the `entrypoint` key in your `cerebrium.toml` under `[runtime.docker]`. This specifies what runs when the container starts. The TOML configuration will take precedence
 3. Set the working directory using `WORKDIR` to ensure your application runs from the correct location (defaults to root directory if not specified)
 
 Update cerebrium.toml to include a docker runtime section with the `dockerfile_path` parameter:
 
 ```toml
-[cerebrium.deployment]
+[deployment]
 name = "my-docker-app"
 
-[cerebrium.runtime.docker]
+[runtime.docker]
 dockerfile_path = "./Dockerfile"
 port = 8192
 healthcheck_endpoint = "/health"
@@ -87,10 +87,10 @@ The configuration requires the following parameters:
 If your Dockerfile does not contain a `CMD` or `ENTRYPOINT` instruction, you **must** specify the `entrypoint` parameter in your `cerebrium.toml`:
 
 ```toml
-[cerebrium.deployment]
+[deployment]
 name = "my-docker-app"
 
-[cerebrium.runtime.docker]
+[runtime.docker]
 dockerfile_path = "./Dockerfile"
 entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8192"]
 port = 8192
@@ -101,10 +101,10 @@ readycheck_endpoint = "/ready"
 If you want to override your Dockerfile's `CMD` at deploy time without modifying the Dockerfile, simply add the `entrypoint` parameter to your TOML configuration:
 
 ```toml
-[cerebrium.deployment]
+[deployment]
 name = "my-docker-app"
 
-[cerebrium.runtime.docker]
+[runtime.docker]
 dockerfile_path = "./Dockerfile"
 # This will override any CMD in your Dockerfile
 entrypoint = ["python", "server.py", "--port", "8192"]
@@ -114,7 +114,7 @@ port = 8192
 <Warning>
   When specifying a `dockerfile_path`, all dependencies and necessary commands
   should be installed and executed within the Dockerfile. Dependencies listed
-  under `cerebrium.dependencies.*`, as well as `shell_commands` and
+  under `dependencies.*`, as well as `shell_commands` and
   `pre_build_commands`, will be ignored.
 </Warning>
 
@@ -196,10 +196,10 @@ CMD ["dumb-init", "--", "/rs_server"]
 Similarly to the FastAPI webserver, the application should be configured in the `cerebrium.toml` file:
 
 ```toml
-[cerebrium.deployment]
+[deployment]
 name = "rust-server"
 
-[cerebrium.runtime.docker]
+[runtime.docker]
 dockerfile_path = "./Dockerfile"
 port = 8192
 healthcheck_endpoint = "/health"

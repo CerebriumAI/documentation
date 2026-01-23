@@ -20,24 +20,24 @@ Cerebrium's partnership with [Rime](https://www.rime.ai/) helps teams deliver te
 cerebrium init rime
 ```
 
-3. Rime services use a simplified TOML configuration with the `[cerebrium.runtime.rime]` section. Create a `cerebrium.toml` file with the following:
+3. Rime services use a simplified TOML configuration with the `[runtime.rime]` section. Create a `cerebrium.toml` file with the following:
 
 ```toml
-[cerebrium.deployment]
+[deployment]
 name = "rime"
 disable_auth = true
 
-[cerebrium.runtime.rime]
+[runtime.rime]
 port = 8001
 
-[cerebrium.hardware]
+[hardware]
 cpu = 4
 memory = 30
 compute = "AMPERE_A10"
 gpu_count = 1
 region = "us-east-1"
 
-[cerebrium.scaling]
+[scaling]
 min_replicas = 1
 max_replicas = 2
 cooldown = 120

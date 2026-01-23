@@ -62,26 +62,28 @@ Transforms into Cerebrium's easy-to-understand TOML config:
 
 ```toml
 # cerebrium.toml
-[cerebrium.deployment]
+[deployment]
 name = "stable-diffusion"
-python_version = "3.11"
-docker_base_image_url = "debian:bookworm-slim"
 include = ["./*", "main.py", "cerebrium.toml"]
 exclude = [".*"]
 
-[cerebrium.hardware]
+[runtime.cortex]
+python_version = "3.11"
+docker_base_image_url = "debian:bookworm-slim"
+
+[hardware]
 compute = "AMPERE_A10"    # Choose your GPU type
 cpu = 4                   # Number of CPU cores
 memory = 16.0             # Memory in GB
 gpu_count = 1             # Number of GPUs
 
-[cerebrium.scaling]
+[scaling]
 min_replicas = 0         # Save costs when inactive and scale down your app
 max_replicas = 2         # Handle increased traffic and scale up where necessary
 cooldown = 60            # Time window at reduced concurrency before scaling down
 replica_concurrency = 1  # The number of requests a single container can support
 
-[cerebrium.dependencies.pip]
+[dependencies.pip]
 torch = ">=2.0.0"
 pydantic = "latest"
 transformers = "latest"

@@ -125,12 +125,12 @@ def hello():
 If you already have a `cerebrium.toml` file, add or update these sections. If you don't have one, create a new file with the following:
 
 ```toml
-[cerebrium.deployment]
+[deployment]
 name = "your-app-name"
 include = ["./*"]
 exclude = [".*"]
 
-[cerebrium.hardware]
+[hardware]
 cpu = 1
 memory = 1.0
 compute = "CPU"
@@ -138,13 +138,13 @@ gpu_count = 0
 provider = "aws"
 region = "us-east-1"
 
-[cerebrium.scaling]
+[scaling]
 min_replicas = 0
 max_replicas = 2
 cooldown = 30
 replica_concurrency = 1  # Must match max_concurrency in your AppState
 
-[cerebrium.runtime.custom]
+[runtime.docker]
 port = 8000
 dockerfile_path = "./Dockerfile"
 ```

@@ -35,24 +35,24 @@ For our LLM we deploy a OpenAI compatible Llama-3 endpoint using the vLLM framew
 Run `cerebrium init llama-llm` and add the following code to your cerebrium.toml:
 
 ```
-[cerebrium.deployment]
+[deployment]
 name = "llama-llm"
 python_version = "3.11"
 docker_base_image_url = "debian:bookworm-slim"
 include = ["./*", "main.py", "cerebrium.toml"]
 exclude = [".*"]
 
-[cerebrium.hardware]
+[hardware]
 cpu = 4
 memory = 12.0
 compute = "ADA_L40"
 
-[cerebrium.scaling]
+[scaling]
 min_replicas = 1
 max_replicas = 5
 cooldown = 60
 
-[cerebrium.dependencies.pip]
+[dependencies.pip]
 vllm = "latest"
 pydantic = "latest"
 ```
@@ -169,13 +169,13 @@ In your IDE, run the following command to create our Cerebrium starter project: 
 Add the following pip packages to your `cerebrium.toml` to create your deployment environment:
 
 ```
-[cerebrium.deployment]
+[deployment]
 name = "pipecat-agent"
 python_version = "3.11"
 include = ["./*", "main.py", "cerebrium.toml"]
 exclude = ["./example_exclude"]
 
-[cerebrium.hardware]
+[hardware]
 region = "us-east-1"
 provider = "aws"
 compute = "CPU"
@@ -183,12 +183,12 @@ cpu = 6
 memory = 18.0
 gpu_count = 1
 
-[cerebrium.scaling]
+[scaling]
 min_replicas = 1 # Note: This incurs a constant cost since at least one instance is always running.
 max_replicas = 2
 cooldown = 180
 
-[cerebrium.dependencies.pip]
+[dependencies.pip]
 torch = ">=2.0.0"
 "pipecat-ai[silero, daily, openai, deepgram, cartesia]" = "==0.0.67"
 aiohttp = ">=3.9.4"
