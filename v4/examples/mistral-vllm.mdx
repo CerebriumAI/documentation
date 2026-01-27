@@ -23,10 +23,10 @@ First, create your project:
 cerebrium init 1-faster-inference-with-vllm
 ```
 
-Add these Python packages to the `[dependencies.pip]` section in your `cerebrium.toml` file:
+Add these Python packages to the `[deps.pip]` section in your `cerebrium.toml` file:
 
 ```toml
-[dependencies.pip]
+[deps.pip]
 sentencepiece = "latest"
 torch = ">=2.0.0"
 vllm = "latest"
@@ -133,7 +133,7 @@ min_replicas = 0
 max_replicas = 5
 cooldown = 60
 
-[dependencies.pip]
+[deps.pip]
 huggingface-hub = "latest"
 sentencepiece = "latest"
 torch = ">=2.0.0"
@@ -142,9 +142,9 @@ transformers = ">=4.35.0"
 accelerate = "latest"
 xformers = "latest"
 
-[dependencies.conda]
+[deps.conda]
 
-[dependencies.apt]
+[deps.apt]
 ffmpeg = "latest"
 
 ```

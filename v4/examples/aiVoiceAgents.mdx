@@ -52,7 +52,7 @@ min_replicas = 1
 max_replicas = 5
 cooldown = 60
 
-[dependencies.pip]
+[deps.pip]
 vllm = "latest"
 pydantic = "latest"
 ```
@@ -188,7 +188,7 @@ min_replicas = 1 # Note: This incurs a constant cost since at least one instance
 max_replicas = 2
 cooldown = 180
 
-[dependencies.pip]
+[deps.pip]
 torch = ">=2.0.0"
 "pipecat-ai[silero, daily, openai, deepgram, cartesia]" = "==0.0.67"
 aiohttp = ">=3.9.4"

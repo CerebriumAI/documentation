@@ -33,7 +33,7 @@ max_replicas = 2
 cooldown = 10
 replica_concurrency = 4 # Each container can now handle multiple requests.
 
-[dependencies.pip]
+[deps.pip]
 sentencepiece = "latest"
 torch = "latest"
 vllm = "latest"
@@ -63,7 +63,7 @@ entrypoint = ["python", "app/main.py"]
 healthcheck_endpoint = "/health"
 readycheck_endpoint = "/ready"
 
-[dependencies.pip]
+[deps.pip]
 litserve = "latest"
 fastapi = "latest"
 ```

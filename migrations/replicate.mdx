@@ -27,7 +27,7 @@ name = "cog-migration-sdxl"
 include = ["./*", "main.py", "cerebrium.toml"]
 exclude = ["./example_exclude"]
 
-[runtime.cortex]
+[runtime.auto-py]
 python_version = "3.11"
 docker_base_image_url = "nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04"
 shell_commands = [
@@ -42,14 +42,14 @@ cpu = 2
 memory = 12.0
 gpu_count = 1
 
-[dependencies.pip]
+[deps.pip]
 "accelerate" = "latest"
 "diffusers" = "latest"
 "torch" = "==2.0.1"
 "torchvision" = "==0.15.2"
 "transformers" = "latest"
 
-[dependencies.apt]
+[deps.apt]
 "curl" = "latest"
 ```
 

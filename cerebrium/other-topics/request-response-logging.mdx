@@ -3,17 +3,17 @@ title: "Request and Response Logging"
 description: "Control request and response logs in your Cerebrium apps"
 ---
 
-By default, the Cortex runtime logs all requests and responses to your Cerebrium app. These logs can be viewed in your app's dashboard and are useful for debugging and monitoring. However, in some cases, you may want to disable these logs for privacy, security, or performance reasons.
+By default, the auto-py runtime logs all requests and responses to your Cerebrium app. These logs can be viewed in your app's dashboard and are useful for debugging and monitoring. However, in some cases, you may want to disable these logs for privacy, security, or performance reasons.
 
 ## Controlling Logs
 
-Cerebrium provides two settings that allow you to control logging behavior in the Cortex runtime:
+Cerebrium provides two settings that allow you to control logging behavior in the auto-py runtime:
 
 - `DISABLE_REQUEST_LOGS` - When enabled, prevents logging of incoming request data
 - `DISABLE_RESPONSE_LOGS` - When enabled, prevents logging of response data from your app
 
 <Note>
-  These settings only affect the default Cortex runtime. If you are using a
+  These settings only affect the default auto-py runtime. If you are using a
   [custom runtime](/cerebrium/container-images/custom-web-servers), you will
   need to handle logging behavior in your own server implementation.
 </Note>

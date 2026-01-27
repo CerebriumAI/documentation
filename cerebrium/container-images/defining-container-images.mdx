@@ -21,7 +21,7 @@ Check out the [Introductory Guide](/cerebrium/getting-started/introduction) for 
 <Info>
   It is possible to initialize an existing project by adding a `cerebrium.toml`
   file to the root of your codebase, defining your entrypoint (`main.py` if
-  using the default cortex runtime, or adding an entrypoint to the runtime
+  using the default auto-py runtime, or adding an entrypoint to the runtime
   section if using a python or docker runtime) and including the necessary files
   in the `deployment` section of your `cerebrium.toml` file.
 </Info>
@@ -47,7 +47,7 @@ For detailed hardware specifications and performance characteristics see the [GP
 The Python runtime version forms the foundation of every Cerebrium app. We currently support versions 3.10 to 3.13. Specify the Python version in the runtime section of the configuration:
 
 ```toml
-[runtime.cortex]
+[runtime.auto-py]
 python_version = "3.11"
 ```
 
@@ -72,7 +72,7 @@ The Python version affects the entire dependency chain. For instance, some packa
 Python dependencies can be managed directly in TOML or through requirement files. The system caches packages to speed up builds:
 
 ```toml
-[dependencies.pip]
+[deps.pip]
 torch = "==2.0.0"
 transformers = "==4.30.0"
 numpy = "latest"
@@ -81,7 +81,7 @@ numpy = "latest"
 Or using an existing requirements file:
 
 ```toml
-[dependencies.paths]
+[deps.paths]
 pip = "requirements.txt"
 ```
 
@@ -94,19 +94,19 @@ The system implements an intelligent caching strategy at the node level. When an
 
 ### Adding APT Packages
 
-System-level packages provide the foundation for many ML apps, handling everything from image-processing libraries to audio codecs. These can be added to the `cerebrium.toml` file under the `[dependencies.apt]` section as follows:
+System-level packages provide the foundation for many ML apps, handling everything from image-processing libraries to audio codecs. These can be added to the `cerebrium.toml` file under the `[deps.apt]` section as follows:
 
 ```toml
-[dependencies.apt]
+[deps.apt]
 ffmpeg = "latest"
 libopenblas-base = "latest"
 libomp-dev = "latest"
 ```
 
-For teams with standardized system dependencies, text files can be used instead by adding the following to the `[dependencies.paths]` section:
+For teams with standardized system dependencies, text files can be used instead by adding the following to the `[deps.paths]` section:
 
 ```toml
-[dependencies.paths]
+[deps.paths]
 apt = "deps_folder/pkglist.txt"
 ```
 
@@ -117,7 +117,7 @@ Since APT packages modify the system environment, any changes to these dependenc
 Conda excels at managing complex system-level Python dependencies, particularly for GPU support and scientific computing:
 
 ```toml
-[dependencies.conda]
+[deps.conda]
 cuda = ">=11.7"
 cudatoolkit = "11.7"
 opencv = "latest"
@@ -126,7 +126,7 @@ opencv = "latest"
 Teams using conda environments can specify their environment file:
 
 ```toml
-[dependencies.paths]
+[deps.paths]
 conda = "conda_pkglist.txt"
 ```
 
@@ -141,7 +141,7 @@ Cerebrium's build process includes two specialized command types that execute at
 Pre-build commands execute at the start of the build process, before dependency installation begins. This early execution timing makes them essential for setting up the build environment:
 
 ```toml
-[runtime.cortex]
+[runtime.auto-py]
 pre_build_commands = [
     # Add specialized build tools
     "curl -o /usr/local/bin/pget -L 'https://github.com/replicate/pget/releases/download/v0.6.2/pget_linux_x86_64'",
@@ -156,7 +156,7 @@ Pre-build commands typically handle tasks like installing build tools, configuri
 Shell commands execute after all dependencies install and the application code copies into the container. This later timing ensures access to the complete environment:
 
 ```toml
-[runtime.cortex]
+[runtime.auto-py]
 shell_commands = [
     # Initialize application resources
     "python -m download_models",
@@ -186,7 +186,7 @@ The base image selection shapes how an app runs in Cerebrium. While the default 
 Cerebrium supports several categories of base images to ensure system compatibility such as nvidia, ubuntu and python images.
 
 ```toml
-[runtime.cortex]
+[runtime.auto-py]
 docker_base_image_url = "debian:bookworm-slim" # Default minimal image
 #docker_base_image_url = "nvidia/cuda:12.0.1-runtime-ubuntu22.04" # CUDA-enabled images
 #docker_base_image_url = "ubuntu:22.04"  # debian images
@@ -213,7 +213,7 @@ docker login -u your-dockerhub-username
 After logging in, you can use the image in your configuration:
 
 ```toml
-[runtime.cortex]
+[runtime.auto-py]
 docker_base_image_url = "bob/infinity:latest"
 ```
 
@@ -234,7 +234,7 @@ docker_base_image_url = "bob/infinity:latest"
 Public ECR images from the `public.ecr.aws` registry work without authentication:
 
 ```toml
-[runtime.cortex]
+[runtime.auto-py]
 docker_base_image_url = "public.ecr.aws/lambda/python:3.11"
 ```
 
@@ -242,7 +242,7 @@ However, **private ECR images** require authentication. See [Using Private Docke
 
 ## Custom Runtimes
 
-While Cerebrium's default cortex runtime works well for most apps, teams often need more control over their server implementation. Custom runtimes enable features like custom authentication, dynamic batching, public endpoints, or WebSocket connections.
+While Cerebrium's default auto-py runtime works well for most apps, teams often need more control over their server implementation. Custom runtimes enable features like custom authentication, dynamic batching, public endpoints, or WebSocket connections.
 
 ### Python Runtime (ASGI/WSGI)
 
@@ -290,7 +290,7 @@ readycheck_endpoint = "/ready"
 
 <Warning>
   When using the docker runtime, all dependencies and build commands should be
-  handled within the Dockerfile. The `[dependencies.*]` sections will
+  handled within the Dockerfile. The `[deps.*]` sections will
   be ignored.
 </Warning>
 
@@ -308,7 +308,7 @@ port = 8000
 healthcheck_endpoint = "/health"
 readycheck_endpoint = "/ready"
 
-[dependencies.pip]
+[deps.pip]
 torch = "latest"
 vllm = "latest"
 ```

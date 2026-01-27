@@ -79,7 +79,7 @@ During normal replica operation, this simply corresponds to a request timeout va
 waits for the specified grace period, issues a SIGKILL command if the instance has not stopped, and kills any active requests with a GatewayTimeout error.
 
 <Note>
-  When using the Cortex runtime (default), SIGTERM signals are automatically
+  When using the auto-py runtime (default), SIGTERM signals are automatically
   handled to allow graceful termination of requests. For custom runtimes, you'll
   need to implement SIGTERM handling yourself to ensure requests complete
   gracefully before termination. See our [Graceful Termination

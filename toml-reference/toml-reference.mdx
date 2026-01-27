@@ -144,7 +144,7 @@ readycheck_endpoint = "/ready"
 
 <Warning>
   When using `dockerfile_path`, all dependencies and build commands should be
-  handled within the Dockerfile. The `[dependencies.*]` sections,
+  handled within the Dockerfile. The `[deps.*]` sections,
   `shell_commands`, and `pre_build_commands` will be ignored.
 </Warning>
 
@@ -292,7 +292,7 @@ pip = "requirements.txt"  # Alternative: use a file instead of inline
 This approach works with any runtime type (`auto-py`, `python`, or partner services).
 
 <Warning>
-**Deprecated:** Top-level `[dependencies.*]` sections are deprecated.
+**Deprecated:** Top-level `[dependencies.*]` and `[deps.*]` sections are deprecated.
 Please move your dependencies to `[runtime.{type}.deps.*]`.
 Dependencies specified at the runtime level take precedence over top-level dependencies when both are present.
 </Warning>

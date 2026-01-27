@@ -58,7 +58,7 @@ name = "llama-8b-vllm"
 include = ["./*", "main.py", "cerebrium.toml"]
 exclude = [".*"]
 
-[runtime.cortex]
+[runtime.auto-py]
 python_version = "3.11"
 docker_base_image_url = "debian:bookworm-slim"
 
@@ -72,7 +72,7 @@ min_replicas = 0
 max_replicas = 5
 cooldown = 30
 
-[dependencies.pip]
+[deps.pip]
 sentencepiece = "latest"
 torch = "latest"
 transformers = "latest"
@@ -86,7 +86,7 @@ bitsandbytes = "latest"
 Let's break down this configuration:
 
 - `deployment`: Specifies the project name and which files to include/exclude as project files.
-- `runtime.cortex`: Specifies the Python version and base Docker image.
+- `runtime.auto-py`: Specifies the Python version and base Docker image.
 - `hardware`: Defines the CPU, memory, and GPU requirements for your deployment.
 - `scaling`: Configures auto-scaling behavior, including minimum and maximum replicas, and cooldown period.
 - `dependencies.pip`: Lists the Python packages required for your project.

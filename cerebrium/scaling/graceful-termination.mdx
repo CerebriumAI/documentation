@@ -9,7 +9,7 @@ Cerebrium runs in a shared, multi-tenant environment. To efficiently scale, opti
 
 ## Understanding Instance Termination
 
-For both application autoscaling and our own internal node scaling, we will send your application a SIGTERM signal, as a warning to the application that we are intending to shut down this instance. For Cortex applications (Cerebriums default runtime), this is handled. On custom runtimes, should you wish to gracefully shut down, you will need to catch and handle this signal. Once at least `response_grace_period` has elapsed, we will send your application a SIGKILL signal, terminating the instance immediately.
+For both application autoscaling and our own internal node scaling, we will send your application a SIGTERM signal, as a warning to the application that we are intending to shut down this instance. For auto-py applications (Cerebriums default runtime), this is handled. On custom runtimes, should you wish to gracefully shut down, you will need to catch and handle this signal. Once at least `response_grace_period` has elapsed, we will send your application a SIGKILL signal, terminating the instance immediately.
 
 When Cerebrium needs to terminate an contanier, we do the following:
 
@@ -22,7 +22,7 @@ Below is a chart that shows it more eloquently:
 
 ```mermaid
 flowchart TD
-    A[SIGTERM sent] --> B[Cortex]
+    A[SIGTERM sent] --> B[auto-py]
     A --> C[Custom Runtime]
 
     B --> D[automatically captured]

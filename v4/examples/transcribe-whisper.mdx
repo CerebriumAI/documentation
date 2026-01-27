@@ -17,10 +17,10 @@ First, create your project:
 cerebrium init 1-whisper-transcription
 ```
 
-Add the following packages to the `[dependencies.pip]` section of your `cerebrium.toml` file:
+Add the following packages to the `[deps.pip]` section of your `cerebrium.toml` file:
 
 ```toml
-[dependencies.pip]
+[deps.pip]
 accelerate = "latest"
 transformers = ">=4.35.0"
 openai-whisper = "latest"
@@ -126,15 +126,15 @@ min_replicas = 0
 max_replicas = 5
 cooldown = 60
 
-[dependencies.pip]
+[deps.pip]
 accelerate = "latest"
 transformers = ">=4.35.0"
 openai-whisper = "latest"
 pydantic = "latest"
 
-[dependencies.conda]
+[deps.conda]
 
-[dependencies.apt]
+[deps.apt]
 "ffmpeg" = "latest"
 
 ```
