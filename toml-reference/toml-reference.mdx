@@ -6,13 +6,14 @@ description: Complete reference for all parameters available in Cerebrium's defa
 <Warning>
 **Deprecation Notice:** The `cerebrium.` prefix is being removed from all configuration sections. Sub-keys are becoming top-level keys (e.g., `[cerebrium.deployment]` → `[deployment]`). The prefixed format is still supported for backwards compatibility but will be removed in a future release. We recommend migrating to the new format.
 
-| Current (Deprecated)              | New Format            |
-| --------------------------------- | --------------------- |
-| `[cerebrium.deployment]`          | `[deployment]`        |
-| `[cerebrium.runtime.cortex]`      | `[runtime.auto-py]`   |
-| `[cerebrium.hardware]`            | `[hardware]`          |
-| `[cerebrium.scaling]`             | `[scaling]`           |
-| `[cerebrium.dependencies]`        | `[dependencies]`      |
+| Current (Deprecated)         | New Format          |
+| ---------------------------- | ------------------- |
+| `[cerebrium.deployment]`     | `[deployment]`      |
+| `[cerebrium.runtime.cortex]` | `[runtime.auto-py]` |
+| `[cerebrium.hardware]`       | `[hardware]`        |
+| `[cerebrium.scaling]`        | `[scaling]`         |
+| `[cerebrium.dependencies]`   | `[dependencies]`    |
+
 </Warning>
 
 The configuration is organized into the following main sections:
@@ -144,8 +145,8 @@ readycheck_endpoint = "/ready"
 
 <Warning>
   When using `dockerfile_path`, all dependencies and build commands should be
-  handled within the Dockerfile. The `[deps.*]` sections,
-  `shell_commands`, and `pre_build_commands` will be ignored.
+  handled within the Dockerfile. The `[deps.*]` sections, `shell_commands`, and
+  `pre_build_commands` will be ignored.
 </Warning>
 
 ### UV Package Manager
@@ -292,15 +293,17 @@ pip = "requirements.txt"  # Alternative: use a file instead of inline
 This approach works with any runtime type (`auto-py`, `python`, or partner services).
 
 <Warning>
-**Deprecated:** Top-level `[dependencies.*]` and `[deps.*]` sections are deprecated.
-Please move your dependencies to `[runtime.{type}.deps.*]`.
-Dependencies specified at the runtime level take precedence over top-level dependencies when both are present.
+  **Deprecated:** Top-level `[dependencies.*]` and `[deps.*]` sections are
+  deprecated. Please move your dependencies to `[runtime.{type}.deps.*]`.
+  Dependencies specified at the runtime level take precedence over top-level
+  dependencies when both are present.
 </Warning>
 
 ### Top-Level Dependencies (Deprecated)
 
 <Warning>
-This approach is deprecated. Please migrate to runtime-specific dependencies above.
+  This approach is deprecated. Please migrate to runtime-specific dependencies
+  above.
 </Warning>
 
 #### Pip Dependencies
@@ -453,36 +456,36 @@ replica_concurrency = 10
 ## Backwards Compatibility
 
 <Warning>
-The following configuration patterns are deprecated but still supported for backwards compatibility.
-We recommend migrating to the new format.
+  The following configuration patterns are deprecated but still supported for
+  backwards compatibility. We recommend migrating to the new format.
 </Warning>
 
-### Deprecated: cerebrium.* prefix
+### Deprecated: cerebrium.\* prefix
 
 The `cerebrium.` prefix on all section names is deprecated. Please migrate to the new format:
 
-| Deprecated Format                  | New Format                          |
-| ---------------------------------- | ----------------------------------- |
-| `[cerebrium.deployment]`           | `[deployment]`                      |
-| `[cerebrium.runtime.cortex]`       | `[runtime.auto-py]`                 |
-| `[cerebrium.runtime.python]`       | `[runtime.python]`                  |
-| `[cerebrium.runtime.docker]`       | `[runtime.docker]`                  |
-| `[cerebrium.hardware]`             | `[hardware]`                        |
-| `[cerebrium.scaling]`              | `[scaling]`                         |
-| `[cerebrium.deps.pip]`     | `[dependencies.pip]`                |
-| `[cerebrium.deps.apt]`     | `[dependencies.apt]`                |
+| Deprecated Format            | New Format           |
+| ---------------------------- | -------------------- |
+| `[cerebrium.deployment]`     | `[deployment]`       |
+| `[cerebrium.runtime.cortex]` | `[runtime.auto-py]`  |
+| `[cerebrium.runtime.python]` | `[runtime.python]`   |
+| `[cerebrium.runtime.docker]` | `[runtime.docker]`   |
+| `[cerebrium.hardware]`       | `[hardware]`         |
+| `[cerebrium.scaling]`        | `[scaling]`          |
+| `[cerebrium.deps.pip]`       | `[dependencies.pip]` |
+| `[cerebrium.deps.apt]`       | `[dependencies.apt]` |
 
 ### Deprecated: Runtime fields in [deployment]
 
 The following fields in `[deployment]` are deprecated. Please move them to the appropriate runtime section:
 
-| Deprecated Field       | New Location                                  |
-| ---------------------- | --------------------------------------------- |
-| python_version         | `[runtime.auto-py]` or `[runtime.python]` |
-| docker_base_image_url  | `[runtime.auto-py]` or `[runtime.python]` |
-| shell_commands         | `[runtime.auto-py]` or `[runtime.python]` |
-| pre_build_commands     | `[runtime.auto-py]` or `[runtime.python]` |
-| use_uv                 | `[runtime.auto-py]` or `[runtime.python]` |
+| Deprecated Field      | New Location                              |
+| --------------------- | ----------------------------------------- |
+| python_version        | `[runtime.auto-py]` or `[runtime.python]` |
+| docker_base_image_url | `[runtime.auto-py]` or `[runtime.python]` |
+| shell_commands        | `[runtime.auto-py]` or `[runtime.python]` |
+| pre_build_commands    | `[runtime.auto-py]` or `[runtime.python]` |
+| use_uv                | `[runtime.auto-py]` or `[runtime.python]` |
 
 ### Deprecated: [runtime.custom]
 
@@ -495,23 +498,25 @@ The `[runtime.custom]` section is deprecated. Please migrate to:
 
 The runtime names `cortex` and `python` are deprecated. The old names still work for backwards compatibility but will be removed in a future release.
 
-| Deprecated Name        | New Name             |
-| ---------------------- | -------------------- |
-| `[runtime.cortex]`     | `[runtime.auto-py]`  |
+| Deprecated Name    | New Name            |
+| ------------------ | ------------------- |
+| `[runtime.cortex]` | `[runtime.auto-py]` |
 
 ### Deprecated: Top-level [dependencies.*]
 
 Top-level dependency sections are deprecated. Please move dependencies to runtime-specific sections:
 
-| Deprecated Location      | New Location                              |
-| ------------------------ | ----------------------------------------- |
-| `[dependencies.pip]`     | `[runtime.{type}.deps.pip]`       |
-| `[dependencies.apt]`     | `[runtime.{type}.deps.apt]`       |
-| `[dependencies.conda]`   | `[runtime.{type}.deps.conda]`     |
-| `[dependencies.paths]`   | `[runtime.{type}.deps.paths]`     |
+| Deprecated Location    | New Location                  |
+| ---------------------- | ----------------------------- |
+| `[dependencies.pip]`   | `[runtime.{type}.deps.pip]`   |
+| `[dependencies.apt]`   | `[runtime.{type}.deps.apt]`   |
+| `[dependencies.conda]` | `[runtime.{type}.deps.conda]` |
+| `[dependencies.paths]` | `[runtime.{type}.deps.paths]` |
 
 Where `{type}` is your runtime type (e.g., `auto-py`, `python`).
 
 <Info>
-When both top-level and runtime-specific dependencies are present, runtime-specific dependencies take precedence on a per-package basis. This allows gradual migration.
+  When both top-level and runtime-specific dependencies are present,
+  runtime-specific dependencies take precedence on a per-package basis. This
+  allows gradual migration.
 </Info>
