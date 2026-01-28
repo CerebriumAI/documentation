@@ -100,7 +100,7 @@ port = 8000
 healthcheck_endpoint = "/health"
 readycheck_endpoint = "/ready"
 
-[runtime.python.deps.pip]
+[runtime.python.dependencies.pip]
 fastapi = "latest"
 uvicorn = "latest"
 ```
@@ -145,8 +145,8 @@ readycheck_endpoint = "/ready"
 
 <Warning>
   When using `dockerfile_path`, all dependencies and build commands should be
-  handled within the Dockerfile. The `[deps.*]` sections, `shell_commands`, and
-  `pre_build_commands` will be ignored.
+  handled within the Dockerfile. The `[dependencies.*]` sections,
+  `shell_commands`, and `pre_build_commands` will be ignored.
 </Warning>
 
 ### UV Package Manager
@@ -273,30 +273,36 @@ Dependencies can be specified within the runtime section. This is the recommende
 [runtime.auto-py]
 python_version = "3.12"
 
-[runtime.auto-py.deps.pip]
+[runtime.auto-py.dependencies.pip]
 torch = "==2.0.0"      # Exact version
 numpy = "latest"       # Latest version
 pandas = ">=1.5.0"     # Minimum version
 
-[runtime.auto-py.deps.apt]
+[runtime.auto-py.dependencies.apt]
 ffmpeg = "latest"
 libopenblas-base = "latest"
 
-[runtime.auto-py.deps.conda]
+[runtime.auto-py.dependencies.conda]
 cuda = ">=11.7"
 cudatoolkit = "11.7"
+```
 
-[runtime.auto-py.deps.paths]
-pip = "requirements.txt"  # Alternative: use a file instead of inline
+#### Using Requirements Files
+
+You can also specify a requirements file using the special `_file_relative_path` key. When both a file and inline packages are specified, they are merged (inline packages take precedence):
+
+```toml
+[runtime.auto-py.dependencies.pip]
+_file_relative_path = "requirements.txt"  # Base packages from file
+numpy = "1.24.0"                          # Override or add packages
 ```
 
 This approach works with any runtime type (`auto-py`, `python`, or partner services).
 
 <Warning>
-  **Deprecated:** Top-level `[dependencies.*]` and `[deps.*]` sections are
-  deprecated. Please move your dependencies to `[runtime.{type}.deps.*]`.
-  Dependencies specified at the runtime level take precedence over top-level
-  dependencies when both are present.
+**Deprecated:** Top-level `[dependencies.*]` sections are deprecated.
+Please move your dependencies to `[runtime.{type}.dependencies.*]`.
+Dependencies specified at the runtime level take precedence over top-level dependencies when both are present.
 </Warning>
 
 ### Top-Level Dependencies (Deprecated)
@@ -339,13 +345,18 @@ cudatoolkit = "11.7"
 
 #### Dependency Files
 
-The `[dependencies.paths]` section allows using requirement files.
+Use the special `_file_relative_path` key to load dependencies from a file. When both a file and inline packages are specified, they are merged (inline packages take precedence):
 
 ```toml
-[dependencies.paths]
-pip = "requirements.txt"
-apt = "pkglist.txt"
-conda = "conda_pkglist.txt"
+[dependencies.pip]
+_file_relative_path = "requirements.txt"  # Load from file
+numpy = "1.24.0"                          # Override or add packages
+
+[dependencies.apt]
+_file_relative_path = "pkglist.txt"
+
+[dependencies.conda]
+_file_relative_path = "conda_pkglist.txt"
 ```
 
 ## Complete Examples
@@ -366,7 +377,7 @@ use_uv = true
 shell_commands = []
 pre_build_commands = []
 
-[runtime.auto-py.deps.pip]
+[runtime.auto-py.dependencies.pip]
 torch = "latest"
 transformers = "latest"
 
@@ -406,7 +417,7 @@ port = 8000
 healthcheck_endpoint = "/health"
 readycheck_endpoint = "/ready"
 
-[runtime.python.deps.pip]
+[runtime.python.dependencies.pip]
 torch = "latest"
 transformers = "latest"
 uvicorn = "latest"
@@ -464,16 +475,16 @@ replica_concurrency = 10
 
 The `cerebrium.` prefix on all section names is deprecated. Please migrate to the new format:
 
-| Deprecated Format            | New Format           |
-| ---------------------------- | -------------------- |
-| `[cerebrium.deployment]`     | `[deployment]`       |
-| `[cerebrium.runtime.cortex]` | `[runtime.auto-py]`  |
-| `[cerebrium.runtime.python]` | `[runtime.python]`   |
-| `[cerebrium.runtime.docker]` | `[runtime.docker]`   |
-| `[cerebrium.hardware]`       | `[hardware]`         |
-| `[cerebrium.scaling]`        | `[scaling]`          |
-| `[cerebrium.deps.pip]`       | `[dependencies.pip]` |
-| `[cerebrium.deps.apt]`       | `[dependencies.apt]` |
+| Deprecated Format                  | New Format                          |
+| ---------------------------------- | ----------------------------------- |
+| `[cerebrium.deployment]`           | `[deployment]`                      |
+| `[cerebrium.runtime.cortex]`       | `[runtime.auto-py]`                 |
+| `[cerebrium.runtime.python]`       | `[runtime.python]`                  |
+| `[cerebrium.runtime.docker]`       | `[runtime.docker]`                  |
+| `[cerebrium.hardware]`             | `[hardware]`                        |
+| `[cerebrium.scaling]`              | `[scaling]`                         |
+| `[cerebrium.dependencies.pip]`     | `[dependencies.pip]`                |
+| `[cerebrium.dependencies.apt]`     | `[dependencies.apt]`                |
 
 ### Deprecated: Runtime fields in [deployment]
 
@@ -506,14 +517,17 @@ The runtime names `cortex` and `python` are deprecated. The old names still work
 
 Top-level dependency sections are deprecated. Please move dependencies to runtime-specific sections:
 
-| Deprecated Location    | New Location                  |
-| ---------------------- | ----------------------------- |
-| `[dependencies.pip]`   | `[runtime.{type}.deps.pip]`   |
-| `[dependencies.apt]`   | `[runtime.{type}.deps.apt]`   |
-| `[dependencies.conda]` | `[runtime.{type}.deps.conda]` |
-| `[dependencies.paths]` | `[runtime.{type}.deps.paths]` |
+| Deprecated Location      | New Location                              |
+| ------------------------ | ----------------------------------------- |
+| `[dependencies.pip]`     | `[runtime.{type}.dependencies.pip]`       |
+| `[dependencies.apt]`     | `[runtime.{type}.dependencies.apt]`       |
+| `[dependencies.conda]`   | `[runtime.{type}.dependencies.conda]`     |
 
 Where `{type}` is your runtime type (e.g., `auto-py`, `python`).
+
+<Note>
+The `[dependencies.paths]` section has been replaced with `_file_relative_path` key inside dependency maps. See the Dependencies section above for the new syntax.
+</Note>
 
 <Info>
   When both top-level and runtime-specific dependencies are present,
