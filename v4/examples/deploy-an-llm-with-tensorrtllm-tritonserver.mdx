@@ -388,7 +388,7 @@ The Dockerfile uses Nvidia's official Triton container with TensorRT-LLM pre-ins
 We now configure our container and autoscaling environment in `cerebrium.toml`. This file defines the hardware resources and scaling behavior:
 
 ```toml
-[cerebrium.deployment]
+[deployment]
 name = "tensorrt-triton-demo"
 python_version = "3.12"
 disable_auth = true
@@ -396,7 +396,7 @@ include = ['./*', 'cerebrium.toml']
 exclude = ['.*']
 deployment_initialization_timeout = 830
 
-[cerebrium.hardware]
+[hardware]
 cpu = 4.0
 memory = 40.0
 compute = "AMPERE_A10"
@@ -404,14 +404,14 @@ gpu_count = 1
 provider = "aws"
 region = "us-east-1"
 
-[cerebrium.scaling]
+[scaling]
 min_replicas = 0
 max_replicas = 5
 cooldown = 300
 replica_concurrency = 128
 scaling_metric = "concurrency_utilization"
 
-[cerebrium.runtime.custom]
+[runtime.custom]
 port = 8000
 healthcheck_endpoint = "/v2/health/live"
 readycheck_endpoint = "/v2/health/ready"

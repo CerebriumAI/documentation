@@ -23,7 +23,7 @@ As traffic decreases, instances enter a cooldown period at reduced concurrency. 
 The `cerebrium.toml` file controls scaling behavior through several key parameters:
 
 ```toml
-[cerebrium.scaling]
+[scaling]
 min_replicas = 0           # Minimum running instances
 max_replicas = 3           # Maximum concurrent instances
 cooldown = 60              # Cooldown period in seconds
@@ -67,7 +67,7 @@ Cerebrium ensures reliability through automatic instance health management. The 
 Apps requiring maximum reliability often combine several scaling features:
 
 ```toml
-[cerebrium.scaling]
+[scaling]
 min_replicas = 2              # Maintain redundant instances
 cooldown = 600                # Extended warm period
 max_replicas = 10             # Room for traffic spikes
@@ -79,7 +79,7 @@ During normal replica operation, this simply corresponds to a request timeout va
 waits for the specified grace period, issues a SIGKILL command if the instance has not stopped, and kills any active requests with a GatewayTimeout error.
 
 <Note>
-  When using the Cortex runtime (default), SIGTERM signals are automatically
+  When using the cortex runtime (default), SIGTERM signals are automatically
   handled to allow graceful termination of requests. For custom runtimes, you'll
   need to implement SIGTERM handling yourself to ensure requests complete
   gracefully before termination. See our [Graceful Termination
@@ -108,10 +108,10 @@ and so Cerebrium currently provides four scaling metrics to choose from:
 - `cpu_utilization`
 - `memory_utilization`
 
-These can be added to the `cerebrium.scaling` section as such, by specifying one of these metrics and a target:
+These can be added to the `scaling` section as such, by specifying one of these metrics and a target:
 
 ```toml
-[cerebrium.scaling]
+[scaling]
 min_replicas = 0
 cooldown = 600
 max_replicas = 10
@@ -143,14 +143,14 @@ if `scaling_target=5`, Cerebrium will attempt to maintain a 5 requests/s average
 ### CPU Utilization
 
 `cpu_utilization` uses a maximum CPU percentage utilization averaged over all instances of an application to scale out, relative to the
-`cerebrium.hardware.cpu` value. For example, if an application has `cpu=2` and `scaling_target=80`, Cerebrium will attempt
+`hardware.cpu` value. For example, if an application has `cpu=2` and `scaling_target=80`, Cerebrium will attempt
 to maintain _80%_ CPU utilization (1.6 CPUs) per instance across your entire deployed service. Since there is no notion of
 scaling relative to 0 CPU units, it is required that `min_replicas=1` if using this metric.
 
 ### Memory Utilization
 
 `memory_utilization` uses a maximum memory percentage utilization averaged over all instances of an application to scale out, relative to the
-`cerebrium.hardware.memory` value. Note this refers to RAM, **not** GPU VRAM utilization. For example, if an application has `memory=10` and `scaling_target=80`, Cerebrium will attempt
+`hardware.memory` value. Note this refers to RAM, **not** GPU VRAM utilization. For example, if an application has `memory=10` and `scaling_target=80`, Cerebrium will attempt
 to maintain _80%_ Memory utilization (8GB) per instance across your entire deployed service. Since there is no notion of
 scaling relative to 0GB of memory, it is required that `min_replicas=1` if using this metric.
 
@@ -165,10 +165,10 @@ is only available when using the following scaling metrics:
 - `concurrency_utilization`
 - `requests_per_second`
 
-The buffer can be added to the `cerebrium.scaling` section as such, by specifying `scaling_buffer`:
+The buffer can be added to the `scaling` section as such, by specifying `scaling_buffer`:
 
 ```toml
-[cerebrium.scaling]
+[scaling]
 min_replicas = 1
 cooldown = 600
 max_replicas = 10
@@ -192,7 +192,7 @@ Once this request has completed, the usual `cooldown` period will apply, and the
 The `evaluation_interval` parameter controls the time window (in seconds) over which the autoscaler evaluates metrics before making scaling decisions. The default is 30 seconds, with a valid range of 6-300 seconds.
 
 ```toml
-[cerebrium.scaling]
+[scaling]
 evaluation_interval = 30  # Evaluate metrics over 30-second windows
 ```
 
@@ -211,7 +211,7 @@ A shorter interval makes the autoscaler more responsive to traffic spikes but ma
 The `load_balancing` parameter controls how incoming requests are distributed across your replicas. When not specified, the system automatically selects the best algorithm based on your `replica_concurrency` setting.
 
 ```toml
-[cerebrium.scaling]
+[scaling]
 load_balancing = "min-connections"  # Explicitly set load balancing algorithm
 ```
 

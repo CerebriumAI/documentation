@@ -5,7 +5,7 @@ description: "Control the transition between revisions during deployments"
 
 <Note>This feature is available from CLI version 1.38.2</Note>
 
-The `roll_out_duration_seconds` parameter in the `[cerebrium.scaling]` section of your `cerebrium.toml` file controls how quickly traffic transitions between revisions after a successful build.
+The `roll_out_duration_seconds` parameter in the `[scaling]` section of your `cerebrium.toml` file controls how quickly traffic transitions between revisions after a successful build.
 
 ## Overview
 
@@ -15,10 +15,10 @@ Traffic is shifted in 5 batches of 20% each, over the specified duration. This g
 
 ## Configuration
 
-Add the `roll_out_duration_seconds` parameter to the `[cerebrium.scaling]` section of your `cerebrium.toml` file:
+Add the `roll_out_duration_seconds` parameter to the `[scaling]` section of your `cerebrium.toml` file:
 
 ```toml
-[cerebrium.scaling]
+[scaling]
 roll_out_duration_seconds = 0  # Default value
 ```
 

@@ -27,7 +27,7 @@ In this tutorial, we will show the most simple variation of deploying this model
 2. Edit your toml file with the following settings
 
 ```
-[cerebrium.deployment]
+[deployment]
 name = "7-openai-gpt-oss"
 python_version = "3.12"
 docker_base_image_url = "nvidia/cuda:12.8.1-devel-ubuntu22.04"
@@ -42,14 +42,14 @@ pre_build_commands = [
     "uv pip install huggingface_hub[hf_transfer]==0.34"
 ]
 
-[cerebrium.hardware]
+[hardware]
 cpu = 8.0
 memory = 18.0
 compute = "HOPPER_H100"
 provider = "aws"
 region = "us-east-1"
 
-[cerebrium.scaling]
+[scaling]
 min_replicas = 0
 max_replicas = 5
 cooldown = 30
@@ -57,7 +57,7 @@ replica_concurrency = 32
 scaling_metric = "concurrency_utilization"
 scaling
 
-[cerebrium.runtime.custom]
+[runtime.custom]
 port = 8000
 entrypoint = ["sh", "-c", "export HF_HUB_ENABLE_HF_TRANSFER=1 && export VLLM_USER_V1=1 && vllm serve openai/gpt-oss-20b --enforce-eager"]
 ```

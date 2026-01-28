@@ -13,7 +13,7 @@ CPU and memory resources on Cerebrium are allocated per container and billed bas
 CPU resources are specified as vCPU units (float) in the `cerebrium.toml` file:
 
 ```toml
-[cerebrium.hardware]
+[hardware]
 cpu = 4    # Number of vCPU cores
 ```
 
@@ -24,7 +24,7 @@ For most applications, starting with 4 CPU cores is recommended. Additional core
 Memory is specified in gigabytes as a floating-point number:
 
 ```toml
-[cerebrium.hardware]
+[hardware]
 memory = 16.0    # Memory in GB
 ```
 

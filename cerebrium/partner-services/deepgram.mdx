@@ -252,21 +252,21 @@ max_response_size = 1073741824 # 1GB
 6. Update the cerebrium.toml file with the following configuration to set hardware requirements, scaling parameters, region, and other settings:
 
 ```toml
-[cerebrium.deployment]
+[deployment]
 name = "deepgram"
 # Enable below in production environments
 disable_auth = true
 
-[cerebrium.runtime.deepgram]
+[runtime.deepgram]
 
-[cerebrium.hardware]
+[hardware]
 cpu = 4
 region = "us-east-1"
 memory = 32
 compute = "AMPERE_A10"
 gpu_count = 1
 
-[cerebrium.scaling]
+[scaling]
 min_replicas = 0
 max_replicas = 2
 cooldown = 120

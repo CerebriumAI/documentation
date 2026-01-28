@@ -114,17 +114,17 @@ Add this configuration:
 ```
 #existing configuration
 
-[cerebrium.hardware]
+[hardware]
 cpu = 6
 memory = 30.0
 compute = "ADA_L40"
 
-[cerebrium.scaling]
+[scaling]
 #existing configuration
 response_grace_period = 3600
 
-[cerebrium.dependencies.paths]
-pip = "requirements.txt"
+[dependencies.pip]
+_file_relative_path = "requirements.txt"
 ```
 
 Install the dependencies locally:

@@ -17,10 +17,10 @@ First, create your project:
 cerebrium init 1-whisper-transcription
 ```
 
-Add the following packages to the `[cerebrium.dependencies.pip]` section of your `cerebrium.toml` file:
+Add the following packages to the `[dependencies.pip]` section of your `cerebrium.toml` file:
 
 ```toml
-[cerebrium.dependencies.pip]
+[dependencies.pip]
 accelerate = "latest"
 transformers = ">=4.35.0"
 openai-whisper = "latest"
@@ -106,14 +106,14 @@ The `predict` function, which runs only on inference requests, creates an audio 
 Configure your compute and environment settings in `cerebrium.toml`:
 
 ```toml
-[cerebrium.deployment]
+[deployment]
 name = "1-whisper-transcription"
 python_version = "3.11"
 include = ["./*", "main.py", "cerebrium.toml"]
 exclude = ["./example_exclude"]
 docker_base_image_url = "nvidia/cuda:12.1.1-runtime-ubuntu22.04"
 
-[cerebrium.hardware]
+[hardware]
 region = "us-east-1"
 provider = "aws"
 compute = "AMPERE_A10"
@@ -121,20 +121,20 @@ cpu = 3
 memory = 12.0
 gpu_count = 1
 
-[cerebrium.scaling]
+[scaling]
 min_replicas = 0
 max_replicas = 5
 cooldown = 60
 
-[cerebrium.dependencies.pip]
+[dependencies.pip]
 accelerate = "latest"
 transformers = ">=4.35.0"
 openai-whisper = "latest"
 pydantic = "latest"
 
-[cerebrium.dependencies.conda]
+[dependencies.conda]
 
-[cerebrium.dependencies.apt]
+[dependencies.apt]
 "ffmpeg" = "latest"
 
 ```

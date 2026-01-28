@@ -261,24 +261,24 @@ def shutdown_event():
 Before deploying our application, we must first define the deployment configuration, which installs all our dependencies, contains our hardware and scaling configurations, as well as any scripts which must be executed before running our app. The following should be added to our `cerebrium.toml` file:
 
 ```
-[cerebrium.deployment]
+[deployment]
 name = "1-comfyui"
 python_version = "3.11"
 include = ["./*", "main.py", "cerebrium.toml", "workflow.json", "workflow_api.json", "helpers.py", "model.json"]
 exclude = ["./example_exclude", "./ComfyUI", "./ComfyUI/models/checkpoints/sd_xl_base_1.0.safetensors", "./ComfyUI/models/controlnet/diffusion_pytorch_model.fp16.safetensors"]
 shell_commands = ["git clone https://github.com/comfyanonymous/ComfyUI", "pip install -r ComfyUI/requirements.txt"]
 
-[cerebrium.runtime.custom]
+[runtime.custom]
 port = 8765
 entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8765"]
 healthcheck_endpoint = "/health"
 
-[cerebrium.hardware]
+[hardware]
 compute = "AMPERE_A10"
 cpu = 4
 memory = 16.0
 
-[cerebrium.scaling]
+[scaling]
 min_replicas = 0
 max_replicas = 2
 cooldown = 30
@@ -288,7 +288,7 @@ scaling_metric = "concurrency_utilization"
 scaling_target = 100
 scaling_buffer = 0
 
-[cerebrium.dependencies.pip]
+[dependencies.pip]
 uvicorn = "latest"
 fastapi = "latest"
 requests = "latest"
@@ -313,7 +313,7 @@ tqdm = "latest"
 psutil = "latest"
 kornia = ">=0.7.1"
 
-[cerebrium.dependencies.apt]
+[dependencies.apt]
 git = "latest"
 ```
 
