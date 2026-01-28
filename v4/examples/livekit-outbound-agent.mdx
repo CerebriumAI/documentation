@@ -406,8 +406,8 @@ max_replicas = 5
 cooldown = 30
 replica_concurrency = 1
 
-[deps.paths]
-pip = "requirements.txt"
+[dependencies.pip]
+_file_relative_path = "requirements.txt"
 
 [runtime.custom]
 port = 8600

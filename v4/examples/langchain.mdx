@@ -17,10 +17,10 @@ First, create your project:
 cerebrium init 1-langchain-QA
 ```
 
-Add these Python packages to the `[deps.pip]` section of your `cerebrium.toml` file:
+Add these Python packages to the `[dependencies.pip]` section of your `cerebrium.toml` file:
 
 ```toml
-[deps.pip]
+[dependencies.pip]
 pytube = "latest" # For audio downloading
 langchain = "latest"
 faiss-gpu = "latest"
@@ -171,12 +171,12 @@ gpu_count = 1
 min_replicas = 0
 cooldown = 60
 
-[deps.apt]
+[dependencies.apt]
 ffmpeg = "latest"
 "libopenblas-base" = "latest"
 "libomp-dev" = "latest"
 
-[deps.pip]
+[dependencies.pip]
 pytube = "latest" # For audio downloading
 langchain = "latest"
 faiss-gpu = "latest"
@@ -185,7 +185,7 @@ openai-whisper = "latest"
 transformers = ">=4.35.0"
 sentence_transformers = ">=2.2.0"
 
-[deps.conda]
+[dependencies.conda]
 
 ```
 

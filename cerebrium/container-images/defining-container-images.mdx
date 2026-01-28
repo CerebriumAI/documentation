@@ -72,7 +72,7 @@ The Python version affects the entire dependency chain. For instance, some packa
 Python dependencies can be managed directly in TOML or through requirement files. The system caches packages to speed up builds:
 
 ```toml
-[deps.pip]
+[dependencies.pip]
 torch = "==2.0.0"
 transformers = "==4.30.0"
 numpy = "latest"
@@ -81,8 +81,8 @@ numpy = "latest"
 Or using an existing requirements file:
 
 ```toml
-[deps.paths]
-pip = "requirements.txt"
+[dependencies.pip]
+_file_relative_path = "requirements.txt"
 ```
 
 <Tip>
@@ -94,20 +94,20 @@ The system implements an intelligent caching strategy at the node level. When an
 
 ### Adding APT Packages
 
-System-level packages provide the foundation for many ML apps, handling everything from image-processing libraries to audio codecs. These can be added to the `cerebrium.toml` file under the `[deps.apt]` section as follows:
+System-level packages provide the foundation for many ML apps, handling everything from image-processing libraries to audio codecs. These can be added to the `cerebrium.toml` file under the `[dependencies.apt]` section as follows:
 
 ```toml
-[deps.apt]
+[dependencies.apt]
 ffmpeg = "latest"
 libopenblas-base = "latest"
 libomp-dev = "latest"
 ```
 
-For teams with standardized system dependencies, text files can be used instead by adding the following to the `[deps.paths]` section:
+For teams with standardized system dependencies, text files can be used instead:
 
 ```toml
-[deps.paths]
-apt = "deps_folder/pkglist.txt"
+[dependencies.apt]
+_file_relative_path = "deps_folder/pkglist.txt"
 ```
 
 Since APT packages modify the system environment, any changes to these dependencies trigger a full rebuild of the container image. This ensures system-level changes are properly integrated but means builds will take longer than when modifying Python packages alone.
@@ -117,7 +117,7 @@ Since APT packages modify the system environment, any changes to these dependenc
 Conda excels at managing complex system-level Python dependencies, particularly for GPU support and scientific computing:
 
 ```toml
-[deps.conda]
+[dependencies.conda]
 cuda = ">=11.7"
 cudatoolkit = "11.7"
 opencv = "latest"
@@ -126,8 +126,8 @@ opencv = "latest"
 Teams using conda environments can specify their environment file:
 
 ```toml
-[deps.paths]
-conda = "conda_pkglist.txt"
+[dependencies.conda]
+_file_relative_path = "conda_pkglist.txt"
 ```
 
 Like APT packages, Conda packages often modify system-level components. Changes to Conda dependencies will trigger a full rebuild to ensure all binary dependencies and system libraries are correctly configured. Consider batching Conda dependency updates together to minimize rebuild time.
@@ -290,7 +290,7 @@ readycheck_endpoint = "/ready"
 
 <Warning>
   When using the docker runtime, all dependencies and build commands should be
-  handled within the Dockerfile. The `[deps.*]` sections will be ignored.
+  handled within the Dockerfile. The `[dependencies.*]` sections will be ignored.
 </Warning>
 
 ### Self-Contained Servers
@@ -307,7 +307,7 @@ port = 8000
 healthcheck_endpoint = "/health"
 readycheck_endpoint = "/ready"
 
-[deps.pip]
+[dependencies.pip]
 torch = "latest"
 vllm = "latest"
 ```

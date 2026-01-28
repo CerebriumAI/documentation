@@ -83,7 +83,7 @@ max_replicas = 2         # Handle increased traffic and scale up where necessary
 cooldown = 60            # Time window at reduced concurrency before scaling down
 replica_concurrency = 1  # The number of requests a single container can support
 
-[deps.pip]
+[dependencies.pip]
 torch = ">=2.0.0"
 pydantic = "latest"
 transformers = "latest"
