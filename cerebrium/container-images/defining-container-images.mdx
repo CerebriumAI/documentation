@@ -21,7 +21,7 @@ Check out the [Introductory Guide](/cerebrium/getting-started/introduction) for 
 <Info>
   It is possible to initialize an existing project by adding a `cerebrium.toml`
   file to the root of your codebase, defining your entrypoint (`main.py` if
-  using the default auto-py runtime, or adding an entrypoint to the runtime
+  using the default cortex runtime, or adding an entrypoint to the runtime
   section if using a python or docker runtime) and including the necessary files
   in the `deployment` section of your `cerebrium.toml` file.
 </Info>
@@ -47,7 +47,7 @@ For detailed hardware specifications and performance characteristics see the [GP
 The Python runtime version forms the foundation of every Cerebrium app. We currently support versions 3.10 to 3.13. Specify the Python version in the runtime section of the configuration:
 
 ```toml
-[runtime.auto-py]
+[runtime.cortex]
 python_version = "3.11"
 ```
 
@@ -141,7 +141,7 @@ Cerebrium's build process includes two specialized command types that execute at
 Pre-build commands execute at the start of the build process, before dependency installation begins. This early execution timing makes them essential for setting up the build environment:
 
 ```toml
-[runtime.auto-py]
+[runtime.cortex]
 pre_build_commands = [
     # Add specialized build tools
     "curl -o /usr/local/bin/pget -L 'https://github.com/replicate/pget/releases/download/v0.6.2/pget_linux_x86_64'",
@@ -156,7 +156,7 @@ Pre-build commands typically handle tasks like installing build tools, configuri
 Shell commands execute after all dependencies install and the application code copies into the container. This later timing ensures access to the complete environment:
 
 ```toml
-[runtime.auto-py]
+[runtime.cortex]
 shell_commands = [
     # Initialize application resources
     "python -m download_models",
@@ -186,7 +186,7 @@ The base image selection shapes how an app runs in Cerebrium. While the default 
 Cerebrium supports several categories of base images to ensure system compatibility such as nvidia, ubuntu and python images.
 
 ```toml
-[runtime.auto-py]
+[runtime.cortex]
 docker_base_image_url = "debian:bookworm-slim" # Default minimal image
 #docker_base_image_url = "nvidia/cuda:12.0.1-runtime-ubuntu22.04" # CUDA-enabled images
 #docker_base_image_url = "ubuntu:22.04"  # debian images
@@ -213,7 +213,7 @@ docker login -u your-dockerhub-username
 After logging in, you can use the image in your configuration:
 
 ```toml
-[runtime.auto-py]
+[runtime.cortex]
 docker_base_image_url = "bob/infinity:latest"
 ```
 
@@ -234,7 +234,7 @@ docker_base_image_url = "bob/infinity:latest"
 Public ECR images from the `public.ecr.aws` registry work without authentication:
 
 ```toml
-[runtime.auto-py]
+[runtime.cortex]
 docker_base_image_url = "public.ecr.aws/lambda/python:3.11"
 ```
 
@@ -242,7 +242,7 @@ However, **private ECR images** require authentication. See [Using Private Docke
 
 ## Custom Runtimes
 
-While Cerebrium's default auto-py runtime works well for most apps, teams often need more control over their server implementation. Custom runtimes enable features like custom authentication, dynamic batching, public endpoints, or WebSocket connections.
+While Cerebrium's default cortex runtime works well for most apps, teams often need more control over their server implementation. Custom runtimes enable features like custom authentication, dynamic batching, public endpoints, or WebSocket connections.
 
 ### Python Runtime (ASGI/WSGI)
 

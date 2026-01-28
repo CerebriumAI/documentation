@@ -9,7 +9,7 @@ description: Complete reference for all parameters available in Cerebrium's defa
 | Current (Deprecated)         | New Format          |
 | ---------------------------- | ------------------- |
 | `[cerebrium.deployment]`     | `[deployment]`      |
-| `[cerebrium.runtime.cortex]` | `[runtime.auto-py]` |
+| `[cerebrium.runtime.cortex]` | `[runtime.cortex]` |
 | `[cerebrium.hardware]`       | `[hardware]`        |
 | `[cerebrium.scaling]`        | `[scaling]`         |
 | `[cerebrium.dependencies]`   | `[dependencies]`    |
@@ -19,7 +19,7 @@ description: Complete reference for all parameters available in Cerebrium's defa
 The configuration is organized into the following main sections:
 
 - **[deployment]** Core settings like app name and file inclusion rules
-- **[runtime.auto-py]** Default Cerebrium-managed Python runtime (build settings)
+- **[runtime.cortex]** Default Cerebrium-managed Python runtime (build settings)
 - **[runtime.python]** Custom Python ASGI/WSGI web server settings
 - **[runtime.docker]** Custom Dockerfile settings
 - **[hardware]** Compute resources including CPU, memory, and GPU specifications
@@ -44,7 +44,7 @@ Cerebrium supports three runtime types. You should only specify one runtime sect
 
 ### Auto-Py Runtime (Default)
 
-The `[runtime.auto-py]` section configures the default Cerebrium-managed Python runtime. This is ideal for standard Python applications where Cerebrium automatically manages the web server.
+The `[runtime.cortex]` section configures the default Cerebrium-managed Python runtime. This is ideal for standard Python applications where Cerebrium automatically manages the web server.
 
 | Option                | Type     | Default                | Description                                   |
 | --------------------- | -------- | ---------------------- | --------------------------------------------- |
@@ -60,7 +60,7 @@ The `[runtime.auto-py]` section configures the default Cerebrium-managed Python 
 [deployment]
 name = "my-app"
 
-[runtime.auto-py]
+[runtime.cortex]
 python_version = "3.12"
 docker_base_image_url = "debian:bookworm-slim"
 use_uv = true
@@ -151,7 +151,7 @@ readycheck_endpoint = "/ready"
 
 ### UV Package Manager
 
-UV is a fast Python package installer written in Rust that can significantly speed up deployment times. When enabled in `[runtime.auto-py]` or `[runtime.python]`, UV will be used instead of pip for installing Python dependencies.
+UV is a fast Python package installer written in Rust that can significantly speed up deployment times. When enabled in `[runtime.cortex]` or `[runtime.python]`, UV will be used instead of pip for installing Python dependencies.
 
 <Info>
 UV typically installs packages 10-100x faster than pip, especially beneficial for:
@@ -165,7 +165,7 @@ UV typically installs packages 10-100x faster than pip, especially beneficial fo
 **Example with UV enabled:**
 
 ```toml
-[runtime.auto-py]
+[runtime.cortex]
 use_uv = true
 ```
 
@@ -270,19 +270,19 @@ Dependencies can be specified either at the runtime level (recommended) or at th
 Dependencies can be specified within the runtime section. This is the recommended approach:
 
 ```toml
-[runtime.auto-py]
+[runtime.cortex]
 python_version = "3.12"
 
-[runtime.auto-py.dependencies.pip]
+[runtime.cortex.dependencies.pip]
 torch = "==2.0.0"      # Exact version
 numpy = "latest"       # Latest version
 pandas = ">=1.5.0"     # Minimum version
 
-[runtime.auto-py.dependencies.apt]
+[runtime.cortex.dependencies.apt]
 ffmpeg = "latest"
 libopenblas-base = "latest"
 
-[runtime.auto-py.dependencies.conda]
+[runtime.cortex.dependencies.conda]
 cuda = ">=11.7"
 cudatoolkit = "11.7"
 ```
@@ -292,12 +292,12 @@ cudatoolkit = "11.7"
 You can also specify a requirements file using the special `_file_relative_path` key. When both a file and inline packages are specified, they are merged (inline packages take precedence):
 
 ```toml
-[runtime.auto-py.dependencies.pip]
+[runtime.cortex.dependencies.pip]
 _file_relative_path = "requirements.txt"  # Base packages from file
 numpy = "1.24.0"                          # Override or add packages
 ```
 
-This approach works with any runtime type (`auto-py`, `python`, or partner services).
+This approach works with any runtime type (`cortex`, `python`, or partner services).
 
 <Warning>
   **Deprecated:** Top-level `[dependencies.*]` sections are deprecated. Please
@@ -371,14 +371,14 @@ disable_auth = false
 include = ["*"]
 exclude = [".*"]
 
-[runtime.auto-py]
+[runtime.cortex]
 python_version = "3.12"
 docker_base_image_url = "debian:bookworm-slim"
 use_uv = true
 shell_commands = []
 pre_build_commands = []
 
-[runtime.auto-py.dependencies.pip]
+[runtime.cortex.dependencies.pip]
 torch = "latest"
 transformers = "latest"
 
@@ -479,7 +479,7 @@ The `cerebrium.` prefix on all section names is deprecated. Please migrate to th
 | Deprecated Format              | New Format           |
 | ------------------------------ | -------------------- |
 | `[cerebrium.deployment]`       | `[deployment]`       |
-| `[cerebrium.runtime.cortex]`   | `[runtime.auto-py]`  |
+| `[cerebrium.runtime.cortex]`   | `[runtime.cortex]`  |
 | `[cerebrium.runtime.python]`   | `[runtime.python]`   |
 | `[cerebrium.runtime.docker]`   | `[runtime.docker]`   |
 | `[cerebrium.hardware]`         | `[hardware]`         |
@@ -493,11 +493,11 @@ The following fields in `[deployment]` are deprecated. Please move them to the a
 
 | Deprecated Field      | New Location                              |
 | --------------------- | ----------------------------------------- |
-| python_version        | `[runtime.auto-py]` or `[runtime.python]` |
-| docker_base_image_url | `[runtime.auto-py]` or `[runtime.python]` |
-| shell_commands        | `[runtime.auto-py]` or `[runtime.python]` |
-| pre_build_commands    | `[runtime.auto-py]` or `[runtime.python]` |
-| use_uv                | `[runtime.auto-py]` or `[runtime.python]` |
+| python_version        | `[runtime.cortex]` or `[runtime.python]` |
+| docker_base_image_url | `[runtime.cortex]` or `[runtime.python]` |
+| shell_commands        | `[runtime.cortex]` or `[runtime.python]` |
+| pre_build_commands    | `[runtime.cortex]` or `[runtime.python]` |
+| use_uv                | `[runtime.cortex]` or `[runtime.python]` |
 
 ### Deprecated: [runtime.custom]
 
@@ -505,14 +505,6 @@ The `[runtime.custom]` section is deprecated. Please migrate to:
 
 - `[runtime.python]` - For custom Python ASGI/WSGI applications
 - `[runtime.docker]` - For custom Dockerfile deployments (when using `dockerfile_path`)
-
-### Deprecated: Runtime names `cortex` and `python`
-
-The runtime names `cortex` and `python` are deprecated. The old names still work for backwards compatibility but will be removed in a future release.
-
-| Deprecated Name    | New Name            |
-| ------------------ | ------------------- |
-| `[runtime.cortex]` | `[runtime.auto-py]` |
 
 ### Deprecated: Top-level [dependencies.*]
 
@@ -524,7 +516,7 @@ Top-level dependency sections are deprecated. Please move dependencies to runtim
 | `[dependencies.apt]`   | `[runtime.{type}.dependencies.apt]`   |
 | `[dependencies.conda]` | `[runtime.{type}.dependencies.conda]` |
 
-Where `{type}` is your runtime type (e.g., `auto-py`, `python`).
+Where `{type}` is your runtime type (e.g., `cortex`, `python`).
 
 <Note>
   The `[dependencies.paths]` section has been replaced with
