@@ -300,9 +300,10 @@ numpy = "1.24.0"                          # Override or add packages
 This approach works with any runtime type (`auto-py`, `python`, or partner services).
 
 <Warning>
-**Deprecated:** Top-level `[dependencies.*]` sections are deprecated.
-Please move your dependencies to `[runtime.{type}.dependencies.*]`.
-Dependencies specified at the runtime level take precedence over top-level dependencies when both are present.
+  **Deprecated:** Top-level `[dependencies.*]` sections are deprecated. Please
+  move your dependencies to `[runtime.{type}.dependencies.*]`. Dependencies
+  specified at the runtime level take precedence over top-level dependencies
+  when both are present.
 </Warning>
 
 ### Top-Level Dependencies (Deprecated)
@@ -475,16 +476,16 @@ replica_concurrency = 10
 
 The `cerebrium.` prefix on all section names is deprecated. Please migrate to the new format:
 
-| Deprecated Format                  | New Format                          |
-| ---------------------------------- | ----------------------------------- |
-| `[cerebrium.deployment]`           | `[deployment]`                      |
-| `[cerebrium.runtime.cortex]`       | `[runtime.auto-py]`                 |
-| `[cerebrium.runtime.python]`       | `[runtime.python]`                  |
-| `[cerebrium.runtime.docker]`       | `[runtime.docker]`                  |
-| `[cerebrium.hardware]`             | `[hardware]`                        |
-| `[cerebrium.scaling]`              | `[scaling]`                         |
-| `[cerebrium.dependencies.pip]`     | `[dependencies.pip]`                |
-| `[cerebrium.dependencies.apt]`     | `[dependencies.apt]`                |
+| Deprecated Format              | New Format           |
+| ------------------------------ | -------------------- |
+| `[cerebrium.deployment]`       | `[deployment]`       |
+| `[cerebrium.runtime.cortex]`   | `[runtime.auto-py]`  |
+| `[cerebrium.runtime.python]`   | `[runtime.python]`   |
+| `[cerebrium.runtime.docker]`   | `[runtime.docker]`   |
+| `[cerebrium.hardware]`         | `[hardware]`         |
+| `[cerebrium.scaling]`          | `[scaling]`          |
+| `[cerebrium.dependencies.pip]` | `[dependencies.pip]` |
+| `[cerebrium.dependencies.apt]` | `[dependencies.apt]` |
 
 ### Deprecated: Runtime fields in [deployment]
 
@@ -517,16 +518,18 @@ The runtime names `cortex` and `python` are deprecated. The old names still work
 
 Top-level dependency sections are deprecated. Please move dependencies to runtime-specific sections:
 
-| Deprecated Location      | New Location                              |
-| ------------------------ | ----------------------------------------- |
-| `[dependencies.pip]`     | `[runtime.{type}.dependencies.pip]`       |
-| `[dependencies.apt]`     | `[runtime.{type}.dependencies.apt]`       |
-| `[dependencies.conda]`   | `[runtime.{type}.dependencies.conda]`     |
+| Deprecated Location    | New Location                          |
+| ---------------------- | ------------------------------------- |
+| `[dependencies.pip]`   | `[runtime.{type}.dependencies.pip]`   |
+| `[dependencies.apt]`   | `[runtime.{type}.dependencies.apt]`   |
+| `[dependencies.conda]` | `[runtime.{type}.dependencies.conda]` |
 
 Where `{type}` is your runtime type (e.g., `auto-py`, `python`).
 
 <Note>
-The `[dependencies.paths]` section has been replaced with `_file_relative_path` key inside dependency maps. See the Dependencies section above for the new syntax.
+  The `[dependencies.paths]` section has been replaced with
+  `_file_relative_path` key inside dependency maps. See the Dependencies section
+  above for the new syntax.
 </Note>
 
 <Info>
