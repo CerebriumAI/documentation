@@ -6,13 +6,13 @@ description: Complete reference for all parameters available in Cerebrium's defa
 <Warning>
 **Deprecation Notice:** The `cerebrium.` prefix is being removed from all configuration sections. Sub-keys are becoming top-level keys (e.g., `[cerebrium.deployment]` → `[deployment]`). The prefixed format is still supported for backwards compatibility but will be removed in a future release. We recommend migrating to the new format.
 
-| Current (Deprecated)         | New Format          |
-| ---------------------------- | ------------------- |
-| `[cerebrium.deployment]`     | `[deployment]`      |
+| Current (Deprecated)         | New Format         |
+| ---------------------------- | ------------------ |
+| `[cerebrium.deployment]`     | `[deployment]`     |
 | `[cerebrium.runtime.cortex]` | `[runtime.cortex]` |
-| `[cerebrium.hardware]`       | `[hardware]`        |
-| `[cerebrium.scaling]`        | `[scaling]`         |
-| `[cerebrium.dependencies]`   | `[dependencies]`    |
+| `[cerebrium.hardware]`       | `[hardware]`       |
+| `[cerebrium.scaling]`        | `[scaling]`        |
+| `[cerebrium.dependencies]`   | `[dependencies]`   |
 
 </Warning>
 
@@ -479,7 +479,7 @@ The `cerebrium.` prefix on all section names is deprecated. Please migrate to th
 | Deprecated Format              | New Format           |
 | ------------------------------ | -------------------- |
 | `[cerebrium.deployment]`       | `[deployment]`       |
-| `[cerebrium.runtime.cortex]`   | `[runtime.cortex]`  |
+| `[cerebrium.runtime.cortex]`   | `[runtime.cortex]`   |
 | `[cerebrium.runtime.python]`   | `[runtime.python]`   |
 | `[cerebrium.runtime.docker]`   | `[runtime.docker]`   |
 | `[cerebrium.hardware]`         | `[hardware]`         |
@@ -491,8 +491,8 @@ The `cerebrium.` prefix on all section names is deprecated. Please migrate to th
 
 The following fields in `[deployment]` are deprecated. Please move them to the appropriate runtime section:
 
-| Deprecated Field      | New Location                              |
-| --------------------- | ----------------------------------------- |
+| Deprecated Field      | New Location                             |
+| --------------------- | ---------------------------------------- |
 | python_version        | `[runtime.cortex]` or `[runtime.python]` |
 | docker_base_image_url | `[runtime.cortex]` or `[runtime.python]` |
 | shell_commands        | `[runtime.cortex]` or `[runtime.python]` |
