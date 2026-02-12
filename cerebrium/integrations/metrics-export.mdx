@@ -9,37 +9,37 @@ Export real-time resource and execution metrics from your Cerebrium applications
 
 ### Resource Metrics
 
-| Metric | Type | Unit | Description |
-|--------|------|------|-------------|
-| `cerebrium_cpu_utilization_cores` | Gauge | cores | CPU cores actively in use per app |
-| `cerebrium_memory_usage_bytes` | Gauge | bytes | Memory actively in use per app |
-| `cerebrium_gpu_memory_usage_bytes` | Gauge | bytes | GPU VRAM in use per app |
+| Metric                                      | Type  | Unit    | Description                             |
+| ------------------------------------------- | ----- | ------- | --------------------------------------- |
+| `cerebrium_cpu_utilization_cores`           | Gauge | cores   | CPU cores actively in use per app       |
+| `cerebrium_memory_usage_bytes`              | Gauge | bytes   | Memory actively in use per app          |
+| `cerebrium_gpu_memory_usage_bytes`          | Gauge | bytes   | GPU VRAM in use per app                 |
 | `cerebrium_gpu_compute_utilization_percent` | Gauge | percent | GPU compute utilization (0-100) per app |
-| `cerebrium_containers_running_count` | Gauge | count | Number of running containers per app |
-| `cerebrium_containers_ready_count` | Gauge | count | Number of ready containers per app |
+| `cerebrium_containers_running_count`        | Gauge | count   | Number of running containers per app    |
+| `cerebrium_containers_ready_count`          | Gauge | count   | Number of ready containers per app      |
 
 ### Execution Metrics
 
-| Metric | Type | Unit | Description |
-|--------|------|------|-------------|
-| `cerebrium_run_execution_time_ms` | Histogram | ms | Time spent executing user code |
-| `cerebrium_run_queue_time_ms` | Histogram | ms | Time spent waiting in queue |
-| `cerebrium_run_total_response_time_ms` | Histogram | ms | Total end-to-end response time |
-| `cerebrium_requests_total` | Counter | count | Total request count |
-| `cerebrium_requests_success` | Counter | count | Successful requests (2xx) |
-| `cerebrium_requests_errors` | Counter | count | Failed requests (4xx/5xx) |
+| Metric                                 | Type      | Unit  | Description                    |
+| -------------------------------------- | --------- | ----- | ------------------------------ |
+| `cerebrium_run_execution_time_ms`      | Histogram | ms    | Time spent executing user code |
+| `cerebrium_run_queue_time_ms`          | Histogram | ms    | Time spent waiting in queue    |
+| `cerebrium_run_total_response_time_ms` | Histogram | ms    | Total end-to-end response time |
+| `cerebrium_requests_total`             | Counter   | count | Total request count            |
+| `cerebrium_requests_success`           | Counter   | count | Successful requests (2xx)      |
+| `cerebrium_requests_errors`            | Counter   | count | Failed requests (4xx/5xx)      |
 
 ### Labels
 
 Every metric includes the following labels for filtering and grouping:
 
-| Label | Description | Example |
-|-------|-------------|---------|
-| `project_id` | Your Cerebrium project ID | `p-abc12345` |
-| `app_id` | Full application identifier | `p-abc12345-my-model` |
-| `app_name` | Human-readable app name | `my-model` |
-| `region` | Deployment region | `us-east-1` |
-| `environment` | Deployment environment | `prod` |
+| Label         | Description                 | Example               |
+| ------------- | --------------------------- | --------------------- |
+| `project_id`  | Your Cerebrium project ID   | `p-abc12345`          |
+| `app_id`      | Full application identifier | `p-abc12345-my-model` |
+| `app_name`    | Human-readable app name     | `my-model`            |
+| `region`      | Deployment region           | `us-east-1`           |
+| `environment` | Deployment environment      | `prod`                |
 
 ## Supported Destinations
 
@@ -82,6 +82,7 @@ Metrics are exported using the [OpenTelemetry Protocol (OTLP)](https://opentelem
     <Warning>
       Make sure the API token has the **MetricsPublisher** role. The default Prometheus Remote Write token will not work with the OTLP endpoint.
     </Warning>
+
   </Tab>
   <Tab title="Datadog">
     1. Sign in to [Datadog](https://app.datadoghq.com)
@@ -95,6 +96,7 @@ Metrics are exported using the [OpenTelemetry Protocol (OTLP)](https://opentelem
     - **OTLP Endpoint:** `https://api.datadoghq.com/api/v2/otlp` (US1) or `https://api.datadoghq.eu/api/v2/otlp` (EU)
     - **Auth Header Name:** `DD-API-KEY`
     - **Auth Header Value:** `your-datadog-api-key`
+
   </Tab>
   <Tab title="Self-hosted Prometheus">
     1. Enable the OTLP receiver in your Prometheus config:
@@ -106,6 +108,7 @@ Metrics are exported using the [OpenTelemetry Protocol (OTLP)](https://opentelem
     - **OTLP Endpoint:** `http://your-prometheus-host:4318`
     - **Auth Header Name:** `Authorization` (if auth is enabled, otherwise leave empty)
     - **Auth Header Value:** `Bearer your-token` (if auth is enabled)
+
   </Tab>
   <Tab title="Custom OTLP">
     Any platform that supports [OpenTelemetry OTLP over HTTP](https://opentelemetry.io/docs/specs/otlp/) will work, including New Relic, Honeycomb, Lightstep, and others.
@@ -122,6 +125,7 @@ Metrics are exported using the [OpenTelemetry Protocol (OTLP)](https://opentelem
     | Lightstep | `lightstep-access-token` | Your Lightstep token |
 
     You can add multiple auth headers if your platform requires them using the **Add Header** button.
+
   </Tab>
 </Tabs>
 
@@ -155,6 +159,7 @@ curl -X POST "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/test" 
 ```
 
 **Success response:**
+
 ```json
 {
   "success": true,
@@ -164,6 +169,7 @@ curl -X POST "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/test" 
 ```
 
 **Failure response:**
+
 ```json
 {
   "success": false,
@@ -187,7 +193,7 @@ Metrics start flowing within 60 seconds.
 ### Grafana Cloud
 
 1. Go to your Grafana dashboard → **Explore**
-2. Select the **grafanacloud-*-prom** data source
+2. Select the **grafanacloud-\*-prom** data source
 3. Search for metrics starting with `cerebrium_`
 
 **Example queries:**
@@ -269,19 +275,19 @@ curl -X PUT "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/config"
 
 Cerebrium uses OpenTelemetry naming conventions. When metrics arrive in Prometheus-compatible systems (like Grafana Cloud), dots are converted to underscores and units are appended:
 
-| Cerebrium metric name | Prometheus/Grafana name |
-|----------------------|------------------------|
-| `cerebrium.cpu.utilization` | `cerebrium_cpu_utilization_cores` |
-| `cerebrium.memory.usage_bytes` | `cerebrium_memory_usage_bytes` |
-| `cerebrium.gpu.memory.usage_bytes` | `cerebrium_gpu_memory_usage_bytes` |
+| Cerebrium metric name               | Prometheus/Grafana name                     |
+| ----------------------------------- | ------------------------------------------- |
+| `cerebrium.cpu.utilization`         | `cerebrium_cpu_utilization_cores`           |
+| `cerebrium.memory.usage_bytes`      | `cerebrium_memory_usage_bytes`              |
+| `cerebrium.gpu.memory.usage_bytes`  | `cerebrium_gpu_memory_usage_bytes`          |
 | `cerebrium.gpu.compute.utilization` | `cerebrium_gpu_compute_utilization_percent` |
-| `cerebrium.containers.running` | `cerebrium_containers_running_count` |
-| `cerebrium.containers.ready` | `cerebrium_containers_ready_count` |
+| `cerebrium.containers.running`      | `cerebrium_containers_running_count`        |
+| `cerebrium.containers.ready`        | `cerebrium_containers_ready_count`          |
 
 ## API Reference
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/v2/metrics-export/{project_id}/config` | Get current configuration |
-| `PUT` | `/v2/metrics-export/{project_id}/config` | Update configuration |
-| `POST` | `/v2/metrics-export/{project_id}/test` | Test connection |
+| Method | Endpoint                                 | Description               |
+| ------ | ---------------------------------------- | ------------------------- |
+| `GET`  | `/v2/metrics-export/{project_id}/config` | Get current configuration |
+| `PUT`  | `/v2/metrics-export/{project_id}/config` | Update configuration      |
+| `POST` | `/v2/metrics-export/{project_id}/test`   | Test connection           |
