@@ -89,6 +89,13 @@
                 ]
               },
               {
+                "group": "Integrations",
+                "pages": [
+                  "cerebrium/integrations/metrics-export",
+                  "cerebrium/integrations/vercel"
+                ]
+              },
+              {
                 "group": "Other concepts",
                 "pages": [
                   "security",

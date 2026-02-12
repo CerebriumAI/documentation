@@ -1,0 +1,287 @@
+---
+title: Metrics Export
+description: Export your application metrics to Grafana Cloud, Datadog, Prometheus, or any OTLP-compatible platform
+---
+
+Export real-time resource and execution metrics from your Cerebrium applications to your existing observability platform. Monitor CPU, memory, GPU usage, request counts, and latency alongside your other services.
+
+## What metrics are exported?
+
+### Resource Metrics
+
+| Metric | Type | Unit | Description |
+|--------|------|------|-------------|
+| `cerebrium_cpu_utilization_cores` | Gauge | cores | CPU cores actively in use per app |
+| `cerebrium_memory_usage_bytes` | Gauge | bytes | Memory actively in use per app |
+| `cerebrium_gpu_memory_usage_bytes` | Gauge | bytes | GPU VRAM in use per app |
+| `cerebrium_gpu_compute_utilization_percent` | Gauge | percent | GPU compute utilization (0-100) per app |
+| `cerebrium_containers_running_count` | Gauge | count | Number of running containers per app |
+| `cerebrium_containers_ready_count` | Gauge | count | Number of ready containers per app |
+
+### Execution Metrics
+
+| Metric | Type | Unit | Description |
+|--------|------|------|-------------|
+| `cerebrium_run_execution_time_ms` | Histogram | ms | Time spent executing user code |
+| `cerebrium_run_queue_time_ms` | Histogram | ms | Time spent waiting in queue |
+| `cerebrium_run_total_response_time_ms` | Histogram | ms | Total end-to-end response time |
+| `cerebrium_requests_total` | Counter | count | Total request count |
+| `cerebrium_requests_success` | Counter | count | Successful requests (2xx) |
+| `cerebrium_requests_errors` | Counter | count | Failed requests (4xx/5xx) |
+
+### Labels
+
+Every metric includes the following labels for filtering and grouping:
+
+| Label | Description | Example |
+|-------|-------------|---------|
+| `project_id` | Your Cerebrium project ID | `p-abc12345` |
+| `app_id` | Full application identifier | `p-abc12345-my-model` |
+| `app_name` | Human-readable app name | `my-model` |
+| `region` | Deployment region | `us-east-1` |
+| `environment` | Deployment environment | `prod` |
+
+## Supported Destinations
+
+Metrics are exported using the [OpenTelemetry Protocol (OTLP)](https://opentelemetry.io/docs/specs/otlp/), which is supported by most observability platforms:
+
+- **Grafana Cloud** — Primary supported destination
+- **Datadog** — Via OTLP endpoint
+- **Prometheus** — Self-hosted with OTLP receiver enabled
+- **Custom** — Any OTLP-compatible endpoint (New Relic, Honeycomb, etc.)
+
+## Setup Guide
+
+### Prerequisites
+
+- A Cerebrium project with deployed apps
+- Your Cerebrium API key
+- An account with your chosen observability platform
+
+### Step 1: Get your destination credentials
+
+<Tabs>
+  <Tab title="Grafana Cloud">
+    1. Sign in to [Grafana Cloud](https://grafana.com)
+    2. Go to your stack → **Connections** → **Add new connection**
+    3. Search for **"OpenTelemetry"** and click **Configure**
+    4. Copy the **OTLP endpoint** (e.g., `https://otlp-gateway-prod-us-east-0.grafana.net/otlp`)
+    5. Note your **Instance ID** (a number like `755366`)
+    6. Generate an API token with **MetricsPublisher** role
+    7. Create the Basic auth string:
+
+    ```bash
+    echo -n "YOUR_INSTANCE_ID:YOUR_TOKEN" | base64
+    ```
+
+    **In the Cerebrium dashboard:**
+    - **OTLP Endpoint:** `https://otlp-gateway-prod-us-east-0.grafana.net/otlp`
+    - **Auth Header Name:** `Authorization`
+    - **Auth Header Value:** `Basic YOUR_BASE64_STRING`
+
+    <Warning>
+      Make sure the API token has the **MetricsPublisher** role. The default Prometheus Remote Write token will not work with the OTLP endpoint.
+    </Warning>
+  </Tab>
+  <Tab title="Datadog">
+    1. Sign in to [Datadog](https://app.datadoghq.com)
+    2. Go to **Organization Settings** → **API Keys**
+    3. Create or copy an existing API key
+    4. Your endpoint depends on your Datadog site:
+       - US1: `https://api.datadoghq.com/api/v2/otlp`
+       - EU: `https://api.datadoghq.eu/api/v2/otlp`
+
+    **In the Cerebrium dashboard:**
+    - **OTLP Endpoint:** `https://api.datadoghq.com/api/v2/otlp` (US1) or `https://api.datadoghq.eu/api/v2/otlp` (EU)
+    - **Auth Header Name:** `DD-API-KEY`
+    - **Auth Header Value:** `your-datadog-api-key`
+  </Tab>
+  <Tab title="Self-hosted Prometheus">
+    1. Enable the OTLP receiver in your Prometheus config:
+       - Add `--enable-feature=otlp-write-receiver` flag
+       - Or use an OpenTelemetry Collector as a sidecar
+    2. Your endpoint is: `http://YOUR_PROMETHEUS:4318`
+
+    **In the Cerebrium dashboard:**
+    - **OTLP Endpoint:** `http://your-prometheus-host:4318`
+    - **Auth Header Name:** `Authorization` (if auth is enabled, otherwise leave empty)
+    - **Auth Header Value:** `Bearer your-token` (if auth is enabled)
+  </Tab>
+  <Tab title="Custom OTLP">
+    Any platform that supports [OpenTelemetry OTLP over HTTP](https://opentelemetry.io/docs/specs/otlp/) will work, including New Relic, Honeycomb, Lightstep, and others.
+
+    1. Get the OTLP HTTP endpoint from your provider's documentation
+    2. Get the required authentication headers
+
+    **Common examples:**
+
+    | Platform | Auth Header Name | Auth Header Value |
+    |----------|-----------------|-------------------|
+    | New Relic | `api-key` | Your New Relic license key |
+    | Honeycomb | `x-honeycomb-team` | Your Honeycomb API key |
+    | Lightstep | `lightstep-access-token` | Your Lightstep token |
+
+    You can add multiple auth headers if your platform requires them using the **Add Header** button.
+  </Tab>
+</Tabs>
+
+### Step 2: Configure metrics export
+
+**Option A: Dashboard UI**
+
+Go to your project → **Integrations** → **Metrics Export**. Enter your OTLP endpoint and authentication headers from Step 1, then click **Save Changes**.
+
+**Option B: API**
+
+```bash
+curl -X PUT "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/config" \
+  -H "Authorization: Bearer YOUR_CEREBRIUM_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "otlpEndpoint": "https://otlp-gateway-prod-us-east-0.grafana.net/otlp",
+    "authHeaders": {
+      "Authorization": "Basic YOUR_BASE64_CREDENTIALS"
+    }
+  }'
+```
+
+The `authHeaders` field is a map of header name → header value. These are stored encrypted and never returned in API responses.
+
+### Step 3: Test the connection
+
+```bash
+curl -X POST "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/test" \
+  -H "Authorization: Bearer YOUR_CEREBRIUM_API_KEY"
+```
+
+**Success response:**
+```json
+{
+  "success": true,
+  "message": "Successfully connected to grafana (145ms)",
+  "latencyMs": 145
+}
+```
+
+**Failure response:**
+```json
+{
+  "success": false,
+  "error": "Authentication failed (HTTP 401). Check your API key or credentials."
+}
+```
+
+### Step 4: Enable export
+
+```bash
+curl -X PUT "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/config" \
+  -H "Authorization: Bearer YOUR_CEREBRIUM_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"enabled": true}'
+```
+
+Metrics start flowing within 60 seconds.
+
+## Viewing Metrics
+
+### Grafana Cloud
+
+1. Go to your Grafana dashboard → **Explore**
+2. Select the **grafanacloud-*-prom** data source
+3. Search for metrics starting with `cerebrium_`
+
+**Example queries:**
+
+```promql
+# CPU usage by app
+cerebrium_cpu_utilization_cores{project_id="YOUR_PROJECT_ID"}
+
+# Memory for a specific app
+cerebrium_memory_usage_bytes{app_name="my-model"}
+
+# Container scaling over time
+cerebrium_containers_running_count{project_id="YOUR_PROJECT_ID"}
+
+# Request rate
+rate(cerebrium_requests_total{app_name="my-model"}[5m])
+
+# p99 latency
+histogram_quantile(0.99, rate(cerebrium_run_total_response_time_ms_bucket{app_name="my-model"}[5m]))
+```
+
+### Datadog
+
+Metrics appear under `cerebrium.*` in the Metrics Explorer. You can filter by `project_id`, `app_name`, and other labels.
+
+## Managing Export
+
+### Check status
+
+```bash
+curl "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/config" \
+  -H "Authorization: Bearer YOUR_CEREBRIUM_API_KEY"
+```
+
+```json
+{
+  "enabled": true,
+  "destination": "grafana",
+  "otlpEndpoint": "https://otlp-gateway-prod-us-east-0.grafana.net/otlp",
+  "authHeadersConfigured": true,
+  "lastExportAt": "2026-02-11T22:44:56Z",
+  "lastExportStatus": "success"
+}
+```
+
+### Disable export
+
+Disabling preserves your configuration. You can re-enable at any time without reconfiguring.
+
+```bash
+curl -X PUT "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/config" \
+  -H "Authorization: Bearer YOUR_CEREBRIUM_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"enabled": false}'
+```
+
+### Update credentials
+
+```bash
+curl -X PUT "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/config" \
+  -H "Authorization: Bearer YOUR_CEREBRIUM_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "authHeaders": {
+      "Authorization": "Basic NEW_CREDENTIALS"
+    }
+  }'
+```
+
+## Reliability
+
+- Metrics are pushed every **60 seconds**
+- Failed exports are retried **3 times** with exponential backoff
+- If exports fail **10 consecutive times**, export is automatically disabled (circuit breaker)
+- Re-enabling export resets the failure counter
+- Your credential are stored encrypted in AWS Secrets Manager and are never returned in API responses
+
+## Metric Name Mapping
+
+Cerebrium uses OpenTelemetry naming conventions. When metrics arrive in Prometheus-compatible systems (like Grafana Cloud), dots are converted to underscores and units are appended:
+
+| Cerebrium metric name | Prometheus/Grafana name |
+|----------------------|------------------------|
+| `cerebrium.cpu.utilization` | `cerebrium_cpu_utilization_cores` |
+| `cerebrium.memory.usage_bytes` | `cerebrium_memory_usage_bytes` |
+| `cerebrium.gpu.memory.usage_bytes` | `cerebrium_gpu_memory_usage_bytes` |
+| `cerebrium.gpu.compute.utilization` | `cerebrium_gpu_compute_utilization_percent` |
+| `cerebrium.containers.running` | `cerebrium_containers_running_count` |
+| `cerebrium.containers.ready` | `cerebrium_containers_ready_count` |
+
+## API Reference
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/v2/metrics-export/{project_id}/config` | Get current configuration |
+| `PUT` | `/v2/metrics-export/{project_id}/config` | Update configuration |
+| `POST` | `/v2/metrics-export/{project_id}/test` | Test connection |
