@@ -1,62 +1,62 @@
 ---
-title: Metrics Export
-description: Export your application metrics to Grafana Cloud, Datadog, Prometheus, or any OTLP-compatible platform
+title: Exporting Metrics to Monitoring Platforms
+description: Export your application metrics to any OTLP-compatible observability platform including Grafana Cloud, Datadog, Prometheus, New Relic, and more
 ---
 
-Export real-time resource and execution metrics from your Cerebrium applications to your existing observability platform. Monitor CPU, memory, GPU usage, request counts, and latency alongside your other services.
+Export real-time resource and execution metrics from your Cerebrium applications to your existing observability platform. Monitor CPU, memory, GPU usage, request counts, and latency alongside your other services. We support most major monitoring platforms that are OTLP-compatible.
 
-## What metrics are exported?
+## How it works
 
-### Resource Metrics
+Cerebrium automatically pushes metrics from your applications to your monitoring platform every **60 seconds** using the [OpenTelemetry Protocol (OTLP)](https://opentelemetry.io/docs/specs/otlp/). You provide an OTLP endpoint and authentication credentials, and Cerebrium handles the rest — collecting resource usage and execution data, formatting it as OpenTelemetry metrics, and delivering it to your platform.
 
-| Metric                                      | Type  | Unit    | Description                             |
-| ------------------------------------------- | ----- | ------- | --------------------------------------- |
-| `cerebrium_cpu_utilization_cores`           | Gauge | cores   | CPU cores actively in use per app       |
-| `cerebrium_memory_usage_bytes`              | Gauge | bytes   | Memory actively in use per app          |
-| `cerebrium_gpu_memory_usage_bytes`          | Gauge | bytes   | GPU VRAM in use per app                 |
-| `cerebrium_gpu_compute_utilization_percent` | Gauge | percent | GPU compute utilization (0-100) per app |
-| `cerebrium_containers_running_count`        | Gauge | count   | Number of running containers per app    |
-| `cerebrium_containers_ready_count`          | Gauge | count   | Number of ready containers per app      |
+- Metrics are pushed every **60 seconds**
+- Failed pushes are retried **3 times** with exponential backoff
+- If pushes fail **10 consecutive times**, export is automatically paused to avoid noise (you can re-enable at any time)
+- Your credentials are stored encrypted and are never returned in API responses
 
-### Execution Metrics
-
-| Metric                                 | Type      | Unit  | Description                    |
-| -------------------------------------- | --------- | ----- | ------------------------------ |
-| `cerebrium_run_execution_time_ms`      | Histogram | ms    | Time spent executing user code |
-| `cerebrium_run_queue_time_ms`          | Histogram | ms    | Time spent waiting in queue    |
-| `cerebrium_run_total_response_time_ms` | Histogram | ms    | Total end-to-end response time |
-| `cerebrium_requests_total`             | Counter   | count | Total request count            |
-| `cerebrium_requests_success`           | Counter   | count | Successful requests (2xx)      |
-| `cerebrium_requests_errors`            | Counter   | count | Failed requests (4xx/5xx)      |
-
-### Labels
-
-Every metric includes the following labels for filtering and grouping:
-
-| Label         | Description                 | Example               |
-| ------------- | --------------------------- | --------------------- |
-| `project_id`  | Your Cerebrium project ID   | `p-abc12345`          |
-| `app_id`      | Full application identifier | `p-abc12345-my-model` |
-| `app_name`    | Human-readable app name     | `my-model`            |
-| `region`      | Deployment region           | `us-east-1`           |
-| `environment` | Deployment environment      | `prod`                |
-
-## Supported Destinations
-
-Metrics are exported using the [OpenTelemetry Protocol (OTLP)](https://opentelemetry.io/docs/specs/otlp/), which is supported by most observability platforms:
+### Supported destinations
 
 - **Grafana Cloud** — Primary supported destination
 - **Datadog** — Via OTLP endpoint
 - **Prometheus** — Self-hosted with OTLP receiver enabled
 - **Custom** — Any OTLP-compatible endpoint (New Relic, Honeycomb, etc.)
 
+## What metrics are exported?
+
+### Resource Metrics
+
+| Metric | Type | Unit | Description |
+|--------|------|------|-------------|
+| `cerebrium_cpu_utilization_cores` | Gauge | cores | CPU cores actively in use per app |
+| `cerebrium_memory_usage_bytes` | Gauge | bytes | Memory actively in use per app |
+| `cerebrium_gpu_memory_usage_bytes` | Gauge | bytes | GPU VRAM in use per app |
+| `cerebrium_gpu_compute_utilization_percent` | Gauge | percent | GPU compute utilization (0-100) per app |
+| `cerebrium_containers_running_count` | Gauge | count | Number of running containers per app |
+| `cerebrium_containers_ready_count` | Gauge | count | Number of ready containers per app |
+
+### Execution Metrics
+
+| Metric | Type | Unit | Description |
+|--------|------|------|-------------|
+| `cerebrium_run_execution_time_ms` | Histogram | ms | Time spent executing user code |
+| `cerebrium_run_queue_time_ms` | Histogram | ms | Time spent waiting in queue |
+| `cerebrium_run_total_response_time_ms` | Histogram | ms | Total end-to-end response time |
+| `cerebrium_requests_total` | Counter | count | Total request count |
+| `cerebrium_requests_success` | Counter | count | Successful requests (2xx) |
+| `cerebrium_requests_errors` | Counter | count | Failed requests (4xx/5xx) |
+
+### Labels
+
+Every metric includes the following labels for filtering and grouping:
+
+| Label | Description | Example |
+|-------|-------------|---------|
+| `project_id` | Your Cerebrium project ID | `p-abc12345` |
+| `app_id` | Full application identifier | `p-abc12345-my-model` |
+| `app_name` | Human-readable app name | `my-model` |
+| `region` | Deployment region | `us-east-1` |
+
 ## Setup Guide
-
-### Prerequisites
-
-- A Cerebrium project with deployed apps
-- Your Cerebrium API key
-- An account with your chosen observability platform
 
 ### Step 1: Get your destination credentials
 
@@ -65,50 +65,59 @@ Metrics are exported using the [OpenTelemetry Protocol (OTLP)](https://opentelem
     1. Sign in to [Grafana Cloud](https://grafana.com)
     2. Go to your stack → **Connections** → **Add new connection**
     3. Search for **"OpenTelemetry"** and click **Configure**
-    4. Copy the **OTLP endpoint** (e.g., `https://otlp-gateway-prod-us-east-0.grafana.net/otlp`)
-    5. Note your **Instance ID** (a number like `755366`)
-    6. Generate an API token with **MetricsPublisher** role
-    7. Create the Basic auth string:
+    4. Copy the **OTLP endpoint** — this will match your stack's region:
+       - US: `https://otlp-gateway-prod-us-east-0.grafana.net/otlp`
+       - EU: `https://otlp-gateway-prod-eu-west-0.grafana.net/otlp`
+       - Other regions will show their specific URL on the configuration page
+    5. On the same page, generate an API token with the **MetricsPublisher** role
+    6. The page will show you an **Instance ID** and the generated token. Run the following in your terminal to create the Basic auth string:
 
     ```bash
-    echo -n "YOUR_INSTANCE_ID:YOUR_TOKEN" | base64
+    echo -n "INSTANCE_ID:TOKEN" | base64
     ```
 
+    Copy the output — you'll need it in the next step.
+
     **In the Cerebrium dashboard:**
-    - **OTLP Endpoint:** `https://otlp-gateway-prod-us-east-0.grafana.net/otlp`
+    - **OTLP Endpoint:** The endpoint URL from step 4
     - **Auth Header Name:** `Authorization`
     - **Auth Header Value:** `Basic YOUR_BASE64_STRING`
 
     <Warning>
       Make sure the API token has the **MetricsPublisher** role. The default Prometheus Remote Write token will not work with the OTLP endpoint.
     </Warning>
-
   </Tab>
   <Tab title="Datadog">
     1. Sign in to [Datadog](https://app.datadoghq.com)
     2. Go to **Organization Settings** → **API Keys**
     3. Create or copy an existing API key
-    4. Your endpoint depends on your Datadog site:
-       - US1: `https://api.datadoghq.com/api/v2/otlp`
-       - EU: `https://api.datadoghq.eu/api/v2/otlp`
+    4. Your OTLP endpoint depends on your [Datadog site](https://docs.datadoghq.com/getting_started/site/):
+
+    | Datadog Site | OTLP Endpoint |
+    |-------------|---------------|
+    | US1 (datadoghq.com) | `https://api.datadoghq.com/api/v2/otlp` |
+    | US3 (us3.datadoghq.com) | `https://api.us3.datadoghq.com/api/v2/otlp` |
+    | US5 (us5.datadoghq.com) | `https://api.us5.datadoghq.com/api/v2/otlp` |
+    | EU (datadoghq.eu) | `https://api.datadoghq.eu/api/v2/otlp` |
+    | AP1 (ap1.datadoghq.com) | `https://api.ap1.datadoghq.com/api/v2/otlp` |
+
+    You can find your site in your Datadog URL — for example, if you log in at `app.us3.datadoghq.com`, your site is US3.
 
     **In the Cerebrium dashboard:**
-    - **OTLP Endpoint:** `https://api.datadoghq.com/api/v2/otlp` (US1) or `https://api.datadoghq.eu/api/v2/otlp` (EU)
+    - **OTLP Endpoint:** The endpoint matching your Datadog site from the table above
     - **Auth Header Name:** `DD-API-KEY`
-    - **Auth Header Value:** `your-datadog-api-key`
-
+    - **Auth Header Value:** Your Datadog API key from step 3
   </Tab>
   <Tab title="Self-hosted Prometheus">
     1. Enable the OTLP receiver in your Prometheus config:
        - Add `--enable-feature=otlp-write-receiver` flag
        - Or use an OpenTelemetry Collector as a sidecar
-    2. Your endpoint is: `http://YOUR_PROMETHEUS:4318`
+    2. Your endpoint will be `http://YOUR_PROMETHEUS_HOST:4318` — copy this for the next step
 
     **In the Cerebrium dashboard:**
     - **OTLP Endpoint:** `http://your-prometheus-host:4318`
     - **Auth Header Name:** `Authorization` (if auth is enabled, otherwise leave empty)
     - **Auth Header Value:** `Bearer your-token` (if auth is enabled)
-
   </Tab>
   <Tab title="Custom OTLP">
     Any platform that supports [OpenTelemetry OTLP over HTTP](https://opentelemetry.io/docs/specs/otlp/) will work, including New Relic, Honeycomb, Lightstep, and others.
@@ -125,23 +134,21 @@ Metrics are exported using the [OpenTelemetry Protocol (OTLP)](https://opentelem
     | Lightstep | `lightstep-access-token` | Your Lightstep token |
 
     You can add multiple auth headers if your platform requires them using the **Add Header** button.
-
   </Tab>
 </Tabs>
 
-### Step 2: Configure metrics export
+### Step 2: Configure in the Cerebrium dashboard
 
-**Option A: Dashboard UI**
+Go to your project → **Integrations** → **Metrics Export**. Enter the OTLP endpoint and authentication headers from Step 1, then click **Save & Enable**.
 
-Go to your project → **Integrations** → **Metrics Export**. Enter your OTLP endpoint and authentication headers from Step 1, then click **Save Changes**.
-
-**Option B: API**
+You can also configure via the API:
 
 ```bash
 curl -X PUT "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/config" \
   -H "Authorization: Bearer YOUR_CEREBRIUM_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
+    "enabled": true,
     "otlpEndpoint": "https://otlp-gateway-prod-us-east-0.grafana.net/otlp",
     "authHeaders": {
       "Authorization": "Basic YOUR_BASE64_CREDENTIALS"
@@ -151,7 +158,11 @@ curl -X PUT "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/config"
 
 The `authHeaders` field is a map of header name → header value. These are stored encrypted and never returned in API responses.
 
+You can find your Cerebrium API key in the [dashboard](https://dashboard.cerebrium.ai) under **Settings** → **API Keys**.
+
 ### Step 3: Test the connection
+
+Click **Test Connection** in the dashboard, or via the API:
 
 ```bash
 curl -X POST "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/test" \
@@ -159,7 +170,6 @@ curl -X POST "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/test" 
 ```
 
 **Success response:**
-
 ```json
 {
   "success": true,
@@ -169,7 +179,6 @@ curl -X POST "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/test" 
 ```
 
 **Failure response:**
-
 ```json
 {
   "success": false,
@@ -177,51 +186,56 @@ curl -X POST "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/test" 
 }
 ```
 
-### Step 4: Enable export
-
-```bash
-curl -X PUT "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/config" \
-  -H "Authorization: Bearer YOUR_CEREBRIUM_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"enabled": true}'
-```
-
 Metrics start flowing within 60 seconds.
 
 ## Viewing Metrics
 
-### Grafana Cloud
+<Tabs>
+  <Tab title="Grafana Cloud">
+    1. Go to your Grafana Cloud dashboard → **Explore**
+    2. Select your Prometheus data source — it will be named something like **grafanacloud-yourstack-prom** (you can find it under **Connections** → **Data sources** if you're unsure)
+    3. Search for metrics starting with `cerebrium_`
 
-1. Go to your Grafana dashboard → **Explore**
-2. Select the **grafanacloud-\*-prom** data source
-3. Search for metrics starting with `cerebrium_`
+    **Example queries:**
 
-**Example queries:**
+    ```promql
+    # CPU usage by app (replace with your project ID, e.g. p-9676c59f)
+    cerebrium_cpu_utilization_cores{project_id="p-9676c59f"}
 
-```promql
-# CPU usage by app
-cerebrium_cpu_utilization_cores{project_id="YOUR_PROJECT_ID"}
+    # Memory for a specific app
+    cerebrium_memory_usage_bytes{app_name="my-model"}
 
-# Memory for a specific app
-cerebrium_memory_usage_bytes{app_name="my-model"}
+    # Container scaling over time
+    cerebrium_containers_running_count{project_id="p-9676c59f"}
 
-# Container scaling over time
-cerebrium_containers_running_count{project_id="YOUR_PROJECT_ID"}
+    # Request rate (requests per second over 5 minutes)
+    rate(cerebrium_requests_total{app_name="my-model"}[5m])
 
-# Request rate
-rate(cerebrium_requests_total{app_name="my-model"}[5m])
+    # p99 latency
+    histogram_quantile(0.99, rate(cerebrium_run_total_response_time_ms_bucket{app_name="my-model"}[5m]))
+    ```
+  </Tab>
+  <Tab title="Datadog">
+    1. Go to **Metrics** → **Explorer** in your Datadog dashboard
+    2. Search for metrics starting with `cerebrium`
+    3. You can filter by `project_id`, `app_name`, and other labels using the "from" field
+  </Tab>
+  <Tab title="Prometheus">
+    Query your Prometheus instance directly. All Cerebrium metrics are prefixed with `cerebrium_`:
 
-# p99 latency
-histogram_quantile(0.99, rate(cerebrium_run_total_response_time_ms_bucket{app_name="my-model"}[5m]))
-```
+    ```promql
+    # List all Cerebrium metrics
+    {__name__=~"cerebrium_.*"}
 
-### Datadog
+    # CPU usage across all apps
+    cerebrium_cpu_utilization_cores
+    ```
+  </Tab>
+</Tabs>
 
-Metrics appear under `cerebrium.*` in the Metrics Explorer. You can filter by `project_id`, `app_name`, and other labels.
+## Managing Metrics Export
 
-## Managing Export
-
-### Check status
+### Check export status
 
 ```bash
 curl "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/config" \
@@ -231,7 +245,6 @@ curl "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/config" \
 ```json
 {
   "enabled": true,
-  "destination": "grafana",
   "otlpEndpoint": "https://otlp-gateway-prod-us-east-0.grafana.net/otlp",
   "authHeadersConfigured": true,
   "lastExportAt": "2026-02-11T22:44:56Z",
@@ -239,7 +252,7 @@ curl "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/config" \
 }
 ```
 
-### Disable export
+### Disable metrics export
 
 Disabling preserves your configuration. You can re-enable at any time without reconfiguring.
 
@@ -250,7 +263,9 @@ curl -X PUT "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/config"
   -d '{"enabled": false}'
 ```
 
-### Update credentials
+### Update OTLP credentials
+
+If you need to rotate or change your monitoring platform credentials:
 
 ```bash
 curl -X PUT "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/config" \
@@ -263,31 +278,10 @@ curl -X PUT "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/config"
   }'
 ```
 
-## Reliability
-
-- Metrics are pushed every **60 seconds**
-- Failed exports are retried **3 times** with exponential backoff
-- If exports fail **10 consecutive times**, export is automatically disabled (circuit breaker)
-- Re-enabling export resets the failure counter
-- Your credential are stored encrypted in AWS Secrets Manager and are never returned in API responses
-
-## Metric Name Mapping
-
-Cerebrium uses OpenTelemetry naming conventions. When metrics arrive in Prometheus-compatible systems (like Grafana Cloud), dots are converted to underscores and units are appended:
-
-| Cerebrium metric name               | Prometheus/Grafana name                     |
-| ----------------------------------- | ------------------------------------------- |
-| `cerebrium.cpu.utilization`         | `cerebrium_cpu_utilization_cores`           |
-| `cerebrium.memory.usage_bytes`      | `cerebrium_memory_usage_bytes`              |
-| `cerebrium.gpu.memory.usage_bytes`  | `cerebrium_gpu_memory_usage_bytes`          |
-| `cerebrium.gpu.compute.utilization` | `cerebrium_gpu_compute_utilization_percent` |
-| `cerebrium.containers.running`      | `cerebrium_containers_running_count`        |
-| `cerebrium.containers.ready`        | `cerebrium_containers_ready_count`          |
-
 ## API Reference
 
-| Method | Endpoint                                 | Description               |
-| ------ | ---------------------------------------- | ------------------------- |
-| `GET`  | `/v2/metrics-export/{project_id}/config` | Get current configuration |
-| `PUT`  | `/v2/metrics-export/{project_id}/config` | Update configuration      |
-| `POST` | `/v2/metrics-export/{project_id}/test`   | Test connection           |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/v2/metrics-export/{project_id}/config` | Get current export configuration |
+| `PUT` | `/v2/metrics-export/{project_id}/config` | Update export configuration |
+| `POST` | `/v2/metrics-export/{project_id}/test` | Test connection to your monitoring platform |
