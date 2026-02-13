@@ -25,36 +25,36 @@ Cerebrium automatically pushes metrics from your applications to your monitoring
 
 ### Resource Metrics
 
-| Metric | Type | Unit | Description |
-|--------|------|------|-------------|
-| `cerebrium_cpu_utilization_cores` | Gauge | cores | CPU cores actively in use per app |
-| `cerebrium_memory_usage_bytes` | Gauge | bytes | Memory actively in use per app |
-| `cerebrium_gpu_memory_usage_bytes` | Gauge | bytes | GPU VRAM in use per app |
+| Metric                                      | Type  | Unit    | Description                             |
+| ------------------------------------------- | ----- | ------- | --------------------------------------- |
+| `cerebrium_cpu_utilization_cores`           | Gauge | cores   | CPU cores actively in use per app       |
+| `cerebrium_memory_usage_bytes`              | Gauge | bytes   | Memory actively in use per app          |
+| `cerebrium_gpu_memory_usage_bytes`          | Gauge | bytes   | GPU VRAM in use per app                 |
 | `cerebrium_gpu_compute_utilization_percent` | Gauge | percent | GPU compute utilization (0-100) per app |
-| `cerebrium_containers_running_count` | Gauge | count | Number of running containers per app |
-| `cerebrium_containers_ready_count` | Gauge | count | Number of ready containers per app |
+| `cerebrium_containers_running_count`        | Gauge | count   | Number of running containers per app    |
+| `cerebrium_containers_ready_count`          | Gauge | count   | Number of ready containers per app      |
 
 ### Execution Metrics
 
-| Metric | Type | Unit | Description |
-|--------|------|------|-------------|
-| `cerebrium_run_execution_time_ms` | Histogram | ms | Time spent executing user code |
-| `cerebrium_run_queue_time_ms` | Histogram | ms | Time spent waiting in queue |
-| `cerebrium_run_total_response_time_ms` | Histogram | ms | Total end-to-end response time |
-| `cerebrium_requests_total` | Counter | count | Total request count |
-| `cerebrium_requests_success` | Counter | count | Successful requests (2xx) |
-| `cerebrium_requests_errors` | Counter | count | Failed requests (4xx/5xx) |
+| Metric                                 | Type      | Unit  | Description                    |
+| -------------------------------------- | --------- | ----- | ------------------------------ |
+| `cerebrium_run_execution_time_ms`      | Histogram | ms    | Time spent executing user code |
+| `cerebrium_run_queue_time_ms`          | Histogram | ms    | Time spent waiting in queue    |
+| `cerebrium_run_total_response_time_ms` | Histogram | ms    | Total end-to-end response time |
+| `cerebrium_requests_total`             | Counter   | count | Total request count            |
+| `cerebrium_requests_success`           | Counter   | count | Successful requests (2xx)      |
+| `cerebrium_requests_errors`            | Counter   | count | Failed requests (4xx/5xx)      |
 
 ### Labels
 
 Every metric includes the following labels for filtering and grouping:
 
-| Label | Description | Example |
-|-------|-------------|---------|
-| `project_id` | Your Cerebrium project ID | `p-abc12345` |
-| `app_id` | Full application identifier | `p-abc12345-my-model` |
-| `app_name` | Human-readable app name | `my-model` |
-| `region` | Deployment region | `us-east-1` |
+| Label        | Description                 | Example               |
+| ------------ | --------------------------- | --------------------- |
+| `project_id` | Your Cerebrium project ID   | `p-abc12345`          |
+| `app_id`     | Full application identifier | `p-abc12345-my-model` |
+| `app_name`   | Human-readable app name     | `my-model`            |
+| `region`     | Deployment region           | `us-east-1`           |
 
 ## Setup Guide
 
@@ -86,6 +86,7 @@ Every metric includes the following labels for filtering and grouping:
     <Warning>
       Make sure the API token has the **MetricsPublisher** role. The default Prometheus Remote Write token will not work with the OTLP endpoint.
     </Warning>
+
   </Tab>
   <Tab title="Datadog">
     1. Sign in to [Datadog](https://app.datadoghq.com)
@@ -107,6 +108,7 @@ Every metric includes the following labels for filtering and grouping:
     - **OTLP Endpoint:** The endpoint matching your Datadog site from the table above
     - **Auth Header Name:** `DD-API-KEY`
     - **Auth Header Value:** Your Datadog API key from step 3
+
   </Tab>
   <Tab title="Self-hosted Prometheus">
     1. Enable the OTLP receiver in your Prometheus config:
@@ -118,6 +120,7 @@ Every metric includes the following labels for filtering and grouping:
     - **OTLP Endpoint:** `http://your-prometheus-host:4318`
     - **Auth Header Name:** `Authorization` (if auth is enabled, otherwise leave empty)
     - **Auth Header Value:** `Bearer your-token` (if auth is enabled)
+
   </Tab>
   <Tab title="Custom OTLP">
     Any platform that supports [OpenTelemetry OTLP over HTTP](https://opentelemetry.io/docs/specs/otlp/) will work, including New Relic, Honeycomb, Lightstep, and others.
@@ -134,6 +137,7 @@ Every metric includes the following labels for filtering and grouping:
     | Lightstep | `lightstep-access-token` | Your Lightstep token |
 
     You can add multiple auth headers if your platform requires them using the **Add Header** button.
+
   </Tab>
 </Tabs>
 
@@ -170,6 +174,7 @@ curl -X POST "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/test" 
 ```
 
 **Success response:**
+
 ```json
 {
   "success": true,
@@ -179,6 +184,7 @@ curl -X POST "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/test" 
 ```
 
 **Failure response:**
+
 ```json
 {
   "success": false,
@@ -214,6 +220,7 @@ Metrics start flowing within 60 seconds.
     # p99 latency
     histogram_quantile(0.99, rate(cerebrium_run_total_response_time_ms_bucket{app_name="my-model"}[5m]))
     ```
+
   </Tab>
   <Tab title="Datadog">
     1. Go to **Metrics** → **Explorer** in your Datadog dashboard
@@ -230,6 +237,7 @@ Metrics start flowing within 60 seconds.
     # CPU usage across all apps
     cerebrium_cpu_utilization_cores
     ```
+
   </Tab>
 </Tabs>
 
@@ -280,8 +288,8 @@ curl -X PUT "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/config"
 
 ## API Reference
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/v2/metrics-export/{project_id}/config` | Get current export configuration |
-| `PUT` | `/v2/metrics-export/{project_id}/config` | Update export configuration |
-| `POST` | `/v2/metrics-export/{project_id}/test` | Test connection to your monitoring platform |
+| Method | Endpoint                                 | Description                                 |
+| ------ | ---------------------------------------- | ------------------------------------------- |
+| `GET`  | `/v2/metrics-export/{project_id}/config` | Get current export configuration            |
+| `PUT`  | `/v2/metrics-export/{project_id}/config` | Update export configuration                 |
+| `POST` | `/v2/metrics-export/{project_id}/test`   | Test connection to your monitoring platform |
