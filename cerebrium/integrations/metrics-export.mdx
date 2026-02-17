@@ -21,42 +21,6 @@ Cerebrium automatically pushes metrics from your applications to your monitoring
 - **Prometheus** — Self-hosted with OTLP receiver enabled
 - **Custom** — Any OTLP-compatible endpoint (New Relic, Honeycomb, etc.)
 
-## What metrics are exported?
-
-### Resource Metrics
-
-| Metric                                      | Type  | Unit    | Description                             |
-| ------------------------------------------- | ----- | ------- | --------------------------------------- |
-| `cerebrium_cpu_utilization_cores`           | Gauge | cores   | CPU cores actively in use per app       |
-| `cerebrium_memory_usage_bytes`              | Gauge | bytes   | Memory actively in use per app          |
-| `cerebrium_gpu_memory_usage_bytes`          | Gauge | bytes   | GPU VRAM in use per app                 |
-| `cerebrium_gpu_compute_utilization_percent` | Gauge | percent | GPU compute utilization (0-100) per app |
-| `cerebrium_containers_running_count`        | Gauge | count   | Number of running containers per app    |
-| `cerebrium_containers_ready_count`          | Gauge | count   | Number of ready containers per app      |
-
-### Execution Metrics
-
-| Metric                            | Type      | Unit | Description                    |
-| --------------------------------- | --------- | ---- | ------------------------------ |
-| `cerebrium_run_execution_time_ms` | Histogram | ms   | Time spent executing user code |
-| `cerebrium_run_queue_time_ms`     | Histogram | ms   | Time spent waiting in queue    |
-| `cerebrium_run_coldstart_time_ms` | Histogram | ms   | Time for container cold start  |
-| `cerebrium_run_response_time_ms`  | Histogram | ms   | Total end-to-end response time |
-| `cerebrium_run_total_total`       | Counter   | —    | Total run count                |
-| `cerebrium_run_successes_total`   | Counter   | —    | Successful run count           |
-| `cerebrium_run_errors_total`      | Counter   | —    | Failed run count               |
-
-### Labels
-
-Every metric includes the following labels for filtering and grouping:
-
-| Label        | Description                 | Example               |
-| ------------ | --------------------------- | --------------------- |
-| `project_id` | Your Cerebrium project ID   | `p-abc12345`          |
-| `app_id`     | Full application identifier | `p-abc12345-my-model` |
-| `app_name`   | Human-readable app name     | `my-model`            |
-| `region`     | Deployment region           | `us-east-1`           |
-
 ## Setup Guide
 
 ### Step 1: Get your platform credentials
@@ -84,7 +48,6 @@ Before heading to the Cerebrium dashboard, you'll need an OTLP endpoint and auth
     <Warning>
       Make sure the API token has the **MetricsPublisher** role. The default Prometheus Remote Write token will not work with the OTLP endpoint.
     </Warning>
-
   </Tab>
   <Tab title="Datadog">
     1. Sign in to [Datadog](https://app.datadoghq.com)
@@ -103,7 +66,6 @@ Before heading to the Cerebrium dashboard, you'll need an OTLP endpoint and auth
     You can find your site in your Datadog URL — for example, if you log in at `app.us3.datadoghq.com`, your site is US3.
 
     Keep your API key and endpoint handy for the next step.
-
   </Tab>
   <Tab title="Self-hosted Prometheus">
     1. Enable the OTLP receiver in your Prometheus config:
@@ -124,7 +86,6 @@ Before heading to the Cerebrium dashboard, you'll need an OTLP endpoint and auth
     | New Relic | `api-key` | Your New Relic license key |
     | Honeycomb | `x-honeycomb-team` | Your Honeycomb API key |
     | Lightstep | `lightstep-access-token` | Your Lightstep token |
-
   </Tab>
 </Tabs>
 
@@ -132,24 +93,23 @@ Before heading to the Cerebrium dashboard, you'll need an OTLP endpoint and auth
 
 1. In the [Cerebrium dashboard](https://dashboard.cerebrium.ai), go to your project → **Integrations** → **Metrics Export**
 2. Paste your **OTLP endpoint** from Step 1
-3. Add your **authentication headers**:
+3. Add the **authentication headers** from Step 1:
 
 <Tabs>
   <Tab title="Grafana Cloud">
-    - **Header name:** `Authorization` - **Header value:** `Basic
-    YOUR_BASE64_STRING` (the output from the terminal command in Step 1)
+    - **Header name:** `Authorization`
+    - **Header value:** `Basic YOUR_BASE64_STRING` (the output from the terminal command in Step 1)
   </Tab>
   <Tab title="Datadog">
-    - **Header name:** `DD-API-KEY` - **Header value:** Your Datadog API key
+    - **Header name:** `DD-API-KEY`
+    - **Header value:** Your Datadog API key
   </Tab>
   <Tab title="Self-hosted Prometheus">
-    - **Header name:** `Authorization` (if auth is enabled on your Prometheus,
-    otherwise leave empty) - **Header value:** `Bearer your-token` (if auth is
-    enabled)
+    - **Header name:** `Authorization` (if auth is enabled on your Prometheus, otherwise leave empty)
+    - **Header value:** `Bearer your-token` (if auth is enabled)
   </Tab>
   <Tab title="Custom OTLP">
-    Add the authentication headers required by your platform. You can add
-    multiple headers using the **Add Header** button.
+    Add the authentication headers required by your platform. You can add multiple headers using the **Add Header** button.
   </Tab>
 </Tabs>
 
@@ -162,6 +122,42 @@ Your metrics will start flowing within 60 seconds. The dashboard will show a gre
 Click **Test Connection** in the dashboard to verify Cerebrium can reach your monitoring platform. You'll see a success or failure message with details.
 
 If the test fails, double-check your endpoint URL and credentials from Step 1.
+
+## What metrics are exported?
+
+### Resource Metrics
+
+| Metric | Type | Unit | Description |
+|--------|------|------|-------------|
+| `cerebrium_cpu_utilization_cores` | Gauge | cores | CPU cores actively in use per app |
+| `cerebrium_memory_usage_bytes` | Gauge | bytes | Memory actively in use per app |
+| `cerebrium_gpu_memory_usage_bytes` | Gauge | bytes | GPU VRAM in use per app |
+| `cerebrium_gpu_compute_utilization_percent` | Gauge | percent | GPU compute utilization (0-100) per app |
+| `cerebrium_containers_running_count` | Gauge | count | Number of running containers per app |
+| `cerebrium_containers_ready_count` | Gauge | count | Number of ready containers per app |
+
+### Execution Metrics
+
+| Metric | Type | Unit | Description |
+|--------|------|------|-------------|
+| `cerebrium_run_execution_time_ms` | Histogram | ms | Time spent executing user code |
+| `cerebrium_run_queue_time_ms` | Histogram | ms | Time spent waiting in queue |
+| `cerebrium_run_coldstart_time_ms` | Histogram | ms | Time for container cold start |
+| `cerebrium_run_response_time_ms` | Histogram | ms | Total end-to-end response time |
+| `cerebrium_run_total_total` | Counter | — | Total run count |
+| `cerebrium_run_successes_total` | Counter | — | Successful run count |
+| `cerebrium_run_errors_total` | Counter | — | Failed run count |
+
+### Labels
+
+Every metric includes the following labels for filtering and grouping:
+
+| Label | Description | Example |
+|-------|-------------|---------|
+| `project_id` | Your Cerebrium project ID | `p-abc12345` |
+| `app_id` | Full application identifier | `p-abc12345-my-model` |
+| `app_name` | Human-readable app name | `my-model` |
+| `region` | Deployment region | `us-east-1` |
 
 ## Viewing Metrics
 
@@ -194,7 +190,6 @@ Once connected, metrics will appear in your monitoring platform within a minute.
     # p99 end-to-end response time
     histogram_quantile(0.99, rate(cerebrium_run_response_time_ms_bucket{app_name="my-model"}[5m]))
     ```
-
   </Tab>
   <Tab title="Datadog">
     1. Go to **Metrics** → **Explorer** in your Datadog dashboard
@@ -211,7 +206,6 @@ Once connected, metrics will appear in your monitoring platform within a minute.
     # CPU usage across all apps
     cerebrium_cpu_utilization_cores
     ```
-
   </Tab>
 </Tabs>
 
@@ -227,43 +221,42 @@ You can manage your metrics export configuration from the dashboard at any time 
 <Accordion title="API Reference">
   You can also manage metrics export programmatically. Find your Cerebrium API key in the [dashboard](https://dashboard.cerebrium.ai) under **Settings** → **API Keys**.
 
-| Method | Endpoint                                 | Description                                 |
-| ------ | ---------------------------------------- | ------------------------------------------- |
-| `GET`  | `/v2/metrics-export/{project_id}/config` | Get current export configuration            |
-| `PUT`  | `/v2/metrics-export/{project_id}/config` | Update export configuration                 |
-| `POST` | `/v2/metrics-export/{project_id}/test`   | Test connection to your monitoring platform |
+  | Method | Endpoint | Description |
+  |--------|----------|-------------|
+  | `GET` | `/v2/metrics-export/{project_id}/config` | Get current export configuration |
+  | `PUT` | `/v2/metrics-export/{project_id}/config` | Update export configuration |
+  | `POST` | `/v2/metrics-export/{project_id}/test` | Test connection to your monitoring platform |
 
-**Enable with endpoint and credentials:**
+  **Enable with endpoint and credentials:**
 
-```bash
-curl -X PUT "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/config" \
-  -H "Authorization: Bearer YOUR_CEREBRIUM_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "enabled": true,
-    "otlpEndpoint": "https://otlp-gateway-prod-us-east-0.grafana.net/otlp",
-    "authHeaders": {
-      "Authorization": "Basic YOUR_BASE64_CREDENTIALS"
-    }
-  }'
-```
+  ```bash
+  curl -X PUT "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/config" \
+    -H "Authorization: Bearer YOUR_CEREBRIUM_API_KEY" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "enabled": true,
+      "otlpEndpoint": "https://otlp-gateway-prod-us-east-0.grafana.net/otlp",
+      "authHeaders": {
+        "Authorization": "Basic YOUR_BASE64_CREDENTIALS"
+      }
+    }'
+  ```
 
-**Test connection:**
+  **Test connection:**
 
-```bash
-curl -X POST "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/test" \
-  -H "Authorization: Bearer YOUR_CEREBRIUM_API_KEY"
-```
+  ```bash
+  curl -X POST "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/test" \
+    -H "Authorization: Bearer YOUR_CEREBRIUM_API_KEY"
+  ```
 
-**Disable export:**
+  **Disable export:**
 
-```bash
-curl -X PUT "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/config" \
-  -H "Authorization: Bearer YOUR_CEREBRIUM_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"enabled": false}'
-```
+  ```bash
+  curl -X PUT "https://rest.cerebrium.ai/v2/metrics-export/YOUR_PROJECT_ID/config" \
+    -H "Authorization: Bearer YOUR_CEREBRIUM_API_KEY" \
+    -H "Content-Type: application/json" \
+    -d '{"enabled": false}'
+  ```
 
-The `authHeaders` field is a map of header name → header value. These are stored encrypted and never returned in API responses.
-
+  The `authHeaders` field is a map of header name → header value. These are stored encrypted and never returned in API responses.
 </Accordion>
