@@ -175,6 +175,10 @@ Once connected, metrics will appear in your monitoring platform within a minute 
 
     **Example queries:**
 
+    <Note>
+    Histogram metrics in Prometheus have `_milliseconds` appended by OTLP's unit suffix convention, so you'll see names like `cerebrium_run_execution_time_ms_milliseconds_bucket`. This is expected behavior — see the [metric name mapping note](#execution-metrics) above.
+    </Note>
+
     ```promql
     # CPU usage by app
     cerebrium_cpu_utilization_cores{project_id="YOUR_PROJECT_ID"}
