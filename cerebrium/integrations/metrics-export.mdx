@@ -5,6 +5,42 @@ description: Export your application metrics to any OTLP-compatible observabilit
 
 Export real-time resource and execution metrics from your Cerebrium applications to your existing observability platform. Monitor CPU, memory, GPU usage, request counts, and latency alongside your other services. We support most major monitoring platforms that are OTLP-compatible.
 
+## What metrics are exported?
+
+### Resource Metrics
+
+| Metric                                      | Type  | Unit    | Description                             |
+| ------------------------------------------- | ----- | ------- | --------------------------------------- |
+| `cerebrium_cpu_utilization_cores`           | Gauge | cores   | CPU cores actively in use per app       |
+| `cerebrium_memory_usage_bytes`              | Gauge | bytes   | Memory actively in use per app          |
+| `cerebrium_gpu_memory_usage_bytes`          | Gauge | bytes   | GPU VRAM in use per app                 |
+| `cerebrium_gpu_compute_utilization_percent` | Gauge | percent | GPU compute utilization (0-100) per app |
+| `cerebrium_containers_running_count`        | Gauge | count   | Number of running containers per app    |
+| `cerebrium_containers_ready_count`          | Gauge | count   | Number of ready containers per app      |
+
+### Execution Metrics
+
+| Metric                            | Type      | Unit | Description                    |
+| --------------------------------- | --------- | ---- | ------------------------------ |
+| `cerebrium_run_execution_time_ms` | Histogram | ms   | Time spent executing user code |
+| `cerebrium_run_queue_time_ms`     | Histogram | ms   | Time spent waiting in queue    |
+| `cerebrium_run_coldstart_time_ms` | Histogram | ms   | Time for container cold start  |
+| `cerebrium_run_response_time_ms`  | Histogram | ms   | Total end-to-end response time |
+| `cerebrium_run_total_total`       | Counter   | —    | Total run count                |
+| `cerebrium_run_successes_total`   | Counter   | —    | Successful run count           |
+| `cerebrium_run_errors_total`      | Counter   | —    | Failed run count               |
+
+### Labels
+
+Every metric includes the following labels for filtering and grouping:
+
+| Label        | Description                 | Example               |
+| ------------ | --------------------------- | --------------------- |
+| `project_id` | Your Cerebrium project ID   | `p-abc12345`          |
+| `app_id`     | Full application identifier | `p-abc12345-my-model` |
+| `app_name`   | Human-readable app name     | `my-model`            |
+| `region`     | Deployment region           | `us-east-1`           |
+
 ## How it works
 
 Cerebrium automatically pushes metrics from your applications to your monitoring platform every **60 seconds** using the [OpenTelemetry Protocol (OTLP)](https://opentelemetry.io/docs/specs/otlp/). You provide an OTLP endpoint and authentication credentials through the Cerebrium dashboard, and Cerebrium handles the rest — collecting resource usage and execution data, formatting it as OpenTelemetry metrics, and delivering it to your platform.
@@ -122,42 +158,6 @@ Before heading to the Cerebrium dashboard, you'll need an OTLP endpoint and auth
 Your metrics will start flowing within 60 seconds. The dashboard will show a green "Connected" status with the time of the last successful export.
 
 If something doesn't look right, click **Test Connection** to verify Cerebrium can reach your monitoring platform. You'll see a success or failure message with details to help you troubleshoot.
-
-## What metrics are exported?
-
-### Resource Metrics
-
-| Metric                                      | Type  | Unit    | Description                             |
-| ------------------------------------------- | ----- | ------- | --------------------------------------- |
-| `cerebrium_cpu_utilization_cores`           | Gauge | cores   | CPU cores actively in use per app       |
-| `cerebrium_memory_usage_bytes`              | Gauge | bytes   | Memory actively in use per app          |
-| `cerebrium_gpu_memory_usage_bytes`          | Gauge | bytes   | GPU VRAM in use per app                 |
-| `cerebrium_gpu_compute_utilization_percent` | Gauge | percent | GPU compute utilization (0-100) per app |
-| `cerebrium_containers_running_count`        | Gauge | count   | Number of running containers per app    |
-| `cerebrium_containers_ready_count`          | Gauge | count   | Number of ready containers per app      |
-
-### Execution Metrics
-
-| Metric                            | Type      | Unit | Description                    |
-| --------------------------------- | --------- | ---- | ------------------------------ |
-| `cerebrium_run_execution_time_ms` | Histogram | ms   | Time spent executing user code |
-| `cerebrium_run_queue_time_ms`     | Histogram | ms   | Time spent waiting in queue    |
-| `cerebrium_run_coldstart_time_ms` | Histogram | ms   | Time for container cold start  |
-| `cerebrium_run_response_time_ms`  | Histogram | ms   | Total end-to-end response time |
-| `cerebrium_run_total_total`       | Counter   | —    | Total run count                |
-| `cerebrium_run_successes_total`   | Counter   | —    | Successful run count           |
-| `cerebrium_run_errors_total`      | Counter   | —    | Failed run count               |
-
-### Labels
-
-Every metric includes the following labels for filtering and grouping:
-
-| Label        | Description                 | Example               |
-| ------------ | --------------------------- | --------------------- |
-| `project_id` | Your Cerebrium project ID   | `p-abc12345`          |
-| `app_id`     | Full application identifier | `p-abc12345-my-model` |
-| `app_name`   | Human-readable app name     | `my-model`            |
-| `region`     | Deployment region           | `us-east-1`           |
 
 ## Viewing Metrics
 
