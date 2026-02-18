@@ -31,7 +31,13 @@ Export real-time resource and execution metrics from your Cerebrium applications
 | `cerebrium_run_errors_total`      | Counter   | —    | Failed run count               |
 
 <Note>
-**Prometheus metric name mapping:** When metrics are ingested by Prometheus (including Grafana Cloud), OTLP automatically appends unit suffixes to metric names. Histogram metrics will appear with `_milliseconds` appended — for example, `cerebrium_run_execution_time_ms` becomes `cerebrium_run_execution_time_ms_milliseconds_bucket`, `_count`, and `_sum`. Counter metrics with the `_total` suffix remain unchanged. The example queries throughout this guide use the Prometheus-ingested names.
+  **Prometheus metric name mapping:** When metrics are ingested by Prometheus
+  (including Grafana Cloud), OTLP automatically appends unit suffixes to metric
+  names. Histogram metrics will appear with `_milliseconds` appended — for
+  example, `cerebrium_run_execution_time_ms` becomes
+  `cerebrium_run_execution_time_ms_milliseconds_bucket`, `_count`, and `_sum`.
+  Counter metrics with the `_total` suffix remain unchanged. The example queries
+  throughout this guide use the Prometheus-ingested names.
 </Note>
 
 ### Labels
@@ -182,25 +188,25 @@ Once connected, metrics will appear in your monitoring platform within a minute 
     ```promql
     # CPU usage by app
     cerebrium_cpu_utilization_cores{project_id="YOUR_PROJECT_ID"}
-    
+
     # Memory for a specific app
     cerebrium_memory_usage_bytes{app_name="my-model"}
-    
+
     # Container scaling over time
     cerebrium_containers_running_count{project_id="YOUR_PROJECT_ID"}
-    
+
     # Request rate (requests per second over 5 minutes)
     rate(cerebrium_run_total[5m])
-    
+
     # p99 execution latency
     histogram_quantile(0.99, rate(cerebrium_run_execution_time_ms_milliseconds_bucket{app_name="my-model"}[5m]))
-    
+
     # p99 end-to-end response time
     histogram_quantile(0.99, rate(cerebrium_run_response_time_ms_milliseconds_bucket{app_name="my-model"}[5m]))
-    
+
     # Error rate as a percentage
     rate(cerebrium_run_errors_total{app_name="my-model"}[5m]) / rate(cerebrium_run_total{app_name="my-model"}[5m]) * 100
-    
+
     # Average cold start time
     rate(cerebrium_run_coldstart_time_ms_milliseconds_sum{app_name="my-model"}[5m]) / rate(cerebrium_run_coldstart_time_ms_milliseconds_count{app_name="my-model"}[5m])
     ```
