@@ -9,26 +9,26 @@ Export real-time resource and execution metrics from your Cerebrium applications
 
 ### Resource Metrics
 
-| Metric                                      | Type  | Unit    | Description                             |
-| ------------------------------------------- | ----- | ------- | --------------------------------------- |
-| `cerebrium_cpu_utilization_cores`           | Gauge | cores   | CPU cores actively in use per app       |
-| `cerebrium_memory_usage_bytes`              | Gauge | bytes   | Memory actively in use per app          |
-| `cerebrium_gpu_memory_usage_bytes`          | Gauge | bytes   | GPU VRAM in use per app                 |
-| `cerebrium_gpu_compute_utilization_percent` | Gauge | percent | GPU compute utilization (0-100) per app |
-| `cerebrium_containers_running_count`        | Gauge | count   | Number of running containers per app    |
-| `cerebrium_containers_ready_count`          | Gauge | count   | Number of ready containers per app      |
+| Metric                                                                                | Type  | Unit    | Description                             |
+| ------------------------------------------------------------------------------------- | ----- | ------- | --------------------------------------- |
+| <code style={{whiteSpace: 'nowrap'}}>cerebrium_cpu_utilization_cores</code>           | Gauge | cores   | CPU cores actively in use per app       |
+| <code style={{whiteSpace: 'nowrap'}}>cerebrium_memory_usage_bytes</code>              | Gauge | bytes   | Memory actively in use per app          |
+| <code style={{whiteSpace: 'nowrap'}}>cerebrium_gpu_memory_usage_bytes</code>          | Gauge | bytes   | GPU VRAM in use per app                 |
+| <code style={{whiteSpace: 'nowrap'}}>cerebrium_gpu_compute_utilization_percent</code> | Gauge | percent | GPU compute utilization (0-100) per app |
+| <code style={{whiteSpace: 'nowrap'}}>cerebrium_containers_running_count</code>        | Gauge | count   | Number of running containers per app    |
+| <code style={{whiteSpace: 'nowrap'}}>cerebrium_containers_ready_count</code>          | Gauge | count   | Number of ready containers per app      |
 
 ### Execution Metrics
 
-| Metric                            | Type      | Unit | Description                    |
-| --------------------------------- | --------- | ---- | ------------------------------ |
-| `cerebrium_run_execution_time_ms` | Histogram | ms   | Time spent executing user code |
-| `cerebrium_run_queue_time_ms`     | Histogram | ms   | Time spent waiting in queue    |
-| `cerebrium_run_coldstart_time_ms` | Histogram | ms   | Time for container cold start  |
-| `cerebrium_run_response_time_ms`  | Histogram | ms   | Total end-to-end response time |
-| `cerebrium_run_total`             | Counter   | —    | Total run count                |
-| `cerebrium_run_successes_total`   | Counter   | —    | Successful run count           |
-| `cerebrium_run_errors_total`      | Counter   | —    | Failed run count               |
+| Metric                                                                      | Type      | Unit | Description                    |
+| --------------------------------------------------------------------------- | --------- | ---- | ------------------------------ |
+| <code style={{whiteSpace: 'nowrap'}}>cerebrium_run_execution_time_ms</code> | Histogram | ms   | Time spent executing user code |
+| <code style={{whiteSpace: 'nowrap'}}>cerebrium_run_queue_time_ms</code>     | Histogram | ms   | Time spent waiting in queue    |
+| <code style={{whiteSpace: 'nowrap'}}>cerebrium_run_coldstart_time_ms</code> | Histogram | ms   | Time for container cold start  |
+| <code style={{whiteSpace: 'nowrap'}}>cerebrium_run_response_time_ms</code>  | Histogram | ms   | Total end-to-end response time |
+| <code style={{whiteSpace: 'nowrap'}}>cerebrium_run_total</code>             | Counter   | —    | Total run count                |
+| <code style={{whiteSpace: 'nowrap'}}>cerebrium_run_successes_total</code>   | Counter   | —    | Successful run count           |
+| <code style={{whiteSpace: 'nowrap'}}>cerebrium_run_errors_total</code>      | Counter   | —    | Failed run count               |
 
 <Note>
   **Prometheus metric name mapping:** When metrics are ingested by Prometheus
