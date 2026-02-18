@@ -1,0 +1,262 @@
+---
+title: Exporting Metrics to Monitoring Platforms
+description: Export your application metrics to any OTLP-compatible observability platform including Grafana Cloud, Datadog, Prometheus, New Relic, and more
+---
+
+Export real-time resource and execution metrics from your Cerebrium applications to your existing observability platform. Monitor CPU, memory, GPU usage, request counts, and latency metrics exported by your applications. We support most major monitoring platforms that are OTLP-compatible.
+
+## What metrics are exported?
+
+### Resource Metrics
+
+| Metric                                                                                | Type  | Unit    | Description                             |
+| ------------------------------------------------------------------------------------- | ----- | ------- | --------------------------------------- |
+| <code style={{whiteSpace: 'nowrap'}}>cerebrium_cpu_utilization_cores</code>           | Gauge | cores   | CPU cores actively in use per app       |
+| <code style={{whiteSpace: 'nowrap'}}>cerebrium_memory_usage_bytes</code>              | Gauge | bytes   | Memory actively in use per app          |
+| <code style={{whiteSpace: 'nowrap'}}>cerebrium_gpu_memory_usage_bytes</code>          | Gauge | bytes   | GPU VRAM in use per app                 |
+| <code style={{whiteSpace: 'nowrap'}}>cerebrium_gpu_compute_utilization_percent</code> | Gauge | percent | GPU compute utilization (0-100) per app |
+| <code style={{whiteSpace: 'nowrap'}}>cerebrium_containers_running_count</code>        | Gauge | count   | Number of running containers per app    |
+| <code style={{whiteSpace: 'nowrap'}}>cerebrium_containers_ready_count</code>          | Gauge | count   | Number of ready containers per app      |
+
+### Execution Metrics
+
+| Metric                                                                      | Type      | Unit | Description                    |
+| --------------------------------------------------------------------------- | --------- | ---- | ------------------------------ |
+| <code style={{whiteSpace: 'nowrap'}}>cerebrium_run_execution_time_ms</code> | Histogram | ms   | Time spent executing user code |
+| <code style={{whiteSpace: 'nowrap'}}>cerebrium_run_queue_time_ms</code>     | Histogram | ms   | Time spent waiting in queue    |
+| <code style={{whiteSpace: 'nowrap'}}>cerebrium_run_coldstart_time_ms</code> | Histogram | ms   | Time for container cold start  |
+| <code style={{whiteSpace: 'nowrap'}}>cerebrium_run_response_time_ms</code>  | Histogram | ms   | Total end-to-end response time |
+| <code style={{whiteSpace: 'nowrap'}}>cerebrium_run_total</code>             | Counter   | —    | Total run count                |
+| <code style={{whiteSpace: 'nowrap'}}>cerebrium_run_successes_total</code>   | Counter   | —    | Successful run count           |
+| <code style={{whiteSpace: 'nowrap'}}>cerebrium_run_errors_total</code>      | Counter   | —    | Failed run count               |
+
+<Note>
+  **Prometheus metric name mapping:** When metrics are ingested by Prometheus
+  (including Grafana Cloud), OTLP automatically appends unit suffixes to metric
+  names. Histogram metrics will appear with `_milliseconds` appended — for
+  example, `cerebrium_run_execution_time_ms` becomes
+  `cerebrium_run_execution_time_ms_milliseconds_bucket`, `_count`, and `_sum`.
+  Counter metrics with the `_total` suffix remain unchanged. The example queries
+  throughout this guide use the Prometheus-ingested names.
+</Note>
+
+### Labels
+
+Every metric includes the following labels for filtering and grouping:
+
+| Label        | Description                 | Example               |
+| ------------ | --------------------------- | --------------------- |
+| `project_id` | Your Cerebrium project ID   | `p-abc12345`          |
+| `app_id`     | Full application identifier | `p-abc12345-my-model` |
+| `app_name`   | Human-readable app name     | `my-model`            |
+| `region`     | Deployment region           | `us-east-1`           |
+
+## How it works
+
+Cerebrium automatically pushes metrics from your applications to your monitoring platform every **60 seconds** using the [OpenTelemetry Protocol (OTLP)](https://opentelemetry.io/docs/specs/otlp/). You provide an OTLP endpoint and authentication credentials through the Cerebrium dashboard, and Cerebrium handles the rest — collecting resource usage and execution data, formatting it as OpenTelemetry metrics, and delivering it to your platform.
+
+- Metrics are pushed every **60 seconds**
+- Failed pushes are retried **3 times** with exponential backoff
+- If pushes fail **10 consecutive times**, export is automatically paused to avoid noise (you can re-enable at any time from the dashboard)
+- Your credentials are stored encrypted and are never returned in API responses
+
+### Supported destinations
+
+- **Grafana Cloud** — Primary supported destination
+- **Datadog** — Via OTLP endpoint
+- **Prometheus** — Self-hosted with OTLP receiver enabled
+- **Custom** — Any OTLP-compatible endpoint (New Relic, Honeycomb, etc.)
+
+## Setup Guide
+
+### Step 1: Get your platform credentials
+
+Before heading to the Cerebrium dashboard, you'll need an OTLP endpoint and authentication credentials from your monitoring platform.
+
+<Tabs>
+  <Tab title="Grafana Cloud">
+    1. Sign in to [Grafana Cloud](https://grafana.com)
+    2. Go to your stack → **Connections** → **Add new connection**
+    3. Search for **"OpenTelemetry"** and click **Configure**
+    4. Copy the **OTLP endpoint** — this will match your stack's region:
+       - US: `https://otlp-gateway-prod-us-east-0.grafana.net/otlp`
+       - EU: `https://otlp-gateway-prod-eu-west-0.grafana.net/otlp`
+       - Other regions will show their specific URL on the configuration page
+    5. On the same page, generate an API token. Click **Generate now** and ensure the token has the **MetricsPublisher** role — this is a separate token from any Prometheus Remote Write tokens you may already have.
+    6. The page will show you an **Instance ID** and the generated token. Run the following in your terminal to create the Basic auth string:
+
+    ```bash
+    echo -n "INSTANCE_ID:TOKEN" | base64
+    ```
+
+    Copy the output — you'll paste it in the dashboard in the next step.
+
+    <Warning>
+      The API token **must** have the **MetricsPublisher** role. The default Prometheus Remote Write token will not work with the OTLP endpoint. If you're unsure, generate a new token from the OpenTelemetry configuration page — it will have the correct role by default.
+    </Warning>
+
+  </Tab>
+  <Tab title="Datadog">
+    1. Sign in to [Datadog](https://app.datadoghq.com)
+    2. Go to **Organization Settings** → **API Keys**
+    3. Create or copy an existing API key
+    4. Your OTLP endpoint depends on your [Datadog site](https://docs.datadoghq.com/getting_started/site/):
+
+    | Datadog Site | OTLP Endpoint |
+    |-------------|---------------|
+    | US1 (datadoghq.com) | `https://api.datadoghq.com/api/v2/otlp` |
+    | US3 (us3.datadoghq.com) | `https://api.us3.datadoghq.com/api/v2/otlp` |
+    | US5 (us5.datadoghq.com) | `https://api.us5.datadoghq.com/api/v2/otlp` |
+    | EU (datadoghq.eu) | `https://api.datadoghq.eu/api/v2/otlp` |
+    | AP1 (ap1.datadoghq.com) | `https://api.ap1.datadoghq.com/api/v2/otlp` |
+
+    You can find your site in your Datadog URL — for example, if you log in at `app.us3.datadoghq.com`, your site is US3.
+
+    Keep your API key and endpoint handy for the next step.
+
+  </Tab>
+  <Tab title="Self-hosted Prometheus">
+    1. Enable the OTLP receiver in your Prometheus config:
+       - Add `--enable-feature=otlp-write-receiver` flag
+       - Or use an OpenTelemetry Collector as a sidecar
+    2. Your endpoint will be `http://YOUR_PROMETHEUS_HOST:4318` (this is the OTLP HTTP port — not `4317`, which is gRPC) — copy this for the next step
+  </Tab>
+  <Tab title="Custom OTLP">
+    Any platform that supports [OpenTelemetry OTLP over HTTP](https://opentelemetry.io/docs/specs/otlp/) will work, including New Relic, Honeycomb, Lightstep, and others.
+
+    1. Get the OTLP HTTP endpoint from your provider's documentation
+    2. Get the required authentication headers
+
+    **Common examples:**
+
+    | Platform | Auth Header Name | Auth Header Value |
+    |----------|-----------------|-------------------|
+    | New Relic | `api-key` | Your New Relic license key |
+    | Honeycomb | `x-honeycomb-team` | Your Honeycomb API key |
+    | Lightstep | `lightstep-access-token` | Your Lightstep token |
+
+  </Tab>
+</Tabs>
+
+### Step 2: Configure in the Cerebrium dashboard
+
+1. In the [Cerebrium dashboard](https://dashboard.cerebrium.ai), go to your project → **Integrations** → **Metrics Export**
+2. Paste your **OTLP endpoint** from Step 1
+3. Add the **authentication headers** from Step 1:
+
+<Tabs>
+  <Tab title="Grafana Cloud">
+    - **Header name:** `Authorization` - **Header value:** `Basic
+    YOUR_BASE64_STRING` (the output from the terminal command in Step 1)
+  </Tab>
+  <Tab title="Datadog">
+    - **Header name:** `DD-API-KEY` - **Header value:** Your Datadog API key
+  </Tab>
+  <Tab title="Self-hosted Prometheus">
+    - **Header name:** `Authorization` (if auth is enabled on your Prometheus,
+    otherwise leave empty) - **Header value:** `Bearer your-token` (if auth is
+    enabled)
+  </Tab>
+  <Tab title="Custom OTLP">
+    Add the authentication headers required by your platform. You can add
+    multiple headers using the **Add Header** button.
+  </Tab>
+</Tabs>
+
+4. Click **Save & Enable**
+
+Your metrics will start flowing within 60 seconds. The dashboard will show a green "Connected" status with the time of the last successful export.
+
+If something doesn't look right, click **Test Connection** to verify Cerebrium can reach your monitoring platform. You'll see a success or failure message with details to help you troubleshoot.
+
+## Viewing Metrics
+
+Once connected, metrics will appear in your monitoring platform within a minute or two (exact latency depends on your platform's ingestion pipeline).
+
+<Tabs>
+  <Tab title="Grafana Cloud">
+    1. Go to your Grafana Cloud dashboard → **Explore**
+    2. Select your Prometheus data source — it will be named something like **grafanacloud-yourstack-prom** (you can find it under **Connections** → **Data sources** if you're unsure)
+    3. Search for metrics starting with `cerebrium_`
+
+    **Example queries:**
+
+    <Note>
+    Histogram metrics in Prometheus have `_milliseconds` appended by OTLP's unit suffix convention, so you'll see names like `cerebrium_run_execution_time_ms_milliseconds_bucket`. This is expected behavior — see the [metric name mapping note](#execution-metrics) above.
+    </Note>
+
+    ```promql
+    # CPU usage by app
+    cerebrium_cpu_utilization_cores{project_id="YOUR_PROJECT_ID"}
+
+    # Memory for a specific app
+    cerebrium_memory_usage_bytes{app_name="my-model"}
+
+    # Container scaling over time
+    cerebrium_containers_running_count{project_id="YOUR_PROJECT_ID"}
+
+    # Request rate (requests per second over 5 minutes)
+    rate(cerebrium_run_total[5m])
+
+    # p99 execution latency
+    histogram_quantile(0.99, rate(cerebrium_run_execution_time_ms_milliseconds_bucket{app_name="my-model"}[5m]))
+
+    # p99 end-to-end response time
+    histogram_quantile(0.99, rate(cerebrium_run_response_time_ms_milliseconds_bucket{app_name="my-model"}[5m]))
+
+    # Error rate as a percentage
+    rate(cerebrium_run_errors_total{app_name="my-model"}[5m]) / rate(cerebrium_run_total{app_name="my-model"}[5m]) * 100
+
+    # Average cold start time
+    rate(cerebrium_run_coldstart_time_ms_milliseconds_sum{app_name="my-model"}[5m]) / rate(cerebrium_run_coldstart_time_ms_milliseconds_count{app_name="my-model"}[5m])
+    ```
+
+  </Tab>
+  <Tab title="Datadog">
+    1. Go to **Metrics** → **Explorer** in your Datadog dashboard
+    2. Search for metrics starting with `cerebrium`
+    3. You can filter by `project_id`, `app_name`, and other labels using the "from" field
+  </Tab>
+  <Tab title="Prometheus">
+    Query your Prometheus instance directly. All Cerebrium metrics are prefixed with `cerebrium_`:
+
+    ```promql
+    # List all Cerebrium metrics
+    {__name__=~"cerebrium_.*"}
+
+    # CPU usage across all apps
+    cerebrium_cpu_utilization_cores
+    ```
+
+  </Tab>
+</Tabs>
+
+## Managing Metrics Export
+
+You can manage your metrics export configuration from the dashboard at any time by going to **Integrations** → **Metrics Export**.
+
+- **Disable export:** Toggle the switch off. Your configuration is preserved — you can re-enable at any time without reconfiguring.
+- **Update credentials:** Enter new authentication headers and click **Save Changes**. Useful when rotating API keys.
+- **Change endpoint:** Update the OTLP endpoint field and click **Save Changes**.
+- **Check status:** The dashboard shows whether export is connected, the time of the last successful export, and any error messages.
+
+## Troubleshooting
+
+### Metrics not appearing
+
+1. **Check the dashboard status.** Go to **Integrations** → **Metrics Export** and look for the connection status. If it shows "Paused," export was automatically disabled after repeated failures — click **Re-enable** after fixing the issue.
+2. **Run a connection test.** Click **Test Connection** on the dashboard. Common errors:
+   - **401 / 403 Unauthorized:** Your auth headers are wrong. For Grafana Cloud, make sure you're using a MetricsPublisher token (not a Prometheus Remote Write token). For Datadog, verify your API key is active.
+   - **404 Not Found:** The OTLP endpoint URL is incorrect. Double-check the URL matches your platform and region.
+   - **Connection timeout:** Your endpoint may be unreachable. For self-hosted Prometheus, confirm the host is publicly accessible and port `4318` is open.
+3. **Check your platform's data source.** In Grafana Cloud, make sure you're querying the correct Prometheus data source (not a Loki or Tempo source). In Datadog, check that your site region matches the endpoint you configured.
+
+### Metrics appear but values look wrong
+
+- **Histogram metrics have `_milliseconds` in the name.** This is normal — Prometheus appends unit suffixes from OTLP metadata. Use the full name (e.g., `cerebrium_run_execution_time_ms_milliseconds_bucket`) in your queries.
+- **Container counts fluctuate during deploys.** This is expected — you may see temporary spikes in `cerebrium_containers_running_count` during rolling deployments as new containers start and old ones drain.
+- **Gaps in metrics.** Short gaps (1-2 minutes) can occur during deployments or scaling events. If you see persistent gaps, check whether export was paused.
+
+### Still stuck?
+
+Reach out to [support@cerebrium.ai](mailto:support@cerebrium.ai) with your project ID and the error message from the dashboard — we can check the export logs on our side.
