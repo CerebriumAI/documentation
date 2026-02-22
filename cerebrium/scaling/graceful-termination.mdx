@@ -9,7 +9,7 @@ Cerebrium runs in a shared, multi-tenant environment. To efficiently scale, opti
 
 ## Understanding Instance Termination
 
-For both application autoscaling and our own internal node scaling, we will send your application a SIGTERM signal, as a warning to the application that we are intending to shut down this instance. For Cortex applications (Cerebriums default runtime), this is handled. On custom runtimes, should you wish to gracefully shut down, you will need to catch and handle this signal. Once at least `response_grace_period` has elapsed, we will send your application a SIGKILL signal, terminating the instance immediately.
+For both application autoscaling and our own internal node scaling, we will send your application a SIGTERM signal, as a warning to the application that we are intending to shut down this instance. For cortex applications (Cerebriums default runtime), this is handled. On custom runtimes, should you wish to gracefully shut down, you will need to catch and handle this signal. Once at least `response_grace_period` has elapsed, we will send your application a SIGKILL signal, terminating the instance immediately.
 
 When Cerebrium needs to terminate an contanier, we do the following:
 
@@ -22,7 +22,7 @@ Below is a chart that shows it more eloquently:
 
 ```mermaid
 flowchart TD
-    A[SIGTERM sent] --> B[Cortex]
+    A[SIGTERM sent] --> B[cortex]
     A --> C[Custom Runtime]
 
     B --> D[automatically captured]
@@ -125,12 +125,12 @@ def hello():
 If you already have a `cerebrium.toml` file, add or update these sections. If you don't have one, create a new file with the following:
 
 ```toml
-[cerebrium.deployment]
+[deployment]
 name = "your-app-name"
 include = ["./*"]
 exclude = [".*"]
 
-[cerebrium.hardware]
+[hardware]
 cpu = 1
 memory = 1.0
 compute = "CPU"
@@ -138,13 +138,13 @@ gpu_count = 0
 provider = "aws"
 region = "us-east-1"
 
-[cerebrium.scaling]
+[scaling]
 min_replicas = 0
 max_replicas = 2
 cooldown = 30
 replica_concurrency = 1  # Must match max_concurrency in your AppState
 
-[cerebrium.runtime.custom]
+[runtime.docker]
 port = 8000
 dockerfile_path = "./Dockerfile"
 ```

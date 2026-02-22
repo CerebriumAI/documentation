@@ -26,7 +26,7 @@ Set up Cerebrium:
 Add these pip packages to your `cerebrium.toml`:
 
 ```
-[cerebrium.dependencies.pip]
+[dependencies.pip]
 torch = ">=2.0.0"
 "pipecat-ai[silero, daily, openai, deepgram, cartesia, twilio]" = "0.0.47"
 aiohttp = ">=3.9.4"
@@ -99,7 +99,7 @@ Replace the stream URL with your deployment's base endpoint, using your project 
 Configure Cerebrium to run the FastAPI server by adding this to `cerebrium.toml`:
 
 ```
-[cerebrium.runtime.custom]
+[runtime.custom]
 port = 8765
 entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8765"]
 healthcheck_endpoint = "/health"
@@ -263,14 +263,14 @@ For scaling criteria, use Cerebrium's `replica_concurrency` setting to spawn new
 To make the two updates above you can update your cerebrium.toml to contain the following:
 
 ```
-[cerebrium.hardware]
+[hardware]
 region = "us-east-1"
 provider = "aws"
 compute = "CPU"
 cpu = 10
 memory = 8.0
 
-[cerebrium.scaling]
+[scaling]
 min_replicas = 1
 max_replicas = 3
 cooldown = 30

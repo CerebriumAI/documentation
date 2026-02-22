@@ -387,7 +387,7 @@ CMD ["python3", "main.py", "start"]
 In our `cerebrium.toml`, edit the values with the following contents:
 
 ```
-[cerebrium.deployment]
+[deployment]
 name = "outbound-livekit-agent"
 python_version = "3.11"
 docker_base_image_url = ""
@@ -395,21 +395,21 @@ disable_auth = false
 include = ['./*', 'main.py', 'cerebrium.toml']
 exclude = ['.*']
 
-[cerebrium.hardware]
+[hardware]
 cpu = 2
 memory = 8.0
 compute = "CPU"
 
-[cerebrium.scaling]
+[scaling]
 min_replicas = 1
 max_replicas = 5
 cooldown = 30
 replica_concurrency = 1
 
-[cerebrium.dependencies.paths]
-pip = "requirements.txt"
+[dependencies.pip]
+_file_relative_path = "requirements.txt"
 
-[cerebrium.runtime.custom]
+[runtime.custom]
 port = 8600
 dockerfile_path = "./Dockerfile"
 ```

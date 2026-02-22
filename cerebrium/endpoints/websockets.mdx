@@ -10,9 +10,9 @@ To set up a WebSocket endpoint, you need to configure your app to use a custom r
 Below is an example of the required changes in your `cerebrium.toml` configuration file:
 
 ```toml
-[cerebrium.runtime.custom]
+[runtime.python]
 port = 5000
-entrypoint = "uvicorn main:app --host 0.0.0.0 --port 5000"
+entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000"]
 healthcheck_endpoint = "/health"
 readycheck_endpoint = "/ready"
 ```
