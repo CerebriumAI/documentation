@@ -3,12 +3,16 @@ title: "Using Private Docker Registries"
 description: "How to authenticate, pull, and use private Docker images as base images in your deployments."
 ---
 
-Cerebrium supports using your own private Docker images as base images for your deployments - including images from Docker Hub and AWS ECR.
+Cerebrium supports using your own private Docker images as base images for your deployments — including images from Docker Hub, AWS ECR, GCR, and any other registry.
 
-Our build system securely pulls your private image using the Docker credentials stored in your ~/.docker/config.json, and then builds your app on top of that image. Since these credentials are used during deployment, they should be team-accessible rather than tied to a single individual.
+Our build system pulls your private image using the Docker credentials from your `~/.docker/config.json`, then builds your app on top of it.
+
+<Warning>
+  Always use `docker login -u <username>` (not just `docker login`). The plain `docker login` command uses an OAuth flow that creates tokens incompatible with our build system. See [Troubleshooting](#troubleshooting) if you run into auth issues.
+</Warning>
 
 <Note>
-  Your Docker images MUST support `linux/amd64` architecture. This is required
+  Your Docker images must support `linux/amd64` architecture. This is required
   for Cerebrium's build environment.
 </Note>
 
@@ -82,11 +86,99 @@ cerebrium deploy
 
 Your application should then proceed to build as normal.
 
+## CI/CD Integration
+
+To deploy private images from a CI/CD pipeline, run `docker login` before `cerebrium deploy` in the same job. The CLI reads `~/.docker/config.json` automatically.
+
+<Tabs>
+  <Tab title="GitHub Actions (Docker Hub)">
+    ```yaml
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Deploy to Cerebrium
+        run: |
+          pip install cerebrium
+          cerebrium deploy --api-key ${{ secrets.CEREBRIUM_API_KEY }}
+    ```
+
+  </Tab>
+  <Tab title="GitHub Actions (AWS ECR)">
+    ```yaml
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to ECR
+        run: |
+          aws ecr get-login-password --region us-east-1 | \
+            docker login --username AWS --password-stdin \
+            123456789.dkr.ecr.us-east-1.amazonaws.com
+
+      - name: Deploy to Cerebrium
+        run: |
+          pip install cerebrium
+          cerebrium deploy --api-key ${{ secrets.CEREBRIUM_API_KEY }}
+    ```
+
+    <Warning>
+      ECR tokens expire after 12 hours. The `docker login` step must run in the same job as `cerebrium deploy` — don't cache ECR credentials across jobs.
+    </Warning>
+
+  </Tab>
+</Tabs>
+
+## Troubleshooting
+
+### "Unable to pull Docker image" or "unauthorized"
+
+**Check 1: Did you use `docker login -u`?**
+
+Running `docker login` without `-u` uses Docker's web-based OAuth flow, which creates tokens that don't work with our build system. Always use:
+
+```bash
+docker login -u your-username
+```
+
+**Check 2: Is Docker Desktop using a credential store?**
+
+Run `cat ~/.docker/config.json` and look for `"credsStore": "desktop"` (or `"osxkeychain"`, `"wincred"`). If present, your credentials are stored externally and not available to the CLI. Fix:
+
+```bash
+# Remove the credsStore line from config.json, then re-login:
+docker login -u your-username
+```
+
+Verify credentials are stored directly by checking that the `"auth"` field is populated:
+
+```bash
+cat ~/.docker/config.json | jq '.auths'
+```
+
+You should see base64-encoded values, not empty objects.
+
+**Check 3: Are your credentials expired?**
+
+Some registries issue temporary tokens. ECR tokens expire after 12 hours. Re-run `docker login` and deploy again.
+
+**Check 4: Is the image URL correct?**
+
+Make sure `docker_base_image_url` in your `cerebrium.toml` matches the registry you logged into. A common mistake is logging into Docker Hub but using an ECR image URL (or vice versa).
+
 ## Security Notes
 
-You might be wondering what security measures Cerebrium follows in order to keep your credentials safe - we take the following precaustions:
+Your Docker credentials are handled securely:
 
-1. **In Transit:** Credentials are sent over HTTPS
+1. **In Transit:** Sent over HTTPS
 2. **In Storage:** Stored in DynamoDB with automatic TTL-based deletion after build completion
 3. **In Logs:** Never logged or displayed (using obfuscated.String type)
 4. **In Build:** Only accessible during build, then discarded
