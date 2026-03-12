@@ -29,6 +29,8 @@ disable_auth = true
 
 [cerebrium.runtime.rime]
 port = 8001
+# model_name = "arcana"  # Optional: specify a Rime model (e.g. "arcana", "mist", "mistv2")
+# language = "en"        # Optional: specify language code (e.g. "en", "es")
 
 [cerebrium.hardware]
 cpu = 4
@@ -90,6 +92,25 @@ Authorization Bearer <RIME_API_KEY>
 {"text": "incomplete "},
 {"text": "phrase "},
 {"operation": "eos"}
+```
+
+## Runtime Configuration
+
+The `[cerebrium.runtime.rime]` section supports the following parameters:
+
+| Option       | Type    | Default  | Description                                                                                               |
+| ------------ | ------- | -------- | --------------------------------------------------------------------------------------------------------- |
+| `port`       | integer | required | Port the Rime server listens on. Typically `8001`.                                                        |
+| `model_name` | string  | —        | Rime model to load (e.g. `"arcana"`, `"mist"`, `"mistv2"`). Defaults to Rime's server default if not set. |
+| `language`   | string  | —        | Language code for the model (e.g. `"en"`, `"es"`). Defaults to Rime's server default if not set.          |
+
+Example with optional parameters:
+
+```toml
+[cerebrium.runtime.rime]
+port = 8001
+model_name = "arcana"
+language = "en"
 ```
 
 ## Scaling and Concurrency
