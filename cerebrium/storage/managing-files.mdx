@@ -125,7 +125,11 @@ if os.path.exists("/persistent-storage/models/mymodel.pt"):
 
 The default 50GB persistent volume can be increased up to 1TB through self-service. The first 100GB is free, then $0.05 per GB per month.
 
-1. **Via Dashboard**: Navigate to your project settings and find the storage/volumes section to resize your volume.
+1. **Via Dashboard**: Navigate to your project and select **Volumes**. Click the three-dot menu on your volume and select **Increase Size**.
+
+<Frame>
+  <img src="/images/storage-volume-resize.png" alt="Volume resize option in the Cerebrium dashboard" />
+</Frame>
 
 2. **Via API**: Use the resize volume endpoint:
 
