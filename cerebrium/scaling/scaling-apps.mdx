@@ -193,7 +193,7 @@ The `evaluation_interval` parameter controls the time window (in seconds) over w
 
 ```toml
 [cerebrium.scaling]
-evaluation_interval = 30  # Evaluate metrics over 30-second windows
+evaluation_interval_seconds = 30  # Evaluate metrics over 30-second windows
 ```
 
 A shorter interval makes the autoscaler more responsive to traffic spikes but may cause more frequent scaling events. A longer interval smooths out transient spikes but may delay scaling responses.
@@ -208,14 +208,14 @@ A shorter interval makes the autoscaler more responsive to traffic spikes but ma
 
 <Warning>Requires CLI version 2.1.5 or higher.</Warning>
 
-The `load_balancing` parameter controls how incoming requests are distributed across your replicas. When not specified, the system automatically selects the best algorithm based on your `replica_concurrency` setting.
+The `load_balancing_algorithm` parameter controls how incoming requests are distributed across your replicas. When not specified, the system automatically selects the best algorithm based on your `replica_concurrency` setting.
 
 ```toml
 [cerebrium.scaling]
-load_balancing = "min-connections"  # Explicitly set load balancing algorithm
+load_balancing_algorithm = "min-connections"  # Explicitly set load balancing algorithm
 ```
 
-**Default behavior**: When `load_balancing` is not set, the system uses `first-available` for `replica_concurrency <= 3` (typical for GPU workloads) and `round-robin` for higher concurrency.
+**Default behavior**: When `load_balancing_algorithm` is not set, the system uses `first-available` for `replica_concurrency <= 3` (typical for GPU workloads) and `round-robin` for higher concurrency.
 
 ### Available Algorithms
 
@@ -280,3 +280,26 @@ Implements the "Power of Two Choices" algorithm: randomly samples two replicas a
 | High-throughput, many replicas           | `random-choice-2`           | Θ(1) selection with near-optimal distribution      |
 | Uniform request times, even distribution | `round-robin`               | Predictable rotation, no hot spots over time       |
 | Latency-sensitive with variable load     | `min-connections`           | Minimizes p90/p99 by routing to least busy replica |
+
+## Compute Tier
+
+<Warning>Requires CLI version 2.1.6 or higher.</Warning>
+
+The `compute_tier` parameter controls whether your replicas are scheduled on spot (interruptible) or on-demand (protected) instances. This directly affects cost and availability.
+
+```toml
+[cerebrium.scaling]
+compute_tier = "protected"  # Use on-demand instances for higher availability
+```
+
+### Available Tiers
+
+| Tier            | Description                                                                                      |
+| --------------- | ------------------------------------------------------------------------------------------------ |
+| `interruptible` | **(Default)** Scheduled on spot instances. Lower cost, but may be interrupted by the cloud provider during periods of high demand. |
+| `protected`     | Scheduled on on-demand instances. Higher availability with no interruptions, at increased cost.  |
+
+**Choosing a tier:**
+
+- Use `interruptible` (default) for batch workloads, development, or cost-sensitive applications that can tolerate occasional interruptions.
+- Use `protected` for production services with strict availability requirements or long-running requests where interruption would be costly.
