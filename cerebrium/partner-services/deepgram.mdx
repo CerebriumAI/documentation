@@ -37,8 +37,18 @@ cerebrium cp <model>.dg deepgram-models/<model>.dg
 cerebrium cp nova-3-general.en.streaming.123456.dg deepgram-models/nova-3-general.en.streaming.123456.dg
 ```
 
-4. Create a file named <b>engine.toml</b> with the following content and upload to your <b>/persistent-storage/</b> root directory. These are
+<Note>
+The `deepgram-models` directory remains at the root level of persistent storage and is shared across all Deepgram apps in the project. Configuration files (`api.toml` and `engine.toml`), however, must be placed under the app name directory (see steps 4 and 5 below).
+</Note>
+
+4. Create a file named <b>engine.toml</b> with the following content and upload to your persistent storage under the app name directory (e.g., `{appName}/engine.toml`). These are
    the default settings but feel free to update.
+
+   For example, if your app is named `deepgram`:
+
+   ```bash
+   cerebrium cp engine.toml deepgram/engine.toml
+   ```
 
 ```bash
 
@@ -122,8 +132,14 @@ step = 0.2
 # state = "disabled" # or "enabled" or "auto"
 ```
 
-5. Create a file named <b>api.toml</b> with the following content and upload to your <b>/persistent-storage/</b> root directory. These are
+5. Create a file named <b>api.toml</b> with the following content and upload to your persistent storage under the app name directory (e.g., `{appName}/api.toml`). These are
    the default settings but feel free to update.
+
+   For example, if your app is named `deepgram`:
+
+   ```bash
+   cerebrium cp api.toml deepgram/api.toml
+   ```
 
 ```bash
 ### Keep in mind that all paths are in-container paths, and do not need to exist
