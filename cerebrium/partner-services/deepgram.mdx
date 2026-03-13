@@ -38,7 +38,10 @@ cerebrium cp nova-3-general.en.streaming.123456.dg deepgram-models/nova-3-genera
 ```
 
 <Note>
-The `deepgram-models` directory remains at the root level of persistent storage and is shared across all Deepgram apps in the project. Configuration files (`api.toml` and `engine.toml`), however, must be placed under the app name directory (see steps 4 and 5 below).
+  The `deepgram-models` directory remains at the root level of persistent
+  storage and is shared across all Deepgram apps in the project. Configuration
+  files (`api.toml` and `engine.toml`), however, must be placed under the app
+  name directory (see steps 4 and 5 below).
 </Note>
 
 4. Create a file named <b>engine.toml</b> with the following content and upload to your persistent storage under the app name directory (e.g., `{appName}/engine.toml`). These are
