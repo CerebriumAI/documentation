@@ -53,8 +53,8 @@ gpu_count = 1
 
 From the above, we do the following:
 
-- Since we need a GPU, we need to use one of the base images that come from Nvidia that has the CUDA libraries installed. We use the Cuda 12 image. You can see other images [here](https://docs.cerebrium.ai/cerebrium/environments/custom-images).
-- Depending on the type of CPU/GPU you need, you can update the hardware settings to run your app. You can see the full list available [here](https://docs.cerebrium.ai/available-hardware).
+- Since we need a GPU, we need to use one of the base images that come from Nvidia that has the CUDA libraries installed. We use the Cuda 12 image. You can see other images [here](/cerebrium/container-images/defining-container-images).
+- Depending on the type of CPU/GPU you need, you can update the hardware settings to run your app. You can see the available options in the [GPU guide](/cerebrium/hardware/using-gpus) and [CPU and memory guide](/cerebrium/hardware/cpu-and-memory).
 - We copy across the pip packages we need to install
 - Replicate uses pget to download model weights - therefore, we need to download it to use it. We do this by installing curl and then adding the shell commands in our cerebrium.toml
 
@@ -290,6 +290,6 @@ You should be all ready to go.
 
 You can read further about some of the functionality Cerebrium has to offer:
 
-- [Secrets](../cerebrium/environments/using-secrets)
-- [Model scaling](../cerebrium/environments/app-scaling)
-- [Keeping models warm](../cerebrium/environments/warm-models)
+- [Secrets](/cerebrium/other-topics/using-secrets)
+- [Model scaling](/cerebrium/scaling/scaling-apps)
+- [Faster cold starts](/cerebrium/other-topics/faster-cold-starts)
