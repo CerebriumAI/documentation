@@ -3,7 +3,7 @@
   "theme": "mint",
   "css": "/custom.css",
   "name": "Cerebrium",
-  "description": "Cerebrium developer documentation to help you build, deploy, and scale AI applications on serverless compute. Learn about serverless GPUs and CPUs, long-running jobs, fine-tuning, hosting LLMs and voice agents, observability, cold starts, and multi-region deployments.",
+  "description": "Cerebrium developer documentation for real-time and production AI workloads. Learn how to deploy low-latency inference APIs, voice agents, multi-region apps, serverless GPUs and CPUs, and workloads that need strong cold-start and scaling performance.",
   "colors": {
     "primary": "#EB3A6F",
     "light": "#F393B0",
@@ -23,7 +23,11 @@
             "groups": [
               {
                 "group": "Getting Started",
-                "pages": ["cerebrium/getting-started/introduction"]
+                "pages": [
+                  "cerebrium/getting-started/introduction",
+                  "cerebrium/other-topics/faster-cold-starts",
+                  "cerebrium/deployments/multi-region-deployment"
+                ]
               },
               {
                 "group": "Container Images",
@@ -222,7 +226,7 @@
   "seo": {
     "indexing": "navigable",
     "metatags": {
-      "description": "Cerebrium developer documentation to help you build, deploy, and scale AI applications on serverless compute. Learn about serverless GPUs and CPUs, long-running jobs, fine-tuning, hosting LLMs and voice agents, observability, cold starts, and multi-region deployments.",
+      "description": "Cerebrium developer documentation for real-time and production AI workloads. Learn how to deploy low-latency inference APIs, voice agents, multi-region apps, serverless GPUs and CPUs, and workloads that need strong cold-start and scaling performance.",
       "keywords": "Cerebrium, serverless GPUs, AI infrastructure, hosting Large Language Models, AI voice agents, Real-time AI",
       "language": "en",
       "copyright": "Copyright 2025"
