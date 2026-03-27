@@ -270,11 +270,11 @@
   "redirects": [
     {
       "source": "/cerebrium/:slug*",
-      "destination": "/docs/:slug*"
+      "destination": "/:slug*"
     },
     {
       "source": "/docs/cerebrium/:slug*",
-      "destination": "/docs/:slug*"
+      "destination": "/:slug*"
     }
   ],
   "integrations": {

@@ -6,13 +6,23 @@
       "permanent": true
     },
     {
-      "source": "/cerebrium/:path*",
-      "destination": "/docs/:path*",
+      "source": "/cerebrium",
+      "destination": "/docs",
       "permanent": true
     },
     {
-      "source": "/docs/cerebrium/:path*",
-      "destination": "/docs/:path*",
+      "source": "/cerebrium/:path(.*)",
+      "destination": "/docs/:path",
+      "permanent": true
+    },
+    {
+      "source": "/docs/cerebrium",
+      "destination": "/docs",
+      "permanent": true
+    },
+    {
+      "source": "/docs/cerebrium/:path(.*)",
+      "destination": "/docs/:path",
       "permanent": true
     }
   ],
