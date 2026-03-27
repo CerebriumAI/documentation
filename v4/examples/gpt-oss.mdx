@@ -67,7 +67,8 @@ Key configuration details:
 - The `docker_base_image_url` is set to the <b>cuda:12.8.1-devel image</b>, which is large but necessary to include all required packages/libraries.
 - Pre-build commands install uv (a faster Python package installer) and the required vLLM packages. These commands execute at the start of the build process, before dependency installation begins, making them essential for setting up the build environment. Read more [here](https://docs.cerebrium.ai/container-images/defining-container-images#pre-build-commands).
 - Hardware is set to an <b>H100</b> in the <b>us-east-1 region</b>.
-- <b>Replica concurrency is 32</b>, meaning a single H100 container handles 32 concurrent requests.
+- <b>Replica concurrency is 32</b>, meaning a single H100 container handles 32
+  concurrent requests.
 - `vllm serve` turns the container into an <b>OpenAI compatible server</b> running on <b>port 8000</b>.
 
 ### Deploy & Test
