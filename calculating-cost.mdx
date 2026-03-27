@@ -12,12 +12,14 @@ Deploying a model incurs two billable processes:
 
 2. **App runtime** — the time code runs from start to finish on each request. Three cost components apply:
 
-- <u>Cold-start</u>: The time to spin up server(s),
-  load the environment, connect storage, etc. Cerebrium continuously optimizes cold-start latency.
+- <u>Cold-start</u>: The time to spin up server(s), load the environment,
+  connect storage, etc. Cerebrium continuously optimizes cold-start latency.
   <b>Cold-start time is not billed.</b>
-- <u>Model initialization</u>: Code outside the request function that only runs on cold start (e.g., loading a
-  model into GPU RAM, importing packages). This time is billed.
-- <u>Function runtime</u>: Code inside the request function, executed on every request
+- <u>Model initialization</u>: Code outside the request function that only runs
+  on cold start (e.g., loading a model into GPU RAM, importing packages). This
+  time is billed.
+- <u>Function runtime</u>: Code inside the request function, executed on every
+  request
 
 **Example cost calculation**
 

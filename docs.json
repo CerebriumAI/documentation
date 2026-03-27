@@ -23,9 +23,7 @@
             "groups": [
               {
                 "group": "Getting Started",
-                "pages": [
-                  "getting-started/introduction"
-                ]
+                "pages": ["getting-started/introduction"]
               },
               {
                 "group": "Container Images",
@@ -92,9 +90,7 @@
               },
               {
                 "group": "Integrations",
-                "pages": [
-                  "integrations/metrics-export"
-                ]
+                "pages": ["integrations/metrics-export"]
               },
               {
                 "group": "Other concepts",
