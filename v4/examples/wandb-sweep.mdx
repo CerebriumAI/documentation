@@ -418,7 +418,7 @@ This code implements a hyperparameter sweep system using Weights & Biases (wandb
 CEREBRIUM_API_KEY=eyJ....
 ```
 
-- Update the Cerebrium endpoint based on your project ID and the function name your wish to call. You will see we append this url with “?async=true”. This means its a fire-and-forgot request that can run up to 12 hours. You can read more [here](https://docs.cerebrium.ai/cerebrium/endpoints/async).
+- Update the Cerebrium endpoint based on your project ID and the function name your wish to call. You will see we append this url with “?async=true”. This means its a fire-and-forgot request that can run up to 12 hours. You can read more [here](https://docs.cerebrium.ai/endpoints/async).
 - We then define a Bayesian optimization sweep configuration that will search through different hyperparameters including:
   - Learning rate (log uniform distribution between ~4.54e-5 and ~9.12e-4)
   - Batch size (1, 2, or 4)
@@ -453,7 +453,7 @@ Monitor training progress in your W&B dashboard:
 
 2. Quality assurance:
    - Run CI/CD tests on model outputs
-   - Use Cerebrium's [webhook functionality](https://docs.cerebrium.ai/cerebrium/endpoints/webhook)
+   - Use Cerebrium's [webhook functionality](https://docs.cerebrium.ai/endpoints/webhook)
 
 3. Deployment:
    - Create inference endpoint

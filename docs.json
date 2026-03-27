@@ -24,88 +24,88 @@
               {
                 "group": "Getting Started",
                 "pages": [
-                  "cerebrium/getting-started/introduction",
-                  "cerebrium/other-topics/faster-cold-starts",
-                  "cerebrium/deployments/multi-region-deployment"
+                  "getting-started/introduction",
+                  "other-topics/faster-cold-starts",
+                  "deployments/multi-region-deployment"
                 ]
               },
               {
                 "group": "Container Images",
                 "pages": [
-                  "cerebrium/container-images/defining-container-images",
-                  "cerebrium/container-images/custom-web-servers",
-                  "cerebrium/container-images/custom-dockerfiles",
-                  "cerebrium/container-images/private-docker-registry"
+                  "container-images/defining-container-images",
+                  "container-images/custom-web-servers",
+                  "container-images/custom-dockerfiles",
+                  "container-images/private-docker-registry"
                 ]
               },
               {
                 "group": "GPUs and Compute Resources",
                 "pages": [
-                  "cerebrium/hardware/using-gpus",
-                  "cerebrium/hardware/using-cuda",
-                  "cerebrium/hardware/cpu-and-memory"
+                  "hardware/using-gpus",
+                  "hardware/using-cuda",
+                  "hardware/cpu-and-memory"
                 ]
               },
               {
                 "group": "Scaling apps",
                 "pages": [
-                  "cerebrium/scaling/scaling-apps",
-                  "cerebrium/scaling/graceful-termination",
-                  "cerebrium/scaling/batching-concurrency"
+                  "scaling/scaling-apps",
+                  "scaling/graceful-termination",
+                  "scaling/batching-concurrency"
                 ]
               },
               {
                 "group": "Deployments",
                 "pages": [
-                  "cerebrium/deployments/ci-cd",
-                  "cerebrium/deployments/gradual-roll-out",
-                  "cerebrium/deployments/multi-region-deployment"
+                  "deployments/ci-cd",
+                  "deployments/gradual-roll-out",
+                  "deployments/multi-region-deployment"
                 ]
               },
               {
                 "group": "Endpoints",
                 "pages": [
-                  "cerebrium/endpoints/openai-compatible-endpoints",
-                  "cerebrium/endpoints/inference-api",
-                  "cerebrium/endpoints/streaming",
-                  "cerebrium/endpoints/websockets",
-                  "cerebrium/endpoints/webhook",
-                  "cerebrium/endpoints/async"
+                  "endpoints/openai-compatible-endpoints",
+                  "endpoints/inference-api",
+                  "endpoints/streaming",
+                  "endpoints/websockets",
+                  "endpoints/webhook",
+                  "endpoints/async"
                 ]
               },
               {
                 "group": "Networking",
                 "pages": [
-                  "cerebrium/networking/custom-domains",
-                  "cerebrium/networking/inter-cluster-routing"
+                  "networking/custom-domains",
+                  "networking/inter-cluster-routing"
                 ]
               },
               {
                 "group": "Storage",
-                "pages": ["cerebrium/storage/managing-files"]
+                "pages": ["storage/managing-files"]
               },
               {
                 "group": "Partner Services",
                 "pages": [
-                  "cerebrium/partner-services/index",
-                  "cerebrium/partner-services/deepgram",
-                  "cerebrium/partner-services/rime"
+                  "partner-services/index",
+                  "partner-services/deepgram",
+                  "partner-services/rime"
                 ]
               },
               {
                 "group": "Integrations",
                 "pages": [
-                  "cerebrium/integrations/metrics-export",
-                  "cerebrium/integrations/vercel"
+                  "integrations/metrics-export",
+                  "integrations/vercel"
                 ]
               },
               {
                 "group": "Other concepts",
                 "pages": [
                   "security",
-                  "cerebrium/other-topics/using-secrets",
-                  "cerebrium/other-topics/request-response-logging",
-                  "cerebrium/other-topics/faster-cold-starts",
+                  "other-topics/using-secrets",
+                  "other-topics/request-response-logging",
+                  "other-topics/faster-cold-starts",
                   "calculating-cost"
                 ]
               }
@@ -274,6 +274,12 @@
       "github": "https://www.linkedin.com/company/cerebrium"
     }
   },
+  "redirects": [
+    {
+      "source": "/cerebrium/:slug*",
+      "destination": "/:slug*"
+    }
+  ],
   "integrations": {
     "ga4": {
       "measurementId": "G-7SBXER6DHL"

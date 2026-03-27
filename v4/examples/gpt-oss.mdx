@@ -65,7 +65,7 @@ entrypoint = ["sh", "-c", "export HF_HUB_ENABLE_HF_TRANSFER=1 && export VLLM_USE
 In the above we do quite a few things:
 
 - We set the docker_base_image_url to the <b>cuda:12.8.1-devel image</b> which is quite large but necessary to contain all the require packages/libraries.
-- We use pre-build commands to install uv (a faster Python package installer) and install the required vLLM packages. These commands execute at the start of the build process, before dependency installation begins. This early execution timing makes them essential for setting up the build environment. You can read more [here](https://docs.cerebrium.ai/cerebrium/container-images/defining-container-images#pre-build-commands)
+- We use pre-build commands to install uv (a faster Python package installer) and install the required vLLM packages. These commands execute at the start of the build process, before dependency installation begins. This early execution timing makes them essential for setting up the build environment. You can read more [here](https://docs.cerebrium.ai/container-images/defining-container-images#pre-build-commands)
 - We set our hardware to use a <b>H100</b> and run in the <b>us-east-1 region</b>
 - We set the <b>replica concurrency to 32</b> meaning this container on a H100 can handle 32 requests concurrently at a time
 - Lastly, we use vllm serve to serve this container which turns it automatically into a <b>OpenAI compatible server</b>. This server runs on <b>port 8000</b> so we just too to export that.

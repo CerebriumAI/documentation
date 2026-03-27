@@ -18,12 +18,12 @@ If you are building a quick prototype with very little infrastructure pressure, 
 ## Why teams choose Cerebrium
 
 - Launch code in the cloud in seconds
-- Run [CPUs](/cerebrium/hardware/cpu-and-memory) or [GPUs](/cerebrium/hardware/using-gpus) with automatic scaling
-- Serve [REST APIs](/cerebrium/endpoints/inference-api), [streaming endpoints](/cerebrium/endpoints/streaming), [WebSockets](/cerebrium/endpoints/websockets), or any [ASGI-compatible app](/cerebrium/container-images/custom-web-servers)
-- Deploy across [multiple regions](/cerebrium/deployments/multi-region-deployment) for lower latency and residency requirements
-- Tune [concurrency and batching](/cerebrium/scaling/batching-concurrency) for real production traffic
-- Improve startup performance with [cold-start optimization strategies](/cerebrium/other-topics/faster-cold-starts)
-- Store model weights and files with [persistent storage](/cerebrium/storage/managing-files)
+- Run [CPUs](/hardware/cpu-and-memory) or [GPUs](/hardware/using-gpus) with automatic scaling
+- Serve [REST APIs](/endpoints/inference-api), [streaming endpoints](/endpoints/streaming), [WebSockets](/endpoints/websockets), or any [ASGI-compatible app](/container-images/custom-web-servers)
+- Deploy across [multiple regions](/deployments/multi-region-deployment) for lower latency and residency requirements
+- Tune [concurrency and batching](/scaling/batching-concurrency) for real production traffic
+- Improve startup performance with [cold-start optimization strategies](/other-topics/faster-cold-starts)
+- Store model weights and files with [persistent storage](/storage/managing-files)
 - Pay only for the compute you use — [billed by the second](https://www.cerebrium.ai/pricing)
 
 ## Start by workload
@@ -124,7 +124,7 @@ You should see the prompt in the logs. This is useful for quick code iteration, 
 cerebrium deploy
 ```
 
-This turns the function into a persistent [REST endpoint](/cerebrium/endpoints/inference-api) that accepts JSON input and can scale automatically.
+This turns the function into a persistent [REST endpoint](/endpoints/inference-api) that accepts JSON input and can scale automatically.
 
 Once deployed, your app will be callable through a POST endpoint shaped like:
 
@@ -136,17 +136,17 @@ https://api.aws.us-east-1.cerebrium.ai/v4/{project-id}/{app-name}/{function-name
 
 After your first deployment, the most useful next steps are usually:
 
-- [Reduce cold starts](/cerebrium/other-topics/faster-cold-starts)
-- [Tune scaling and concurrency](/cerebrium/scaling/batching-concurrency)
-- [Deploy to multiple regions](/cerebrium/deployments/multi-region-deployment)
-- [Use OpenAI-compatible endpoints](/cerebrium/endpoints/openai-compatible-endpoints)
-- [Store model weights in persistent storage](/cerebrium/storage/managing-files)
+- [Reduce cold starts](/other-topics/faster-cold-starts)
+- [Tune scaling and concurrency](/scaling/batching-concurrency)
+- [Deploy to multiple regions](/deployments/multi-region-deployment)
+- [Use OpenAI-compatible endpoints](/endpoints/openai-compatible-endpoints)
+- [Store model weights in persistent storage](/storage/managing-files)
 
 ## How Cerebrium works
 
 Cerebrium uses containerization to ensure consistent environments and reliable scaling for apps. When code is deployed, Cerebrium packages it with all necessary dependencies into a container image. This image serves as a blueprint for creating instances that handle incoming requests. The system automatically manages scaling, creating new instances when traffic increases and removing them during quiet periods.
 
-For a detailed explanation of how Cerebrium builds and manages container images, see our [Defining Container Images Guide](/cerebrium/container-images/defining-container-images).
+For a detailed explanation of how Cerebrium builds and manages container images, see our [Defining Container Images Guide](/container-images/defining-container-images).
 
 <Info>
   Content-Aware Storage forms the foundation of Cerebrium's speed. This system

@@ -58,7 +58,7 @@ _3_ requests in flight with no replicas currently available, Cerebrium will scal
 
 ## Processing Multiple Requests
 
-Apps can process multiple requests simultaneously using Cerebrium's batching and concurrency features. The system offers native support for frameworks with built-in batching capabilities and enables custom implementations through the [custom runtime](cerebrium/container-images/defining-container-images#custom-runtimes) feature. For detailed information about handling multiple requests efficiently, see our [Batching & Concurrency Guide](/cerebrium/scaling/batching-concurrency).
+Apps can process multiple requests simultaneously using Cerebrium's batching and concurrency features. The system offers native support for frameworks with built-in batching capabilities and enables custom implementations through the [custom runtime](container-images/defining-container-images#custom-runtimes) feature. For detailed information about handling multiple requests efficiently, see our [Batching & Concurrency Guide](/scaling/batching-concurrency).
 
 ## Instance Management
 
@@ -83,7 +83,7 @@ waits for the specified grace period, issues a SIGKILL command if the instance h
   handled to allow graceful termination of requests. For custom runtimes, you'll
   need to implement SIGTERM handling yourself to ensure requests complete
   gracefully before termination. See our [Graceful Termination
-  guide](/cerebrium/scaling/graceful-termination) for detailed implementation
+  guide](/scaling/graceful-termination) for detailed implementation
   examples, including FastAPI patterns for tracking and completing in-flight
   requests during shutdown.
 </Note>

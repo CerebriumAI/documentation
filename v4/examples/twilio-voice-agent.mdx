@@ -14,7 +14,7 @@ You can find the final version of the code [here](https://github.com/CerebriumAI
 Set up Cerebrium:
 
 1. Sign up [here](https://dashboard.cerebrium.ai/register)
-2. Follow installation docs [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation)
+2. Follow installation docs [here](https://docs.cerebrium.ai/getting-started/installation)
 3. Create a starter project:
    ```bash
    cerebrium init 4-twilio-voice-agent
@@ -105,7 +105,7 @@ entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8765"]
 healthcheck_endpoint = "/health"
 ```
 
-You can read more about run custom web servers [here](https://docs.cerebrium.ai/cerebrium/container-images/custom-web-servers).
+You can read more about run custom web servers [here](https://docs.cerebrium.ai/container-images/custom-web-servers).
 
 ### Twilio setup
 
@@ -229,7 +229,7 @@ The code:
    - [OpenAI](https://openai.com/) for LLM
    - [Cartesia](https://www.cartesia.ai/) for TTS
    - Other providers supported via PipeCat
-3. Uses [Secrets](https://docs.cerebrium.ai/cerebrium/environments/using-secrets) for authentication
+3. Uses [Secrets](https://docs.cerebrium.ai/environments/using-secrets) for authentication
 4. Creates a customizable PipelineTask supporting:
    - Image and Vision use cases ([docs](https://docs.pipecat.ai/docs/category/services))
    - Built-in interruption handling
