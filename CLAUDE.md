@@ -30,9 +30,17 @@
 - title: Clear, descriptive page title
 - description: Concise summary for SEO/navigation
 
+## Voice and tone
+
+- Direct, matter-of-fact tone — write reference material, not a tutorial blog post
+- Lead with imperative verbs: "Configure scaling in the TOML file" not "You can configure scaling by editing the TOML file"
+- State facts declaratively: "Cerebrium uses container images to package apps" not "You'll notice that Cerebrium uses container images"
+- Drop filler and hedging: "To use a custom domain, add a CNAME record" not "If you want to use a custom domain, you'll need to add a CNAME record"
+- Use "you/your" only when it adds clarity — e.g. distinguishing the reader's action from system behavior
+- Never use "we", "let's", "our", or "simply"
+
 ## Writing standards
 
-- Second-person voice ("you")
 - Prerequisites at start of procedural content
 - Test all code examples before publishing
 - Match style and formatting of existing pages

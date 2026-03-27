@@ -1,0 +1,116 @@
+---
+title: Faster Cold Starts
+description: Decrease the time it takes start your application
+---
+
+## Container vs Storage Volume for Model Loading
+
+Two main options exist for storing model weights:
+
+1. **Inside the Container**: Packaging model weights directly in your container image
+   - Pros:
+     - Faster initial startup as weights are already in the container
+     - No need to download or transfer weights from external storage
+   - Cons:
+     - Much larger container size, leading to longer deployment times
+     - Less flexibility to update model weights without rebuilding container
+
+2. **Storage Volume**: Storing weights in a persistent storage volume
+   - Pros:
+     - Smaller container sizes and faster deployments
+     - Easy to update model weights without rebuilding container
+   - Cons:
+     - Initial cold start includes time to load weights from storage
+     - Requires managing separate storage infrastructure
+
+Storing model weights in a storage volume works best for most applications. For smaller models requiring minimal cold start times, container storage may be more appropriate.
+
+<Note>
+  Increasing core counts can parallelize downloads, improving pull-through times
+  for large images. This benefit becomes particularly notable when handling
+  large files from the storage layer, as multiple cores process different parts
+  simultaneously, reducing overall download time.
+</Note>
+
+## Loading Models from Storage Volume Faster
+
+One of the biggest factors in model startup time is loading the model from storage into GPU memory. For example, in larger models of 20B+ parameters, it can take over 40 seconds to load using a normal Hugging Face load, even with 2GB/s transfer speeds from persistent storage.
+
+The underlying hardware is optimized for fast model loading, but several additional techniques can further reduce cold-start times.
+
+### Tensorizer (recommended)
+
+[Tensorizer](https://github.com/coreweave/tensorizer) is a library that loads models from storage into GPU memory in a single step. Initially built for S3, it also works with Cerebrium's persistent storage (nearly 2GB/s read speed). For large models (20B+ parameters), loading time decreases by 30–50%, with even greater improvements for larger models. See the [GitHub page](https://github.com/coreweave/tensorizer) for details on the underlying methods.
+
+The following section covers using **Tensorizer** to load a model from storage directly into GPU memory in a single step.
+
+### Installation
+
+Add the following to your `[cerebrium.dependencies.pip]` in your `cerebrium.toml` file to install Tensorizer in your deployment:
+
+```txt
+tensorizer = ">=2.7.0"
+```
+
+### Usage
+
+To use **Tensorizer**, you need to first serialise your model and save it to your persistent-storage.
+
+```python
+from tensorizer import TensorSerializer
+def serialize_model(model, save_path):
+    """Serialize the model and save the weights to the save_path."""
+    try:
+        serializer = TensorSerializer(save_path)
+        start = time.time()
+        serializer.write_module(model)
+        end = time.time()
+        print(f"Serializing model took {end - start} seconds", file=sys.stderr)
+        serializer.close()
+        return True
+    except Exception as e:
+        print("Serialization failed with error:", e, file=sys.stderr)
+        return False
+```
+
+This will convert your model to a protocol buffer serialised format that is optimised for faster transfer speeds and fast loading into GPU memory.
+
+On the next deployment start, load the serialised model from storage into GPU memory in a single step:
+
+```python
+
+from tensorizer import TensorDeserializer
+from tensorizer.utils import no_init_or_tensor
+def deserialize_saved_model(model_path, model_id, plaid=True):
+    """Deserialize the model from the model_path and load into GPU memory."""
+
+    # create a config object that we can use to init an empty model
+    config = AutoConfig.from_pretrained(model_id)
+
+    # Initialize empty model without loading weights into GPU
+    print("Initializing empty model", file=sys.stderr)
+    start = time.time()
+    with no_init_or_tensor():
+        # Load empty model from config
+        model = AutoModelForCausalLM.from_config(config)
+    end_init = time.time() - start
+
+    # Create deserializer object
+    # Note: plaid_mode enables faster deserialization but isn't safe for training
+    deserializer = TensorDeserializer(model_path, plaid_mode=True)
+
+    # Deserialize model directly into GPU (zero-copy)
+    print("Loading model", file=sys.stderr)
+    start = time.time()
+    deserializer.load_into_module(model)
+    end = time.time()
+    deserializer.close()
+
+    # Report timings
+    print(f"Initializing empty model took {end_init} seconds", file=sys.stderr)
+    print(f"\nDeserializing model took {end - start} seconds\n", file=sys.stderr)
+
+    return model
+```
+
+Tensorizer works with any model type — Transformers, Diffusers, scikit-learn, or custom PyTorch. The only requirement is the ability to initialize an empty model. The deserializer restores weights into that empty model.

@@ -1,0 +1,62 @@
+---
+title: CPU and Memory
+---
+
+## Overview
+
+CPU and memory resources are allocated per container and billed based on actual usage. Configure each app with specific CPU and memory requirements to optimize performance and cost.
+
+## Resource Configuration
+
+### CPU Configuration
+
+CPU resources are specified as vCPU units (float) in the `cerebrium.toml` file:
+
+```toml
+[cerebrium.hardware]
+cpu = 4    # Number of vCPU cores
+```
+
+Start with 4 CPU cores for most applications. Add cores based on monitoring, performance, and resource requirements. CPU usage is throttled when exceeding the specified limit. Fractional CPUs are also supported (e.g., `0.5`).
+
+### Memory Configuration
+
+Memory is specified in gigabytes as a floating-point number:
+
+```toml
+[cerebrium.hardware]
+memory = 16.0    # Memory in GB
+```
+
+Allocate system memory equal to the GPU's VRAM capacity as a baseline. This accounts for initial model loading and compilation before GPU transfer. Applications terminate with an Out of Memory (OOM) error if they exceed the specified memory limit.
+
+<Info>
+  Memory and CPU are billed based on usage, which reduces costs for end-users
+  and doesn’t require the overprovisioning of an entire instance.
+</Info>
+
+## Resource Limits
+
+Resource limits depend on the selected hardware configuration:
+
+| Hardware Type  | Max CPU Cores | Max Memory (GB) |
+| -------------- | ------------- | --------------- |
+| CPU Only       | 48            | 96              |
+| ADA_L40        | 16            | 128             |
+| AMPERE_A100    | 12            | 140             |
+| AMPERE_A10     | 48            | 192             |
+| ADA_L4         | 48            | 192             |
+| TURING_T4      | 48            | 192             |
+| HOPPER_H100    | 24            | 256             |
+| HOPPER_H200    | 24            | 256             |
+| BLACKWELL_B200 | 24            | 256             |
+| BLACKWELL_B300 | 24            | 512             |
+| TRN1           | 128           | 512             |
+
+## Memory Optimization
+
+The Transformers library provides memory optimization through the `low_cpu_mem_usage` flag, which reduces memory footprint at the cost of longer initialization times. Implement lazy loading for large datasets to further reduce memory usage. Monitor memory patterns through platform metrics to identify optimization opportunities. Use memory-efficient model loading techniques for large-scale deployments.
+
+## Resource Monitoring
+
+The platform monitors CPU utilization and throttling events to identify performance bottlenecks. Memory usage and OOM events are tracked to prevent application failures.

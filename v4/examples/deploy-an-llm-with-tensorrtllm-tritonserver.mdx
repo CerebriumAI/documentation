@@ -3,7 +3,7 @@ title: "Deploy Triton Inference server and TensorRT-LLM"
 description: "Achieve high throughput with Triton Inference Server and the TensorRT-LLM framework"
 ---
 
-In this tutorial, we'll show you how to deploy Llama 3.2 3B using TensorRT-LLM's PyTorch backend served through Nvidia Triton Inference Server.
+This tutorial deploys Llama 3.2 3B using TensorRT-LLM's PyTorch backend served through Nvidia Triton Inference Server.
 
 The TensorRT + Triton setup delivers **15x higher throughput** with **100% reliability** compared to the baseline (vanilla deployment), while reducing latency by **7-9x** across all percentiles. See the [Performance Analysis](#performance-analysis) section for detailed test methodology and results.
 
@@ -35,7 +35,7 @@ Below is the process of how the two work together in terms of handling requests:
 
 This setup allows multiple concurrent requests to be processed together on the GPU for maximum throughput.
 
-Now let's combine Triton and TensorRT-LLM together and see how it works
+The following sections combine Triton and TensorRT-LLM into a working deployment.
 
 ## Basic Setup
 
@@ -53,7 +53,7 @@ cerebrium init tensorrt-triton-demo
 cd tensorrt-triton-demo
 ```
 
-In order to download the model to Cerebrium, you need to be [granted acces](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct). Then add your [HuggingFace token](https://huggingface.co/settings/tokens) to your Cerebrium project secrets as `HF_AUTH_TOKEN` through the dashboard so we can authenticate while downloading.
+To download the model, [request access](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct) on Hugging Face. Then add the [HuggingFace token](https://huggingface.co/settings/tokens) to Cerebrium project secrets as `HF_AUTH_TOKEN` through the dashboard for authentication during download.
 
 ## Implementation
 
@@ -61,7 +61,7 @@ All files should be placed in the same project directory.
 
 ### Triton Model Configuration
 
-Create `config.pbtxt` to define Triton's model interface - you can view a more comprehensive list of what is available [here](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/user_guide/model_configuration.html#dynamic-batcher)
+Create `config.pbtxt` to define Triton's model interface. See the [full configuration reference](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/user_guide/model_configuration.html#dynamic-batcher) for all available options.
 
 ```protobuf
 name: "llama3_2"
@@ -298,7 +298,7 @@ class TritonPythonModel:
 
 ### Model Download Script
 
-To download our model, create `download_model.py`:
+Create `download_model.py` to download the model:
 
 ```python
 #!/usr/bin/env python3
@@ -385,7 +385,7 @@ The Dockerfile uses Nvidia's official Triton container with TensorRT-LLM pre-ins
 
 ### Deployment Configuration
 
-We now configure our container and autoscaling environment in `cerebrium.toml`. This file defines the hardware resources and scaling behavior:
+Configure the container and autoscaling environment in `cerebrium.toml`:
 
 ```toml
 [cerebrium.deployment]
@@ -427,17 +427,17 @@ Key configuration details:
 
 ### Download Model to Persistent Storage
 
-Before deploying, we need to download the model to Cerebrium's persistent storage. This ensures the model is available across all deployments and avoids redundant downloads during container startup.
+Before deploying, download the model to Cerebrium's persistent storage. This ensures the model is available across all deployments and avoids redundant downloads during container startup.
 
-The `cerebrium run` command executes a Python script in a temporary container with the same environment and hardware configuration as your deployment. It has access to persistent storage at `/persistent-storage`, so any files written there will be available to your deployed containers.
+The `cerebrium run` command executes a Python script in a temporary container with the same environment and hardware configuration as the deployment. It has access to persistent storage at `/persistent-storage`, so any files written there are available to deployed containers.
 
-Run the download script on Cerebrium:
+Run the download script:
 
 ```bash
 cerebrium run download_model.py
 ```
 
-You should see in the logs that the model either exists or has been downloaded successfully!
+The logs confirm whether the model already exists or has been downloaded successfully.
 
 ### Deploy the Model
 
@@ -447,7 +447,7 @@ Deploy the model:
 cerebrium deploy
 ```
 
-Once your application has been deployed successfully your should see the base endpoint url that we can use to call it - we will use this in the next section.
+After successful deployment, the base endpoint URL appears in the output. Use this URL in the next section.
 
 ## Test
 
@@ -492,7 +492,7 @@ The response follows Triton's standard inference protocol format with the genera
 
 ### Test Setup
 
-To validate the performance improvements of TensorRT + Triton, we compared it against a vanilla HuggingFace baseline serving the same Llama 3.2 3B Instruct model. Both deployments used identical hardware (NVIDIA A10 GPU) and were tested under the same load conditions.
+To validate performance improvements, TensorRT + Triton was compared against a vanilla HuggingFace baseline serving the same Llama 3.2 3B Instruct model. Both deployments used identical hardware (NVIDIA A10 GPU) and were tested under the same load conditions.
 
 **Vanilla Baseline Setup:**
 
@@ -528,4 +528,4 @@ These results demonstrate that TensorRT + Triton is not just faster, but also mo
 
 The complete implementation, including all configuration files and deployment scripts, is available in our [GitHub repository](https://github.com/CerebriumAI/examples/tree/master/5-large-language-models/8-faster-inference-with-triton-tensorrt).
 
-Clone the repository and follow this tutorial to deploy Llama 3.2 3B (or adapt it for your own models) with TensorRT-LLM and Triton Inference Server. You'll have a production-ready, high-performance LLM serving endpoint in minutes.
+Clone the repository and follow this tutorial to deploy Llama 3.2 3B (or adapt it for other models) with TensorRT-LLM and Triton Inference Server.

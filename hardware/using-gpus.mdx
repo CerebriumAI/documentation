@@ -1,0 +1,54 @@
+---
+title: Using GPUs
+---
+
+GPUs accelerate computational workloads through parallel processing. Originally designed for graphics rendering, modern GPUs are essential for AI models, large-scale data processing, and other compute-intensive applications.
+
+Cerebrium provides GPU access through configuration in the `cerebrium.toml` file, without requiring infrastructure management.
+
+## Specifying GPUs
+
+Configure GPUs in the `[cerebrium.hardware]` section of `cerebrium.toml`, specifying the type (`compute` parameter) and quantity (`gpu_count`). Additional deployment and scaling considerations are covered in the sections below.
+
+## Available GPUs
+
+The platform offers GPUs ranging from cost-effective development options to high-end enterprise hardware.
+
+| GPU Model    | Identifier       | VRAM (GB) | Max GPUs | Plan required |
+| ------------ | ---------------- | --------- | -------- | ------------- |
+| NVIDIA B300  | BLACKWELL_B300   | 262       | 8        | Enterprise    |
+| NVIDIA B200  | BLACKWELL_B200   | 180       | 8        | Enterprise    |
+| NVIDIA H200  | HOPPER_H200      | 141       | 8        | Enterprise    |
+| NVIDIA H100  | HOPPER_H100      | 80        | 8        | Enterprise    |
+| NVIDIA A100  | AMPERE_A100_80GB | 80        | 8        | Standard      |
+| NVIDIA A100  | AMPERE_A100_40GB | 40        | 8        | Standard      |
+| NVIDIA L40s  | ADA_L40          | 48        | 8        | Hobby+        |
+| NVIDIA L4    | ADA_L4           | 24        | 8        | Hobby+        |
+| NVIDIA A10   | AMPERE_A10       | 24        | 8        | Hobby+        |
+| NVIDIA T4    | TURING_T4        | 16        | 8        | Hobby+        |
+| AWS Trainium | TRN1             | 32        | 8        | Hobby+        |
+
+<Info>
+  The identifier is used in the `cerebrium.toml` file. It consists of the GPU
+  model generation and model name to avoid ambiguity.
+</Info>
+
+<Tip>
+  GPU selection is also possible using the `--compute` and `--gpu-count` flags
+  during application initialization.
+</Tip>
+
+## Multi-GPU Configuration
+
+Multiple GPUs are configured in the `cerebrium.toml` file:
+
+```toml
+[cerebrium.hardware]
+compute = "AMPERE_A100_80GB"
+gpu_count = 4        # Number of GPUs needed
+cpu = 8
+memory = 128.0
+```
+
+GPU availability varies by region and provider. Narrowing the provider and region constraints increases the likelihood of request queuing.
+For guaranteed burst capacity, contact the [enterprise plan](mailto:sales@cerebrium.ai) team.

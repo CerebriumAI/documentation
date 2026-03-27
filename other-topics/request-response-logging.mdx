@@ -1,0 +1,53 @@
+---
+title: "Request and Response Logging"
+description: "Control request and response logs in your Cerebrium apps"
+---
+
+By default, the Cortex runtime logs all requests and responses. These logs appear in the app dashboard and are useful for debugging and monitoring. Disable them when privacy, security, or performance requires it.
+
+## Controlling Logs
+
+Two settings control logging behavior in the Cortex runtime:
+
+- `DISABLE_REQUEST_LOGS` - When enabled, prevents logging of incoming request data
+- `DISABLE_RESPONSE_LOGS` - When enabled, prevents logging of response data from your app
+
+<Note>
+  These settings only affect the default Cortex runtime. If you are using a
+  [custom runtime](/container-images/custom-web-servers), you will need to
+  handle logging behavior in your own server implementation.
+</Note>
+
+## Configuration
+
+Configure these settings as [secrets](/other-topics/using-secrets) at either the app or project level:
+
+1. Navigate to your project dashboard
+2. Go to the "Secrets" section
+3. Add one or both of the settings as a key with a value of `"true"` to disable the corresponding logs
+
+<Info>
+  Setting the value to anything other than `true` (or leaving it undefined) will
+  keep logging enabled, which is the default behavior.
+</Info>
+
+## Use Cases
+
+Common reasons to disable logs:
+
+- **Processing sensitive data**: If your app processes personal or sensitive information that shouldn't be stored in logs
+- **Observability optimization**: For high-throughput apps where logging adds unnecessary overhead making it difficult to monitor your app
+
+## Example
+
+To disable both request and response logging, add the following secrets to your app:
+
+| Key                   | Value |
+| --------------------- | ----- |
+| DISABLE_REQUEST_LOGS  | true  |
+| DISABLE_RESPONSE_LOGS | true  |
+
+<Note>
+  Secrets are loaded on container startup. After updating a secret, restart the
+  app container for the change to take effect.
+</Note>

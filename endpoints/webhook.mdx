@@ -1,0 +1,94 @@
+---
+title: "Webhook Forwarding"
+description: "Forward responses to a specified webhook"
+---
+
+Forward function response data to an external endpoint via POST by adding the `webhookEndpoint` query parameter to any API call:
+
+```bash
+curl -X POST https://api.aws.us-east-1.cerebrium.ai/v4/<YOUR-PROJECT-ID>/<YOUR-APP>/run?webhookEndpoint=https%3A%2F%2Fwebhook.site%2F'\
+       -H 'Content-Type: application/json'\
+       -H 'Authorization: Bearer <YOUR-JWT-TOKEN>\
+       --data '{"param": "hello world"}'
+```
+
+The proxy forwards the response body as a POST request to the specified webhook — no code changes required. Ensure the webhook endpoint accepts POST requests. Webhook forwarding works with both Cortex and Custom runtimes, but only for HTTP requests (not WebSockets).
+
+## Retry Behavior
+
+Webhook requests are sent asynchronously and do not block the function's response. Failed deliveries are retried automatically:
+
+- **Maximum attempts**: 3 attempts total
+- **Delay between retries**: Up to 5 seconds between attempts
+
+**Retry conditions:**
+
+- Network errors (connection failures, timeouts) will trigger retries
+- `404 Not Found` responses will trigger retries (endpoint may be temporarily unreachable)
+- Other `4xx` client errors will **not** be retried (considered permanent failures)
+- `5xx` server errors will **not** be retried (to avoid potential duplicate side effects)
+- Non-2xx responses (excluding the above) will trigger retries
+
+If all attempts fail, the error is logged but will not affect your function's response to the original caller.
+
+<Warning>
+  **The webhook endpoint should be idempotent.** A webhook may be retried even
+  if it was already processed — for example, if the Cerebrium backend does not
+  receive the success response due to network issues. Design the endpoint to
+  handle duplicate deliveries gracefully.
+</Warning>
+
+For example, if the function returns `{"smile": "wave"}`, the proxy sends a POST like this to the webhook:
+
+<Note>
+  Cerebrium does not literally use `curl`. This is illustrative of the request
+  the webhook endpoint receives.
+</Note>
+
+```bash
+curl -X POST https://webhook.site/'\
+       -H 'Content-Type: application/json'\
+       --data '{"smile": "wave"}'
+```
+
+## Webhook Signature Verification
+
+Verify that webhooks originate from Cerebrium using signature verification:
+
+1. Include an `X-Webhook-Secret` header with a secret value when making requests to the Cerebrium API.
+2. Incoming webhooks include the following headers:
+
+- `X-Request-Id`: A unique identifier for the request
+- `X-Cerebrium-Webhook-Timestamp`: The Unix timestamp when the webhook was sent
+- `X-Cerebrium-Webhook-Signature`: The signature in the format `v1,<signature>`
+
+3. To verify the signature:
+
+```python
+import hmac
+import hashlib
+
+def verify_webhook_signature(request_id, timestamp, body, signature, secret):
+    # Remove the 'v1,' prefix from the signature
+    signature = signature.split(',')[1] if ',' in signature else signature
+
+    # Construct the signed content
+    signed_content = f"{request_id}.{timestamp}.{body}"
+
+    # Calculate expected signature
+    expected_signature = hmac.new(
+        secret.encode(),
+        signed_content.encode(),
+        hashlib.sha256
+    ).hexdigest()
+
+    # Compare signatures
+    return hmac.compare_digest(expected_signature, signature)
+```
+
+<Note>
+  The body should include everything returned from cerebrium (run_id, function
+  response, timestamp etc) not just your function response
+</Note>
+
+A matching signature confirms the webhook originated from Cerebrium and has not been tampered with.

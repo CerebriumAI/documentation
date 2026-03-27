@@ -3,18 +3,18 @@ title: "OpenAI compatible vLLM endpoint"
 description: "Create a OpenAI compatible endpoint using the vLLM framework"
 ---
 
-In this tutorial, we'll create an OpenAI-compatible endpoint that works with any open-source model. This lets you use your existing OpenAI code with Cerebrium serverless functions by changing just two lines of code.
+This tutorial creates an OpenAI-compatible endpoint that works with any open-source model. Use existing OpenAI code with Cerebrium serverless functions by changing just two lines of code.
 
 To see the final code implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/5-large-language-models/1-openai-compatible-endpoint)
 
 ### Cerebrium setup
 
-If you don't have a Cerebrium account, you can create one by signing up [here](https://dashboard.cerebrium.ai/register) and following the documentation [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation) to get set up.
+Create a Cerebrium account by signing up [here](https://dashboard.cerebrium.ai/register) and follow the [installation docs](https://docs.cerebrium.ai/getting-started/installation).
 
-In your IDE, run the following command to create our Cerebrium starter project: `cerebrium init 1-openai-compatible-endpoint`. This creates two files:
+Run the following command to create the Cerebrium starter project: `cerebrium init 1-openai-compatible-endpoint`. This creates two files:
 
-- `main.py`: Our entrypoint file where our code lives
-- `cerebrium.toml`: A configuration file that contains all our build and environment settings
+- `main.py`: The entrypoint file where application code lives
+- `cerebrium.toml`: A configuration file that contains all build and environment settings
 
 Add the following pip packages and hardware requirements to your `cerebrium.toml` to create your deployment environment:
 
@@ -29,7 +29,7 @@ vllm = "latest"
 pydantic = "latest"
 ```
 
-Let's define our imports and initialize our model. We'll use Meta's Llama 3.1 model, which requires Hugging Face authorization. Add your HF token to your secrets in the Cerebrium dashboard, then add this code to `main.py`:
+Define the imports and initialize the model. This example uses Meta's Llama 3.1 model, which requires Hugging Face authorization. Add the HF token to secrets in the Cerebrium dashboard, then add this code to `main.py`:
 
 ```python
 from vllm import SamplingParams, AsyncLLMEngine
@@ -114,7 +114,7 @@ To deploy the model use the following command:
 cerebrium deploy
 ```
 
-After deployment, you'll see a curl command like this:
+After deployment, a curl command like this appears:
 
 ```curl
 curl --location 'https://api.aws.us-east-1.cerebrium.ai/v4/p-<YOUR PROJECT ID>/5-openai-compatible-endpoint/{function}' \
@@ -123,7 +123,7 @@ curl --location 'https://api.aws.us-east-1.cerebrium.ai/v4/p-<YOUR PROJECT ID>/5
 --data '{"..."}'
 ```
 
-In Cerebrium, each function name becomes an endpoint (ending with `/run`). While OpenAI-compatible endpoints typically end with `/chat/completions`, we've made all endpoints OpenAI-compatible. Here's how to call the endpoint:
+In Cerebrium, each function name becomes an endpoint (ending with `/run`). While OpenAI-compatible endpoints typically end with `/chat/completions`, all Cerebrium endpoints are OpenAI-compatible. Call the endpoint as follows:
 
 ```python
 import os
@@ -148,6 +148,4 @@ for chunk in chat_completion:
 print("Finished receiving chunks.")
 ```
 
-Set the base URL to the one from your deploy command (ending in `/run`). Use your JWT token from either the curl command or your Cerebrium dashboard's API Keys section.
-
-Voilà! You now have an OpenAI-compatible endpoint that you can customize to your needs!
+Set the base URL to the one from the deploy command (ending in `/run`). Use the JWT token from either the curl command or the Cerebrium dashboard's API Keys section.

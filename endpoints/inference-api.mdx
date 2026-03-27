@@ -1,0 +1,46 @@
+---
+title: "REST API"
+description: "Make authenticated HTTP requests to your Cerebrium endpoints"
+---
+
+All functions on Cerebrium are accessible via authenticated POST requests by default, unless marked private by prefixing the function name with an underscore (e.g. `_private_function()`). Authenticate using the JWT token from the **API Keys** section of the dashboard.
+
+## Request format
+
+The POST request follows the structure below, where `{function}` is the name of the function to invoke. In this example, `predict()` from `main.py` is called.
+
+```bash
+curl --location --request POST 'https://api.aws.us-east-1.cerebrium.ai/v4/p-xxxxx/{app-name}/{function}' \
+--header 'Authorization: Bearer <JWT_TOKEN>' \
+--header 'Content-Type: application/json' \
+--data '{
+  "function_param": "data"
+}'
+```
+
+## Response format
+
+Responses follow this format:
+
+```json
+{
+  "run_id": "52eda406-b81b-43f5-8deb-fcf80dfsb74b",
+  "run_time_ms": 326.34,
+  "result": { "some": "data" }
+}
+```
+
+## Status codes
+
+- `200` → the function completed successfully
+- `401` / `403` → authentication or authorization failed
+- `404` → the app or function path could not be found
+- `5xx` → either your app raised an exception or the platform could not complete the request
+
+To return a custom status code such as `422` or `404`, include a `status_code` field in the JSON response from `main.py`.
+
+<Note>
+  When debugging a failed request, check the HTTP status code and the app logs
+  in the Cerebrium dashboard. Inspecting the request payload, logs, and `run_id`
+  together speeds up diagnosis.
+</Note>

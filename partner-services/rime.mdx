@@ -1,0 +1,127 @@
+---
+title: Rime
+description: Deploy Rime text-to-speech services on Cerebrium
+---
+
+<Note>
+  Rime Partner Service is available from CLI version 1.39.0 and greater
+</Note>
+
+Cerebrium's partnership with [Rime](https://www.rime.ai/) enables text-to-speech (TTS) deployment with low latency and region selection for data privacy compliance.
+
+## Setup
+
+1. Create a [Rime](https://www.rime.ai/) account and get an API key. Add the key as a <b>secret in Cerebrium</b> with the name <b>"RIME_API_KEY".</b>
+
+2. Create a Cerebrium app with the CLI:
+
+```bash
+cerebrium init rime
+```
+
+3. Rime services use a simplified TOML configuration with the `[cerebrium.runtime.rime]` section. Create a `cerebrium.toml` file with the following:
+
+```toml
+[cerebrium.deployment]
+name = "rime"
+disable_auth = true
+
+[cerebrium.runtime.rime]
+port = 8001
+# model_name = "arcana"  # Optional: specify a Rime model (e.g. "arcana", "mist", "mistv2")
+# language = "en"        # Optional: specify language code (e.g. "en", "es")
+
+[cerebrium.hardware]
+cpu = 4
+memory = 30
+compute = "AMPERE_A10"
+gpu_count = 1
+region = "us-east-1"
+
+[cerebrium.scaling]
+min_replicas = 1
+max_replicas = 2
+cooldown = 120
+replica_concurrency = 50
+```
+
+<Note>
+  Disable auth because the Rime API key in the header handles authentication.
+  The Rime Server validates the API key directly.
+</Note>
+
+4. Run `cerebrium deploy` to deploy the Rime service - the output of which should appear as follows:
+
+```
+App Dashboard: https://dashboard.cerebrium.ai/projects/p-xxxxxxxx/apps/p-xxxxxxxx-rime
+```
+
+5. Send requests to the <b>HTTP</b> Rime service using the deployment URL from the output:
+
+```
+curl --location 'https://api.aws.us-east-1.cerebrium.ai/v4/p-xxxxxxxx/rime' \
+--header 'Authorization: Bearer <RIME_API_KEY>' \
+--header 'Content-Type: application/json' \
+--header 'Accept: audio/pcm' \
+--data '{
+  "text": "I would love to have a conversation with you.",
+  "speaker": "joy",
+  "modelId": "mist"
+}'
+```
+
+For <b>Websockets</b>, send the following
+
+```
+wss://api.aws.us-east-1.cerebrium.ai/v4/p-xxxxxx/rime/ws2?audioFormat=mp3&speaker=cove&modelId=mistv2&phonemizeBetweenBrackets=true
+Authorization Bearer <RIME_API_KEY>
+
+#With a message like:
+{"text": "This "},
+{"text": "is "},
+{"text": "a "},
+{"text": "test against the "},
+{"text": "websockets endpoint of the "},
+{"text": "api image. "},
+{"operation": "flush"},
+{"text": "This "},
+{"text": "is "},
+{"text": "an "},
+{"text": "incomplete "},
+{"text": "phrase "},
+{"operation": "eos"}
+```
+
+## Runtime Configuration
+
+The `[cerebrium.runtime.rime]` section supports the following parameters:
+
+| Option       | Type    | Default  | Description                                                                                               |
+| ------------ | ------- | -------- | --------------------------------------------------------------------------------------------------------- |
+| `port`       | integer | required | Port the Rime server listens on. Typically `8001`.                                                        |
+| `model_name` | string  | —        | Rime model to load (e.g. `"arcana"`, `"mist"`, `"mistv2"`). Defaults to Rime's server default if not set. |
+| `language`   | string  | —        | Language code for the model (e.g. `"en"`, `"es"`). Defaults to Rime's server default if not set.          |
+
+Example with optional parameters:
+
+```toml
+[cerebrium.runtime.rime]
+port = 8001
+model_name = "arcana"
+language = "en"
+```
+
+## Scaling and Concurrency
+
+Rime services support independent scaling configurations:
+
+- **min_replicas**: Minimum instances to maintain (0 for scale-to-zero). Recommended: 1.
+- **max_replicas**: Maximum instances during high load.
+- **replica_concurrency**: Concurrent requests per instance. Recommended: 3.
+- **cooldown**: Time window (in seconds) that must pass at reduced concurrency before scaling down. Recommended: 50.
+- **compute**: Instance type. Recommended: `AMPERE_A10`.
+
+Adjust these parameters based on traffic patterns and latency requirements. Consult the Rime team
+for concurrency and scalability guidance.
+
+For further documentation on Rime, see the [Rime documentation](https://docs.rime.ai/).

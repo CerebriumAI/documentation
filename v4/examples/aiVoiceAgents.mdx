@@ -3,17 +3,17 @@ title: "Real-time Voice Agent"
 description: "Deploy a real-time AI voice agent"
 ---
 
-In this tutorial, we'll create a real-time voice agent that responds to queries via speech in ~500ms. This flexible implementation lets you swap in any Large Language Model (LLM) or Text-to-Speech (TTS) model. It's ideal for voice-based use cases like customer support bots and receptionists.
+This tutorial creates a real-time voice agent that responds to queries via speech in ~500ms. The implementation supports swapping in any Large Language Model (LLM) or Text-to-Speech (TTS) model, making it ideal for voice-based use cases like customer support bots and receptionists.
 
-To create this app, we use [PipeCat](https://www.pipecat.ai/), a framework that handles component integration, user interruptions, and audio data processing. We'll demonstrate this by joining a meeting room with our voice agent using [Daily](https://daily.co) (PipeCat's creators) and deploy the app on Cerebrium for seamless deployment and scaling.
+The app uses [PipeCat](https://www.pipecat.ai/), a framework that handles component integration, user interruptions, and audio data processing. The example joins a meeting room with a voice agent using [Daily](https://daily.co) (PipeCat's creators) and deploys on Cerebrium for scaling.
 
-Essentially our application will have 3/4 parts:
+The application has 3–4 parts:
 
-- Your Pipecat agent which acts as the orchestrator
-- Your Deepgram TTS/STT service (Requires a Deepgram Enterprise account)
+- A Pipecat agent that acts as the orchestrator
+- A Deepgram TTS/STT service (requires a Deepgram Enterprise account)
 - A self-hosted LLM using the vLLM framework
 
-The reason we achieve such low latency is that each service is hosted within Cerebrium and so we have no network latency for the requests we make - communication across containers is less than 10ms.
+Low latency is achieved because each service is hosted within Cerebrium — communication across containers is less than 10ms with no network latency overhead.
 
 ![Realtime Voice Agents](/images/examples/self-hosted-pipecat.png)
 
@@ -21,7 +21,7 @@ You can find the final version of the code [here](https://github.com/CerebriumAI
 
 ### Deepgram deployment
 
-For the sake of conciseness, look at our Partner Services page to see how you can deploy a Deepgram service on Cerebrium. The link is [here](/cerebrium/partner-services/deepgram)
+See the [Partner Services page](/partner-services/deepgram) to deploy a Deepgram service on Cerebrium.
 
 <Note>
   You need a Deepgram Enterprise License to do deploy Deegram on Cerebrium else
@@ -30,9 +30,9 @@ For the sake of conciseness, look at our Partner Services page to see how you ca
 
 ### LLM Deployment
 
-For our LLM we deploy a OpenAI compatible Llama-3 endpoint using the vLLM framework - in order to have a low TTFT we deploy a quantized version (RedHatAI/Meta-Llama-3.1-8B-Instruct-quantized.w8a8").
+The LLM is an OpenAI-compatible Llama-3 endpoint using the vLLM framework. For low TTFT, a quantized version is used (RedHatAI/Meta-Llama-3.1-8B-Instruct-quantized.w8a8).
 
-Run `cerebrium init llama-llm` and add the following code to your cerebrium.toml:
+Run `cerebrium init llama-llm` and add the following to `cerebrium.toml`:
 
 ```
 [cerebrium.deployment]
@@ -57,7 +57,7 @@ vllm = "latest"
 pydantic = "latest"
 ```
 
-Add the following code to your main.py - this uses the vLLM framework and makes it openAI compatible:
+Add the following code to `main.py` — this uses the vLLM framework and makes it OpenAI compatible:
 
 ```
 import os
@@ -153,20 +153,20 @@ async def run(
     yield "data: [DONE]\n\n"
 ```
 
-Make sure to add your HuggingFace token to your Secrets on Cerebrium as `HF_TOKEN`.
+Add the HuggingFace token to Secrets on Cerebrium as `HF_TOKEN`.
 
-The run `cerebrium deploy` to make it live - you should see it live in your Cerebrium dashboard. We will use your deployment url in the next step.
+Run `cerebrium deploy` to make it live. The deployment URL appears in the dashboard and is used in the next step.
 
 ### Pipecat setup
 
-If you don't have a Cerebrium account, you can create one by signing up [here](https://dashboard.cerebrium.ai/register) and following the documentation [here](https://docs.cerebrium.ai/cerebrium/getting-started/installation) to get set up.
+Create a Cerebrium account by signing up [here](https://dashboard.cerebrium.ai/register) and follow the [installation docs](https://docs.cerebrium.ai/getting-started/installation).
 
-In your IDE, run the following command to create our Cerebrium starter project: `cerebrium init pipecat-agent`. This creates two files:
+Run the following command to create the Cerebrium starter project: `cerebrium init pipecat-agent`. This creates two files:
 
-- `main.py`: Our entrypoint file where our code lives
-- `cerebrium.toml`: A configuration file that contains all our build and environment settings
+- `main.py`: The entrypoint file where application code lives
+- `cerebrium.toml`: A configuration file that contains all build and environment settings
 
-Add the following pip packages to your `cerebrium.toml` to create your deployment environment:
+Add the following pip packages to `cerebrium.toml`:
 
 ```
 [cerebrium.deployment]
@@ -198,18 +198,18 @@ requests = "==2.32.2"
 dotenv = "latest"
 ```
 
-We specify a Docker base image that contains local [Deepgram](https://deepgram.com/) Speech-to-Text (STT) and Text-to-Speech (TTS) models, provided by Daily. Running everything locally instead of over the network helps achieve low latency.
+The Docker base image contains local [Deepgram](https://deepgram.com/) Speech-to-Text (STT) and Text-to-Speech (TTS) models, provided by Daily. Running everything locally instead of over the network achieves low latency.
 
 <Note>
   Docker files are not support yet but are rather in the works to be released
   soon. This is just a very early preview of how it would work.
 </Note>
 
-We'll use Llama 3 8B as our LLM, served via vLLM. First, request access to [Llama 8B](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct) on Hugging Face (approval typically takes less than 30 minutes).
+The LLM is Llama 3 8B, served via vLLM. Request access to [Llama 8B](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct) on Hugging Face (approval typically takes less than 30 minutes).
 
-Add your Hugging Face token as a secret named "HF_TOKEN" in your Cerebrium dashboard under "Secrets". This allows secure access to the token at runtime.
+Add the Hugging Face token as a secret named "HF_TOKEN" in the Cerebrium dashboard under "Secrets" for secure runtime access.
 
-You can then add the following code to your main.py:
+Add the following code to `main.py`:
 
 ```python
 from huggingface_hub import login
@@ -229,9 +229,9 @@ server_process = Process(target=start_server)
 server_process.start()
 ```
 
-Since PipeCat requires models to follow the OpenAI-compatible format and doesn't support local instantiation, we run the vLLM server locally in a background process. We monitor the process for successful launch due to a known issue with rapidly starting multiple vLLM instances, retrying after 5 seconds if needed. The server runs on port 5000 (port 8000 is reserved for Cerebrium), and we set a persistent download directory to speed up subsequent cold starts.
+PipeCat requires models to follow the OpenAI-compatible format and doesn't support local instantiation, so vLLM runs as a local background process. The process is monitored for successful launch and retries after 5 seconds if needed (a known issue with rapid vLLM starts). The server runs on port 5000 (port 8000 is reserved for Cerebrium), with a persistent download directory to speed up subsequent cold starts.
 
-Now we implement the Pipecat framework by instantiating the various components. Create a function called "main" with the following code:
+Implement the Pipecat framework by creating a `main` function:
 
 ```python
 import aiohttp
@@ -342,11 +342,11 @@ async def main(room_url: str, token: str = None):
             ))
 ```
 
-In our main function, we initialize the Daily transport layer to handle audio/video data from the Daily room. We pass the room URL and authentication token for programmatic joining. We set the VAD stop seconds to 200 milliseconds, which defines the pause duration before the bot responds.
+The `main` function initializes the Daily transport layer to handle audio/video data from the Daily room, passing the room URL and authentication token for programmatic joining. VAD stop seconds is set to 200 milliseconds, defining the pause duration before the bot responds.
 
-Next, we connect to our locally running Deepgram models from our Docker base image on port 8082. The PipeCat framework handles audio-to-text and text-to-audio conversion. We then connect to our local LLM model from the vLLM server. Note: Set the Deepgram API key to `None` to use the local instance.
+The locally running Deepgram models (from the Docker base image on port 8082) handle audio-to-text and text-to-audio conversion via PipeCat. The local LLM connects from the vLLM server. Set the Deepgram API key to `None` to use the local instance.
 
-Finally, we combine everything into a PipelineTask, which PipeCat executes. Tasks are fully customizable and support Image and Vision use cases (learn more [here](https://docs.pipecat.ai/docs/category/services)). Pipeline tasks include built-in interruption handling and easy model swapping capabilities.
+Everything combines into a PipelineTask, which PipeCat executes. Tasks are fully customizable and support Image and Vision use cases ([docs](https://docs.pipecat.ai/docs/category/services)). Pipeline tasks include built-in interruption handling and easy model swapping.
 
 The Daily Python SDK provides event webhooks to trigger functionality based on events like users joining or leaving calls. Add this event handling code to the `main()` function:
 
@@ -388,10 +388,9 @@ This code handles these events:
 - Additional participants join: Bot listens and responds to all participants
 - Participant leaves or call ends: Bot terminates itself
 
-Events are attached to Transport (our meeting room communication method). The Pipeline task runs through our pipeline runner until signaled to exit (when a call ends). Learn more about PipeCat's infrastructure [here](https://docs.pipecat.ai/docs/understanding-bots/dailyai-architecture).
+Events attach to Transport (the meeting room communication method). The Pipeline task runs through the pipeline runner until signaled to exit (when a call ends). See [PipeCat's architecture docs](https://docs.pipecat.ai/docs/understanding-bots/dailyai-architecture) for more details.
 
-We run the code in a separate execution environment to prevent multiple PipeCat instances. This background process serves as the entry point for our REST API endpoint to start the PipeCat bot. When the call ends and the bot returns, we send a response to our API endpoint.
-We therefore create the following function:
+The code runs in a separate execution environment to prevent multiple PipeCat instances. This background process serves as the entry point for the REST API endpoint to start the PipeCat bot. When the call ends and the bot returns, a response is sent to the API endpoint:
 
 <NOTE>
   Currently, Cerebrium does not support workloads running longer than 5 minutes
@@ -414,13 +413,11 @@ def start_bot(room_url: str, token: str = None):
     return {"message": "session finished"}
 ```
 
-That's it! You now have a fully functioning AI bot that interacts with users through speech in ~500ms. Imagine the possibilities!
-
-Now, let's create a user interface for the bot.
+The result is a fully functioning AI bot that interacts with users through speech in ~500ms. The next section creates a user interface.
 
 ## Creating Meeting Room
 
-Cerebrium can run any Python code, not just AI workloads. For our demo, we define two functions that use the Daily REST API to create a room and temporary token, both valid for 5 minutes.
+Cerebrium runs any Python code, not just AI workloads. The following two functions use the Daily REST API to create a room and temporary token, both valid for 5 minutes.
 
 Get your Daily developer token from your profile. If you don't have an account, sign up [here](https://dashboard.daily.co/u/signup) (they offer a generous free tier). Navigate to the "developers" tab to get your API key and add it to your Cerebrium Secrets.
 
@@ -478,17 +475,17 @@ def create_token(room_name: str):
 
 ### Deploy to Cerebrium
 
-Deploy the app to Cerebrium by running this command in your terminal: `cerebrium deploy`
+Deploy to Cerebrium by running `cerebrium deploy`.
 
 A successful deployment looks like this:
 
 ![Cerebrium Deployment](/images/examples/langchain_langsmith/cerebrium_deploy.png)
 
-We'll add these endpoints to our frontend interface.
+The endpoints are used in the frontend interface below.
 
 ## Connect frontend
 
-We created a public fork of the PipeCat frontend to show you a nice demo of this application. You can clone the repo [here](https://github.com/CerebriumAI/web-client-ui).
+A public fork of the PipeCat frontend demonstrates this application. Clone the repo [here](https://github.com/CerebriumAI/web-client-ui).
 
 Follow the instructions in the README.md and then populate the following variables in your .env.development.local
 
@@ -501,6 +498,6 @@ You can now run yarn dev and go to the URL: http://localhost:5173/ to test your 
 
 ### Conclusion
 
-This tutorial provides a foundation for implementing voice in your app and extending into image and vision capabilities. PipeCat is an extensible, open-source framework for building voice-enabled apps, while Cerebrium provides seamless deployment and autoscaling with pay-as-you-go compute.
+This tutorial provides a foundation for implementing voice in applications and extending into image and vision capabilities. PipeCat is an extensible, open-source framework for building voice-enabled apps. Cerebrium handles deployment and autoscaling with pay-as-you-go compute.
 
-Tag us as **@cerebriumai** to showcase your work and join our [Discord](https://discord.gg/ATj6USmeE2) community for questions and feedback.
+Tag **@cerebriumai** to showcase work and join the [Discord](https://discord.gg/ATj6USmeE2) community for questions and feedback.

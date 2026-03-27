@@ -1,0 +1,79 @@
+---
+title: "Batching and Concurrency"
+description: "Improve throughput and cost performance with batching and concurrency"
+---
+
+## Understanding Concurrency
+
+Each instance can process multiple requests simultaneously. The `replica_concurrency` setting in `cerebrium.toml` determines how many requests each instance handles in parallel:
+
+```toml
+[cerebrium.scaling]
+replica_concurrency = 4    # Process up to 4 requests simultaneously.
+```
+
+Requests arriving at an instance below its concurrency limit begin processing immediately. Once an instance reaches its maximum, additional requests queue until capacity becomes available.
+
+GPUs excel at parallel processing, so concurrent request handling utilizes GPU resources more efficiently than sequential processing.
+
+## Understanding Batching
+
+Batching determines how concurrent requests are grouped and executed within an instance. Concurrency controls the number of simultaneous requests; batching controls how those requests are processed together. The default concurrency is 1 request per container.
+
+Cerebrium supports two approaches to request batching.
+
+### Framework-native Batching
+
+Many frameworks handle batched processing natively. vLLM, for example, automatically batches model inference requests:
+
+```toml
+[cerebrium.scaling]
+min_replicas = 0
+max_replicas = 2
+cooldown = 10
+replica_concurrency = 4 # Each container can now handle multiple requests.
+
+[cerebrium.dependencies.pip]
+sentencepiece = "latest"
+torch = "latest"
+vllm = "latest"
+transformers = "latest"
+accelerate = "latest"
+xformers = "latest"
+```
+
+When multiple requests arrive, vLLM combines them into optimal batch sizes and processes them together, maximizing GPU utilization.
+
+<Tip>
+  Check out the complete [vLLM batching
+  example](https://github.com/CerebriumAI/examples/tree/master/10-batching/3-vllm-batching-gpu)
+  for more information.
+</Tip>
+
+### Custom Batching
+
+Implement custom batching through Cerebrium's [custom runtime feature](/container-images/defining-container-images#custom-runtimes) for precise control over request processing and custom batching strategies.
+
+LitServe implementation requires additional configuration in `cerebrium.toml`:
+
+```toml
+[cerebrium.runtime.custom]
+port = 8000
+entrypoint = ["python", "app/main.py"]
+healthcheck_endpoint = "/health"
+readycheck_endpoint = "/ready"
+
+[cerebrium.dependencies.pip]
+litserve = "latest"
+fastapi = "latest"
+```
+
+<Tip>
+  Check out the complete [Litserve
+  example](https://github.com/CerebriumAI/examples/tree/master/10-batching/2-litserve-batching-gpu)
+  for more information.
+</Tip>
+
+Custom batching provides full control over request grouping and processing — particularly useful for frameworks without native batching support. The [Container Images Guide](/container-images/defining-container-images#custom-runtimes) provides detailed implementation instructions.
+
+Concurrency enables parallel request handling; batching optimizes how those requests are processed. Together, they improve resource utilization and throughput.

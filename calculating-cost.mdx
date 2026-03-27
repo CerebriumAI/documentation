@@ -3,38 +3,33 @@ title: Calculating compute cost
 description: How to calculate the cost of your deployment on Cerebrium
 ---
 
-The cost of your deployment is based on the hardware you select and the amount of time it executes for. <b>Essentially, every time we run your code, or you specify that a
-machine should be running—we charge you</b>. GPU, CPU, and Memory usage are all charged per second while persistent storage is charged per GB per month. You can
-view the pricing of various compute on our [pricing page](https://www.cerebrium.ai/pricing).
+Deployment cost is based on the hardware selected and the execution time. <b>Every time code runs or a machine is specified to stay running, compute is billed</b>. GPU, CPU, and Memory usage are charged per second; persistent storage is charged per GB per month. View compute pricing on the [pricing page](https://www.cerebrium.ai/pricing).
 
-When you deploy a model, there are two processes we charge you for:
+Deploying a model incurs two billable processes:
 
-1. We charge you for the build process where we set up your app environment. In this step, we set up a Python environment according to your parameters before downloading and installing the required apt packages, Conda and Python packages, as well as any model files you require.
-   You are only charged for a build if we need to rebuild your environment, i.e., you have run a `build` or `deploy` command and have changed your requirements, parameters or code. Note that we cache each of the steps in a build so subsequent builds will cost substantially less than the first.
+1. **Build process** — sets up the app environment: a Python environment with the specified parameters, required apt packages, Conda and Python packages, and any model files.
+   A build is only charged when the environment needs rebuilding, i.e., a `build` or `deploy` command runs with changed requirements, parameters, or code. Each build step is cached, so subsequent builds cost substantially less than the first.
 
-2. The app runtime. This is the amount of time it takes your code to run from start to finish on each request. There are 3 costs to consider here:
+2. **App runtime** — the time code runs from start to finish on each request. Three cost components apply:
 
-- <u>Cold-start</u>: This is the amount of time it takes to spin up a server(s),
-  load your environment, connect storage, etc. This is part of the Cerebrium
-  service and something we are working on every day to get as low as possible.
-  <b>We do not charge you for this!</b>
-- <u>Model initialization</u>: This part of your code is outside of your
-  function and only runs when your app incurs a cold start. You are charged for
-  the amount of time it takes for this code to run. Typically this is loading a
-  model into GPU RAM, loading python packages etc.
-- <u>Function runtime</u>: This is the code stored in your function and runs
-  every time a request hits your endpoint
+- <u>Cold-start</u>: The time to spin up server(s), load the environment,
+  connect storage, etc. Cerebrium continuously optimizes cold-start latency.
+  <b>Cold-start time is not billed.</b>
+- <u>Model initialization</u>: Code outside the request function that only runs
+  on cold start (e.g., loading a model into GPU RAM, importing packages). This
+  time is billed.
+- <u>Function runtime</u>: Code inside the request function, executed on every
+  request
 
-Let us go through an example of how you can calculate the cost of your deployment:
+**Example cost calculation**
 
-The model you wish to deploy requires:
+A model deployment requires:
 
 - 24 GB VRam (A10): $0.000306 per second
 - 2 CPU cores: 2 \* $0.00000655 per second
 - 20GB Memory: 20 \* $0.00000222 per second
 
-In our situation, your app works on the first deployment and so you incur only one build process of 2 minutes. Additionally, let's say that the app has 10 cold starts a day with an average initialization of 2 seconds and lastly and average runtime (predict) of 2 seconds. Let us calculate your
-expected cost at month-end with you expecting to do 100,000 model inferences.
+Assume the app works on the first deployment, incurring a single 2-minute build. The app has 10 cold starts per day with an average initialization of 2 seconds and an average runtime (predict) of 2 seconds. The expected monthly volume is 100,000 inferences.
 
 ```python
 # Your variables

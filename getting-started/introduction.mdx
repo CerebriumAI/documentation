@@ -1,0 +1,155 @@
+---
+title: Introduction
+description: Start with Cerebrium when latency, burst traffic, and production AI constraints matter from day one.
+---
+
+Cerebrium is the infrastructure platform for **real-time and high-performance AI workloads**.
+
+It is a strong fit when an app requires one or more of the following:
+
+- **Low latency and low cold starts**
+- **Bursty traffic** that should scale without wasting GPU capacity
+- **Multi-region deployments** for global users or data residency
+- **Realtime voice, video, and streaming workloads**
+- **GPU-heavy production inference** that has to stay reliable under load
+
+## Why teams choose Cerebrium
+
+- Launch code in the cloud in seconds
+- Run [CPUs](/hardware/cpu-and-memory) or [GPUs](/hardware/using-gpus) with automatic scaling
+- Serve [REST APIs](/endpoints/inference-api), [streaming endpoints](/endpoints/streaming), [webSockets](/endpoints/websockets), or any [ASGI-compatible app](/container-images/custom-web-servers)
+- Deploy across [multiple regions](/deployments/multi-region-deployment) for lower latency and residency requirements
+- Tune [concurrency and batching](/scaling/batching-concurrency) for real production traffic
+- Improve startup performance with [cold-start optimization strategies](/other-topics/faster-cold-starts)
+- Store model weights and files with [persistent storage](/storage/managing-files)
+- Pay only for the compute you use - [billed by the second](https://www.cerebrium.ai/pricing)
+
+## Start by workload
+
+Pick the closest path below to get started:
+
+- **OpenAI-compatible LLM endpoint** → [Serve an OpenAI Compatible LLM with vLLM](/v4/examples/gpt-oss)
+- **Voice AI / real-time speech** → [Deploy a Twilio Voice Agent with Pipecat](/v4/examples/twilio-voice-agent)
+- **Image and video generation** → [Generate images using SDXL](/v4/examples/sdxl)
+- **Python Apps** → [Deploy Gradio Chat Interface](/v4/examples/asgi-gradio-interface)
+
+For the fastest first deployment, follow the quickstart below.
+
+## Quickstart
+
+Set up and deploy an app on Cerebrium in a few steps.
+
+### 1. Install the CLI
+
+<Tabs>
+<Tab title="Python (pip)">
+
+```bash
+pip install cerebrium
+```
+
+</Tab>
+<Tab title="macOS (Homebrew)">
+
+```bash
+brew tap cerebriumai/tap
+brew install cerebrium
+```
+
+</Tab>
+<Tab title="Linux">
+
+```bash
+# Ubuntu/Debian
+wget https://github.com/CerebriumAI/cerebrium/releases/latest/download/cerebrium_linux_amd64.deb
+sudo dpkg -i cerebrium_linux_amd64.deb
+
+# Or binary installation
+curl -L https://github.com/CerebriumAI/cerebrium/releases/latest/download/cerebrium_cli_linux_amd64.tar.gz | tar xz
+sudo mv cerebrium /usr/local/bin/
+```
+
+</Tab>
+<Tab title="Windows">
+
+```powershell
+# PowerShell (Run as Administrator)
+Invoke-WebRequest -Uri "https://github.com/CerebriumAI/cerebrium/releases/latest/download/cerebrium_cli_windows_amd64.zip" -OutFile "cerebrium.zip"
+Expand-Archive -Path "cerebrium.zip" -DestinationPath "."
+# Add cerebrium.exe to PATH
+```
+
+</Tab>
+</Tabs>
+
+### 2. Log in to the CLI
+
+```bash
+cerebrium login
+```
+
+This opens your browser so you can authenticate your CLI session.
+
+### 3. Initialize a project
+
+```bash
+cerebrium init my-first-app
+cd my-first-app
+```
+
+This creates a basic project with `main.py` for app code and `cerebrium.toml` for configuration.
+
+```python
+def run(prompt: str):
+    print(f"Running on Cerebrium: {prompt}")
+    return {"my_result": prompt}
+```
+
+### 4. Run code remotely
+
+Run the function in the cloud and pass it a prompt:
+
+```bash
+cerebrium run main.py::run --prompt "Hello World!"
+```
+
+The prompt appears in the logs. This is useful for quick code iteration, testing snippets, or one-off scripts that need cloud CPU/GPU resources.
+
+### 5. Deploy your app
+
+```bash
+cerebrium deploy
+```
+
+This turns the function into a persistent [REST endpoint](/endpoints/inference-api) that accepts JSON input and can scale automatically.
+
+Once deployed, the app is callable at a POST endpoint:
+
+```text
+https://api.aws.us-east-1.cerebrium.ai/v4/{project-id}/{app-name}/{function-name}
+```
+
+### 6. What to do next
+
+Useful next steps after a first deployment:
+
+- [Define Container images](/container-images/defining-container-images)
+- [Tune scaling and concurrency](/scaling/scaling-apps)
+- [Store model weights in persistent storage](/storage/managing-files)
+- [Deploy to multiple regions](/deployments/multi-region-deployment)
+
+Join the Community [Discord](https://discord.gg/ATj6USmeE2) for support and updates.
+
+## How Cerebrium works
+
+Cerebrium uses containerization to ensure consistent environments and reliable scaling for apps. When code is deployed, Cerebrium packages it with all necessary dependencies into a container image. This image serves as a blueprint for creating instances that handle incoming requests. The system automatically manages scaling, creating new instances when traffic increases and removing them during quiet periods.
+
+For a detailed explanation of how Cerebrium builds and manages container images, see the [Defining Container Images Guide](/container-images/defining-container-images).
+
+<Info>
+  Content-Aware Storage forms the foundation of Cerebrium's speed. This system
+  intelligently manages container images by understanding their content
+  structure. When launching new instances, it pulls only the specific files.
+  This targeted approach significantly reduces cold start times and optimizes
+  resource usage.
+</Info>

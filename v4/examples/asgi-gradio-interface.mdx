@@ -3,21 +3,21 @@ title: "Gradio Chat Interface"
 description: "Using FastAPI, Gradio and Cerebrium to deploy an LLM chat interface"
 ---
 
-In this tutorial, we'll create and deploy a Gradio chat interface that connects to a Llama 8B language model using Cerebrium's custom ASGI runtime. We'll build a scalable architecture where the frontend runs on CPU instances, while the model runs separately on GPU instances for optimal resource utilization.
+This tutorial covers creating and deploying a Gradio chat interface connected to a Llama 8B language model using Cerebrium's custom ASGI runtime. The architecture runs the frontend on CPU instances while the model runs separately on GPU instances for optimal resource utilization.
 
 You can find the full codebase for deploying your Gradio frontend [here](https://github.com/CerebriumAI/examples/tree/master/11-python-apps/2-asgi-gradio-interface).
 
 ## Architecture Overview
 
-Our application consists of two main components:
+The application consists of two main components:
 
 1. A frontend interface running on CPU instances using FastAPI and Gradio.
-2. A separate Llama model endpoint running on GPU instances. (While this is beyond the scope of this article, you can find a comprehensive example for deploying Llama 8B with TensorRT [here](https://docs.cerebrium.ai/v4/examples/tensorRT).)
+2. A separate Llama model endpoint running on GPU instances. (For a comprehensive example for deploying Llama 8B with TensorRT [here](https://docs.cerebrium.ai/v4/examples/tensorRT).)
 
-This separation allows us to:
+This separation enables:
 
 - Keep the frontend always available while minimizing costs (CPU-only).
-- Scale our GPU-intensive model independently based on demand.
+- Scale the GPU-intensive model independently based on demand.
 - Optimize resource allocation for different components.
 
 ## Prerequisites
@@ -36,7 +36,7 @@ First, create a new directory for your project and initialize it:
 cerebrium init 2-gradio-interface
 ```
 
-Next, let us add the following configuration to our `cerebrium.toml` file:
+Add the following configuration to `cerebrium.toml`:
 
 ```toml
 [cerebrium.deployment]
@@ -71,17 +71,17 @@ uvicorn = "latest"
 starlette = "latest"
 ```
 
-This configuration does several things:
+This configuration:
 
-- Disables the default JWT authentication that is automatically placed on all Cerebrium endpoints, making your Gradio interface publicly accessible.
-- Sets the entrypoint for the ASGI server to run through Uvicorn.
-- Sets the default port to 8080 for serving your app.
-- Sets the health endpoint to `/health` for checking app availability through our FastAPI application.
-- Configures hardware settings for the CPU instance running your app.
-- Defines scaling configuration with minimum and maximum replicas, cooldown period, and replica concurrency (set to 10 requests per replica).
+- Disables default JWT authentication, making the Gradio interface publicly accessible.
+- Sets the ASGI server entrypoint to Uvicorn.
+- Sets the default port to 8080.
+- Sets the health endpoint to `/health` for availability checks.
+- Configures hardware settings for the CPU instance.
+- Defines scaling with min/max replicas, cooldown, and concurrency (10 requests per replica).
 - Specifies required dependencies: Gradio, FastAPI, Requests, HTTPX, Uvicorn, and Starlette.
 
-Now, let's set up our main entrypoint file (`main.py`). To start, let's create our FastAPI application:
+Set up the main entrypoint file (`main.py`). Start by creating the FastAPI application:
 
 ```python
 # at the top of your main.py file
@@ -134,11 +134,11 @@ async def gradio(request: Request):
 
 The above code:
 
-- Initializes a FastAPI application to forward requests to our Gradio app running as a subprocess on a different port.
+- Initializes a FastAPI application that forwards requests to the Gradio app running as a subprocess on a different port.
 - Sets up a health check endpoint at `/health`.
 - Creates a catchall proxy that routes all requests to Gradio, including headers.
 
-Now that we've set up our FastAPI application, let's set up our Gradio application. Staying in our `main.py`, let's add the following code:
+Next, set up the Gradio application. Add the following code to `main.py`:
 
 ```python
 import multiprocessing
@@ -260,16 +260,16 @@ async def shutdown_event():
         gradio_server.stop()
 ```
 
-Above, we have:
+The code above defines:
 
-- A class `GradioServer` that handles the communication with the Llama model endpoint
-- A `chat_with_llama` method that sends a message to the Llama model and returns the response
-- A `run_server` method that creates a Gradio chat interface
-- A `start` method that starts the Gradio server in a separate process
-- A `stop` method that stops the Gradio server
-- An `on_event` startup and shutdown event that starts and stops the Gradio server respectively
+- `GradioServer`: handles communication with the Llama model endpoint
+- `chat_with_llama`: sends a message to the Llama model and returns the response
+- `run_server`: creates a Gradio chat interface
+- `start`: starts the Gradio server in a separate process
+- `stop`: stops the Gradio server
+- `on_event` startup/shutdown: starts and stops the Gradio server respectively
 
-Finally, your `main.py` file should look like this:
+The final `main.py` file:
 
 ```python
 import multiprocessing
@@ -436,7 +436,7 @@ async def shutdown_event():
 
 ## Deploy
 
-Deploy the app use the following command:
+Deploy the app:
 
 ```bash
 cerebrium deploy -y
@@ -448,8 +448,8 @@ Once deployed, navigate to the following URL in your browser:
 https://api.aws.us-east-1.cerebrium.ai/v4/p-<YOUR_PROJECT_ID>/2-gradio-interface/
 ```
 
-You should see the Gradio chat interface.
+The Gradio chat interface appears at this URL.
 
 ## Conclusion
 
-This architecture provides a scalable chat app that efficiently utilizes our new ASGI custom runtime. The separation of frontend and backend services allows for improved performance and cost management while maintaining flexibility for future scaling. We hope you've enjoyed this tutorial. Please feel free to share feedback, challenges, or your own Gradio apps in our [Discord](https://discord.com/invite/ATj6USmeE2) community.
+This architecture provides a scalable chat app using the ASGI custom runtime. The frontend/backend separation improves performance and cost management while maintaining scaling flexibility. Share feedback, challenges, or Gradio apps in the [Discord](https://discord.com/invite/ATj6USmeE2) community.

@@ -1,0 +1,140 @@
+---
+title: "Custom Domains"
+description: "Connect your own domain to your Cerebrium project"
+---
+
+Custom domains serve Cerebrium apps through a custom domain instead of the default `*.cerebrium.ai` URLs.
+Once configured, API calls use the custom domain while keeping the same path structure: `api.example.com/v4/p-1234/my-app/run`.
+
+## Key Features
+
+- Support for apex domains (`example.com`) and subdomains (`api.example.com`)
+- Automatic SSL certificate provisioning and renewal
+- Project-level domains - one domain serves all apps in a project
+- Multiple domains can point to the same project
+- Professional branding with custom domains instead of `*.cerebrium.ai` URLs
+
+## How Custom Domains Work
+
+- **Domains are region-specific** meaning each will always resolve to the selected region
+- **Domains are app-agnostic** enabling connection to any number of deployed apps within a project via custom domain
+- **Multiple domains** can be configured on the same project (useful for apps within the project deployed in different regions)
+
+## Getting Started
+
+### Step 1: Create a Custom Domain
+
+1. Navigate to project settings in the Cerebrium dashboard
+2. Click on the "Custom Domains" tab
+3. Click "Add Custom Domain"
+4. Enter the domain name and select the target region (the region closest to users provides the lowest latency)
+5. Click "Create Domain"
+
+### Step 2: Configure DNS Records
+
+After creating the domain, DNS configuration instructions will be displayed. Create a CNAME record at the DNS provider using the DNS record Cerebrium generates.
+
+<Note>
+  DNS record details can also be found later by clicking "DNS Record" in the
+  Custom Domains list.
+</Note>
+
+<Tabs>
+  <Tab title="Subdomains (Recommended)">
+    **Benefits:**
+    - Easier DNS configuration
+    - Allows other subdomains for different purposes
+
+    ```
+    Type: CNAME
+    Name: api
+    Value: proxy.aws.{region}.cerebrium.ai
+    ```
+
+  </Tab>
+
+  <Tab title="Apex Domains">
+    **Benefits:**
+    - Routes all traffic from the domain root
+    - Best for dedicated API domains
+
+    **Note:** ALIAS records are preferred over CNAME since only one CNAME is allowed per domain
+
+    ```
+    Type: CNAME (or ALIAS if supported)
+    Name: @ (or leave blank)
+    Value: proxy.aws.{region}.cerebrium.ai
+    ```
+
+  </Tab>
+
+</Tabs>
+
+<Note>A `{region}` must be selected when creating a custom domain.</Note>
+
+### Step 3: Domain Validation
+
+1. After configuring DNS, return to the Cerebrium dashboard
+2. Cerebrium will automatically attempt to validate DNS records every 30 minutes for up to 2 days
+3. To trigger an immediate validation attempt, click "Validation Status" -> "Validate Domain" (this works even after the 2-day window has elapsed)
+4. If validation fails, the dialog will show the last known error.
+5. Once validated, SSL certificates will be automatically provisioned
+
+### Step 4: Start Using the Custom Domain
+
+Once validation is complete, the custom domain can be used immediately with all apps in the project:
+
+<Tabs>
+  <Tab title="POST Request">
+    ```bash
+    curl -X POST https://api.example.com/v4/p-1234/my-app/run \
+      -H "Authorization: Bearer {YOUR_API_KEY}" \
+      -H "Content-Type: application/json" \
+      -d "{'inputs': {'prompt': 'Hello world'}}"
+    ```
+  </Tab>
+
+  <Tab title="GET Request">
+    ```bash
+    curl https://api.example.com/v4/p-1234/my-app/run \
+      -H "Authorization: Bearer {YOUR_API_KEY}"
+    ```
+  </Tab>
+</Tabs>
+
+## Managing Domains
+
+### Domain Validation Statuses
+
+Cerebrium attempts to validate domains once every 30 minutes for up to 2 days. If validation has not succeeded, click "Validation Status" to see the last attempt and any errors.
+
+- **Pending**: Domain is waiting for DNS validation
+- **Validated**: Domain is successfully validated and ready to use
+- **Failed**: DNS validation failed - click "Validation Status" to see the specific error
+
+### Validation Errors
+
+If a domain shows "Failed" status, the DNS record has been misconfigured. Common issues include:
+
+- **Wrong target**: CNAME points to incorrect proxy URL
+- **Multiple conflicting records**: Remove any existing ALIAS records for the same hostname
+
+### Common DNS Provider Issues
+
+- **Cloudflare**: Disable proxy (set to "DNS only" - gray cloud icon)
+- **Route53**: Use simple routing policy, not weighted or latency-based
+- **Namecheap**: Use "@" for apex domains, not "www" or blank
+- **GoDaddy**: CNAME records cannot be used with apex domains - consider using a subdomain or an ALIAS record
+
+### Common DNS Mistakes
+
+- **Wrong proxy URL**: Use the exact URL shown in the dashboard
+- **TTL too high**: Consider lowering TTL before making DNS changes
+- **Multiple records**: Remove conflicting A or CNAME records for the same name
+
+## Security Considerations
+
+- Custom domains automatically receive SSL certificates
+- All traffic is encrypted end-to-end
+- Certificates auto-renew before expiration
+- Domain validation ensures control of the domain

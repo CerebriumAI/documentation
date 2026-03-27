@@ -1,0 +1,27 @@
+---
+title: "Inter-cluster routing"
+description: "Route to your apps privately in cluster with minimal latency"
+---
+
+Inter-cluster routing enables direct, low-latency communication between Cerebrium apps within the same region. Traffic stays off the public internet, reducing latency and improving performance. Each application scales independently based on its configured scaling parameters.
+
+Inter-cluster routing provides:
+
+- **Low latency**: Direct container-to-container communication within the same region (~0.3–1 ms typical)
+- **High bandwidth**: Up to 50 Gbps between containers
+- **No public internet**: Apps communicate directly without external routing
+- **Observablity**: All requests appear in the Cerebrium dashboard with full logs, payloads, and latency metrics
+
+## How It Works
+
+![Inter-cluster Routing](/images/inter-cluster-routing.png)
+
+When one app communicates with another within the same region, the request is routed through Cerebrium’s local proxy layer. This proxy keeps every request inside the regional cluster while enforcing authentication, observability, and scaling. All communication follows the same security standards as the public API server — every request is authenticated unless authentication is explicitly disabled. If authentication is disabled without custom security in place, other apps within the same cluster can access the endpoint.
+
+The proxy enforces configured [scaling parameters](../../scaling/scaling-apps), including concurrency and RPS-based autoscaling, so services scale predictably as traffic grows. Multiple communication protocols are supported — apps can interact over HTTP, WebSocket, or batch job execution for streaming data, chaining models, or triggering asynchronous workloads.
+
+Apps communicate using a consistent internal endpoint format: `http://api.aws/v4/<project_id>/<app_name>/<func_name>`
+
+This endpoint pattern remains the same across all regions, so URLs do not change when deploying to multiple locations. Inter-cluster routing only works between applications deployed within the same region. Requests never traverse the public internet — they stay fully contained within the cluster network, achieving typical latencies of 0.3–1 ms and bandwidth up to 50 Gbps between containers.
+
+<Note>gRPC is not currently supported but is on the roadmap.</Note>

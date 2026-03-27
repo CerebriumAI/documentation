@@ -1,0 +1,69 @@
+---
+title: Vercel Integration
+description: Integrate Cerebrium with Vercel to build AI applications
+---
+
+The Cerebrium + Vercel integration provides access to Cerebrium-deployed apps via REST endpoints from Vercel projects. Install it from the Vercel AI marketplace.
+
+### What this integration does
+
+This integration provides:
+
+1. Automatic synchronization of Cerebrium API keys to one or more Vercel projects.
+2. HTTP access to Cerebrium endpoints from connected Vercel projects.
+
+### Authentication
+
+The integration sets the following environment variables on the selected Vercel projects:
+
+- CEREBRIUM_JWT
+
+The environment variables are set in the “preview” and “production” project targets. See the Vercel [documentation](https://vercel.com/docs/concepts/projects/environment-variables#environments) for more on environment variables.
+
+### Installing the integration
+
+1. Click "Add Integration" on the Vercel integrations page.
+2. Select the Vercel account you want to connect with.
+3. (If logged out) Sign into an existing Cerebrium project, or create a new Cerebrium project.
+4. Select the Vercel projects that you wish to connect to your Cerebrium workspace.
+5. Click "Continue."
+6. Back in your Vercel dashboard, confirm the environment variables were added by going to your Vercel project → Settings → Environment Variables.
+
+### Uninstalling the integration
+
+Manage the Cerebrium Vercel integration from the Vercel dashboard under the “Integrations” tab. Remove the integration installation from there.
+
+Important: Removing an integration will delete the corresponding API token set by Cerebrium in your Vercel project(s).
+
+## Example
+
+See the [Mistral 7B with vLLM example](/v4/examples/mistral-vllm) for deploying to an auto-scaling endpoint.
+
+After deploying the app, the output includes the endpoint URL. Call it from a Vercel project:
+
+```javascript
+fetch(
+  "https://api.aws.us-east-1.cerebrium.ai/v4/p-<YOUR PROJECT ID>/mistral-vllm/predict",
+  {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.CEREBRIUM_JWT}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      prompt: "What is the capital city of France?",
+    }),
+  },
+)
+  .then((response) => response.json())
+  .then((data) => console.log(data))
+  .catch((error) => console.error("Error:", error));
+```
+
+This example app takes a prompt as input and returns the model output.
+
+## Pricing
+
+Requests to apps use usage-based pricing, billed at 1ms granularity. The exact cost per millisecond is based on the underlying hardware you specify.
+
+See the [pricing page](https://www.cerebrium.ai/pricing) for current GPU prices.

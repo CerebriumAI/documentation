@@ -1,0 +1,47 @@
+---
+title: "Async requests"
+description: "Execute calls to a Cerebrium app to be run asynchronously"
+---
+
+Some apps require asynchronous "fire-and-forget" execution. In this model, Cerebrium handles running the function, while the developer is responsible for ensuring data leaves the function (e.g. via a webhook).
+
+Enable async execution by adding the `async=true` query parameter to the request:
+
+```bash
+curl -X POST https://api.aws.us-east-1.cerebrium.ai/v4/<YOUR-PROJECT-ID>/<YOUR-APP>/run?async=true'\
+       -H 'Content-Type: application/json'\
+       -H 'Authorization: Bearer <YOUR-JWT-TOKEN>\
+       --data '{"param": "hello world"}'
+```
+
+This _immediately_ returns a `202 Accepted` response containing only a `run_id`:
+
+```bash
+HTTP/1.1 202 Accepted
+Connection: close
+Content-Length: 50
+Content-Type: application/json
+Date: Tue, 12 Nov 2024 03:13:25 GMT
+Server: envoy
+Vary: Origin
+X-Envoy-Upstream-Service-Time: 2
+X-Request-Id: 21eb3b98-4b10-9ad6-8681-a47172828024
+
+{"run_id":"21eb3b98-4b10-9ad6-8681-a47172828024"}
+```
+
+Async functions run for a maximum of **12 hours**, bounded by the `response_grace_period` in `cerebrium.toml`. This defaults to 15 minutes — update it to match the maximum time the task needs.
+
+Cerebrium runs the HTTP request in the background, but the function itself must still behave **synchronously** — it must complete its work and return a result.
+Returning a response while the application is still processing causes Cerebrium to begin terminating the container. Only return once all processing is finished.
+
+Because async calls do not return a response to the caller, the function must export any relevant data itself. Combine async execution with a `webhookEndpoint` to have Cerebrium automatically forward the function's response body:
+
+```bash
+curl -X POST <https://api.aws.us-east-1.cerebrium.ai/v4/><YOUR-PROJECT-ID>/<YOUR-APP>/run?async=true&webhookEndpoint=https%3A%2F%2Fwebhook.site%2F'\
+ -H 'Content-Type: application/json'\
+ -H 'Authorization: Bearer <YOUR-JWT-TOKEN>\
+ --data '{"param": "hello world"}'
+```
+
+This is a proxy-level feature — no code changes are required to use webhook forwarding. In the dashboard, the function is marked **async** but still shows the status of the internal synchronous call (e.g. if the call failed, the async request state is `failure`).

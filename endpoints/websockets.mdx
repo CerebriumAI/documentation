@@ -1,0 +1,82 @@
+---
+title: "WebSocket Endpoints"
+---
+
+WebSocket endpoints stream responses to the client, enabling real-time, bidirectional communication.
+
+## Required changes
+
+Setting up a WebSocket endpoint requires a custom runtime. Configure it in `cerebrium.toml`:
+
+```toml
+[cerebrium.runtime.custom]
+port = 5000
+entrypoint = "uvicorn main:app --host 0.0.0.0 --port 5000"
+healthcheck_endpoint = "/health"
+readycheck_endpoint = "/ready"
+```
+
+Fields:
+
+- `port`: The port the app listens on inside the container.
+- `entrypoint`: The command to start the app. This example uses Uvicorn to run a FastAPI app in `main.py`.
+- `healthcheck_endpoint`: Confirms instance health. Defaults to a TCP ping on the configured port. A non-200 response marks the instance as _unhealthy_, triggering a restart if it does not recover.
+- `readycheck_endpoint`: Confirms the instance is ready to receive traffic. Defaults to a TCP ping on the configured port. A non-200 response removes the instance from request routing.
+
+## Things to note
+
+- Custom Runtime Required: WebSocket endpoints require a custom runtime to control how the app runs inside the container.
+
+- WebSocket URL: Requests must use a `wss://` URL. The client must support secure WebSocket connections.
+
+## Making a request
+
+Test the WebSocket endpoint using websocat, a command-line WebSocket client:
+
+```bash
+websocat wss://api.aws.us-east-1.cerebrium.ai/v4/<your-project-id>/<your-app-name>/<your-websocket-function-name>
+```
+
+## Implementing the WebSocket Endpoint
+
+Example WebSocket endpoint using FastAPI:
+
+```python
+# In main.py:
+from fastapi import FastAPI, WebSocket
+
+app = FastAPI()
+
+@app.websocket("/your-websocket-function-name")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    await websocket.send_text("Hello, WebSocket!")
+    await websocket.close()
+```
+
+## Additional Info
+
+Client-side Implementation: Handle the WebSocket connection properly on the client, including error handling and reconnection logic.
+
+```javascript
+// Example using JavaScript in a browser
+const socket = new WebSocket(
+  "wss://api.aws.us-east-1.cerebrium.ai/v4/<your-project-id>/<your-app-name>/<your-websocket-function-name>",
+);
+
+socket.onopen = function (event) {
+  console.log("WebSocket is open now.");
+};
+
+socket.onmessage = function (event) {
+  console.log("Received data: " + event.data);
+};
+
+socket.onclose = function (event) {
+  console.log("WebSocket is closed now.");
+};
+
+socket.onerror = function (error) {
+  console.error("WebSocket error observed:", error);
+};
+```
