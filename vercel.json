@@ -6,16 +6,6 @@
       "permanent": true
     },
     {
-      "source": "/cerebrium",
-      "destination": "/docs",
-      "permanent": true
-    },
-    {
-      "source": "/cerebrium/:path(.*)",
-      "destination": "/docs/:path",
-      "permanent": true
-    },
-    {
       "source": "/docs/cerebrium",
       "destination": "/docs",
       "permanent": true
@@ -34,6 +24,14 @@
     {
       "source": "/api/request",
       "destination": "https://cerebrium.mintlify.dev/_mintlify/api/request"
+    },
+    {
+      "source": "/cerebrium",
+      "destination": "https://cerebrium.mintlify.dev/docs"
+    },
+    {
+      "source": "/cerebrium/:path*",
+      "destination": "https://cerebrium.mintlify.dev/docs/:path*"
     },
     {
       "source": "/docs",
