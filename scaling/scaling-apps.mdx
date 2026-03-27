@@ -74,9 +74,9 @@ waits for the specified grace period, issues a SIGKILL command if the instance h
   handled to allow graceful termination of requests. For custom runtimes, you'll
   need to implement SIGTERM handling yourself to ensure requests complete
   gracefully before termination. See our [Graceful Termination
-  guide](/scaling/graceful-termination) for detailed implementation
-  examples, including FastAPI patterns for tracking and completing in-flight
-  requests during shutdown.
+  guide](/scaling/graceful-termination) for detailed implementation examples,
+  including FastAPI patterns for tracking and completing in-flight requests
+  during shutdown.
 </Note>
 
 Performance metrics available through the dashboard help monitor scaling behavior:
