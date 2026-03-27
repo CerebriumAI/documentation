@@ -1,0 +1,61 @@
+{
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/docs",
+      "permanent": true
+    },
+    {
+      "source": "/cerebrium/:path*",
+      "destination": "/docs/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/docs/cerebrium/:path*",
+      "destination": "/docs/:path*",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/_mintlify/:path*",
+      "destination": "https://cerebrium.mintlify.dev/_mintlify/:path*"
+    },
+    {
+      "source": "/api/request",
+      "destination": "https://cerebrium.mintlify.dev/_mintlify/api/request"
+    },
+    {
+      "source": "/docs",
+      "destination": "https://cerebrium.mintlify.dev/docs"
+    },
+    {
+      "source": "/docs/llms.txt",
+      "destination": "https://cerebrium.mintlify.dev/llms.txt"
+    },
+    {
+      "source": "/docs/llms-full.txt",
+      "destination": "https://cerebrium.mintlify.dev/llms-full.txt"
+    },
+    {
+      "source": "/docs/sitemap.xml",
+      "destination": "https://cerebrium.mintlify.dev/sitemap.xml"
+    },
+    {
+      "source": "/docs/robots.txt",
+      "destination": "https://cerebrium.mintlify.dev/robots.txt"
+    },
+    {
+      "source": "/docs/mcp",
+      "destination": "https://cerebrium.mintlify.dev/mcp"
+    },
+    {
+      "source": "/docs/:path*",
+      "destination": "https://cerebrium.mintlify.dev/docs/:path*"
+    },
+    {
+      "source": "/mintlify-assets/:path+",
+      "destination": "https://cerebrium.mintlify.dev/mintlify-assets/:path+"
+    }
+  ]
+}
