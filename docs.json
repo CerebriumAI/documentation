@@ -274,10 +274,10 @@
     },
     {
       "source": "/cerebrium/:slug*",
-      "destination": "/docs/:slug*"
+      "destination": "/:slug*"
     },
     {
-      "source": "/cerebrium/:slug*",
+      "source": "docs/cerebrium/:slug*",
       "destination": "/:slug*"
     }
   ],
