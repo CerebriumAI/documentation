@@ -273,6 +273,14 @@
   },
   "redirects": [
     {
+      "source": "/",
+      "destination": "/docs"
+    },
+    {
+      "source": "/cerebrium/:slug*",
+      "destination": "/docs/:slug*"
+    },
+    {
       "source": "/cerebrium/:slug*",
       "destination": "/:slug*"
     }
