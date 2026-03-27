@@ -3,11 +3,9 @@ title: "Async requests"
 description: "Execute calls to a Cerebrium app to be run asynchronously"
 ---
 
-Many apps require asynchronous execution of functions in a "fire-and-forget" fashion
-to work optimally. In this scenario, you hand off execution of a function to be Cerebrium's
-responsibility, while you as the developer are responsible for ensuring that data is able to leave the function.
+Some apps require asynchronous "fire-and-forget" execution. In this model, Cerebrium handles running the function, while the developer is responsible for ensuring data leaves the function (e.g. via a webhook).
 
-You can enable your function to execute asynchronously by adding the `async` query parameter to your request and setting it to `true`. This would look something like this:
+Enable async execution by adding the `async=true` query parameter to the request:
 
 ```bash
 curl -X POST https://api.aws.us-east-1.cerebrium.ai/v4/<YOUR-PROJECT-ID>/<YOUR-APP>/run?async=true'\
@@ -16,7 +14,7 @@ curl -X POST https://api.aws.us-east-1.cerebrium.ai/v4/<YOUR-PROJECT-ID>/<YOUR-A
        --data '{"param": "hello world"}'
 ```
 
-This would _immediately_ return a response akin to the following, with a body that only specifies a `run_id`:
+This _immediately_ returns a `202 Accepted` response containing only a `run_id`:
 
 ```bash
 HTTP/1.1 202 Accepted
@@ -32,19 +30,12 @@ X-Request-Id: 21eb3b98-4b10-9ad6-8681-a47172828024
 {"run_id":"21eb3b98-4b10-9ad6-8681-a47172828024"}
 ```
 
-Async functions will run for a maximum of **12 hours** however will obey a maximum running time of based what is set in your cerebrium.toml file as the `response_grace_period`.
-This defaults to 15 minutes so max sure to update it to the maximum time your task needs.
+Async functions run for a maximum of **12 hours**, bounded by the `response_grace_period` in `cerebrium.toml`. This defaults to 15 minutes — update it to match the maximum time the task needs.
 
-In the background, Cerebrium will now run this HTTP request for you.
-Your function is still expected to behave in a **synchronous** manner. That is, it must execute a body of work and return a result once it is done.
-If you terminate your function early and return a response while the application is still doing work, the Cerebrium
-system will begin to terminate the application. Therefore, you should only return a response once the container
-has finished processing the task, and not earlier.
+Cerebrium runs the HTTP request in the background, but the function itself must still behave **synchronously** — it must complete its work and return a result.
+Returning a response while the application is still processing causes Cerebrium to begin terminating the container. Only return once all processing is finished.
 
-To use async execution effectively, you must ensure that your function exports any relevant data you
-need, since you will no longer be able to receive a request. An easy way to achieve this would be to combine
-async execution with a specified `webhookEndpoint`, to have Cerebrium automatically forward the body of
-the function response once it has returned:
+Because async calls do not return a response to the caller, the function must export any relevant data itself. Combine async execution with a `webhookEndpoint` to have Cerebrium automatically forward the function's response body:
 
 ```bash
 curl -X POST <https://api.aws.us-east-1.cerebrium.ai/v4/><YOUR-PROJECT-ID>/<YOUR-APP>/run?async=true&webhookEndpoint=https%3A%2F%2Fwebhook.site%2F'\
@@ -53,6 +44,4 @@ curl -X POST <https://api.aws.us-east-1.cerebrium.ai/v4/><YOUR-PROJECT-ID>/<YOUR
  --data '{"param": "hello world"}'
 ```
 
-As with webhooks, this a feature of our proxy, and you will not need to modify any part of your code to use the webhook
-functionality. In your dashboard, your function will be marked as **async**, but will still show the status of the internal synchronous call
-that was made (in other words, if the call to your function failed, the state of your async request would be `failure` etc.)
+This is a proxy-level feature — no code changes are required to use webhook forwarding. In the dashboard, the function is marked **async** but still shows the status of the internal synchronous call (e.g. if the call failed, the async request state is `failure`).

@@ -3,13 +3,13 @@ title: "Langchain and Langsmith"
 description: "Deploy an executive assistant using Langsmith and Langchain"
 ---
 
-In this tutorial, we'll create Cal-vin, an executive assistant that manages calendar appointments (via Cal.com) with employees, customers, partners, and friends. Using the LangChain SDK for agent creation and LangSmith platform for monitoring, we'll track scheduling activities and identify failure points. Finally, we'll deploy on Cerebrium to demonstrate seamless deployment and scaling.
+This tutorial builds Cal-vin, an executive assistant that manages calendar appointments (via Cal.com) with employees, customers, partners, and friends. It uses the LangChain SDK for agent creation and the LangSmith platform for monitoring scheduling activities and identifying failure points, deployed on Cerebrium for seamless scaling.
 
 You can find the final version of the code [here](https://github.com/CerebriumAI/examples/tree/master/4-integrations/2-tool-calling-langsmith)
 
 ### Concepts
 
-This app requires calendar interaction based on user instructions - an ideal use case for an agent with function (tool) calling capabilities. LangChain, a framework with extensive agent support, created LangSmith, making integration straightforward.
+This app requires calendar interaction based on user instructions — an ideal use case for an agent with function (tool) calling capabilities. LangChain provides extensive agent support, and its companion tool LangSmith makes monitoring integration straightforward.
 
 A tool refers to any framework, utility, or system with defined functionality for specific use cases, such as searching Google or retrieving credit card transactions.
 
@@ -47,7 +47,7 @@ agent_executor.invoke({"input": "what's 3 plus 5 raised to the 2.743. also what'
 
 ### Setup Cal.com
 
-[Cal.com](https://cal.com) provides our calendar management foundation. Create an account [here](https://app.cal.com/signup) if needed. Cal serves as the source of truth - any updates to time zones or working hours automatically reflect in the assistant's responses.
+[Cal.com](https://cal.com) provides the calendar management foundation. Create an account [here](https://app.cal.com/signup) if needed. Cal serves as the source of truth — updates to time zones or working hours automatically reflect in the assistant's responses.
 
 After creating your account:
 
@@ -122,7 +122,7 @@ You should get a response similar to the following:
 }
 ```
 
-Great! Now we know that our API key is working and pulling information from our calendar. The API calls we will be using later in this tutorial are:
+The API key is now confirmed working and pulling calendar information. The API calls used later in this tutorial are:
 
 - **/availability**: Get your availability
 - **/bookings**: Book a slot
@@ -214,7 +214,7 @@ The code above:
 3. Uses `find_available_slots` helper function to format Cal.com API responses into readable time slots
    ‍
 
-We then follow a similar practice to write our book_slot tool. This will book a slot in my calendar based on the selected time/day. You can get the eventTypeId from your dashboard, select an event and grab the ID in the URL.
+The book_slot tool follows a similar pattern. It books a slot based on the selected time/day. Get the eventTypeId from the dashboard by selecting an event and grabbing the ID from the URL.
 
 ```python
 @tool
@@ -252,7 +252,7 @@ def book_slot(datetime: str, name: str, email: str, title: str, description: str
         return {}
 ```
 
-Now that we have created our two tools let us create our agent in our `main.py` file too:
+With both tools created, set up the agent in `main.py`:
 
 ```python
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -275,20 +275,20 @@ agent = create_tool_calling_agent(llm, tools, prompt)
 agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
 ```
 
-The above snippet is used to create our agent executor which consists of:
+The agent executor consists of:
 
-- Our prompt template:
-  - This is where we can give instructions to our agent on what role it is taking on, its goal and how it should perform in certain situations etc. The more precise and concise this is, the better.
-  - Chat History is where we will inject all previous messages so that the agent has context on what was said previously.
-  - Input is new input from the end user.
-- We then instantiate our GPT3.5 model that will be the LLM we will be using. You can swap this our with Antrophic or any other provider just by replacing this one line - LangChain makes this seamless.
-- Lastly, we join this all together with our tools to create an agent executor.
+- The prompt template:
+  - Defines the agent’s role, goals, and situational behavior. More precise instructions yield better results.
+  - Chat History stores previous messages for conversation context.
+  - Input receives new input from the end user.
+- The GPT-3.5 model serves as the LLM. Swap to Anthropic or any other provider by replacing this one line — LangChain makes this seamless.
+- Finally, these components combine with the tools to create an agent executor.
 
 ### Setup Chatbot
 
-The above code is static in that it will only reply to our first question but we might need to have a conversation to find a time that suits both the user and my schedule. We therefore need to create a chatbot with tool calling capabilities and the ability to remember past messages. LangChain supports this with RunnableWithMessageHistory().
+The above code only handles a single question. A multi-turn conversation is needed to find a mutually suitable time. LangChain’s RunnableWithMessageHistory() adds tool calling capabilities and message memory.
 
-It essentially allows us to store the previous replies of our conversation in a chat_history variable (mentioned above in our prompt template) and tie this all to a session identifier so your API can remember information pertaining to a specific user/session. Below is our code to implement this:
+It stores previous replies in the chat_history variable (from the prompt template) and ties them to a session identifier, so the API remembers information per user/session:
 
 ```python
 from langchain.memory import ChatMessageHistory
@@ -304,7 +304,7 @@ conversational_agent_executor = RunnableWithMessageHistory(
 )
 ```
 
-Let us run a simple local test to make sure everything is working as expected.
+Run a local test to verify everything works:
 
 ```python
 class Item(BaseModel):
@@ -332,21 +332,21 @@ if __name__ == "__main__":
         print(result)
 ```
 
-The above code does the following:
+This code:
 
-- We define a Pydantic object which specifies the parameters our API expects - the user prompt and a session id to tie the conversation to.
-- The predict function in Cerebrium is the entry point for our API so we just pass the prompt and session id to our agent and print the results.
+- Defines a Pydantic object specifying the expected API parameters — user prompt and session ID.
+- The predict function (Cerebrium’s API entry point) passes the prompt and session ID to the agent and returns results.
   ‍
 
-To run this, simply install the pip dependencies manually by typing the following into your terminal `pip install pydantic langchain pytz openai langchain_openai langchain-community` and then run `python main.py` to execute your main python file. You will need to replace your secrets with the actual values when running locally. You should then see output similar to the following:
+Install pip dependencies locally: `pip install pydantic langchain pytz openai langchain_openai langchain-community`, then run `python main.py`. Replace secrets with actual values when running locally. Output looks similar to:
 
 ![Langchain Agent](/images/examples/langchain_langsmith/langchain_agent.png)
 
-If you keep talking and answering, you will see it will eventually book a slot.
+Continuing the conversation eventually results in a booked slot.
 
 ### Integrate Langsmith
 
-Production monitoring is crucial, especially for agent applications with indeterministic workflows based on user interactions. LangSmith, a LangChain tool for logging, debugging, and monitoring, helps track performance and handle edge cases. Learn more about LangSmith [here](https://docs.smith.langchain.com/monitoring).
+Production monitoring is crucial for agent applications with nondeterministic workflows. LangSmith, a LangChain tool for logging, debugging, and monitoring, tracks performance and surfaces edge cases. Learn more [here](https://docs.smith.langchain.com/monitoring).
 
 Set up LangSmith monitoring:
 
@@ -354,7 +354,7 @@ Set up LangSmith monitoring:
 2. Create a free LangSmith account [here](https://smith.langchain.com/)
 3. Generate API key (click gear icon in bottom left)
 
-Next we need to set the following environment variables. You can add the following code at the top of your main.py. You can add the API key to your secrets in Cerebrium
+Set the following environment variables at the top of main.py. Add the API key to Cerebrium secrets
 
 ```python
 import os
@@ -362,7 +362,7 @@ os.environ['LANGCHAIN_TRACING_V2']="true"
 os.environ['LANGCHAIN_API_KEY']=os.environ.get("LANGCHAIN_API_KEY")
 ```
 
-Enable tracing by adding the `@traceable` decorator to your functions. LangSmith automatically tracks tool invocations and OpenAI responses through function traversal. Add the decorator to the `predict` function and any independently instantiated functions. Edit main.py to have the following:
+Enable tracing by adding the `@traceable` decorator to functions. LangSmith automatically tracks tool invocations and OpenAI responses through function traversal. Add the decorator to the `predict` function and any independently instantiated functions:
 
 ```
 from langsmith import traceable
@@ -371,15 +371,15 @@ from langsmith import traceable
 def predict(item, run_id, logger):
 ```
 
-Easy! Now LangSmith is set up. Run python main.py to run your file and test booking an appointment with yourself.
+LangSmith is now set up. Run `python main.py` and test booking an appointment.
 
-After you have completed a successful test run you should see data populating in LangSmith. You should see the following:
+After a successful test run, data populates in LangSmith:
 
 ![LangSmith Runs Dashboard](/images/examples/langchain_langsmith/langsmith_runs.png)
 
-In the Runs tab, you can see all your runs (ie: invocations/API requests).
+The Runs tab shows all runs (invocations/API requests).
 
-In 1 above, it takes the name of our function, input is set to the Cerebrium RunID which in this case we set to “test”. Lastly, you can see the input as well as the total latency of your run.
+In 1 above, the function name appears, with input set to the Cerebrium RunID (set to “test”. The input and total latency of the run are also visible.
 
 LangSmith supports various data automations:
 
@@ -389,29 +389,29 @@ LangSmith supports various data automations:
 - Webhook endpoint triggers
 - Additional features
 
-You can set these automations by clicking the “Add rule” button above (2) and specifying under what conditions you would like the above to occur. The options to create a rule on are a filter, a sampling rate, and an action.
+Set automations by clicking the “Add rule” button above (2) and specifying conditions. Rule options include a filter, sampling rate, and action.
 
-Lastly, in 3 you can see overall metrics about your project such as number of runs, error rate, latency etc.
+Section 3 shows overall project metrics: run count, error rate, latency, etc.
 
-LangSmith Threads provide clean conversation tracking between agents and users. Track conversation evolution and investigate anomalies through trace analysis. Each thread links to its associated session ID.
+LangSmith Threads provide clean conversation tracking between agents and users. Track conversation evolution and investigate anomalies through trace analysis. Each thread links to its session ID.
 
 ![LangSmith Threads](/images/examples/langchain_langsmith/langsmith_threads.png)
 
-Lastly, you can monitor performance metrics regarding your agent in the Monitor tab. It shows metrics such as trace count, LLM call success rate, First time for token and much more.
+The Monitor tab shows agent performance metrics: trace count, LLM call success rate, time to first token, and more.
 
 ![LangSmith Performance Monitoring](/images/examples/langchain_langsmith/langsmith_performance.png)
 
-LangSmith offers simple integration for agent development with extensive functionality. While we've covered the basics, it provides comprehensive support for the application feedback loop: data collection/annotation → monitoring → iteration.
+LangSmith offers straightforward integration with extensive functionality. Beyond the basics covered here, it supports the full application feedback loop: data collection/annotation → monitoring → iteration.
 
 ### Deploy to Cerebrium
 
-To deploy this application to Cerebrium you can simply run the command: cerebrium deploy in your terminal. Just make sure to delete the name == “main” code since that was just to run locally.
+Deploy to Cerebrium by running `cerebrium deploy`. Delete the `name == "main"` block first (used only for local testing).
 
-If it deployed successfully, you should see something like this:
+After successful deployment:
 
 ![Cerebrium Deployment](/images/examples/langchain_langsmith/cerebrium_deploy.png)
 
-You can now call this via an API endpoint and our agent will remember the conversation as long as the session id is the same. Cerebrium will automatically scale up your application based on demand and only pay for the compute you use.
+The API endpoint is now live. The agent remembers conversations as long as the session ID remains the same. Cerebrium automatically scales the application based on demand, with pay-per-use compute.
 
 ```
 {
@@ -441,6 +441,6 @@ Consider implementing:
 
 ### Conclusion
 
-The combination of LangChain, LangSmith, and Cerebrium enables scalable agent deployment. LangChain excels at LLM orchestration, tooling, and memory management, while LangSmith provides production monitoring and edge case identification. Cerebrium offers pay-as-you-go scaling across hundreds or thousands of CPU/GPUs.
+LangChain, LangSmith, and Cerebrium together enable scalable agent deployment. LangChain handles LLM orchestration, tooling, and memory management. LangSmith provides production monitoring and edge case identification. Cerebrium offers pay-as-you-go scaling across hundreds or thousands of CPU/GPUs.
 
-Tag us as **@cerebriumai** in extensions you make to the code repository so we can share it with our community.
+Tag **@cerebriumai** in extensions to the code repository to share with the community.

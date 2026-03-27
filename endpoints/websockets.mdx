@@ -2,12 +2,11 @@
 title: "WebSocket Endpoints"
 ---
 
-Using a WebSocket endpoint allows responses to be streamed to the client, enabling real-time communication and efficient data transfer.
+WebSocket endpoints stream responses to the client, enabling real-time, bidirectional communication.
 
 ## Required changes
 
-To set up a WebSocket endpoint, you need to configure your app to use a custom runtime.
-Below is an example of the required changes in your `cerebrium.toml` configuration file:
+Setting up a WebSocket endpoint requires a custom runtime. Configure it in `cerebrium.toml`:
 
 ```toml
 [cerebrium.runtime.custom]
@@ -17,22 +16,22 @@ healthcheck_endpoint = "/health"
 readycheck_endpoint = "/ready"
 ```
 
-Explanation:
+Fields:
 
-- port: The port your app will listen on inside the container
-- entrypoint: The command to start your app. In this example, we're using Uvicorn to run a FastAPI app located in `main.py`
-- `healthcheck_endpoint`: The endpoint used to confirm instance health. If unspecified, defaults to a TCP ping on the configured port. If the health check registers a non-200 response, it will be considered _unhealthy_, and be restarted should it not recover timely.
-- `readycheck_endpoint`: The endpoint used to confirm if the instance is ready to receive. If unspecified, defaults to a TCP ping on the configured port. If the ready check registers a non-200 response, it will not be a viable target for request routing.
+- `port`: The port the app listens on inside the container.
+- `entrypoint`: The command to start the app. This example uses Uvicorn to run a FastAPI app in `main.py`.
+- `healthcheck_endpoint`: Confirms instance health. Defaults to a TCP ping on the configured port. A non-200 response marks the instance as _unhealthy_, triggering a restart if it does not recover.
+- `readycheck_endpoint`: Confirms the instance is ready to receive traffic. Defaults to a TCP ping on the configured port. A non-200 response removes the instance from request routing.
 
 ## Things to note
 
-- Custom Runtime Required: A custom runtime is necessary to set up a WebSocket endpoint because it allows you to define how your app is run inside the container
+- Custom Runtime Required: WebSocket endpoints require a custom runtime to control how the app runs inside the container.
 
-- WebSocket URL: Requests need to be made to a WebSocket URL starting with `wss://`. Ensure that your client supports secure WebSocket connections
+- WebSocket URL: Requests must use a `wss://` URL. The client must support secure WebSocket connections.
 
 ## Making a request
 
-You can test your WebSocket endpoint using websocat, a command-line utility for connecting to WebSocket servers:
+Test the WebSocket endpoint using websocat, a command-line WebSocket client:
 
 ```bash
 websocat wss://api.aws.us-east-1.cerebrium.ai/v4/<your-project-id>/<your-app-name>/<your-websocket-function-name>
@@ -40,7 +39,7 @@ websocat wss://api.aws.us-east-1.cerebrium.ai/v4/<your-project-id>/<your-app-nam
 
 ## Implementing the WebSocket Endpoint
 
-Here’s an example of how you can implement a WebSocket endpoint using FastAPI:
+Example WebSocket endpoint using FastAPI:
 
 ```python
 # In main.py:
@@ -57,7 +56,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
 ## Additional Info
 
-Client-side Implementation: When connecting from a client app, ensure you handle the WebSocket connection properly, including error handling and reconnection logic if necessary.
+Client-side Implementation: Handle the WebSocket connection properly on the client, including error handling and reconnection logic.
 
 ```javascript
 // Example using JavaScript in a browser

@@ -15,7 +15,7 @@ This guide sets up a CI/CD pipeline using GitHub Actions and Cerebrium's Service
 
 ### 1. Authenticating to Cerebrium
 
-The GitHub Action workflow will use a **Service Account key** to authenticate to Cerebrium. Service Account keys are credentials that are not tied to an indivdual but to a specific service.
+The GitHub Action workflow uses a **Service Account key** to authenticate to Cerebrium. Service Account keys are credentials tied to a specific service, not an individual.
 
 1. Go to the [Cerebrium Dashboard](https://dashboard.cerebrium.ai/) and open the **API Keys** page.
 2. Click **Create Service Account**, name it `"GitHub Actions CI/CD"`, choose an expiry date, and click **Create**.
@@ -41,7 +41,7 @@ Store this key in a secret for use in GitHub Actions workflows.
 
 ### 3. GitHub Actions Workflow
 
-GitHub Actions use workflow files located in the `.github/workflows/` directory of a repository. Create one to define a deployment process.
+GitHub Actions use workflow files in the `.github/workflows/` directory. Create one to define the deployment process.
 
 1. Create a `.github/workflows` directory in the root of a new or existing GitHub repository
 2. Within that directory, create a new file named `cerebrium-deploy.yml`

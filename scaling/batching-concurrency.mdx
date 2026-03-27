@@ -5,26 +5,26 @@ description: "Improve throughput and cost performance with batching and concurre
 
 ## Understanding Concurrency
 
-Concurrency in Cerebrium allows each instance to process multiple requests simultaneously. The `replica_concurrency` setting in the `cerebrium.toml` file determines how many requests each instance handles in parallel:
+Each instance can process multiple requests simultaneously. The `replica_concurrency` setting in `cerebrium.toml` determines how many requests each instance handles in parallel:
 
 ```toml
 [cerebrium.scaling]
 replica_concurrency = 4    # Process up to 4 requests simultaneously.
 ```
 
-When requests arrive at an instance that hasn't reached its concurrency limit, they begin processing immediately. Once an instance reaches its maximum concurrent requests, additional requests queue until capacity becomes available. This parallel processing capability helps applications maintain consistent performance during periods of high traffic.
+Requests arriving at an instance below its concurrency limit begin processing immediately. Once an instance reaches its maximum, additional requests queue until capacity becomes available.
 
-Modern GPUs excel at parallel processing, making concurrent request handling particularly effective for workloads. For instance, when an instance processes multiple image classification requests concurrently, it utilizes GPU resources more efficiently than processing requests sequentially.
+GPUs excel at parallel processing, so concurrent request handling utilizes GPU resources more efficiently than sequential processing.
 
 ## Understanding Batching
 
-Batching determines how concurrent requests are processed together within an instance. While concurrency controls the number of simultaneous requests, batching manages how these requests are grouped and executed (the default concurrency is 1 request per container).
+Batching determines how concurrent requests are grouped and executed within an instance. Concurrency controls the number of simultaneous requests; batching controls how those requests are processed together. The default concurrency is 1 request per container.
 
 Cerebrium supports two approaches to request batching.
 
 ### Framework-native Batching
 
-Many frameworks include features for processing multiple requests efficiently. vLLM, for example, automatically handles batched model inference requests:
+Many frameworks handle batched processing natively. vLLM, for example, automatically batches model inference requests:
 
 ```toml
 [cerebrium.scaling]
@@ -42,7 +42,7 @@ accelerate = "latest"
 xformers = "latest"
 ```
 
-When multiple requests arrive, vLLM automatically combines them into optimal batch sizes and processes them together, maximizing GPU utilization through its internal batching functionality.
+When multiple requests arrive, vLLM combines them into optimal batch sizes and processes them together, maximizing GPU utilization.
 
 <Tip>
   Check out the complete [vLLM batching
@@ -52,9 +52,9 @@ When multiple requests arrive, vLLM automatically combines them into optimal bat
 
 ### Custom Batching
 
-Applications requiring precise control over request processing can implement custom batching through Cerebrium's [custom runtime feature](/container-images/defining-container-images#custom-runtimes). This approach allows for specific batching strategies and custom processing logic.
+Implement custom batching through Cerebrium's [custom runtime feature](/container-images/defining-container-images#custom-runtimes) for precise control over request processing and custom batching strategies.
 
-As an example, implementation with LitServe requires additional configuration in the `cerebrium.toml` file:
+LitServe implementation requires additional configuration in `cerebrium.toml`:
 
 ```toml
 [cerebrium.runtime.custom]
@@ -74,6 +74,6 @@ fastapi = "latest"
   for more information.
 </Tip>
 
-Custom batching provides complete control over request grouping and processing, particularly valuable for frameworks without native batching support or applications with specific processing requirements. The [Container Images Guide](/container-images/defining-container-images#custom-runtimes) provides detailed implementation instructions.
+Custom batching provides full control over request grouping and processing — particularly useful for frameworks without native batching support. The [Container Images Guide](/container-images/defining-container-images#custom-runtimes) provides detailed implementation instructions.
 
-Together, batching and concurrency create an efficient request processing system. Concurrency enables parallel request handling, while batching optimizes how these concurrent requests are processed, leading to better resource utilization and application performance.
+Concurrency enables parallel request handling; batching optimizes how those requests are processed. Together, they improve resource utilization and throughput.

@@ -5,25 +5,25 @@ description: "Deploy a Model from Mystic on Cerebrium"
 
 ## Introduction
 
-We are saddened by the news that Mystic AI is sunsetting their services. They were an early pioneer in the space and really pushed the industry forward. This guide will walk you through migrating apps from Mystic to Cerebrium to ensure that users' apps remain functional despite the circumstances.
+Mystic AI is sunsetting their services. They were an early pioneer that pushed the industry forward. This guide covers migrating apps from Mystic to Cerebrium to keep them functional.
 
-We'll show you how to convert your existing Mystic code (using a stable diffusion example) and configuration to work with the Cerebrium platform. You'll learn about the tools and features available to make this transition as seamless as possible, including ways to optimize your deployments for better performance and cost efficiency.
+It covers converting existing Mystic code (using a stable diffusion example) and configuration to the Cerebrium platform, including deployment optimization for performance and cost efficiency.
 
 ## Key Differences
 
-Cerebrium helps teams deploy and run their models efficiently. Our infrastructure is designed for reliable performance:
+Cerebrium helps teams deploy and run models efficiently. The infrastructure is designed for reliable performance:
 
 - The average model cold-starts in 2-5 seconds.
 - Updates to your code deploy quickly, taking only 8-14 seconds.
 - 99.9% uptime.
 
-Cerebrium gives you precise control over your computing resources. Instead of managing entire instances, which can become costly and unnecessary, you choose exactly how much CPU, memory, and GPU power you need. You pay only for the resources you use, calculated down to the second. To better understand costs for your specific needs, you can use our [pricing calculator](https://cerebrium.ai/pricing).
+Cerebrium provides precise control over computing resources. Instead of managing entire instances, select the exact CPU, memory, and GPU power needed. Billing is per-second for actual resource usage. Use the [pricing calculator](https://cerebrium.ai/pricing) for cost estimates.
 
 ## Migration Process
 
 ### 1. Project Setup and Configuration
 
-Start by installing Cerebrium's command-line tool and creating your project:
+Install Cerebrium's command-line tool and create the project:
 
 ```bash
 pip install cerebrium --upgrade
@@ -33,7 +33,7 @@ cd stable-diffusion
 
 ```
 
-Next, we'll convert your existing configuration to Cerebrium's format. Here's what your current Mystic configuration may look like:
+Convert the existing Mystic configuration to Cerebrium's format. A typical Mystic configuration:
 
 ```yaml
 # Mystic's pipeline.yaml
@@ -58,7 +58,7 @@ pipeline_name: <YOUR_USERNAME>/stable-diffusion-v1.5
 extras: {}
 ```
 
-Transforms into Cerebrium's easy-to-understand TOML config:
+Becomes this Cerebrium TOML config:
 
 ```toml
 # cerebrium.toml
@@ -94,7 +94,7 @@ xformers = "latest"
 
 ### 2. Code Migration
 
-Now we'll convert your model implementation. Here's what a typical Mystic pipeline looks like:
+Convert the model implementation. A typical Mystic pipeline:
 
 ```python
 import typing as t
@@ -201,7 +201,7 @@ pipeline_graph = builder.get_pipeline()
 
 ```
 
-Which becomes much simpler in Cerebrium. Add the following to you `main.py` file:
+The Cerebrium equivalent in `main.py`:
 
 ```python
 import base64
@@ -281,13 +281,13 @@ curl --location 'https://api.aws.us-east-1.cerebrium.ai/v4/p-<YOUR PROJECT ID>/s
 }'
 ```
 
-Transitioning between platforms requires careful planning and execution. We're here to help make this process as smooth as possible for teams like yours. Our platform provides the tools and support you need to ensure your apps continue running with unparalleled reliability.
+The Cerebrium platform provides the tools and support needed for a smooth transition.
 
-## Join Our Community
+## Join the Community
 
-Connect with other developers and our team in our active communities for better response and issue resolution times:
+Connect with other developers and the Cerebrium team for faster response and issue resolution:
 
-- Join our Discord server.
-- Join our Slack workspace.
+- Join the Discord server.
+- Join the Slack workspace.
 
-These communities are great places to share migration experiences, get quick answers to technical questions, learn best practices from other developers, and stay updated on new features and improvements.
+These communities offer migration support, quick technical answers, best practices, and feature updates.

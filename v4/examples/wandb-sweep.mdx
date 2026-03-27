@@ -3,17 +3,17 @@ title: "Hyperparameter Sweep training Llama 3.2 with WandB"
 description: "Run a hyperparameter sweep on Llama 3.2 with WandB"
 ---
 
-When training machine learning models, finding the perfect combination of hyper parameters can feel overwhelming however if you do it well, it can turn a good model into a great one! Hyper parameter sweeps help you find the best performing model for the least amount of compute or time spent training - think of them as your systematic approach to testing every variation to uncover the best result.
+Hyperparameter sweeps systematically test parameter combinations to find the best-performing model for the least compute or training time.
 
-In this tutorial, we'll walk through training Llama 3.2, using [Wandb](https://wandb.ai/site) (Weights and Biases) to run hyper parameter sweeps to optimize its performance and we'll leverage Cerebrium to scale our experiments across serverless GPUs, allowing us to find the best-performing model faster than ever.
+This tutorial covers training Llama 3.2, using [Wandb](https://wandb.ai/site) (Weights and Biases) to run hyperparameter sweeps and Cerebrium to scale experiments across serverless GPUs.
 
-If you would like to see the final version of this tutorial, you can view it on Github [here](https://github.com/CerebriumAI/examples/tree/master/12-training/1-wandb-sweep).
+View the final version [on GitHub](https://github.com/CerebriumAI/examples/tree/master/12-training/1-wandb-sweep).
 
 Read this section if you're unfamiliar with sweeps.
 
 ### Analogy: Pizza Topping Sweep
 
-Forget about ML for a second. Imagine you're making pizzas, and you want to discover the most delicious combination of toppings. You can change three things about your pizza:
+Forget about ML for a second. Imagine making pizzas to discover the best combination of toppings. Three variables are available:
 
 • **Type of Cheese** (mozzarella, cheddar, parmesan)
 
@@ -21,17 +21,17 @@ Forget about ML for a second. Imagine you're making pizzas, and you want to disc
 
 • **Extra Topping** (pepperoni, mushrooms, olives)
 
-There are 12 possible combinations of pizzas you can make. One of them will taste the best!
+There are 12 possible combinations. One of them will taste the best.
 
-To find out which pizza is the tastiest, you need to try all the combinations and rate them. This process is called a **hyperparameter sweep**. Your three hyperparameters are the cheese, sauce, and extra topping.
+To find the tastiest pizza, try all combinations and rate them. This process is a **hyperparameter sweep**. The three hyperparameters are cheese, sauce, and extra topping.
 
-If you do it one pizza at a time, it could take hours. But if you had 12 ovens, you could bake all the pizzas at once and find the best one in just a few minutes!
+One pizza at a time takes hours. With 12 ovens, all pizzas bake at once and the best one emerges in minutes.
 
-If a kitchen is a GPU, then you need 12 GPUs to run each experiment to see which cookie is the best. The power of Cerebrium is the ability to run sweeps like this on 12 different GPUs (or 1,000 GPUs if you'd like) to get you the best version of a model fast.
+If a kitchen is a GPU, 12 GPUs run all experiments in parallel. Cerebrium enables sweeps across 12 GPUs (or 1,000) to find the best model version fast.
 
 ### Setup Cerebrium
 
-If you don’t have a Cerebrium account, you can run the following in your cli:
+If you don’t have a Cerebrium account, run the following:
 
 ```bash
 pip install cerebrium --upgrade
@@ -41,14 +41,14 @@ cerebrium init wandb-sweep
 
 This creates a folder with two files:
 
-- **main.py** - Our entrypoint file where our code lives.
-- **cerebrium.toml** - A configuration file that contains all our build and environment settings Add the following pip packages near the bottom of your cerebrium.toml. This will be used in creating our deployment environment.
+- **main.py** - The entrypoint file where application code lives.
+- **cerebrium.toml** - A configuration file for build and environment settings.
 
-We will return back to these files later but for now, we will continue the rest of this tutorial in this folder.
+The rest of this tutorial continues in this folder.
 
 ### Setup Wandb
 
-**Weights & Biases (Wandb)** is a powerful tool for tracking, visualizing, and managing machine learning experiments in real-time. It helps you log hyperparameters, metrics, and results, making it easy to compare models, optimize performance, and collaborate effectively with your team.
+**Weights & Biases (Wandb)** tracks, visualizes, and manages machine learning experiments in real-time. It logs hyperparameters, metrics, and results for comparing models and optimizing performance.
 
 1. [Sign up](https://wandb.ai/site) for a free account and then log in to your wandb account by running the following in your CLI.
 
@@ -57,18 +57,18 @@ pip install wandb
 wandb login
 ```
 
-You should see a link printed in your terminal - click it and copy the API from the webpage back into your terminal.
+A link prints in the terminal — click it and copy the API key back into the terminal.
 
-Add your W&B API key to Cerebrium secrets for use in your code. You can go to your [Cerebrium Dashboard](https://dashboard.cerebrium.ai/) and navigate to the “secrets” tab in the left side bar. Add the following:
+Add the W&B API key to Cerebrium secrets. In the [Cerebrium Dashboard](https://dashboard.cerebrium.ai/), navigate to the “secrets” tab in the left sidebar. Add the following:
 
 - **Key**: WANDB_API_KEY
 - **Value**: The value you copied from the Wandb website.
 
-Click the “Save All Changes” button to save the changes!
+Click the “Save All Changes” button.
 
 ![Cerebrium Secrets](/images/examples/wandb-sweep/cerebrium-secrets.png)
 
-You should then be authenticated with Wandb and ready to go!
+Wandb authentication is now complete.
 
 ### Training Script
 
@@ -89,7 +89,7 @@ To train with Llama 3.2, you'll need:
 
 ![Hugging Face Token](/images/examples/wandb-sweep/huggingface.png)
 
-Our training script adapts [this Kaggle notebook](https://www.kaggle.com/code/scratchpad/notebookad2fe9fab1/edit).
+The training script adapts [this Kaggle notebook](https://www.kaggle.com/code/scratchpad/notebookad2fe9fab1/edit).
 
 Create a `requirements.txt` file with these dependencies:
 
@@ -289,11 +289,11 @@ def train_model(params: Dict):
 You can read a deeper explanation of the training script [here](https://www.datacamp.com/tutorial/fine-tuning-llama-3-2) but here's a high-level explanation of the code in bullet points:
 
 - This code sets up a fine-tuning pipeline for a Large Language Model (specifically Llama 3.2) using several modern training techniques:
-- The function takes a dictionary of parameters for flexibility in training configurations - this is our hyper parameter sweep.
-- We load a customer support dataset from Hugging Face and format the data into a chat template format
-- We implement QLoRA (Quantized Low-Rank Adaptation) for efficient fine-tuning.
-- We use Weights & Biases (wandb) for experiment tracking logging results to our Wandb dashboard as they are available.
-- At the end, we saves the final model to our Cerebrium volume and return a “success” message to show that the training was successful.
+- Takes a dictionary of parameters for flexible training configurations — the hyperparameter sweep.
+- Loads a customer support dataset from Hugging Face and formats it into chat template format
+- Implements QLoRA (Quantized Low-Rank Adaptation) for efficient fine-tuning.
+- Uses Weights & Biases (Wandb) for experiment tracking, logging results to the Wandb dashboard.
+- Saves the final model to a Cerebrium volume and returns a “success” message.
 
 Deploy the training endpoint:
 
@@ -307,11 +307,11 @@ This command:
 2. Deploys the training script as an endpoint
 3. Returns a POST URL (save this for later)
 
-Cerebrium requires no special decorators or syntax - just wrap your training code in a function. The endpoint automatically scales based on request volume, making it perfect for hyperparameter sweeps.
+Cerebrium requires no special decorators or syntax — wrap the training code in a function. The endpoint automatically scales based on request volume, making it ideal for hyperparameter sweeps.
 
 ### Hyperparameter Sweep
 
-Let us create a **run.py** file that we will use to run locally. Put the following code in there:
+Create a **run.py** file for running locally. Add the following code:
 
 ```python
 import wandb
@@ -410,28 +410,28 @@ if __name__ == "__main__":
     main()
 ```
 
-This code implements a hyperparameter sweep system using Weights & Biases (wandb) sweeps to train a Llama 3.2 model for customer support. Here's what it does:
+This code implements a hyperparameter sweep using Wandb sweeps to train a Llama 3.2 model for customer support. Here's what it does:
 
-- Create a .env file and add your Inference API key from your Cerebrium Dashboard.
+- Create a .env file and add the Inference API key from the Cerebrium Dashboard.
 
 ```
 CEREBRIUM_API_KEY=eyJ....
 ```
 
-- Update the Cerebrium endpoint based on your project ID and the function name your wish to call. You will see we append this url with “?async=true”. This means its a fire-and-forgot request that can run up to 12 hours. You can read more [here](https://docs.cerebrium.ai/endpoints/async).
-- We then define a Bayesian optimization sweep configuration that will search through different hyperparameters including:
+- Update the Cerebrium endpoint with the correct project ID and function name. The URL is appended with “?async=true”. This makes it a fire-and-forget request that can run up to 12 hours. Read more [here](https://docs.cerebrium.ai/endpoints/async).
+- The Bayesian optimization sweep configuration searches through these hyperparameters:
   - Learning rate (log uniform distribution between ~4.54e-5 and ~9.12e-4)
   - Batch size (1, 2, or 4)
   - Gradient accumulation steps (2, 4, or 8)
   - LoRA parameters (r, alpha, and dropout)
   - Maximum sequence length (512 or 1024)
-- We create this sweep in the "Llama-3.2-Customer-Support" W&B project
+- The sweep is created in the "Llama-3.2-Customer-Support" W&B project
 - For each sweep iteration:
-  - We initialize a new W&B run
+  - Initializes a new W&B run
   - Combines the sweep's hyperparameters with fixed parameters (like model name and dataset)
   - Sends the parameters to a Cerebrium endpoint for training that happens asynchronously.
   - Logs the results back to W&B
-- Run these combinations across 10 experiments (10 concurrent GPU’s is the limit on Cerebrium’s Hobby plan)
+- Runs 10 experiments (10 concurrent GPUs is the limit on Cerebrium’s Hobby plan)
 
 Run the script:
 
@@ -441,7 +441,7 @@ python run.py
 
 ![Cerebrium Runs](/images/examples/wandb-sweep/cerebrium-secrets.png)
 
-Monitor training progress in your W&B dashboard:
+Monitor training progress in the W&B dashboard:
 
 ![Hugging Face Token](/images/examples/wandb-sweep/wandb-dashboard.png)
 
@@ -461,6 +461,6 @@ Monitor training progress in your W&B dashboard:
 
 ### Conclusion
 
-Hyperparameter optimization becomes manageable with the right tools. This tutorial showed how combining W&B for tracking and Cerebrium for serverless compute enables efficient hyperparameter sweeps for Llama 3.2, optimizing model performance with minimal effort.
+Combining W&B for tracking and Cerebrium for serverless compute enables efficient hyperparameter sweeps for Llama 3.2, optimizing model performance with minimal effort.
 
 View the complete code in the [GitHub repository](https://github.com/CerebriumAI/examples/tree/master/12-training/1-wandb-sweep)

@@ -3,9 +3,9 @@ title: "Using Private Docker Registries"
 description: "How to authenticate, pull, and use private Docker images as base images in your deployments."
 ---
 
-Cerebrium supports using your own private Docker images as base images for your deployments - including images from Docker Hub and AWS ECR.
+Cerebrium supports private Docker images as base images for deployments, including images from Docker Hub and AWS ECR.
 
-Our build system securely pulls your private image using the Docker credentials stored in your ~/.docker/config.json, and then builds your app on top of that image. Since these credentials are used during deployment, they should be team-accessible rather than tied to a single individual.
+The build system pulls private images using Docker credentials stored in `~/.docker/config.json`, then builds the app on top of that image. Since these credentials are used during deployment, they should be team-accessible rather than tied to a single individual.
 
 <Note>
   Your Docker images MUST support `linux/amd64` architecture. This is required
@@ -54,11 +54,11 @@ Check that your credentials are saved:
 cat ~/.docker/config.json | jq '.auths | keys'
 ```
 
-You should see your registry URL(s) listed.
+The output lists registered registry URLs.
 
 ### Step 3: Configure Your Project
 
-Edit your cerebrium.toml and enter the url of the registry image from the step 2:
+Set the `docker_base_image_url` in `cerebrium.toml` to the registry image URL:
 
 ```toml
 [cerebrium.deployment]
@@ -74,17 +74,17 @@ docker_base_image_url = "your-registry.com/your-org/your-image:tag"
 
 ### Step 4: Deploy
 
-Simply run:
+Run:
 
 ```bash
 cerebrium deploy
 ```
 
-Your application should then proceed to build as normal.
+The application builds as normal.
 
 ## Security Notes
 
-You might be wondering what security measures Cerebrium follows in order to keep your credentials safe - we take the following precaustions:
+Cerebrium applies the following security measures to protect registry credentials:
 
 1. **In Transit:** Credentials are sent over HTTPS
 2. **In Storage:** Stored in DynamoDB with automatic TTL-based deletion after build completion

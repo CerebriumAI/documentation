@@ -3,9 +3,9 @@ title: "Twilio Voice Agent with PipeCat"
 description: "Integrate a real-time AI voice agent with Twilio"
 ---
 
-This tutorial demonstrates creating a real-time voice agent that responds to phone calls via Twilio. The flexible implementation supports any LLM or Text-to-Speech (TTS) model, making it ideal for voice applications like customer support bots and receptionists.
+This tutorial creates a real-time voice agent that responds to phone calls via Twilio. The implementation supports any LLM or Text-to-Speech (TTS) model, making it ideal for voice applications like customer support bots and receptionists.
 
-We'll use [PipeCat](https://www.pipecat.ai/) to handle component integration, user interruptions, and audio data processing.
+The example uses [PipeCat](https://www.pipecat.ai/) to handle component integration, user interruptions, and audio data processing.
 
 You can find the final version of the code [here](https://github.com/CerebriumAI/examples/tree/master/6-voice/4-twilio-voice-agent)
 
@@ -94,7 +94,7 @@ Create a `templates` folder with `stream.xml` inside. This XML response tells Tw
 </Response>
 ```
 
-Replace the stream URL with your deployment's base endpoint, using your project ID. Next, let's set up your Twilio number.
+Replace the stream URL with the deployment's base endpoint, using the correct project ID.
 
 Configure Cerebrium to run the FastAPI server by adding this to `cerebrium.toml`:
 
@@ -109,7 +109,7 @@ You can read more about run custom web servers [here](https://docs.cerebrium.ai/
 
 ### Twilio setup
 
-Twilio provides cloud communications APIs for messaging, voice, video, and authentication. While we use Twilio for this demo, other providers work too. Sign up for a free account [here](https://www.twilio.com/try-twilio).
+Twilio provides cloud communications APIs for messaging, voice, video, and authentication. Other providers work as well. Sign up for a free account [here](https://www.twilio.com/try-twilio).
 
 Purchase a local number (not toll-free) from the [phone numbers page](https://console.twilio.com/us1/develop/phone-numbers/manage/search?isoCountry=US&types[]=Local&capabilities[]=Sms&capabilities[]=Mms&capabilities[]=Voice&capabilities[]=Fax&searchTerm=&searchFilter=left&searchType=number). Then set up a webhook to connect calls to your agent.
 
@@ -117,7 +117,7 @@ Purchase a local number (not toll-free) from the [phone numbers page](https://co
 
 ![Setup Webhook](/images/examples/twilio-agent/twilio-webhook.png)
 
-You should then save the changes above and move on to setting up our AI Agent.
+Save the changes and proceed to set up the AI agent.
 
 ### AI Agent Setup
 
@@ -236,17 +236,17 @@ The code:
    - Easy model swapping
 5. Handles call events (join/leave) via webhooks
 
-For lower latency (~500ms end-to-end), run parts or all of the pipeline locally. Learn more in our [voice agents guide](/v4/examples/realtime-voice-agents) and [RAG voice agent blog post](https://www.cerebrium.ai/blog/creating-a-realtime-rag-voice-agent).
+For lower latency (~500ms end-to-end), run parts or all of the pipeline locally. See the [voice agents guide](/v4/examples/realtime-voice-agents) and [RAG voice agent blog post](https://www.cerebrium.ai/blog/creating-a-realtime-rag-voice-agent).
 
 ### Deploy to Cerebrium
 
-To deploy this app to Cerebrium you can simply run the command: cerebrium deploy in your terminal.
+Deploy to Cerebrium by running `cerebrium deploy` in the terminal.
 
-If it deployed successfully, you should see something like this:
+A successful deployment looks like this:
 
 ![Cerebrium Deployment](/images/examples/twilio-agent/twilio-deployment.png)
 
-Test the app by calling your Twilio number - the agent will respond automatically.
+Test by calling the Twilio number — the agent responds automatically.
 
 ### Scaling Pipecat
 
@@ -260,7 +260,7 @@ For scaling PipeCat on Cerebrium:
 
 For scaling criteria, use Cerebrium's `replica_concurrency` setting to spawn new containers based on utilization, preventing cold starts for subsequent calls.
 
-To make the two updates above you can update your cerebrium.toml to contain the following:
+Update `cerebrium.toml` with the following:
 
 ```
 [cerebrium.hardware]
@@ -281,6 +281,6 @@ scaling_target = 80
 
 ### Conclusion
 
-This tutorial provides a foundation for implementing voice features and expanding into image and vision capabilities. PipeCat offers an extensible, open-source framework for building voice-enabled apps, while Cerebrium provides seamless deployment and autoscaling with pay-as-you-go compute.
+This tutorial provides a foundation for implementing voice features and expanding into image and vision capabilities. PipeCat is an extensible, open-source framework for building voice-enabled apps. Cerebrium handles deployment and autoscaling with pay-as-you-go compute.
 
-Tag us as **@cerebriumai** to showcase your work and join our [Discord](https://discord.gg/ATj6USmeE2) community for questions and feedback.
+Tag **@cerebriumai** to showcase work and join the [Discord](https://discord.gg/ATj6USmeE2) community for questions and feedback.

@@ -2,29 +2,31 @@
 title: Using GPUs
 ---
 
-GPUs provide specialized computing power that dramatically accelerates computational workloads. While originally designed for graphics rendering, modern GPUs excel at parallel processing tasks, making them essential for a wide range of applications.
+GPUs accelerate computational workloads through parallel processing. Originally designed for graphics rendering, modern GPUs are essential for AI models, large-scale data processing, and other compute-intensive applications.
 
-Applications deployed on Cerebrium can access GPU computing power without managing complex infrastructure. The platform supports sophisticated AI models, large-scale data processing, and GPU-accelerated applications through simple configuration.
+Cerebrium provides GPU access through configuration in the `cerebrium.toml` file, without requiring infrastructure management.
 
 ## Specifying GPUs
 
-The GPU configuration in the `cerebrium.toml` is handled through the `[cerebrium.hardware]` section, where you can specify both the type (using the `compute` parameter) and quantity of GPUs (`gpu_count`) for your app. We address additional deployment configurations and GPU scaling considerations in more detail in the sections below.
+Configure GPUs in the `[cerebrium.hardware]` section of `cerebrium.toml`, specifying the type (`compute` parameter) and quantity (`gpu_count`). Additional deployment and scaling considerations are covered in the sections below.
 
 ## Available GPUs
 
-The platform offers a range of GPUs to match various computational needs and budgets, from cost-effective development options to high-end enterprise hardware.
+The platform offers GPUs ranging from cost-effective development options to high-end enterprise hardware.
 
-| GPU Model        | Identifier       | VRAM (GB) | Max GPUs | Plan required | Provider |
-| ---------------- | ---------------- | --------- | -------- | ------------- | -------- |
-| NVIDIA H100      | HOPPER_H100      | 80        | 8        | Enterprise    | AWS      |
-| NVIDIA A100      | AMPERE_A100_80GB | 80        | 8        | Enterprise    | AWS      |
-| NVIDIA A100      | AMPERE_A100_40GB | 40        | 8        | Enterprise    | AWS      |
-| NVIDIA L40s      | ADA_L40          | 48        | 8        | Hobby+        | AWS      |
-| NVIDIA L4        | ADA_L4           | 24        | 8        | Hobby+        | AWS      |
-| NVIDIA A10       | AMPERE_A10       | 24        | 8        | Hobby+        | AWS      |
-| NVIDIA T4        | TURING_T4        | 16        | 8        | Hobby+        | AWS      |
-| AWS Inferentia 2 | INF2             | 32        | 8        | Hobby+        | AWS      |
-| AWS Trainium     | TRN1             | 32        | 8        | Hobby+        | AWS      |
+| GPU Model        | Identifier       | VRAM (GB) | Max GPUs | Plan required |
+| ---------------- | ---------------- | --------- | -------- | ------------- |
+| NVIDIA B300      | BLACKWELL_B300   | 262       | 8        | Enterprise    |
+| NVIDIA B200      | BLACKWELL_B200   | 180       | 8        | Enterprise    |
+| NVIDIA H200      | HOPPER_H200      | 141       | 8        | Enterprise    |
+| NVIDIA H100      | HOPPER_H100      | 80        | 8        | Enterprise    |
+| NVIDIA A100      | AMPERE_A100_80GB | 80        | 8        | Standard      |
+| NVIDIA A100      | AMPERE_A100_40GB | 40        | 8        | Standard      |
+| NVIDIA L40s      | ADA_L40          | 48        | 8        | Hobby+        | 
+| NVIDIA L4        | ADA_L4           | 24        | 8        | Hobby+        |
+| NVIDIA A10       | AMPERE_A10       | 24        | 8        | Hobby+        |
+| NVIDIA T4        | TURING_T4        | 16        | 8        | Hobby+        |
+| AWS Trainium     | TRN1             | 32        | 8        | Hobby+        |
 
 <Info>
   The identifier is used in the `cerebrium.toml` file. It consists of the GPU
@@ -38,19 +40,6 @@ The platform offers a range of GPUs to match various computational needs and bud
 
 ## Multi-GPU Configuration
 
-Multiple GPUs can enhance application performance through parallel processing and increased memory capacity.
-
-### Use Cases
-
-Multiple GPUs become essential when:
-
-- Models exceed single GPU memory capacity
-- Workloads require parallel inference processing
-- Applications need distributed training capabilities
-- Production environments demand high availability
-
-### Configuration
-
 Multiple GPUs are configured in the `cerebrium.toml` file:
 
 ```toml
@@ -61,55 +50,5 @@ cpu = 8
 memory = 128.0
 ```
 
-## Selecting the Right GPU
-
-Selecting appropriate hardware requires balancing performance requirements with resource efficiency. GPU selection involves calculating VRAM usage based on model parameters and input requirements. This is particularly important for:
-
-- LLMs and transformer architectures: Account for attention processes and positional encoding.
-- CNNs: Consider filter numbers and input sizes.
-- Batch processing: Factor in concurrent processing requirements.
-
-### VRAM Requirement Calculation
-
-Base VRAM requirements can be calculated using:
-
-```
-modelVRAM = numParams × numBytesPerDataType
-```
-
-Common data types:
-
-- FP32 (32-bit floating point): 4 bytes
-- FP16 (16-bit floating point): 2 bytes
-- INT8 (8-bit quantization): 1 byte
-
-Example calculations:
-
-1. 7B parameter model with FP32:
-
-```
-modelVRAM = 7B × 4 bytes = 28GB
-```
-
-2. Same model with INT8 quantization:
-
-```
-modelVRAM = 7B × 1 byte = 7GB
-```
-
-### Safety Buffer
-
-A 1.5× VRAM buffer should be added to account for runtime memory requirements, attention mechanisms, intermediate computations, and input variations:
-
-```
-recommendedVRAM = modelVRAM × 1.5
-```
-
-Using the 7B parameter example:
-
-- FP32: 28GB × 1.5 = 42GB (requires A100_40GB or higher)
-- INT8: 7GB × 1.5 = 10.5GB (T4 or higher is sufficient)
-
-The [Pricing Calculator](https://cerebrium.ai/pricing) provides detailed cost comparisons for different GPU configurations.
-
-For custom GPU configurations, contact Cerebrium support.
+GPU availability varies by region and provider. Narrowing the provider and region constraints increases the likelihood of request queuing.
+For guaranteed burst capacity, contact the [enterprise plan](mailto:sales@cerebrium.ai) team.

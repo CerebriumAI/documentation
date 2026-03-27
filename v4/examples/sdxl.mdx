@@ -15,7 +15,7 @@ To see the final implementation, you can view it [here](https://github.com/Cereb
 
 ## Basic Setup
 
-Developing models with Cerebrium is similar to developing on a virtual machine or Google Colab, making conversion straightforward. Make sure you have the Cerebrium package installed and are logged in. If not, check our docs [here](https://docs.cerebrium.ai/getting-started/installation).
+Developing on Cerebrium is similar to a virtual machine or Google Colab. Install the Cerebrium package and log in before proceeding. See the [installation docs](https://docs.cerebrium.ai/getting-started/installation) for details.
 
 First, create your project:
 
@@ -60,7 +60,7 @@ ffmpeg = "latest"
 
 ```
 
-Create a `main.py` file for our Python code. This simple implementation can be done in a single file. First, let's define our request object:
+Create a `main.py` file. This implementation fits in a single file. Start by defining the request object:
 
 ```python
 from typing import Optional
@@ -83,11 +83,11 @@ class Item(BaseModel):
     num_images_per_prompt: int
 ```
 
-We import the required Python libraries and use Pydantic for data validation. The `prompt` and `url` parameters are required, while all others are optional. Missing required parameters will trigger an automatic error message.
+The code uses Pydantic for data validation. The `prompt` and `url` parameters are required; all others are optional. Missing required parameters trigger an automatic error message.
 
 ## Instantiate model
 
-We load the SDXL model outside the `predict` function since it only needs to be loaded once at startup. While the model downloads during initial deployment, it's automatically cached in persistent storage for subsequent use.
+The SDXL model loads outside the `predict` function since it only needs to load once at startup. The model downloads during initial deployment and is automatically cached in persistent storage for subsequent use.
 
 ```python
 pipe = StableDiffusionXLImg2ImgPipeline.from_pretrained(
@@ -98,7 +98,7 @@ pipe = pipe.to("cuda")
 
 ## Predict Function
 
-The `predict` function takes parameters from the request and passes them to the SDXL model to generate images. We convert images to base64 for direct JSON-serializable responses instead of writing to S3.
+The `predict` function takes parameters from the request, passes them to the SDXL model, and returns base64-encoded images for direct JSON-serializable responses.
 
 ```python
 def predict(prompt, url, negative_prompt=None, conditioning_scale=0.5, height=512, width=512, num_inference_steps=20,

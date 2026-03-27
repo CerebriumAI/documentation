@@ -5,7 +5,7 @@ description: Decrease the time it takes start your application
 
 ## Container vs Storage Volume for Model Loading
 
-When deploying machine learning models, you have two main options for storing model weights:
+Two main options exist for storing model weights:
 
 1. **Inside the Container**: Packaging model weights directly in your container image
    - Pros:
@@ -36,13 +36,13 @@ Storing model weights in a storage volume works best for most applications. For 
 
 One of the biggest factors in model startup time is loading the model from storage into GPU memory. For example, in larger models of 20B+ parameters, it can take over 40 seconds to load using a normal Hugging Face load, even with 2GB/s transfer speeds from persistent storage.
 
-While we've optimized the underlying hardware to load models as fast as possible, there are several ways to decrease model loading time and reduce cold-start times.
+The underlying hardware is optimized for fast model loading, but several additional techniques can further reduce cold-start times.
 
 ### Tensorizer (recommended)
 
-[Tensorizer](https://github.com/coreweave/tensorizer) is a library that loads models from storage into GPU memory in a single step. While initially built to fetch models from S3, it can also load models from Cerebrium's persistent storage, which features nearly 2GB/s read speed. For large models (20B+ parameters), we've observed a 30–50% decrease in loading time, with even greater improvements for larger models. For more information on the underlying methods, see their [GitHub page](https://github.com/coreweave/tensorizer).
+[Tensorizer](https://github.com/coreweave/tensorizer) is a library that loads models from storage into GPU memory in a single step. Initially built for S3, it also works with Cerebrium's persistent storage (nearly 2GB/s read speed). For large models (20B+ parameters), loading time decreases by 30–50%, with even greater improvements for larger models. See the [GitHub page](https://github.com/coreweave/tensorizer) for details on the underlying methods.
 
-In this section below, we'll show you how to use **Tensorizer** to load your model from storage straight into GPU memory in a single step.
+The following section covers using **Tensorizer** to load a model from storage directly into GPU memory in a single step.
 
 ### Installation
 
@@ -75,8 +75,7 @@ def serialize_model(model, save_path):
 
 This will convert your model to a protocol buffer serialised format that is optimised for faster transfer speeds and fast loading into GPU memory.
 
-Then, the next time your deployment starts, you can load your serialised model from storage into GPU memory in a single step.
-You would do this as follows:
+On the next deployment start, load the serialised model from storage into GPU memory in a single step:
 
 ```python
 
@@ -114,4 +113,4 @@ def deserialize_saved_model(model_path, model_id, plaid=True):
     return model
 ```
 
-Note that your model does not need to be a Transformers or even a Hugging Face model. If you have a Diffusers, scikit-learn, or custom PyTorch model, you can still use Tensorizer to load your model from storage into GPU memory in a single step. The only requirement for deserialization speedup is that you can initialize an empty model. The deserializer object will then restore the weights into the empty model.
+Tensorizer works with any model type — Transformers, Diffusers, scikit-learn, or custom PyTorch. The only requirement is the ability to initialize an empty model. The deserializer restores weights into that empty model.

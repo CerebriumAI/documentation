@@ -3,22 +3,22 @@ title: "Deploy a Vision Language Model with SGLang"
 description: "Build an intelligent ad analysis system that evaluates advertisements across multiple dimensions"
 ---
 
-In this tutorial, we'll explore how to deploy a Vision Language Model (VLM) using SGLang on Cerebrium. A VLM is an AI model that combines a large language model (LLM) with a vision encoder, allowing it to understand and process both images and text.
+This tutorial deploys a Vision Language Model (VLM) using SGLang on Cerebrium. A VLM combines a large language model (LLM) with a vision encoder, enabling it to understand and process both images and text.
 
-We'll build an intelligent ad analysis system that evaluates advertisements across multiple dimensions, giving us a score on how the advertisement relates to the business in quesion and how it scores on the given criteria.
+The example builds an intelligent ad analysis system that evaluates advertisements across multiple dimensions, scoring how the advertisement relates to the business in question and how it performs on the given criteria.
 
 SGLang (Structured Generation Language) differs from other inference frameworks such as vLLM and TensorRT by focusing no structed generation and complex workflows multi-step LLM workflows. SGLang is being used in production by teams at xAI and Deepseek to power their core language model capabilities making it a trusted choice.
 
 ### SGLang Architecture
 
-SGLang isn't just a domain-specific language (DSL). It's a complete, integrated execution system, designed with a clear seperation of functionality:
+SGLang isn't just a domain-specific language (DSL). It's a complete, integrated execution system with a clear separation of functionality:
 
 | Layer    | What it does                                                                   | Why it matters                                                                    |
 | -------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
 | Frontend | Where you define your LLM logic (with gen, fork, join, etc.)                   | This keeps your code clean, readable, and your workflows easily reusable.         |
 | Backend  | Where SGLang intelligently figures out how to run your logic most efficiently. | This is where the speed, scalability, and optimized inference truly come to life. |
 
-To give you quick example, here are some primitives on the frontend you can use to create multi-step workflows:
+Here are some frontend primitives for creating multi-step workflows:
 
 | Primitive  | What it does                            | Example                                    |
 | ---------- | --------------------------------------- | ------------------------------------------ |
@@ -39,14 +39,14 @@ Here is a summary of key advantages over traditional inference engines
 | **Parallel Processing** | Manual batching and coordination                 | Built-in `fork()` and `join()` for parallel execution                      |
 | **Performance**         | Standard inference optimization                  | PyTorch-native with `torch.compile()`, quantization, sparse inference      |
 
-If you would like to read more, checkout this [article](https://huggingface.co/blog/paresh2806/sglang-efficient-llm-workflows). Let us show this in practice with our tutorial.
+For more details, see this [article](https://huggingface.co/blog/paresh2806/sglang-efficient-llm-workflows).
 You can see the final code sample [here](https://github.com/CerebriumAI/examples/tree/master/5-large-language-models/7-vision-language-sglang)
 
 ## Tutorial
 
 ### Step 1: Project Setup
 
-First, let's create our project structure:
+Create the project structure:
 
 ```bash
 cerebrium init 7-vision-language-sglang
@@ -55,21 +55,19 @@ cd 7-vision-language-sglang
 
 ### Step 2: Configure Dependencies
 
-The VLM we will be using is [Qwen3-VL-30B-A3B-Instruct-FP8](https://huggingface.co/Qwen/Qwen3-VL-30B-A3B-Instruct-FP8) model, which need a lot of GPU memory - we configure this in our cerebrium.toml.
+The VLM is [Qwen3-VL-30B-A3B-Instruct-FP8](https://huggingface.co/Qwen/Qwen3-VL-30B-A3B-Instruct-FP8), which requires significant GPU memory. The `cerebrium.toml` defines the environment, hardware, and scaling settings. This configuration uses an ADA_L40 GPU and includes:
 
-Cerebrium runs containers in the cloud and this file defines our environment, hardware, and scaling settings. We'll use an ADA_L40 GPU to accommodate our model's memory requirements. The configuration includes:
-
-- Hardware settings for GPU, CPU and memory allocation
+- Hardware settings for GPU, CPU, and memory allocation
 - Scaling parameters to control instance counts
-- Required pip packages like SGLang, flashinfer (our chosen backend), and PyTorch
+- Required pip packages: SGLang, flashinfer (the chosen backend), and PyTorch
 - APT system dependencies
-- FastAPI server configuration for hosting our API
+- FastAPI server configuration for hosting the API
 
-For a complete reference of all available TOML settings, see our [TOML Reference](/toml-reference/toml-reference).
+For a complete reference of all available TOML settings, see the [TOML Reference](/toml-reference/toml-reference).
 
-While we use flashinfer as our backend here, other options like flash attention are also available depending on your needs.
+This example uses flashinfer as the backend, but other options like flash attention are also available.
 
-Update your cerebrium.toml with:
+Update `cerebrium.toml` with:
 
 ```toml
 [cerebrium.deployment]
@@ -111,9 +109,7 @@ entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 ### Step 3: Implement the Ad Analysis Logic
 
-One of the many great features of Cerebrium is we don't enforce any special class design or way of architecing your applications - Just write your python code as if you
-were running it locally (and if you had a GPU ;). Below, we setup our SGLang Runtime Engine (Backend) with our FastAPI and load the model on startup of the container. This means we will incur
-a model load on the first request but subsequent requests will execute instantaneously.
+Cerebrium does not enforce any special class design or application architecture — write Python code as if running locally. The code below sets up the SGLang Runtime Engine (Backend) with FastAPI and loads the model on container startup. The first request incurs a model load, but subsequent requests execute instantaneously.
 
 In your `main.py` file:
 
@@ -150,8 +146,7 @@ def health():
     }
 ```
 
-In order to score the advertisement, we will be using one of the core differentiators of SGLang, `fork`, which allows us to run many prompts in parallel and bring the results together in the end. This
-allows us to execute alot of simulaneous requests with no increase in total latency. Lastly, we bring these results together and structure them in a specific format to return to the user.
+To score the advertisement, the code uses one of SGLang's core differentiators: `fork`, which runs many prompts in parallel and brings the results together. This enables many simultaneous evaluations with no increase in total latency. The results are then structured in a specific format for the response.
 
 ```python
 @function
@@ -180,7 +175,7 @@ def analyze_ad(s, image, ad_description, dimensions):
     s += sgl.assistant(sgl.gen("output", regex=schema))
 ```
 
-To end, let us bring it all together in an endpoint and
+Bring it all together in an endpoint:
 
 ```python
 from pydantic import BaseModel
@@ -228,7 +223,7 @@ def analyze_advertisement(req: AnalyzeRequest):
 
 ```
 
-Thats it! Let's deploy your application so it becomes a scalable inference endpoint
+Deploy the application to create a scalable inference endpoint.
 
 ### Step 4: Deploy Your Application
 
@@ -238,7 +233,7 @@ Run:
 cerebrium deploy
 ```
 
-Once deployed, test your application with a sample request:
+Once deployed, test with a sample request:
 
 ```bash
 curl -X POST "https://api.aws.us-east-1.cerebrium.ai/v4/p-<YOUR-PROJECT-ID>/7-vision-language-sglang/analyze" \
@@ -265,7 +260,7 @@ curl -X POST "https://api.aws.us-east-1.cerebrium.ai/v4/p-<YOUR-PROJECT-ID>/7-vi
 }
 ```
 
-We've demonstrated a simple application how to leverage SGLang's powerful structured generation capabilities to build a naive ad analysis system. By using features like `fork()` for parallel processing and SGLang's built-in output control.
+This example demonstrates how to leverage SGLang's structured generation capabilities to build an ad analysis system, using features like `fork()` for parallel processing and SGLang's built-in output control.
 
 You can find the complete code for this tutorial in our [examples repository](https://github.com/CerebriumAI/examples/tree/master/5-large-language-models/7-vision-language-sglang).
 

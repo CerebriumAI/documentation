@@ -2,13 +2,13 @@
 title: "Streaming Endpoints"
 ---
 
-Streaming allows users to stream live output from their models using a server-sent event (SSE) stream.
-This works for Python objects that use the iterator or generator protocol.
+Streaming sends live output from a model over a server-sent event (SSE) stream.
+It works with any Python object that implements the iterator or generator protocol.
 
-Currently, your generator/iterator is required to `yield` data, as it will be sent downstream via the `text/event-stream` Content-Type.
-You may still send data in JSON format and then can decode it appropriately.
+The generator/iterator must `yield` data, which is sent downstream via the `text/event-stream` Content-Type.
+Data can be sent in JSON format and decoded on the client side.
 
-Let's see how we can implement a simple example below:
+A minimal example:
 
 ```python
 import time
@@ -19,9 +19,7 @@ def run(upper_range: int):
         time.sleep(1)
 ```
 
-Once you deploy this code snippet and hit the stream endpoint, you will see the SSE events progressively appear every second.
-
-You can do this as follows:
+Deploy this snippet and call the endpoint. SSE events appear progressively, one per second:
 
 ```bash
 curl -X POST https://api.aws.us-east-1.cerebrium.ai/v4/<YOUR-PROJECT-ID>/2-streaming-endpoint/run \
@@ -49,7 +47,7 @@ data: Number 0
 ...
 ```
 
-Progressively, you will see the rest of the data stream every second:
+The remaining data streams in every second:
 
 ```
 ...
@@ -58,8 +56,8 @@ data: Number 1
 data: Number 2
 ```
 
-The latest Postman also has great functionality to show this.
+Postman also supports SSE streams natively.
 
 ![Streaming](/images/cortex/streaming-postman.png)
 
-If you want to see an example of implementing this with Falcon-7B, please check out the example [here](https://github.com/CerebriumAI/examples/tree/master/5-large-language-models/2-streaming-endpoint).
+For a Falcon-7B streaming example, see the [streaming endpoint example](https://github.com/CerebriumAI/examples/tree/master/5-large-language-models/2-streaming-endpoint).

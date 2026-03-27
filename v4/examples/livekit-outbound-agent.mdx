@@ -3,17 +3,17 @@ title: "Outbound Agent with LiveKit"
 description: "Create an Outbound AI agent that can transfer calls to real agents"
 ---
 
-Voice agents are transforming how businesses operate by introducing efficiencies and personalization for each customer interaction. While most use cases are focusing on agents receiving calls from customers, this article focuses on outbound voice AI agents and the use cases they unlock.
+Voice agents are transforming business operations by introducing efficiencies and personalization for each customer interaction. While most use cases focus on agents receiving calls, this tutorial covers outbound voice AI agents and the use cases they unlock.
 
-Outbound agents can handle tasks like appointment scheduling, lead qualification, and customer follow-ups, all while maintaining a human-like, conversational tone. Businesses can enhance efficiency by replacing manual efforts with intelligent automation, improving customer engagement in scenarios such as sales, healthcare, hospitality, and collections. By reducing friction and enabling instant, personalized connections, these agents empower organizations to deliver exceptional experiences while saving time and resources.
+Outbound agents handle tasks like appointment scheduling, lead qualification, and customer follow-ups while maintaining a human-like, conversational tone. They replace manual efforts with intelligent automation, improving customer engagement in sales, healthcare, hospitality, and collections.
 
-In this tutorial we will show you how you can set up an outbound calling agent that does a warm transfer - i.e.: can handover the call to a real person using Livekit. A fitting example scenario would be for a support center where teams would like an agent to do data collection before connecting to a real person.
+This tutorial sets up an outbound calling agent that does a warm transfer — handing off the call to a real person using LiveKit. A fitting example: a support center where an agent collects data before connecting to a real person.
 
 The final code implementation and complete example can be found in our examples Github repository [here](https://github.com/CerebriumAI/examples/tree/master/6-voice/7-outbound-livekit-agent).
 
 ### Cerebrium setup
 
-If you don’t have a Cerebrium account, you can run the following in your cli:
+Install the Cerebrium CLI and create a project:
 
 ```
 pip install cerebrium --upgrade
@@ -23,31 +23,29 @@ cerebrium init livekit-voice-agent
 
 This creates a folder with two files:
 
-- **main.py** - Our entrypoint file where our code lives.
-- **cerebrium.toml** - A configuration file that contains all our build and environment settings
-  Add the following pip packages near the bottom of your cerebrium.toml. This will be used in creating our deployment environment.
+- **main.py** - The entrypoint file where application code lives.
+- **cerebrium.toml** - A configuration file that contains all build and environment settings.
 
-We will return back to these files later but for now, we will continue the rest of this tutorial in this folder.
+These files are populated later in the tutorial.
 
 ### Livekit Setup
 
-We will be using [Livekit](https://livekit.io/kitt) to build this example. Livekit is a platform that makes it easy to build real-time audio and video applications.
+[LiveKit](https://livekit.io/kitt) is a platform for building real-time audio and video applications.
 
-To start, we first need to create a LiveKit account. You can do this by signing up to an account [here](https://cloud.livekit.io/login?r=%2F) (they have a generous free tier). Once an account
-is created, run the following commands to install their cli package (Homebrew can be installed from [here](https://brew.sh/)).
+Start by creating a LiveKit account. You can do this by signing up to an account [here](https://cloud.livekit.io/login?r=%2F) (they have a generous free tier). Once the account
+is created, run the following commands to install the CLI package (Homebrew can be installed from [here](https://brew.sh/)).
 
 ```
 brew update && brew install livekit-cli
 ```
 
-Once installed, let us authenticate our CLI with our newly created account, you can run the following in your cli
+Authenticate the CLI with the newly created account:
 
 ```
 lk cloud auth
 ```
 
-Then create a **.env** file with your LiveKit credentials. To get these credentials, you can go to the [LiveKit dashboard](https://cloud.livekit.io/), click on the Settings tab to get your project url.
-You must then go to the keys tab to create a new key and copy the API key as well as the secret. Store these three values as below:
+Create a **.env** file with LiveKit credentials. Get these from the [LiveKit dashboard](https://cloud.livekit.io/): click the Settings tab for the project URL, then the Keys tab to create a new key and copy the API key and secret:
 
 ```
 LIVEKIT_URL=<your LiveKit WebSocket URL>
@@ -57,11 +55,11 @@ LIVEKIT_API_SECRET=<your API Secret>
 
 ![LiveKit Dashboard](/images/examples/livekit-agent/livekit-dashboard.png)
 
-Great now we have setup our LikeKit instance that acts as the transport layer for our agent!
+The LiveKit instance is now set up as the transport layer for the agent.
 
 ### Twilio Setup
 
-To setup a outbound calling agent, we need to setup a SIP trunk in Twilio. A SIP trunk in Twilio is like a virtual phone line that connects your app to the traditional phone network, allowing it to make outbound calls to any phone number. It ensures your calls are routed properly and reliably, acting as the bridge between your app and the global telephony system.
+Setting up an outbound calling agent requires a SIP trunk in Twilio. A SIP trunk is a virtual phone line that connects the app to the traditional phone network, enabling outbound calls to any phone number. It routes calls properly and reliably, acting as the bridge between the app and the global telephony system.
 
 1. **Log in to your Twilio Console**:
    Go to [Twilio Console](https://console.twilio.com/) and log in with your credentials. If you don’t already have an account, create one.
@@ -82,9 +80,9 @@ To setup a outbound calling agent, we need to setup a SIP trunk in Twilio. A SIP
    ```
 5. **Create your credentials:**
 
-   To secure our SIP trunk, we must first create a credential list in your Twilio console dashboard. Navigate to “Voice”, and then “Manage”, and then “Credential lists”.
+   To secure the SIP trunk, create a credential list in the Twilio console dashboard. Navigate to “Voice”, then “Manage”, then “Credential lists”.
 
-   Click the plus icon and add a friendly name, together with a username and password (Note: We’ll need these later, so be sure to remember them or store them in a place where you can retrieve them later)
+   Click the plus icon and add a friendly name, username, and password. Save these credentials — they are required in a later step.
 
 ![Twilio Dashboard](/images/examples/livekit-agent/twilio-credentials.png)
 
@@ -95,7 +93,7 @@ export TWILIO_ACCOUNT_SID="<twilio_account_sid>"
 export TWILIO_AUTH_TOKEN="<twilio_auth_token>"
 ```
 
-Now that we have our trunk setup, the Twilio’s outbound trunk needs to be registered with LiveKit. SIP trunking providers typically require authentication when accepting outbound SIP requests to ensure only authorized users are making calls with your number.
+With the trunk configured, register Twilio’s outbound trunk with LiveKit. SIP trunking providers typically require authentication when accepting outbound SIP requests to ensure only authorized users can make calls.
 
 Create a file named `outbound-trunk.json` using the Twilio phone number you purchased in the previous step, trunk domain name, and `username` and `password`.
 
@@ -113,17 +111,17 @@ Create a file named `outbound-trunk.json` using the Twilio phone number you pu
 
 Run the following in your CLI: `lk sip outbound create outbound-trunk.json`
 
-The output of the command returns the trunk ID which we will need later.
+The output returns the trunk ID, which is required in a later step.
 
 ### Services setup
 
-For our solution, we will use the following services to create our outbound AI agent:
+The following services power the outbound AI agent:
 
 - [Deepgram](https://www.deepgram.com/) for our Speech-to-Text service
 - [OpenAI](https://openai.com/) for our LLM
 - [Cartesia](https://www.cartesia.com/) for our Text-to-Speech service
 
-Below I will walk you through the setup of each service - they all come with a generous free tier:
+Each service offers a generous free tier:
 
 - **Deepgram**
 
@@ -158,7 +156,7 @@ CARTESIA_API_KEY=""
 SIP_TRUNK_ID=""
 ```
 
-Now that our services are setup, let us create a **requirements.txt** with the following python packages that we will need:
+Create a **requirements.txt** with the following Python packages:
 
 ```
 livekit-agents>=0.11.1
@@ -173,9 +171,9 @@ fastapi
 uvicorn
 ```
 
-In your cli, run `pip install -r requirements.txt`. I will explain why we need FastAPI later.
+Run `pip install -r requirements.txt`. FastAPI is explained later.
 
-Let us now get started on our code. Create a file called [main.py](http://main.py) where we will write the code for our agent. Your directory structure should look like this:
+Create a file called `main.py` for the agent code. The directory structure should look like this:
 
 - main.py
 - .env
@@ -265,14 +263,14 @@ if __name__ == '__main__':
 
 ```
 
-The above code is a simple LiveKit setup in which we do the following:
+This LiveKit setup does the following:
 
-- We specify our initial system prompt to guide our AI agent
-- We list the services we are using to create our AI agent as well as the settings for how long it must wait until it replies.
-- We collect metrics about our call that we display throughout to track performance and when the call ends we log a summary of those metrics.
-- Lastly, we start the agent with an initial greeting to the user.
+- Specifies an initial system prompt to guide the AI agent
+- Lists the services and configures response timing settings
+- Collects and displays call metrics throughout, with a summary logged when the call ends
+- Starts the agent with an initial greeting
 
-In our use case, we would like to connect the customer to a real person when a specific stage has been reached or a user has asked to be connected. We can achieve this through function calling. To add function calling we can add the following code to our entrypoint.
+To connect the customer to a real person when a specific stage is reached or the user requests it, use function calling. Add the following code to the entrypoint:
 
 ```
 #Add this below the initial_ctx line
@@ -289,9 +287,9 @@ async def transfer_call(
 
 ```
 
-The **@ai_callable decorator** tells the LLM that this is a function it has at its disposal and the docstring describes to the LLM when it should use this function. When this function is triggered, we make an outbound call to a phone number and then disconnect the agent from the room so its just the two users in the call. We will create the “create_sip_participant()” function in the next step.
+The **@ai_callable decorator** tells the LLM this function is available, and the docstring describes when to use it. When triggered, the function makes an outbound call to a phone number and disconnects the agent from the room, leaving just the two users in the call. The `create_sip_participant()` function is defined in the next step.
 
-Lastly, to create an outbound call to the user we would like to add to our call, we need to add functionality to do this. Add the following code to your [main.py](http://main.py) - above entrypoint():
+To create an outbound call and add a user to the call, add the following code to `main.py` above `entrypoint()`:
 
 ```
 async def create_sip_participant(phone_number, room_name):
@@ -323,7 +321,7 @@ async def create_sip_participant(phone_number, room_name):
         return f"Error: {str(e)}"
 ```
 
-To test this running locally, you can create a test.py file with the following functionality:
+To test locally, create a `test.py` file:
 
 ```
 import asyncio
@@ -339,18 +337,17 @@ if __name__ == '__main__':
     asyncio.run(main("<Your number>"))
 ```
 
-To test the application locally, start by running `python main.py` in one terminal - this will keep the agents running as a open process and you should see the output as below.
+To test locally, run `python main.py` in one terminal. This keeps the agents running as an open process:
 
 ![LiveKit processes ](/images/examples/livekit-agent/livekit-processes.png)
 
-Once you see the job processes initializing, open a separate terminal and run `python test.py`. This will initiate a call to the phone number you provided. Note,
-you can't make calls internationally but only to the region your number is purchased from.
+Once the job processes initialize, open a separate terminal and run `python test.py`. This initiates a call to the provided phone number. Note: calls are limited to the region the number is purchased from.
 
-With this now working locally, let us deploy it on Cerebrium to make it production ready with autoscaling capabilities.
+With local testing working, deploy on Cerebrium for production-ready autoscaling.
 
 ### Deploy on Cerebrium
 
-We need to specify our Cerebrium environment to deploy our app. We will be doing this using a Dockerfile:
+Specify the Cerebrium environment using a Dockerfile:
 
 ```
 FROM debian:bookworm-slim
@@ -384,7 +381,7 @@ EXPOSE 8600
 CMD ["python3", "main.py", "start"]
 ```
 
-In our `cerebrium.toml`, edit the values with the following contents:
+Edit `cerebrium.toml` with the following:
 
 ```
 [cerebrium.deployment]
@@ -414,24 +411,24 @@ port = 8600
 dockerfile_path = "./Dockerfile"
 ```
 
-Above we simply define our hardware, scaling parameters, dependancies as well as the port and Dockerfile to run our application.
+This defines the hardware, scaling parameters, dependencies, and the port and Dockerfile for the application.
 
-In your Cerebrium dashboard, go to the secrets tab in the left sidebar and upload your .env file. Cerebrium imports secrets into your application as normal ENV vars so its seamless to test locally and in the cloud.
+In the Cerebrium dashboard, go to the Secrets tab in the left sidebar and upload the `.env` file. Cerebrium imports secrets as standard environment variables, making local and cloud testing seamless.
 
 ![Cerebrium Secrets](/images/examples/livekit-agent/cerebrium-secrets.png)
 
-Now simply run the following command in your cli:
+Run the following command:
 
 ```
 cerebrium deploy
 ```
 
-This will install all the necessary packages and deploy your application. You will have LiveKit workers running in the cloud and you can test its working by running your [test.py](http://test.py) script locally and looking at your logs on the Cerebrium dashboard.
+This installs all necessary packages and deploys the application. LiveKit workers run in the cloud — test by running the `test.py` script locally and checking logs on the Cerebrium dashboard.
 
 ### Further Improvements:
 
-To reduce latency, Cerebrium has partnerships with both Deepgram and Rime to run their STT and TTS models locally right next to your LiveKit worker which reduces latency by a ~400ms.
+To reduce latency, Cerebrium partners with Deepgram and Rime to run STT and TTS models locally alongside the LiveKit worker, reducing latency by ~400ms.
 
-In this tutorial, we demonstrated how to set up an outbound calling agent that can perform warm transfers to live agents using LiveKit. This solution not only facilitates intelligent automation but also introduces the flexibility needed to meet diverse use cases such as pre-call data collection, sales outreach, and customer follow-ups. By integrating services like LiveKit, Twilio, and AI-driven tools for STT, TTS, and LLM capabilities, you can create a robust outbound voice AI agent to transform your business operations.
+This tutorial set up an outbound calling agent that performs warm transfers to live agents using LiveKit. The solution supports diverse use cases such as pre-call data collection, sales outreach, and customer follow-ups by integrating LiveKit, Twilio, and AI-driven STT, TTS, and LLM services.
 
-Check out the final example in Github [here](https://github.com/CerebriumAI/examples/tree/master/6-voice/7-outbound-livekit-agent) or feel free to ask questions give feedback in our community [Discord](https://discord.gg/ATj6USmeE2).
+Find the final example on [GitHub](https://github.com/CerebriumAI/examples/tree/master/6-voice/7-outbound-livekit-agent). Ask questions or give feedback in the [Discord](https://discord.gg/ATj6USmeE2) community.

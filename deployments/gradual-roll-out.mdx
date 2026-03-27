@@ -9,9 +9,9 @@ The `roll_out_duration_seconds` parameter in the `[cerebrium.scaling]` section o
 
 ## Overview
 
-When you deploy a new version of your app, Cerebrium creates a new revision. The `roll_out_duration_seconds` parameter determines how long it takes to transition traffic from the old revision to the new one.
+Each deployment creates a new revision. The `roll_out_duration_seconds` parameter determines how long traffic takes to transition from the old revision to the new one.
 
-Traffic is shifted in 5 batches of 20% each, over the specified duration. This gradual transition helps ensure a smooth user experience and minimizes disruptions.
+Traffic shifts in 5 batches of 20% each over the specified duration, minimizing disruptions.
 
 ## Configuration
 

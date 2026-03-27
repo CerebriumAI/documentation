@@ -8,9 +8,9 @@ Cerebrium's partnership with [Deepgram](https://www.deepgram.com/) enables simpl
 <Note>
 Using Deepgram services requires an Enterprise Deepgram account and API key for self-hosted models. Contact Deepgram support to access this feature.
 
-Links to the Deepgram model files referenced below (file extension `.dg`) should should be obtained from the Deepgram Account Representative.
+Obtain links to the Deepgram model files referenced below (file extension `.dg`) from the Deepgram Account Representative.
 
-Please ensure you chat with your Deepgram representative on how to get parity with the Deepgram API.
+Consult the Deepgram representative on how to achieve parity with the Deepgram API.
 
 </Note>
 
@@ -20,7 +20,7 @@ Please ensure you chat with your Deepgram representative on how to get parity wi
 
 ## Setup
 
-1. Create a simple cerebrium app with the CLI:
+1. Create a Cerebrium app with the CLI:
 
 ```bash
 cerebrium init deepgram
@@ -45,7 +45,7 @@ cerebrium cp nova-3-general.en.streaming.123456.dg deepgram-models/nova-3-genera
 </Note>
 
 4. Create a file named <b>engine.toml</b> with the following content and upload to your persistent storage under the app name directory (e.g., `{appName}/engine.toml`). These are
-   the default settings but feel free to update.
+   the default settings. Adjust as needed.
 
    For example, if your app is named `deepgram`:
 
@@ -136,7 +136,7 @@ step = 0.2
 ```
 
 5. Create a file named <b>api.toml</b> with the following content and upload to your persistent storage under the app name directory (e.g., `{appName}/api.toml`). These are
-   the default settings but feel free to update.
+   the default settings. Adjust as needed.
 
    For example, if your app is named `deepgram`:
 
@@ -268,7 +268,7 @@ retry_backoff = 1.6
 max_response_size = 1073741824 # 1GB
 ```
 
-6. Update the cerebrium.toml file with the following configuration to set hardware requirements, scaling parameters, region, and other settings:
+6. Update `cerebrium.toml` with the following configuration for hardware, scaling, region, and other settings:
 
 ```toml
 [cerebrium.deployment]
@@ -292,7 +292,7 @@ cooldown = 120
 replica_concurrency = 150
 ```
 
-7. Run 'cerebrium deploy' to deploy the app. After deployment and endpoint for the Deepgram services is provided in the terminal output (The URL for this endpoint can also be found in the App's overview page on the dashboard).
+7. Run `cerebrium deploy`. After deployment, an endpoint for the Deepgram services appears in the terminal output. The URL is also available on the app's overview page in the dashboard.
 
 8. Download an example audio file for use with the deepgram service:
 
@@ -300,7 +300,7 @@ replica_concurrency = 150
 wget https://dpgr.am/bueller.wav
 ```
 
-9. Access the Deepgram service by calling the endpoint with appropriate parameters such as:
+9. Call the Deepgram endpoint with appropriate parameters:
 
 ```curl
 curl -X POST --data-binary @bueller.wav "https://api.aws.us-east-1.cerebrium.ai/v4/p-xxxxxx/deepgram/v1/listen?model=nova-3&smart_format=true"
@@ -309,10 +309,9 @@ curl -X POST --data-binary @bueller.wav "https://api.aws.us-east-1.cerebrium.ai/
 Parameters accepted by the Deepgram service can be found in the [speech-to-text API reference](https://developers.deepgram.com/reference/speech-to-text-api/listen-streaming).
 
 <Note>
-  If 'disable_auth' in your cerebrium.toml is set to false, use the inference
-  token in your Authorization header in order to authenticate with your
-  Cerebrium service. Don't worry about the Deepgram API key, it will be pulled
-  automatically from your secrets.
+  If 'disable_auth' in cerebrium.toml is set to false, include the inference
+  token in the Authorization header to authenticate with the Cerebrium service.
+  The Deepgram API key is pulled automatically from secrets.
 </Note>
 
 ## API Key Configuration
@@ -336,7 +335,7 @@ Deepgram services support independent scaling configurations:
 - **replica_concurrency**: Number of concurrent requests each instance can handle
 - **cooldown**: Time window (in seconds) that must pass at reduced concurrency before scaling down
 
-Adjust these parameters based on expected traffic patterns and latency requirements.
+Adjust these parameters based on traffic patterns and latency requirements.
 
 ## Usage Examples
 

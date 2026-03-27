@@ -3,13 +3,13 @@ title: "Langchain Q&A on a YouTube Video"
 description: "To deploy a Q&A application around a YouTube video"
 ---
 
-In this tutorial, we'll recreate a question-answering bot based on YouTube video content, inspired by [this application](https://colab.research.google.com/drive/1sKSTjt9cPstl_WMZ86JsgEqFG-aSAwkn?usp=sharing) by @m_morzywolek.
+This tutorial recreates a question-answering bot based on YouTube video content, inspired by [this application](https://colab.research.google.com/drive/1sKSTjt9cPstl_WMZ86JsgEqFG-aSAwkn?usp=sharing) by @m_morzywolek.
 
 To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/4-integrations/1-lanchain-QA)
 
 ## Basic Setup
 
-Developing models with Cerebrium is similar to developing on a virtual machine or Google Colab, making conversion straightforward. Make sure you have the Cerebrium package installed and are logged in. If not, check our docs [here](https://docs.cerebrium.ai/getting-started/installation).
+Developing on Cerebrium is similar to a virtual machine or Google Colab. Install the Cerebrium package and log in before proceeding. See the [installation docs](https://docs.cerebrium.ai/getting-started/installation) for details.
 
 First, create your project:
 
@@ -37,7 +37,7 @@ Whisper requires ffmpeg and other Linux packages. Add them to the `[cerebrium.de
 apt = [ "ffmpeg", "libopenblas-base", "libomp-dev"]
 ```
 
-Create a `main.py` file for our Python code. This simple implementation accepts a YouTube video link and a question, then returns an answer with the corresponding time segment. First, let's define our request object:
+Create a `main.py` file. This implementation accepts a YouTube video link and a question, then returns an answer with the corresponding time segment. Start by defining the request object:
 
 ```python
 from pydantic import BaseModel
@@ -47,11 +47,11 @@ class Item(BaseModel):
     question: str
 ```
 
-We use Pydantic for data validation. Both `url` and `question` parameters are required - missing either will trigger an automatic error message.
+Pydantic handles data validation. Both `url` and `question` parameters are required — missing either triggers an automatic error message.
 
 ## Video Transcription
 
-We use OpenAI's Whisper model to convert video audio to text, splitting it into phrase segments with timestamps to track answer sources.
+OpenAI's Whisper model converts video audio to text, splitting it into phrase segments with timestamps to track answer sources.
 
 ```python
 import pytube
@@ -97,7 +97,7 @@ def predict(url, question, run_id):
 
 ## LangChain Implementation
 
-We implement [LangChain](https://python.langchain.com/en/latest/index.html) to store video segments in a vector store and use a locally hosted LLM on Cerebrium to generate answers.
+[LangChain](https://python.langchain.com/en/latest/index.html) stores video segments in a vector store and uses a locally hosted LLM on Cerebrium to generate answers.
 
 ```python
 from langchain.embeddings.openai import OpenAIEmbeddings
@@ -138,7 +138,7 @@ def create_embeddings(texts, start_times):
 
 ```
 
-We chunk text segments and store them in a FAISS vector store, using a Hugging Face open-source model for embeddings. Running Whisper and the embeddings model on the same machine saves two network round trips, reducing latency by over 600ms.
+Text segments are chunked and stored in a FAISS vector store using a Hugging Face open-source model for embeddings. Running Whisper and the embeddings model on the same machine saves two network round trips, reducing latency by over 600ms.
 
 The code integrates LangChain with a Cerebrium-deployed endpoint for question answering.
 

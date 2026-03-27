@@ -6,7 +6,7 @@ Cerebrium offers file management through a 50GB persistent volume that's availab
 
 <Note>
   The `/persistent-storage` directory is not directly accessible during build
-  time. You'll need to use the Cerebrium CLI commands or the mounted volume at
+  time. Use the Cerebrium CLI commands or the mounted volume at
   runtime to manage these files.
 </Note>
 
@@ -88,7 +88,7 @@ The CLI provides four commands for working with persistent storage.
 
 ## Using Stored Files
 
-Here's how to work with files in persistent storage:
+Access files in persistent storage at runtime:
 
 ```python
 import os
@@ -99,7 +99,7 @@ file_path = "/persistent-storage/segment-anything/sam_vit_h_4b8939.pth"
 model = torch.jit.load(file_path)
 ```
 
-During runtime on Cerebrium, your application should access files using the full `/persistent-storage/` path. For example:
+Applications access files using the full `/persistent-storage/` path at runtime:
 
 ```python
 # Read a file from persistent storage
@@ -125,7 +125,7 @@ if os.path.exists("/persistent-storage/models/mymodel.pt"):
 
 The default 50GB persistent volume can be increased up to 1TB through self-service. The first 100GB is free, then $0.05 per GB per month.
 
-1. **Via Dashboard**: Navigate to your project and select **Volumes**. Click the three-dot menu on your volume and select **Increase Size**.
+1. **Via Dashboard**: Navigate to the project and select **Volumes**. Click the three-dot menu on the volume and select **Increase Size**.
 
 <Frame>
   <img
@@ -144,7 +144,7 @@ curl -X POST "https://api.cerebrium.ai/v4/projects/{project_id}/volumes/{volume_
 ```
 
 <Note>
-  For storage needs beyond 1TB, please contact support on
+  For storage needs beyond 1TB, contact support on
   [Discord](https://discord.gg/ATj6USmeE2) or via
   [email](mailto:support@cerebrium.ai).
 </Note>
@@ -154,5 +154,5 @@ curl -X POST "https://api.cerebrium.ai/v4/projects/{project_id}/volumes/{volume_
 If you hit your storage quota, you'll see errors like `No space left on device` when trying to download or write files. To resolve this:
 
 1. Remove unnecessary files from `/persistent-storage` using `cerebrium rm`
-2. Resize your volume to a larger capacity (up to 1TB self-service)
+2. Resize the volume to a larger capacity (up to 1TB self-service)
 3. Contact support for storage beyond 1TB

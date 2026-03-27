@@ -3,9 +3,9 @@ title: Introduction
 description: Start with Cerebrium when latency, burst traffic, and production AI constraints matter from day one.
 ---
 
-Cerebrium is the inference platform for **real-time and production AI workloads**.
+Cerebrium is the infrastructure platform for **real-time and high-performance AI workloads**.
 
-It is a particularly strong fit when you already know your app will care about one or more of the following:
+It is a strong fit when an app requires one or more of the following:
 
 - **Low latency and low cold starts**
 - **Bursty traffic** that should scale without wasting GPU capacity
@@ -13,34 +13,31 @@ It is a particularly strong fit when you already know your app will care about o
 - **Realtime voice, video, and streaming workloads**
 - **GPU-heavy production inference** that has to stay reliable under load
 
-If you are building a quick prototype with very little infrastructure pressure, many platforms can work. Cerebrium is designed for teams that want to start closer to their production reality instead of replatforming later.
-
 ## Why teams choose Cerebrium
 
 - Launch code in the cloud in seconds
 - Run [CPUs](/hardware/cpu-and-memory) or [GPUs](/hardware/using-gpus) with automatic scaling
-- Serve [REST APIs](/endpoints/inference-api), [streaming endpoints](/endpoints/streaming), [WebSockets](/endpoints/websockets), or any [ASGI-compatible app](/container-images/custom-web-servers)
+- Serve [REST APIs](/endpoints/inference-api), [streaming endpoints](/endpoints/streaming), [webSockets](/endpoints/websockets), or any [ASGI-compatible app](/container-images/custom-web-servers)
 - Deploy across [multiple regions](/deployments/multi-region-deployment) for lower latency and residency requirements
 - Tune [concurrency and batching](/scaling/batching-concurrency) for real production traffic
 - Improve startup performance with [cold-start optimization strategies](/other-topics/faster-cold-starts)
 - Store model weights and files with [persistent storage](/storage/managing-files)
-- Pay only for the compute you use — [billed by the second](https://www.cerebrium.ai/pricing)
+- Pay only for the compute you use - [billed by the second](https://www.cerebrium.ai/pricing)
 
 ## Start by workload
 
-If you already know what you are building, start with the closest path below:
+Pick the closest path below to get started:
 
 - **OpenAI-compatible LLM endpoint** → [Serve an OpenAI Compatible LLM with vLLM](/v4/examples/gpt-oss)
 - **Voice AI / real-time speech** → [Deploy a Twilio Voice Agent with Pipecat](/v4/examples/twilio-voice-agent)
-- **Realtime voice agents** → [Realtime Voice Agents](/v4/examples/realtime-voice-agents)
-- **Image and video generation** → [Deploy ComfyUI on Cerebrium](/v4/examples/comfyUI)
-- **Migration from another platform** → [Migrate from Replicate](/migrations/replicate)
+- **Image and video generation** → [Generate images using SDXL](/v4/examples/sdxl)
+- **Python Apps** → [Deploy Gradio Chat Interface](/v4/examples/asgi-gradio-interface)
 
-If you just want the fastest possible first deployment, follow the quickstart below.
+For the fastest first deployment, follow the quickstart below.
 
 ## Quickstart
 
-Setting up and deploying an app on Cerebrium takes just a few steps.
+Set up and deploy an app on Cerebrium in a few steps.
 
 ### 1. Install the CLI
 
@@ -116,7 +113,7 @@ Run the function in the cloud and pass it a prompt:
 cerebrium run main.py::run --prompt "Hello World!"
 ```
 
-You should see the prompt in the logs. This is useful for quick code iteration, testing snippets, or once-off scripts that need cloud CPU/GPU resources.
+The prompt appears in the logs. This is useful for quick code iteration, testing snippets, or one-off scripts that need cloud CPU/GPU resources.
 
 ### 5. Deploy your app
 
@@ -126,7 +123,7 @@ cerebrium deploy
 
 This turns the function into a persistent [REST endpoint](/endpoints/inference-api) that accepts JSON input and can scale automatically.
 
-Once deployed, your app will be callable through a POST endpoint shaped like:
+Once deployed, the app is callable at a POST endpoint:
 
 ```text
 https://api.aws.us-east-1.cerebrium.ai/v4/{project-id}/{app-name}/{function-name}
@@ -134,19 +131,20 @@ https://api.aws.us-east-1.cerebrium.ai/v4/{project-id}/{app-name}/{function-name
 
 ### 6. What to do next
 
-After your first deployment, the most useful next steps are usually:
+Useful next steps after a first deployment:
 
-- [Reduce cold starts](/other-topics/faster-cold-starts)
-- [Tune scaling and concurrency](/scaling/batching-concurrency)
-- [Deploy to multiple regions](/deployments/multi-region-deployment)
-- [Use OpenAI-compatible endpoints](/endpoints/openai-compatible-endpoints)
+- [Define Container images](/container-images/defining-container-images)
+- [Tune scaling and concurrency](/scaling/scaling-apps)
 - [Store model weights in persistent storage](/storage/managing-files)
+- [Deploy to multiple regions](/deployments/multi-region-deployment)
+
+Join the Community [Discord](https://discord.gg/ATj6USmeE2) for support and updates.
 
 ## How Cerebrium works
 
 Cerebrium uses containerization to ensure consistent environments and reliable scaling for apps. When code is deployed, Cerebrium packages it with all necessary dependencies into a container image. This image serves as a blueprint for creating instances that handle incoming requests. The system automatically manages scaling, creating new instances when traffic increases and removing them during quiet periods.
 
-For a detailed explanation of how Cerebrium builds and manages container images, see our [Defining Container Images Guide](/container-images/defining-container-images).
+For a detailed explanation of how Cerebrium builds and manages container images, see the [Defining Container Images Guide](/container-images/defining-container-images).
 
 <Info>
   Content-Aware Storage forms the foundation of Cerebrium's speed. This system
@@ -155,12 +153,3 @@ For a detailed explanation of how Cerebrium builds and manages container images,
   This targeted approach significantly reduces cold start times and optimizes
   resource usage.
 </Info>
-
-## Further examples
-
-- [Serve an OpenAI Compatible LLM with vLLM](/v4/examples/gpt-oss)
-- [Deploy a Twilio Voice Agent with Pipecat](/v4/examples/twilio-voice-agent)
-- [Run a Hyper-Parameter Sweep Training Llama 3.2](/v4/examples/wandb-sweep)
-- [Run a Gradio Chat Interface](/v4/examples/asgi-gradio-interface)
-
-Join our Community [Discord](https://discord.gg/ATj6USmeE2) for support and updates.

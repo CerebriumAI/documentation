@@ -3,11 +3,11 @@ title: "REST API"
 description: "Make authenticated HTTP requests to your Cerebrium endpoints"
 ---
 
-By default, all functions on Cerebrium are accessible via authenticated POST requests, unless they are marked as private by prefixing the function name with an underscore (for example `_private_function()`). Authentication is handled using the JWT token available in the **API Keys** section of your dashboard.
+All functions on Cerebrium are accessible via authenticated POST requests by default, unless marked private by prefixing the function name with an underscore (e.g. `_private_function()`). Authenticate using the JWT token from the **API Keys** section of the dashboard.
 
 ## Request format
 
-The POST request follows the structure below, where `{function}` is the name of the function you want to invoke. For example, in this case, the function `predict()` from `main.py` is being called.
+The POST request follows the structure below, where `{function}` is the name of the function to invoke. In this example, `predict()` from `main.py` is called.
 
 ```bash
 curl --location --request POST 'https://api.aws.us-east-1.cerebrium.ai/v4/p-xxxxx/{app-name}/{function}' \
@@ -37,10 +37,10 @@ Responses follow this format:
 - `404` → the app or function path could not be found
 - `5xx` → either your app raised an exception or the platform could not complete the request
 
-If you want to return a custom status code such as `422` or `404`, include a `status_code` field in the JSON response from your `main.py`.
+To return a custom status code such as `422` or `404`, include a `status_code` field in the JSON response from `main.py`.
 
 <Note>
-  If you are debugging a failed request, check both the HTTP status code and the
-  app logs in the Cerebrium dashboard. Most production debugging goes faster
-  when you inspect the request payload, logs, and `run_id` together.
+  When debugging a failed request, check the HTTP status code and the app logs
+  in the Cerebrium dashboard. Inspecting the request payload, logs, and
+  `run_id` together speeds up diagnosis.
 </Note>

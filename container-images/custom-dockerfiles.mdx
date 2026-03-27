@@ -3,13 +3,11 @@ title: "Custom Dockerfiles"
 description: "Run generic containerized applications on Cerebrium using your own custom Dockerfiles."
 ---
 
-For enhanced flexibility, users can bring existing containerized apps to Cerebrium. These can range from standard Python apps to compiled Rust binaries, provided a functional Dockerfile is supplied to build the app.
-
-There are multiple benefits to building using Dockerfiles on Cerebrium, including the ability to bring existing containerized apps to the platform and maintaining consistent deployment environments that are easily managed locally.
+Cerebrium supports deploying existing containerized apps — from standard Python apps to compiled Rust binaries - using a custom Dockerfile. This allows portable, locally reproducible deployment environments.
 
 ## Building Dockerized Python Apps
 
-This example demonstrates a simple FastAPI server that has been containerized:
+A simple containerized FastAPI server:
 
 ```python
 from fastapi import FastAPI
@@ -29,7 +27,7 @@ def ready():
     return "OK"
 ```
 
-The application is built using the following Dockerfile:
+The corresponding Dockerfile:
 
 ```dockerfile
 # Base image
@@ -48,11 +46,11 @@ EXPOSE 8192
 CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8192"]
 ```
 
-When creating a Dockerfile for Cerebrium, there are three key requirements:
+Dockerfiles for Cerebrium have three requirements:
 
-1. You must expose a port using the `EXPOSE` command - this port will be referenced later in your `cerebrium.toml` configuration
-2. A `CMD` command is required to specify what runs when the container starts (typically your server process)
-3. Set the working directory using `WORKDIR` to ensure your application runs from the correct location (defaults to root directory if not specified)
+1. Expose a port with the `EXPOSE` command - this port is referenced in `cerebrium.toml`
+2. Include a `CMD` command to specify the container's startup process (typically the server)
+3. Set the working directory with `WORKDIR` to ensure correct file paths (defaults to root if not specified)
 
 Update cerebrium.toml to include a custom runtime section with the `dockerfile_path` parameter:
 
@@ -71,7 +69,7 @@ The configuration requires three key parameters:
 - `readycheck_endpoint`: The endpoint used to confirm if the instance is ready to receive. If unspecified, defaults to a TCP ping on the configured port. If the ready check registers a non-200 response, it will not be a viable target for request routing.
 - `dockerfile_path`: The relative path to the Dockerfile used to build the app.
 
-If a Dockerfile does not contain a `CMD` clause, specifying the `entrypoint` parameter in the `cerebrium.toml` file is required.
+If the Dockerfile omits a `CMD` clause, specify the `entrypoint` parameter in `cerebrium.toml`:
 
 ```toml
 [cerebrium.runtime.custom]
@@ -89,7 +87,7 @@ entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8192"]
 
 ## Building Generic Dockerized Apps
 
-Cerebrium supports apps in languages other than Python, provided a Dockerfile is supplied. The following example demonstrates a Rust-based API server using the Axum framework:
+Cerebrium supports non-Python apps as long as a Dockerfile is provided. The following example shows a Rust-based API server using the Axum framework:
 
 ```rust
 use axum::{
@@ -124,7 +122,7 @@ async fn main() {
 }
 ```
 
-In this case, a multi-stage Dockerfile is used to separate the build step, creating a smaller and more secure image for the runtime:
+A multi-stage Dockerfile separates the build step from the runtime, producing a smaller and more secure image:
 
 ```dockerfile
 # Build stage
@@ -162,7 +160,7 @@ EXPOSE 8192
 CMD ["dumb-init", "--", "/rs_server"]
 ```
 
-Similarly to the FastAPI webserver, the application should be configured in the `cerebrium.toml` file:
+Configure the application in `cerebrium.toml` the same way as the FastAPI example:
 
 ```toml
 [cerebrium.runtime.custom]

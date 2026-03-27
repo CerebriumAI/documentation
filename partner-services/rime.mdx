@@ -7,14 +7,13 @@ description: Deploy Rime text-to-speech services on Cerebrium
   Rime Partner Service is available from CLI version 1.39.0 and greater
 </Note>
 
-Cerebrium's partnership with [Rime](https://www.rime.ai/) helps teams deliver text-to-speech (TTS) services with efficient deployment, minimized latency, and region selection for data privacy compliance needs.
+Cerebrium's partnership with [Rime](https://www.rime.ai/) enables text-to-speech (TTS) deployment with low latency and region selection for data privacy compliance.
 
 ## Setup
 
-1. Create a Rime account and get an API key.
-   In order to use Rime on Cerebrium, you will need to create a [Rime](https://www.rime.ai/) account and get an API key. You must then create a <b>secret in Cerebrium</b> with the specific name <b>"RIME_API_KEY".</b>
+1. Create a [Rime](https://www.rime.ai/) account and get an API key. Add the key as a <b>secret in Cerebrium</b> with the name <b>"RIME_API_KEY".</b>
 
-2. Create a simple cerebrium app with the CLI:
+2. Create a Cerebrium app with the CLI:
 
 ```bash
 cerebrium init rime
@@ -47,9 +46,8 @@ replica_concurrency = 50
 ```
 
 <Note>
-  You need to disable auth in the above since you need to use your Rime API key
-  in the header. API authentication is handle by the Rime Server using your API
-  key
+  Disable auth because the Rime API key in the header handles
+  authentication. The Rime Server validates the API key directly.
 </Note>
 
 4. Run `cerebrium deploy` to deploy the Rime service - the output of which should appear as follows:
@@ -58,7 +56,7 @@ replica_concurrency = 50
 App Dashboard: https://dashboard.cerebrium.ai/projects/p-xxxxxxxx/apps/p-xxxxxxxx-rime
 ```
 
-5. Use the Deployment url from the output to send requests to the <b>HTTP</b> Rime service via curl request:
+5. Send requests to the <b>HTTP</b> Rime service using the deployment URL from the output:
 
 ```
 curl --location 'https://api.aws.us-east-1.cerebrium.ai/v4/p-xxxxxxxx/rime' \
@@ -123,7 +121,7 @@ Rime services support independent scaling configurations:
 - **cooldown**: Time window (in seconds) that must pass at reduced concurrency before scaling down. Recommended: 50.
 - **compute**: Instance type. Recommended: `AMPERE_A10`.
 
-Adjust these parameters based on traffic patterns and latency requirements. Best would be to consult the Rime team
-about concurrency and scalability
+Adjust these parameters based on traffic patterns and latency requirements. Consult the Rime team
+for concurrency and scalability guidance.
 
 For further documentation on Rime, see the [Rime documentation](https://docs.rime.ai/).

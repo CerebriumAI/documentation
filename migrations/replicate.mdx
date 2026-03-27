@@ -5,21 +5,21 @@ description: "Deploy a Model from Replicate on Cerebrium"
 
 ### Introduction
 
-In this tutorial, I will show you how you can migrate your workloads from Replicate to Cerebrium in less than 5 minutes.
+This tutorial covers migrating workloads from Replicate to Cerebrium in less than 5 minutes.
 
-As an example, we will be migrating the model SDXL-Lightning-4step from ByteDance. You can find the link to it on Replicate [here](https://replicate.com/bytedance/sdxl-lightning-4step).
+This example migrates the SDXL-Lightning-4step model from ByteDance. Find it on Replicate [here](https://replicate.com/bytedance/sdxl-lightning-4step).
 
-It is best to look at the code in the [GitHub repo](https://github.com/lucataco/cog-sdxl-lightning-4step) and follow along as we migrate it.
+Follow along with the code in the [GitHub repo](https://github.com/lucataco/cog-sdxl-lightning-4step).
 
-To start, let us create our Cerebrium project.
+Start by creating the Cerebrium project.
 
 ```python
 cerebrium init cog-migration-sdxl
 ```
 
-Now Cerebrium and Replicate have a common setup in that they both have a setup file. **cog.yaml** and **cerebrium.toml** for Replicate and Cerebrium respectively.
+Cerebrium and Replicate both use a setup file: **cog.yaml** and **cerebrium.toml** for Replicate and Cerebrium respectively.
 
-Looking at the cog.yaml, we need to add/change the following in our cerebrium.toml
+Based on the cog.yaml, add/change the following in `cerebrium.toml`
 
 ```python
 [cerebrium.deployment]
@@ -51,20 +51,20 @@ gpu_count = 1
 "curl" = "latest"
 ```
 
-From the above, we do the following:
+The configuration above:
 
-- Since we need a GPU, we need to use one of the base images that come from Nvidia that has the CUDA libraries installed. We use the Cuda 12 image. You can see other images [here](/container-images/defining-container-images).
-- Depending on the type of CPU/GPU you need, you can update the hardware settings to run your app. You can see the available options in the [GPU guide](/hardware/using-gpus) and [CPU and memory guide](/hardware/cpu-and-memory).
-- We copy across the pip packages we need to install
-- Replicate uses pget to download model weights - therefore, we need to download it to use it. We do this by installing curl and then adding the shell commands in our cerebrium.toml
+- Uses an Nvidia base image with CUDA libraries (Cuda 12). You can see other images [here](/container-images/defining-container-images).
+- Sets hardware based on CPU/GPU requirements. You can see the available options in the [GPU guide](/hardware/using-gpus) and [CPU and memory guide](/hardware/cpu-and-memory).
+- Copies the required pip packages
+- Downloads pget (used by Replicate for model weights) via curl and shell commands in cerebrium.toml
 
-Great! Now our setup is the same in terms of our hardware and environment.
+The hardware and environment setup now matches.
 
-Now the cog.yaml usually indicates the file that the endpoint calls - in this case, `predict.py` - so let us inspect that file.
+The cog.yaml indicates the endpoint file — in this case, `predict.py`.
 
-Cerebrium has a similar notion in that the main file that is called on our side is `main.py`.
+Cerebrium’s equivalent entry file is `main.py`.
 
-To start, I copy across all import statements and constant variables that have nothing to do with Replicate/Cog. In this case:
+Start by copying all import statements and constant variables unrelated to Replicate/Cog:
 
 ```python
 import os
@@ -115,13 +115,13 @@ SCHEDULERS = {
 }
 ```
 
-Replicate makes use of classes for their syntax which we shy away from - we run whatever Python code you give us and make each function an endpoint. Therefore, when you see a reference to `self.`, remove it throughout the code.
+Replicate uses classes, while Cerebrium runs standard Python code and makes each function an endpoint. Remove all `self.` references throughout the code.
 
-There is a folder in the repo called "feature-extractor" which we need to have in our repository. We could git clone the repo; however, it's quite small, so I would just copy the contents of the folder and put it in your Cerebrium project, i.e.:
+The repo contains a "feature-extractor" folder needed in the Cerebrium project. Since it's small, copy the folder contents directly:
 
 ![Folder Structure](/images/migrations/replicate-folder-structure.png)
 
-The setup function on Replicate runs on each cold-start (i.e., each new instantiation of the app) and so we just define it as normal code that gets run at the top of our file. I put it right below my import statements above.
+Replicate’s setup function runs on each cold start (each new app instantiation). Define it as top-level code below the import statements.
 
 ```python
 def download_weights(url, dest):
@@ -159,7 +159,7 @@ self.pipe.unet.load_state_dict(torch.load(unet_path, map_location="cuda"))
 print("setup took: ", time.time() - start)
 ```
 
-The code above downloads the model weights if they don’t exist and then instantiates the models. To persist files/data on Cerebrium, you need to store it on the path **/persistent-storage**. So we can update the following paths above:
+The code downloads model weights if they don’t exist and instantiates the models. To persist files/data on Cerebrium, store them at **/persistent-storage**. Update the paths:
 
 ```python
 UNET_CACHE = "/persistent-storage/unet-cache"
@@ -167,7 +167,7 @@ BASE_CACHE = "/persistent-storage/checkpoints"
 SAFETY_CACHE = "/persistent-storage/safety-cache"
 ```
 
-We can then copy the two other functions, run_safety_checker() and predict(). In Cerebrium, the parameters of a function is the json data it expects if you make a request to it. We can then define it as follows:
+Copy the remaining functions, run_safety_checker() and predict(). In Cerebrium, function parameters map directly to the expected JSON request data:
 
 ```python
 def run_safety_checker(image):
@@ -245,7 +245,7 @@ def predict(
         return output_paths
 ```
 
-The above returns a path to the generated images, but we would like to return it as a base64-encoded image so that users can render the image instantly. You are welcome to upload the images to a storage bucket to reference directly - it's up to you.
+The above returns a path to the generated images, To return base64-encoded images for instant rendering Alternatively, upload images to a storage bucket.
 
 ```python
 from io import BytesIO
@@ -270,13 +270,13 @@ encoded_images = []
     return encoded_images
 ```
 
-Now we can run `cerebrium deploy`. You should see your app build in under 90 seconds.
+Run `cerebrium deploy`. The app builds in under 90 seconds.
 
 It should output the curl statement to run your app:
 
 ![Curl Request](/images/migrations/replicate-curl.png)
 
-Make sure to replace the end of the URL with `/predict` (since that is the function we are calling) and send it the required JSON data. This is our result:
+Replace the end of the URL with `/predict` (the target function) and send the required JSON data. Example result:
 
 ```python
 {
@@ -286,9 +286,9 @@ Make sure to replace the end of the URL with `/predict` (since that is the funct
 }
 ```
 
-You should be all ready to go.
 
-You can read further about some of the functionality Cerebrium has to offer:
+
+Read more about Cerebrium functionality:
 
 - [Secrets](/other-topics/using-secrets)
 - [Model scaling](/scaling/scaling-apps)

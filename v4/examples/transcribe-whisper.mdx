@@ -3,15 +3,15 @@ title: "Transcribe 1 hour podcast"
 description: "Using Distill Whisper to transcribe an audio file"
 ---
 
-In this tutorial, we'll transcribe an hour-long audio file using Distill Whisper - an optimized version of Whisper-large-v2 that's 60% faster while maintaining accuracy within 1% of the original. We'll accept either a base64-encoded string of the audio file or a URL to download the audio file.
+This tutorial transcribes an hour-long audio file using Distill Whisper — an optimized version of Whisper-large-v2 that's 60% faster while maintaining accuracy within 1% of the original. The endpoint accepts either a base64-encoded string of the audio file or a URL to download the audio file.
 
 To see the final implementation, you can view it [here](https://github.com/CerebriumAI/examples/tree/master/6-voice/1-whisper-transcription)
 
 ## Basic Setup
 
-Developing models with Cerebrium is similar to developing on a virtual machine or Google Colab, making conversion straightforward. Make sure you have the Cerebrium package installed and are logged in. If not, check our docs [here](https://docs.cerebrium.ai/getting-started/installation).
+Developing models with Cerebrium is similar to developing on a virtual machine or Google Colab. Install the Cerebrium package and log in. See the [installation docs](https://docs.cerebrium.ai/getting-started/installation) for details.
 
-First, create your project:
+Create the project:
 
 ```
 cerebrium init 1-whisper-transcription
@@ -27,7 +27,7 @@ openai-whisper = "latest"
 pydantic = "latest"
 ```
 
-Let's create a `util.py` file for our utility functions - downloading a file from a URL or converting a base64 string to a file:
+Create a `util.py` file for utility functions — downloading a file from a URL or converting a base64 string to a file:
 
 ```python
 import base64
@@ -54,7 +54,7 @@ def save_base64_string_to_file(audio: str):
 
 ```
 
-Now that our utility functions are complete, let's update `main.py` with our main Python code. Users can send either a base64-encoded string or a public URL of the audio file. We'll pass this file to our model and return the output. First, let's define our request object:
+With the utility functions complete, update `main.py` with the main application code. The endpoint accepts either a base64-encoded string or a public URL of the audio file, passes it to the model, and returns the output. Define the request object:
 
 ```python
 from typing import Optional
@@ -66,13 +66,13 @@ class Item(BaseModel):
     webhook_endpoint: Optional[HttpUrl]
 ```
 
-We use Pydantic for data validation. While `audio` and `file_url` are optional parameters, we ensure at least one is provided. The `webhook_endpoint` parameter, automatically included by Cerebrium in every request, is useful for long-running requests.
+Pydantic handles data validation. While `audio` and `file_url` are optional parameters, at least one must be provided. The `webhook_endpoint` parameter, automatically included by Cerebrium in every request, is useful for long-running requests.
 
-Note: Cerebrium has a 3-minute timeout for each inference request. For long audio files (2+ hours) that take several minutes to process, use a `webhook_endpoint` - a URL where we'll send a POST request with your function's results.
+Note: Cerebrium has a 3-minute timeout for each inference request. For long audio files (2+ hours) that take several minutes to process, use a `webhook_endpoint` — a URL where Cerebrium sends a POST request with the function's results.
 
 ## Setup Model and inference
 
-Below, we import the required packages and load our Whisper model. While the model downloads during initial deployment, it's automatically cached in persistent storage for subsequent use. We load the model outside our `predict` function since this code should only run on cold start (startup). For warm containers, only the `predict` function executes for inference.
+Import the required packages and load the Whisper model. The model downloads during initial deployment and is automatically cached in persistent storage for subsequent use. Loading the model outside the `predict` function ensures this code only runs on cold start (startup). For warm containers, only the `predict` function executes for inference.
 
 ```python
 from huggingface_hub import hf_hub_download
@@ -154,7 +154,7 @@ curl --location 'https://api.aws.us-east-1.cerebrium.ai/v4/p-<YOUR PROJECT ID>/1
 --data '{"file_url": "https://your-public-url.com/test.mp3"}''
 ```
 
-You'll receive an immediate response with a 202 status code and a `run_id` - a unique identifier to correlate the result with the initial workload.
+The response returns immediately with a 202 status code and a `run_id` — a unique identifier to correlate the result with the initial workload.
 
 The endpoint returns results in this format:
 

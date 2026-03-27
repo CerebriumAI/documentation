@@ -3,7 +3,7 @@ title: Exporting Metrics to Monitoring Platforms
 description: Export your application metrics to any OTLP-compatible observability platform including Grafana Cloud, Datadog, Prometheus, New Relic, and more
 ---
 
-Export real-time resource and execution metrics from your Cerebrium applications to your existing observability platform. Monitor CPU, memory, GPU usage, request counts, and latency metrics exported by your applications. We support most major monitoring platforms that are OTLP-compatible.
+Export real-time resource and execution metrics from Cerebrium applications to an existing observability platform. Monitor CPU, memory, GPU usage, request counts, and latency. Most major OTLP-compatible monitoring platforms are supported.
 
 ## What metrics are exported?
 
@@ -53,12 +53,12 @@ Every metric includes the following labels for filtering and grouping:
 
 ## How it works
 
-Cerebrium automatically pushes metrics from your applications to your monitoring platform every **60 seconds** using the [OpenTelemetry Protocol (OTLP)](https://opentelemetry.io/docs/specs/otlp/). You provide an OTLP endpoint and authentication credentials through the Cerebrium dashboard, and Cerebrium handles the rest — collecting resource usage and execution data, formatting it as OpenTelemetry metrics, and delivering it to your platform.
+Cerebrium automatically pushes metrics to the configured monitoring platform every **60 seconds** using the [OpenTelemetry Protocol (OTLP)](https://opentelemetry.io/docs/specs/otlp/). Provide an OTLP endpoint and authentication credentials through the Cerebrium dashboard — Cerebrium handles collecting resource usage and execution data, formatting it as OpenTelemetry metrics, and delivering it to the destination.
 
 - Metrics are pushed every **60 seconds**
 - Failed pushes are retried **3 times** with exponential backoff
-- If pushes fail **10 consecutive times**, export is automatically paused to avoid noise (you can re-enable at any time from the dashboard)
-- Your credentials are stored encrypted and are never returned in API responses
+- If pushes fail **10 consecutive times**, export is automatically paused to avoid noise (re-enable at any time from the dashboard)
+- Credentials are stored encrypted and never returned in API responses
 
 ### Supported destinations
 
@@ -71,7 +71,7 @@ Cerebrium automatically pushes metrics from your applications to your monitoring
 
 ### Step 1: Get your platform credentials
 
-Before heading to the Cerebrium dashboard, you'll need an OTLP endpoint and authentication credentials from your monitoring platform.
+Gather an OTLP endpoint and authentication credentials from the monitoring platform before configuring the Cerebrium dashboard.
 
 <Tabs>
   <Tab title="Grafana Cloud">
@@ -110,7 +110,7 @@ Before heading to the Cerebrium dashboard, you'll need an OTLP endpoint and auth
     | EU (datadoghq.eu) | `https://api.datadoghq.eu/api/v2/otlp` |
     | AP1 (ap1.datadoghq.com) | `https://api.ap1.datadoghq.com/api/v2/otlp` |
 
-    You can find your site in your Datadog URL — for example, if you log in at `app.us3.datadoghq.com`, your site is US3.
+    Find the site in the Datadog URL — for example, if you log in at `app.us3.datadoghq.com`, your site is US3.
 
     Keep your API key and endpoint handy for the next step.
 
@@ -158,25 +158,25 @@ Before heading to the Cerebrium dashboard, you'll need an OTLP endpoint and auth
     enabled)
   </Tab>
   <Tab title="Custom OTLP">
-    Add the authentication headers required by your platform. You can add
+    Add the authentication headers required by the platform. Add
     multiple headers using the **Add Header** button.
   </Tab>
 </Tabs>
 
 4. Click **Save & Enable**
 
-Your metrics will start flowing within 60 seconds. The dashboard will show a green "Connected" status with the time of the last successful export.
+Metrics start flowing within 60 seconds. The dashboard shows a green "Connected" status with the time of the last successful export.
 
-If something doesn't look right, click **Test Connection** to verify Cerebrium can reach your monitoring platform. You'll see a success or failure message with details to help you troubleshoot.
+If something looks wrong, click **Test Connection** to verify Cerebrium can reach the monitoring platform. The result includes details to help troubleshoot.
 
 ## Viewing Metrics
 
-Once connected, metrics will appear in your monitoring platform within a minute or two (exact latency depends on your platform's ingestion pipeline).
+Once connected, metrics appear in the monitoring platform within a minute or two (exact latency depends on the platform's ingestion pipeline).
 
 <Tabs>
   <Tab title="Grafana Cloud">
     1. Go to your Grafana Cloud dashboard → **Explore**
-    2. Select your Prometheus data source — it will be named something like **grafanacloud-yourstack-prom** (you can find it under **Connections** → **Data sources** if you're unsure)
+    2. Select your Prometheus data source — it will be named something like **grafanacloud-yourstack-prom** (find it under **Connections** → **Data sources** if you're unsure)
     3. Search for metrics starting with `cerebrium_`
 
     **Example queries:**
@@ -215,7 +215,7 @@ Once connected, metrics will appear in your monitoring platform within a minute 
   <Tab title="Datadog">
     1. Go to **Metrics** → **Explorer** in your Datadog dashboard
     2. Search for metrics starting with `cerebrium`
-    3. You can filter by `project_id`, `app_name`, and other labels using the "from" field
+    3. Filter by `project_id`, `app_name`, and other labels using the "from" field
   </Tab>
   <Tab title="Prometheus">
     Query your Prometheus instance directly. All Cerebrium metrics are prefixed with `cerebrium_`:
@@ -233,10 +233,10 @@ Once connected, metrics will appear in your monitoring platform within a minute 
 
 ## Managing Metrics Export
 
-You can manage your metrics export configuration from the dashboard at any time by going to **Integrations** → **Metrics Export**.
+Manage metrics export configuration from the dashboard at any time under **Integrations** → **Metrics Export**.
 
-- **Disable export:** Toggle the switch off. Your configuration is preserved — you can re-enable at any time without reconfiguring.
-- **Update credentials:** Enter new authentication headers and click **Save Changes**. Useful when rotating API keys.
+- **Disable export:** Toggle the switch off. The configuration is preserved — re-enable at any time without reconfiguring.
+- **Update credentials:** Enter new authentication headers and click **Save Changes**. Use this when rotating API keys.
 - **Change endpoint:** Update the OTLP endpoint field and click **Save Changes**.
 - **Check status:** The dashboard shows whether export is connected, the time of the last successful export, and any error messages.
 
@@ -259,4 +259,4 @@ You can manage your metrics export configuration from the dashboard at any time 
 
 ### Still stuck?
 
-Reach out to [support@cerebrium.ai](mailto:support@cerebrium.ai) with your project ID and the error message from the dashboard — we can check the export logs on our side.
+Contact [support@cerebrium.ai](mailto:support@cerebrium.ai) with the project ID and error message from the dashboard for further investigation.

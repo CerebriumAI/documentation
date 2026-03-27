@@ -3,22 +3,22 @@ title: Vercel Integration
 description: Integrate Cerebrium with Vercel to build AI applications
 ---
 
-You can use the Cerebrium + Vercel integration to access apps deployed on Cerebrium via REST endpoints from Vercel projects. You'll find the Cerebrium integration available to install in the Vercel AI marketplace.
+The Cerebrium + Vercel integration provides access to Cerebrium-deployed apps via REST endpoints from Vercel projects. Install it from the Vercel AI marketplace.
 
 ### What this integration does
 
-This integration allows you to:
+This integration provides:
 
-1. Easily synchronize your Cerebrium API keys to one or more Vercel projects.
-2. Call Cerebrium endpoints over HTTP in connected Vercel projects.
+1. Automatic synchronization of Cerebrium API keys to one or more Vercel projects.
+2. HTTP access to Cerebrium endpoints from connected Vercel projects.
 
 ### Authentication
 
-The integration will set the following environment variables against the user’s selected Vercel projects:
+The integration sets the following environment variables on the selected Vercel projects:
 
 - CEREBRIUM_JWT
 
-The environment variables will be set in the “preview” and “production” project targets. You can read more about environment variables within Vercel in the [documentation](https://vercel.com/docs/concepts/projects/environment-variables#environments).
+The environment variables are set in the “preview” and “production” project targets. See the Vercel [documentation](https://vercel.com/docs/concepts/projects/environment-variables#environments) for more on environment variables.
 
 ### Installing the integration
 
@@ -31,15 +31,15 @@ The environment variables will be set in the “preview” and “production” 
 
 ### Uninstalling the integration
 
-The Cerebrium Vercel integration is managed under the user’s Vercel dashboard under the “Integrations” tab. From there they can remove the specific integration installation from their Vercel account.
+Manage the Cerebrium Vercel integration from the Vercel dashboard under the “Integrations” tab. Remove the integration installation from there.
 
 Important: Removing an integration will delete the corresponding API token set by Cerebrium in your Vercel project(s).
 
 ## Example
 
-You can view our example [here](/v4/examples/mistral-vllm) on how to deploy Mistral 7B with vLLM to an auto-scaling endpoint.
+See the [Mistral 7B with vLLM example](/v4/examples/mistral-vllm) for deploying to an auto-scaling endpoint.
 
-Once you have followed the example and deployed the app, you should have an output of the endpoint your app is deployed at. You can then deploy this within your vercel project as:
+After deploying the app, the output includes the endpoint URL. Call it from a Vercel project:
 
 ```javascript
 fetch(
@@ -60,10 +60,10 @@ fetch(
   .catch((error) => console.error("Error:", error));
 ```
 
-In this example, we built our app to take a prompt as input and return the output of the model.
+This example app takes a prompt as input and returns the model output.
 
 ## Pricing
 
 Requests to apps use usage-based pricing, billed at 1ms granularity. The exact cost per millisecond is based on the underlying hardware you specify.
 
-See our [pricing page](https://www.cerebrium.ai/pricing) for current GPU prices.
+See the [pricing page](https://www.cerebrium.ai/pricing) for current GPU prices.

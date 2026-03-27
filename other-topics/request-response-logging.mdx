@@ -3,11 +3,11 @@ title: "Request and Response Logging"
 description: "Control request and response logs in your Cerebrium apps"
 ---
 
-By default, the Cortex runtime logs all requests and responses to your Cerebrium app. These logs can be viewed in your app's dashboard and are useful for debugging and monitoring. However, in some cases, you may want to disable these logs for privacy, security, or performance reasons.
+By default, the Cortex runtime logs all requests and responses. These logs appear in the app dashboard and are useful for debugging and monitoring. Disable them when privacy, security, or performance requires it.
 
 ## Controlling Logs
 
-Cerebrium provides two settings that allow you to control logging behavior in the Cortex runtime:
+Two settings control logging behavior in the Cortex runtime:
 
 - `DISABLE_REQUEST_LOGS` - When enabled, prevents logging of incoming request data
 - `DISABLE_RESPONSE_LOGS` - When enabled, prevents logging of response data from your app
@@ -20,7 +20,7 @@ Cerebrium provides two settings that allow you to control logging behavior in th
 
 ## Configuration
 
-These settings can be configured as [secrets](/other-topics/using-secrets) at either the app or project level:
+Configure these settings as [secrets](/other-topics/using-secrets) at either the app or project level:
 
 1. Navigate to your project dashboard
 2. Go to the "Secrets" section
@@ -33,7 +33,7 @@ These settings can be configured as [secrets](/other-topics/using-secrets) at ei
 
 ## Use Cases
 
-Some common reasons to disable logs include:
+Common reasons to disable logs:
 
 - **Processing sensitive data**: If your app processes personal or sensitive information that shouldn't be stored in logs
 - **Observability optimization**: For high-throughput apps where logging adds unnecessary overhead making it difficult to monitor your app
@@ -48,6 +48,6 @@ To disable both request and response logging, add the following secrets to your 
 | DISABLE_RESPONSE_LOGS | true  |
 
 <Note>
-  Remember that secrets are loaded on container startup. If you update a secret,
-  you must restart your app container for the changes to take effect.
+  Secrets are loaded on container startup. After updating a secret,
+  restart the app container for the change to take effect.
 </Note>

@@ -24,9 +24,7 @@
               {
                 "group": "Getting Started",
                 "pages": [
-                  "getting-started/introduction",
-                  "other-topics/faster-cold-starts",
-                  "deployments/multi-region-deployment"
+                  "getting-started/introduction"
                 ]
               },
               {
@@ -65,12 +63,12 @@
               {
                 "group": "Endpoints",
                 "pages": [
-                  "endpoints/openai-compatible-endpoints",
                   "endpoints/inference-api",
                   "endpoints/streaming",
                   "endpoints/websockets",
                   "endpoints/webhook",
-                  "endpoints/async"
+                  "endpoints/async",
+                  "endpoints/openai-compatible-endpoints"
                 ]
               },
               {
@@ -95,8 +93,7 @@
               {
                 "group": "Integrations",
                 "pages": [
-                  "integrations/metrics-export",
-                  "integrations/vercel"
+                  "integrations/metrics-export"
                 ]
               },
               {

@@ -3,15 +3,15 @@ title: "OpenAI-Compatible Endpoints"
 description: ""
 ---
 
-By default, all functions deployed on Cerebrium are a REST API that are accessible through an authenticated POST request. We have made all these endpoints OpenAI-compatible, whether they use `/chat/completions` or `/embedding`. Below we show you a very basic implementation of a streaming OpenAI-compatible endpoint.
+All Cerebrium endpoints are OpenAI-compatible, supporting both `/chat/completions` and `/embedding`. Below is a basic implementation of a streaming OpenAI-compatible endpoint.
 
-We recommend you check out a full example of how to deploy an OpenAI-compatible endpoint using vLLM [here](https://github.com/CerebriumAI/examples/tree/master/5-large-language-models/1-openai-compatible-endpoint).
+For a full example using vLLM, see the [OpenAI-compatible endpoint example](https://github.com/CerebriumAI/examples/tree/master/5-large-language-models/1-openai-compatible-endpoint).
 
-To create a streaming-compatible endpoint, we need to make sure our Cerebrium function:
+A streaming-compatible Cerebrium function must:
 
-- Specifies all the parameters that OpenAI sends in the function signature.
-- Returns `yield data`, where `yield` signifies we are streaming and `data` is the JSON-serializable
-  object that we are returning to our user.
+- Specify all the parameters that OpenAI sends in the function signature.
+- Return `yield data`, where `yield` signals streaming and `data` is the JSON-serializable
+  object returned to the caller.
 
 Here's a small snippet from the example listed above:
 
@@ -41,9 +41,9 @@ def run(messages: list, model: str,...):
     yield json.dumps(response.model_dump())
 ```
 
-Once deployed, we can set the base URL to the desired function we wish to call and use our Cerebrium JWT (accessible on your dashboard) as the API key.
+Once deployed, set the base URL to the target function and use the Cerebrium JWT (from the dashboard) as the API key.
 
-Our client code will then look something like this:
+Client code:
 
 ```python
 import os

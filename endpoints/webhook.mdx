@@ -3,9 +3,7 @@ title: "Webhook Forwarding"
 description: "Forward responses to a specified webhook"
 ---
 
-An HTTP request to the Cerebrium API can be parameterized to forward data from your function/app to a specified endpoint via a POST.
-This allows you to use webhooks in your architecture. To achieve this, we can simply add the `webhookEndpoint`
-query parameter to any API call:
+Forward function response data to an external endpoint via POST by adding the `webhookEndpoint` query parameter to any API call:
 
 ```bash
 curl -X POST https://api.aws.us-east-1.cerebrium.ai/v4/<YOUR-PROJECT-ID>/<YOUR-APP>/run?webhookEndpoint=https%3A%2F%2Fwebhook.site%2F'\
@@ -14,15 +12,11 @@ curl -X POST https://api.aws.us-east-1.cerebrium.ai/v4/<YOUR-PROJECT-ID>/<YOUR-A
        --data '{"param": "hello world"}'
 ```
 
-This will then forward the body by sending a POST request to your specified webhook. Since this is
-a feature of our proxy, you will not need to modify any part of your code to use the webhook
-functionality. You should, however, ensure that your endpoint is able to receive POST requests. While
-this will work for both Cortex and Custom runtimes, it will only work for HTTP requests, and not websockets.
+The proxy forwards the response body as a POST request to the specified webhook — no code changes required. Ensure the webhook endpoint accepts POST requests. Webhook forwarding works with both Cortex and Custom runtimes, but only for HTTP requests (not WebSockets).
 
 ## Retry Behavior
 
-Webhook requests are sent asynchronously and will not block your function's response. If a webhook delivery fails,
-we automatically retry with the following behavior:
+Webhook requests are sent asynchronously and do not block the function's response. Failed deliveries are retried automatically:
 
 - **Maximum attempts**: 3 attempts total
 - **Delay between retries**: Up to 5 seconds between attempts
@@ -38,18 +32,17 @@ we automatically retry with the following behavior:
 If all attempts fail, the error is logged but will not affect your function's response to the original caller.
 
 <Warning>
-  **Your webhook endpoint should be idempotent.** In some cases, we may retry a
-  webhook even if it was processed successfully—for example, if our backend
-  doesn't receive the success response from your webhook server due to network
-  issues. Design your endpoint to handle duplicate deliveries gracefully.
+  **The webhook endpoint should be idempotent.** A webhook may be retried even
+  if it was already processed — for example, if the Cerebrium backend does not
+  receive the success response due to network issues. Design the endpoint to
+  handle duplicate deliveries gracefully.
 </Warning>
 
-To illustrate this, suppose your function returns `{"smile": "wave"}`. We would then make a POST call from
-our proxy that would look like this to your webhook:
+For example, if the function returns `{"smile": "wave"}`, the proxy sends a POST like this to the webhook:
 
 <Note>
-  We do not actually use `curl`. This is used as an example to show what a
-  webhook may expect.
+  Cerebrium does not literally use `curl`. This is illustrative of the request
+  the webhook endpoint receives.
 </Note>
 
 ```bash
@@ -60,10 +53,10 @@ curl -X POST https://webhook.site/'\
 
 ## Webhook Signature Verification
 
-To verify that webhooks are genuinely coming from Cerebrium, you can use our webhook signature verification system:
+Verify that webhooks originate from Cerebrium using signature verification:
 
-1. Include an `X-Webhook-Secret` header with a secret value of your choice when making requests to our API
-2. When you receive a webhook, we'll include the following headers:
+1. Include an `X-Webhook-Secret` header with a secret value when making requests to the Cerebrium API.
+2. Incoming webhooks include the following headers:
 
 - `X-Request-Id`: A unique identifier for the request
 - `X-Cerebrium-Webhook-Timestamp`: The Unix timestamp when the webhook was sent
@@ -98,4 +91,4 @@ def verify_webhook_signature(request_id, timestamp, body, signature, secret):
   response, timestamp etc) not just your function response
 </Note>
 
-This ensures that the webhook is genuinely from Cerebrium and hasn't been tampered with.
+A matching signature confirms the webhook originated from Cerebrium and has not been tampered with.

@@ -3,8 +3,8 @@ title: "Custom Domains"
 description: "Connect your own domain to your Cerebrium project"
 ---
 
-Custom domains allow serving Cerebrium apps through custom domains instead of the default `*.cerebrium.ai` URLs.
-Once configured, API calls will use the custom domain while keeping the same path structure: `api.example.com/v4/p-1234/my-app/run`.
+Custom domains serve Cerebrium apps through a custom domain instead of the default `*.cerebrium.ai` URLs.
+Once configured, API calls use the custom domain while keeping the same path structure: `api.example.com/v4/p-1234/my-app/run`.
 
 ## Key Features
 
@@ -27,7 +27,7 @@ Once configured, API calls will use the custom domain while keeping the same pat
 1. Navigate to project settings in the Cerebrium dashboard
 2. Click on the "Custom Domains" tab
 3. Click "Add Custom Domain"
-4. Enter the domain name and select the target region (choose the region closest to users for optimal latency)
+4. Enter the domain name and select the target region (the region closest to users provides the lowest latency)
 5. Click "Create Domain"
 
 ### Step 2: Configure DNS Records
@@ -76,7 +76,7 @@ After creating the domain, DNS configuration instructions will be displayed. Cre
 
 1. After configuring DNS, return to the Cerebrium dashboard
 2. Cerebrium will automatically attempt to validate DNS records every 30 minutes for up to 2 days
-3. To trigger an immediate validation attempt, click "Validation Status" -> "Validate Domain" (you can do this manually even after the 2 days have elapsed)
+3. To trigger an immediate validation attempt, click "Validation Status" -> "Validate Domain" (this works even after the 2-day window has elapsed)
 4. If validation fails, the dialog will show the last known error.
 5. Once validated, SSL certificates will be automatically provisioned
 
@@ -106,9 +106,7 @@ Once validation is complete, the custom domain can be used immediately with all 
 
 ### Domain Validation Statuses
 
-Cerebrium will attempt to validate domains once every 30 minutes up to a maximum of 2 days. If a domain is not
-being validated, click on "Validation Status" to see the last validation attempt, along with any error that
-occurred.
+Cerebrium attempts to validate domains once every 30 minutes for up to 2 days. If validation has not succeeded, click "Validation Status" to see the last attempt and any errors.
 
 - **Pending**: Domain is waiting for DNS validation
 - **Validated**: Domain is successfully validated and ready to use
@@ -130,7 +128,7 @@ If a domain shows "Failed" status, the DNS record has been misconfigured. Common
 
 ### Common DNS Mistakes
 
-- **Wrong proxy URL**: Ensure the exact URL provided in the dashboard is being used
+- **Wrong proxy URL**: Use the exact URL shown in the dashboard
 - **TTL too high**: Consider lowering TTL before making DNS changes
 - **Multiple records**: Remove conflicting A or CNAME records for the same name
 

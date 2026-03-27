@@ -3,7 +3,7 @@ title: Multi-Region Deployment
 description: Deploy your apps globally across multiple regions for improved latency and data residency compliance
 ---
 
-Cerebrium's multi-region deployment capability allows you to deploy your apps globally across different continents, taking advantage of co-location for reduced latency and meeting data residency requirements.
+Deploy apps globally across multiple continents to reduce latency through co-location and meet data residency requirements.
 
 <Warning>
   Multi-region deployment is currently in **beta**. Rapid updates and
@@ -44,17 +44,17 @@ Cerebrium supports deployment across three major continents with the following r
 
 ## CLI Configuration
 
-You can configure your CLI to work with different regions in two ways:
+Configure the CLI to work with different regions in two ways:
 
-Set a default region for your CLI sessions that will be used for all commands:
+Set a default region for all CLI commands:
 
 ```bash
 cerebrium region set us-east-1
 ```
 
-This will set the default region for commands like listing storage volumes, running applications, and other operations.
+This sets the default region for commands like listing storage volumes, running applications, and other operations.
 
-Alternatively, you can specify the region for individual commands using the `--region` flag:
+Alternatively, specify the region for individual commands using the `--region` flag:
 
 ```bash
 # List storage volumes in a specific region
@@ -70,7 +70,7 @@ cerebrium ls --region eu-west-2
 
 ## App Deployment
 
-Configure your app's deployment region using the `region` parameter in the `[cerebrium.hardware]` section of your `cerebrium.toml` file:
+Set the deployment region using the `region` parameter in the `[cerebrium.hardware]` section of `cerebrium.toml`:
 
 ```toml
 [cerebrium.hardware]
@@ -91,7 +91,11 @@ GPU availability and pricing vary across regions due to infrastructure constrain
 
 | GPU Model        | US East | EU West | EU North | AP South |
 | ---------------- | ------- | ------- | -------- | -------- |
+| BLACKWELL_B300   | ✅      | ❌      | ✅       | ❌       |
+| BLACKWELL_B200   | ✅      | ❌      | ✅       | ❌       |
+| HOPPER_H200      | ✅      | ✅      | ✅       | ✅       |
 | HOPPER_H100      | ✅      | ✅      | ✅       | ✅       |
+| AMPERE_A100_80GB | ✅      | ✅      | ✅       | ✅       |
 | AMPERE_A100_40GB | ✅      | ✅      | ✅       | ✅       |
 | ADA_L40S         | ✅      | ❌      | ✅       | ❌       |
 | ADA_L4           | ✅      | ✅      | ✅       | ✅       |
