@@ -94,10 +94,7 @@
               },
               {
                 "group": "Integrations",
-                "pages": [
-                  "integrations/metrics-export",
-                  "integrations/vercel"
-                ]
+                "pages": ["integrations/metrics-export", "integrations/vercel"]
               },
               {
                 "group": "Other concepts",
