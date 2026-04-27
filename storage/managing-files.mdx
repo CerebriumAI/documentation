@@ -40,6 +40,13 @@ The CLI provides four commands for working with persistent storage.
   portion of the path.
 </Note>
 
+Each region has its own isolated persistent storage volume. File commands operate on the default region set by `cerebrium region set` (`us-east-1` for new accounts). To target a different region for a single command, pass `--region` (or `-r`):
+
+```bash
+cerebrium ls --region eu-north-1
+cerebrium cp model.bin -r eu-north-1
+```
+
 1. Upload files with `cerebrium cp`:
 
    ```bash

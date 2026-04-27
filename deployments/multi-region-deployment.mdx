@@ -54,18 +54,18 @@ cerebrium region set us-east-1
 
 This sets the default region for commands like listing storage volumes, running applications, and other operations.
 
-Alternatively, specify the region for individual commands using the `--region` flag:
+Alternatively, specify the region for individual commands using `--region` (or its short form `-r`). This works for all file commands — `cp`, `ls`, `rm`, and `download`:
 
 ```bash
-# List storage volumes in a specific region
-cerebrium ls --region eu-west-2
-
+cerebrium ls --region eu-north-1
+cerebrium cp model.bin -r eu-north-1
+cerebrium rm old_file.txt --region eu-north-1
+cerebrium download results.json -r eu-north-1
 ```
 
 <Info>
-  The `--region` flag takes precedence over the default region set with
-  `cerebrium region set`. This allows you to temporarily use a different region
-  without changing your default configuration.
+  `--region` applies only to the command it's attached to. The default set by
+  `cerebrium region set` is not modified.
 </Info>
 
 ## App Deployment
