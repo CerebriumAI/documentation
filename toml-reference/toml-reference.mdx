@@ -110,14 +110,12 @@ The `[cerebrium.runtime.custom]` section configures custom web servers and runti
 
 The `[cerebrium.hardware]` section defines compute resources.
 
-| Option    | Type    | Default     | Description                          |
-| --------- | ------- | ----------- | ------------------------------------ |
-| cpu       | float   | required    | Number of CPU cores                  |
-| memory    | float   | required    | Memory allocation in GB              |
-| compute   | string  | "CPU"       | Compute type (CPU, AMPERE_A10, etc.) |
-| gpu_count | integer | 0           | Number of GPUs                       |
-| provider  | string  | "aws"       | Cloud provider                       |
-| region    | string  | "us-east-1" | Deployment region                    |
+| Option    | Type    | Default  | Description                          |
+| --------- | ------- | -------- | ------------------------------------ |
+| cpu       | float   | required | Number of CPU cores                  |
+| memory    | float   | required | Memory allocation in GB              |
+| compute   | string  | "CPU"    | Compute type (CPU, AMPERE_A10, etc.) |
+| gpu_count | integer | 0        | Number of GPUs                       |
 
 <Warning>
   Memory refers to RAM, not GPU VRAM. Ensure sufficient memory for your
@@ -233,8 +231,6 @@ cpu = 4
 memory = 16.0
 compute = "AMPERE_A10"
 gpu_count = 1
-provider = "aws"
-region = "us-east-1"
 
 [cerebrium.scaling]
 min_replicas = 0
