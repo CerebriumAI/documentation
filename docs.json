@@ -82,6 +82,7 @@
               },
               {
                 "group": "Partner Services",
+                "tag": "Beta",
                 "pages": [
                   "partner-services/index",
                   "partner-services/deepgram",
