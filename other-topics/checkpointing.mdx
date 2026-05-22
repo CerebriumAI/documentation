@@ -1,0 +1,51 @@
+---
+title: "Memory Checkpointing"
+description: "Faster cold starts with memory checkpointing"
+---
+
+## Introduction
+
+Memory checkpointing takes a snapshot of a containers GPU and CPU memory and uses that to speed up the startup of all future containers. Applications that perform a large amount of work at container start time benefit the most form this process.
+
+Machine Learning and LLM frameworks load model weights and compile various CUDA kernels at container start time taking many minutes. Loading a checkpoint that contains the already compiled CUDA kernels saves time.
+
+Cerebrium has checkpointing and restore built in to the platform.
+
+## How To Use
+
+Checkpointing is available on our v2 runtime environment. Add the following to your `cerebrium.toml` to upgrade.
+
+```
+[cerebrium.runtime]
+container_runtime = "v2"
+```
+
+To create a checkpoint your application has to send a trigger to our runtime when it is ready. When the trigger is sent our runtime checks to see if a checkpoint should be created. If there is already an existing checkpoint at this build version or another container is already checkpointing it will not attempt to create another one.
+
+If a checkpoint should occur your container will be frozen for the duration of the process. GPU memory will be copied to CPU memory and then all of the container memory will be written to storage. This saved checkpoint will then be distributed to be able to run throughout the region.
+
+Send a POST request to http://169.254.169.253:8234/checkpoint from inside your container when the container is ready to checkpoint.
+
+If successful subsequent containers will be restored from this created checkpoint. You can tell that a container was restored from a checkpoint if it has `CEREBRIUM_RESTORED: container restored from checkpoint` as the first log line in the container.
+
+A checkpoint is tied to a single deployment. To disable restoring from checkpoints simply remove the POST request and redeploy your application.
+
+## Limitations
+
+Your memory request needs to be large enough to contain the GPU memory dump in addition to your regular memory use.
+
+When a container is restored from a checkpoint execution continues from the point where the http request is sent. If environment variables were read before this point they will remain the same as they were from the time of the checkpoint.
+
+Any TCP connections that were made before the checkpoint will have disconnected. For example if you connected to a database before the checkpoint you will have to reestablish that connection after restore.
+
+Any files written to disk before the checkpoint will not be copied to the restored container. Only memory is checkpointed.
+
+Not all Cerebrium providers are supported during this alpha release.
+
+## Platform specific recommendations
+
+### vLLM
+
+vLLM checkpointing support is not complete but still possible. See https://github.com/vllm-project/vllm/issues/34303 and other issues.
+
+If you are getting an EngineCoreDead exception add `async_scheduling=False` to your AsyncEngineArgs and it should succeed.
