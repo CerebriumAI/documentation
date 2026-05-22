@@ -61,7 +61,7 @@ urllib.request.urlopen("http://169.254.169.253:8234/checkpoint/wait")
 
 **Ephemeral Filesystem:** Any files written to disk before the checkpoint will not be copied to the restored container. Only memory is checkpointed.
 
-**Provider Availablity:** Not all Cerebrium providers are supported during this alpha release.
+**Provider Availablity:** Checkpointing is only available on the AWS provider. More coming soon.
 
 ## Platform specific recommendations
 
