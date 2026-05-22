@@ -5,9 +5,9 @@ description: "Faster cold starts with memory checkpointing"
 
 ## Introduction
 
-Memory checkpointing takes a snapshot of a containers GPU and CPU memory and uses that to speed up the startup of all future containers. Applications that perform a large amount of work at container start time benefit the most from this process.
+Memory checkpointing takes a snapshot of a container's GPU and CPU memory and uses that to speed up the startup of all future containers. Applications that perform a large amount of work at container start time benefit the most from this process.
 
-For example, Machine Learning and LLM frameworks load massive model weights and compile various CUDA kernels at container start time, taking many minutes. Loading a checkpoint that already contains the already compiled CUDA kernels can skip this delay entirely.
+For example, Machine Learning and LLM frameworks load massive model weights and compile various CUDA kernels at container start time, taking many minutes. Loading a checkpoint that already contains the compiled CUDA kernels can skip this delay entirely.
 
 Cerebrium has native checkpointing and restore functionality built in to the platform.
 
@@ -53,7 +53,7 @@ urllib.request.urlopen("http://169.254.169.253:8234/checkpoint/wait")
 
 ## Limitations
 
-**Memory Overhead:** Your memory request needs to be large enough to contain the GPU memory dump in addition to your regular memory use.
+**Memory Overhead:** The container memory allocation needs to be large enough to contain the GPU memory dump in addition to your regular memory use.
 
 **Execution Lifecycle:** When a container is restored from a checkpoint execution continues from the point where the http request is sent. If environment variables were read before this point they will remain the same as they were from the time of the checkpoint.
 
@@ -61,7 +61,7 @@ urllib.request.urlopen("http://169.254.169.253:8234/checkpoint/wait")
 
 **Ephemeral Filesystem:** Any files written to disk before the checkpoint will not be copied to the restored container. Only memory is checkpointed.
 
-**Provider Availablility:** Not all Cerebrium providers are supported during this alpha release.
+**Provider Availablity:** Not all Cerebrium providers are supported during this alpha release.
 
 ## Platform specific recommendations
 
