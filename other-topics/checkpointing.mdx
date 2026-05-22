@@ -36,19 +36,19 @@ A checkpoint is tightly coupled to a single deployment. To disable restoring fro
 ### Example
 
 ```python
-    from vllm import AsyncLLMEngine
-    from vllm.engine.arg_utils import AsyncEngineArgs
-    # Init vLLM engine
-    engine_args = AsyncEngineArgs(
-        model="Qwen/Qwen2.5-0.5B-Instruct",
-        async_scheduling=False
-    )
-    AsyncLLMEngine.from_engine_args(engine_args)
+from vllm import AsyncLLMEngine
+from vllm.engine.arg_utils import AsyncEngineArgs
+# Init vLLM engine
+engine_args = AsyncEngineArgs(
+    model="Qwen/Qwen2.5-0.5B-Instruct",
+    async_scheduling=False
+)
+AsyncLLMEngine.from_engine_args(engine_args)
 
-    # Trigger checkpoint
-    urllib.request.urlopen("http://169.254.169.253:8234/checkpoint/", method="POST")
-    # Wait for it to complete
-    urllib.request.urlopen("http://169.254.169.253:8234/checkpoint/wait")
+# Trigger checkpoint
+urllib.request.urlopen("http://169.254.169.253:8234/checkpoint/", method="POST")
+# Wait for it to complete
+urllib.request.urlopen("http://169.254.169.253:8234/checkpoint/wait")
 ```
 
 ## Limitations
