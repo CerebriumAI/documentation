@@ -54,7 +54,7 @@ engine.sleep(level=1)
 # Trigger checkpoint
 try:
     urllib.request.urlopen("http://169.254.169.253:8234/checkpoint", method="POST")
-except (http.client.RemoteDisconnect):
+except http.client.RemoteDisconnect:
     # TCP connections disconnect on restore and throw remote
     pass
 
