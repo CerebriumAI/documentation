@@ -16,8 +16,8 @@ Cerebrium has native checkpointing and restore functionality built in to the pla
 Checkpointing is available on our v2 runtime environment. Add the following to your `cerebrium.toml` to upgrade.
 
 ```
-[cerebrium.runtime]
-container_runtime = "v2"
+[cerebrium.experimental]
+checkpointing = true
 ```
 
 To create a checkpoint your application has to send a trigger to our runtime after it has performed its initialization and is ready. When this trigger is received, the runtime verifies if a new checkpoint is required. To save resources, the system will not create a new checkpoint if:
@@ -38,17 +38,28 @@ A checkpoint is tightly coupled to a single deployment. To disable restoring fro
 ```python
 from vllm import AsyncLLMEngine
 from vllm.engine.arg_utils import AsyncEngineArgs
+import http
+import urllib
+
 # Init vLLM engine
 engine_args = AsyncEngineArgs(
     model="Qwen/Qwen2.5-0.5B-Instruct",
-    async_scheduling=False
+    async_scheduling=False,
+    sleep_mode=True
 )
-AsyncLLMEngine.from_engine_args(engine_args)
+engine = AsyncLLMEngine.from_engine_args(engine_args)
 
+# Drop KV cache for reduced GPU memory footprint.
+engine.sleep(level=1)
 # Trigger checkpoint
-urllib.request.urlopen("http://169.254.169.253:8234/checkpoint/", method="POST")
-# Wait for it to complete
-urllib.request.urlopen("http://169.254.169.253:8234/checkpoint/wait")
+try:
+    urllib.request.urlopen("http://169.254.169.253:8234/checkpoint/", method="POST")
+except (http.client.RemoteDisconnect):
+    # TCP connections disconnect on restore and throw remote
+    pass
+
+# Restore KV cache
+engine.wake_up()
 ```
 
 ## Limitations
@@ -70,3 +81,7 @@ urllib.request.urlopen("http://169.254.169.253:8234/checkpoint/wait")
 vLLM checkpointing support is not complete but still possible. See https://github.com/vllm-project/vllm/issues/34303 and other issues.
 
 If you are getting an EngineCoreDead exception add `async_scheduling=False` to your AsyncEngineArgs and it should succeed.
+
+The larger the size of the memory checkpoint the slower the restore is. We can reduce the size of the snapshot substantially and improve startup times by dropping the KV Cache before checkpoint and recreating it after restore. vLLM has functionality that does this built in as part of [vLLM Sleep Mode](https://docs.vllm.ai/en/latest/features/sleep_mode/).
+
+You
