@@ -70,16 +70,45 @@ cerebrium download results.json -r eu-north-1
 
 ## App Deployment
 
-Set the deployment region using the `region` parameter in the `[cerebrium.hardware]` section of `cerebrium.toml`:
+Set the deployment regions using the `region` parameter in the `[cerebrium.hardware]` section of `cerebrium.toml`. The value is an array of strings — apps deploy to every region in the list:
 
 ```toml
 [cerebrium.hardware]
-region = "us-east-1"
-provider = "aws"
+region = ["us-east-1"]
 compute = "AMPERE_A10"
 cpu = 2
 memory = 8.0
 ```
+
+To deploy to several regions at once, list each one explicitly:
+
+```toml
+region = ["us-east-1", "eu-west-2"]
+```
+
+### Region Keywords
+
+In addition to explicit region names, `region` accepts shorthand keywords that expand to a group of regions. This is useful when you want to deploy across an entire locale or to every available region without listing them individually.
+
+| Keyword    | Expands to                |
+| ---------- | ------------------------- |
+| `*`        | All available regions     |
+| `us`       | `us-east-1`               |
+| `us-east`  | `us-east-1`               |
+| `eu`       | `eu-west-2`, `eu-north-1` |
+| `eu-west`  | `eu-west-2`               |
+| `eu-north` | `eu-north-1`              |
+| `uk`       | `eu-west-2`               |
+| `ap`       | `ap-south-1`              |
+| `ap-south` | `ap-south-1`              |
+
+Keywords and explicit region names can be mixed in the same array:
+
+```toml
+region = ["us", "eu-west-2"]
+```
+
+If `region` is omitted, apps deploy to all available regions (`["*"]`).
 
 ## Pricing
 

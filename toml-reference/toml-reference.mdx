@@ -110,14 +110,14 @@ The `[cerebrium.runtime.custom]` section configures custom web servers and runti
 
 The `[cerebrium.hardware]` section defines compute resources.
 
-| Option    | Type    | Default     | Description                          |
-| --------- | ------- | ----------- | ------------------------------------ |
-| cpu       | float   | required    | Number of CPU cores                  |
-| memory    | float   | required    | Memory allocation in GB              |
-| compute   | string  | "CPU"       | Compute type (CPU, AMPERE_A10, etc.) |
-| gpu_count | integer | 0           | Number of GPUs                       |
-| provider  | string  | "aws"       | Cloud provider                       |
-| region    | string  | "us-east-1" | Deployment region                    |
+| Option    | Type            | Default  | Description                                                                                        |
+| --------- | --------------- | -------- | -------------------------------------------------------------------------------------------------- |
+| cpu       | float           | required | Number of CPU cores                                                                                |
+| memory    | float           | required | Memory allocation in GB                                                                            |
+| compute   | string          | "CPU"    | Compute type (CPU, AMPERE_A10, etc.)                                                               |
+| gpu_count | integer         | 0        | Number of GPUs                                                                                     |
+| provider  | string          | "aws"    | Cloud provider                                                                                     |
+| region    | array of string | `["*"]`  | Regions to deploy to. Accepts explicit region names (e.g. `"us-east-1"`) and keywords like `"eu"`. |
 
 <Warning>
   Memory refers to RAM, not GPU VRAM. Ensure sufficient memory for your
