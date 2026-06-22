@@ -83,7 +83,6 @@ engine.wake_up()
 
 ### vLLM
 
-
 vLLM checkpointing support is not complete but still possible. See https://github.com/vllm-project/vllm/issues/34303 and other issues.
 
 If you are getting an EngineCoreDead exception add `async_scheduling=False` to your AsyncEngineArgs and it should succeed.
