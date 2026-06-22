@@ -1,0 +1,137 @@
+---
+title: Faster Cold Start Performance
+description: Reduce queueing delay and initialization time on new containers
+---
+
+Cold starts happen when Cerebrium must boot a new container to serve a request. That adds latency in two phases:
+
+1. **Queueing** - No warm container is available, so the request waits until a new one starts and becomes ready.
+2. **Initialization** - The new container runs startup work before it accepts traffic: importing dependencies, loading model weights into GPU memory, compiling CUDA kernels.
+
+Use metrics and request logs from your Cerebrium dashboard to see which phase dominates and how you can improve it.
+However, most production workloads benefit from both the reduction of initialization and then configuring scaling to keep warm capacity available.
+
+## Reducing initialization time
+
+Most cold-start time in ML workloads comes from loading model weights into GPU memory. For large models, a standard Hugging Face load can take 40+ seconds even when reading from storage at ~2 GB/s.
+
+Work through the techniques below in order. Each step targets a different part of startup and can be combined with the others.
+
+### Store model weights on persistent storage
+
+Store model weights on [persistent storage](/storage/managing-files) at `/persistent-storage` rather than baking them into the container image.
+
+Cerebrium caches reads from persistent storage within each region. After weights are loaded once, future cold starts can reuse the cached copy and load faster.
+
+This is usually the best default for large models. Baking weights into the container increases image size, which means Cerebrium has to pull and restore a larger image before your application can start initialization.
+
+Only include weights in the container image when they are small enough that the image remains lightweight.
+
+<Note>
+  Increasing CPU core count can parallelise reads from storage and improve
+  pull-through times for large files. Multiple cores process different parts
+  simultaneously, reducing overall transfer time.
+</Note>
+
+### Run initialization at module scope
+
+Move as much initialization work as possible out of the request path and into module scope so it runs once at container start, before the container accepts traffic.
+
+```python
+# Runs once at container start — not on every request
+model = load_model("/persistent-storage/models/my-model/")
+tokenizer = load_tokenizer("/persistent-storage/models/my-model/")
+
+def predict(prompt: str):
+    return model.generate(prompt)
+```
+
+For multiple independent models or weight files, load them concurrently rather than sequentially. Use `ThreadPoolExecutor` or similar patterns to read files in parallel and take full advantage of storage bandwidth.
+
+### Load weights directly to GPU
+
+Standard PyTorch and Hugging Face loading paths copy weights through CPU memory. Libraries that stream weights directly from disk to GPU reduce this overhead. Use one of these when model loading remains the bottleneck after moving work to module scope.
+
+#### Tensorizer
+
+[Tensorizer](https://github.com/coreweave/tensorizer) serialises model weights into a format optimised for fast transfer and loads them directly into GPU memory in a single step. It works with Cerebrium persistent storage at nearly 2 GB/s read speed. For large models (20B+ parameters), loading time typically decreases by 30–50%, with greater improvements on larger models.
+
+Tensorizer works with Transformers, Diffusers, scikit-learn, or custom PyTorch modules. The only requirement is the ability to initialise an empty model before the deserializer restores weights into it.
+
+#### FlashPack
+
+[FlashPack](https://github.com/fal-ai/flashpack) loads PyTorch tensors from disk to GPU at high throughput without requiring GPUDirect Storage. Convert a model once, store the `.flashpack` file on persistent storage, then load directly into GPU memory on startup.
+
+FlashPack also provides integration mixins for Transformers and Diffusers models. See the [FlashPack repository](https://github.com/fal-ai/flashpack) for conversion and loading patterns.
+
+### Restore from a checkpoint
+
+When initialization includes work that does not change between deployments - compiled CUDA kernels, large weight loads, framework setup - [memory checkpointing](/performance/checkpointing) captures CPU and GPU memory state after initialization and restores it on future cold starts.
+
+Checkpointing skips repeated initialization work entirely. A container restored from a checkpoint resumes from the point where the checkpoint trigger was sent, with model weights and compiled kernels already in memory.
+
+Use checkpointing when Tensorizer or FlashPack still leave multi-minute startup times, or when compiled kernels dominate initialization. Enable checkpointing in `cerebrium.toml` and trigger it after initialization completes. See the [Memory Checkpointing guide](/performance/checkpointing) for configuration, trigger endpoints, and framework-specific recommendations.
+
+## Reduce queueing with scaling
+
+When initialization is already optimised, keep warm containers available so requests do not wait for new ones to boot. See [Scaling Apps](/scaling/scaling-apps) for full parameter reference.
+
+Use these scaling options based on traffic pattern:
+
+| Goal | Parameter | When to use |
+| --- | --- | --- |
+| Eliminate cold starts from scaling to zero | `min_replicas` | Latency-sensitive production workloads that cannot tolerate startup delay |
+| Handle bursty traffic without waiting for scale-up | `scaling_buffer` | Traffic arrives in bursts where one request is followed by several more |
+| Keep containers warm through brief dips | `cooldown` | Steady workloads with occasional gaps before traffic returns |
+| Maintain headroom before autoscaler adds replicas | `scaling_target` | Workloads using `concurrency_utilization` that need spare capacity per replica |
+
+### Keep containers warm with `min_replicas`
+
+Set `min_replicas` to maintain a floor of running instances at all times. This eliminates cold starts from scaling to zero but increases cost while idle.
+
+```toml
+[cerebrium.scaling]
+min_replicas = 1
+```
+
+Use `min_replicas = 1` or higher for latency-sensitive production workloads that cannot tolerate cold-start delay.
+
+### Buffer capacity with `scaling_buffer`
+
+`scaling_buffer` provisions extra idle replicas above what the scaling metric recommends. This helps with bursty traffic - when one request arrives, additional warm containers are already available for the requests that follow.
+
+```toml
+[cerebrium.scaling]
+min_replicas = 0
+max_replicas = 10
+replica_concurrency = 1
+scaling_metric = "concurrency_utilization"
+scaling_target = 100
+scaling_buffer = 3
+```
+
+`scaling_buffer` is available with `concurrency_utilization` and `requests_per_second` metrics.
+
+### Tune cooldown for traffic patterns
+
+The `cooldown` parameter sets how long reduced concurrency must persist before a container scales down. A longer cooldown keeps containers warm through brief traffic dips and reduces cold starts when traffic returns quickly.
+
+```toml
+[cerebrium.scaling]
+cooldown = 600  # Keep containers warm for 10 minutes after traffic drops
+```
+
+Match cooldown to traffic patterns. Steady workloads with occasional gaps benefit from longer cooldowns. Highly intermittent workloads may accept shorter cooldowns to reduce idle cost.
+
+### Leave headroom with `scaling_target`
+
+With `concurrency_utilization`, set `scaling_target` below 100 to maintain excess capacity before the autoscaler adds replicas. For example, `scaling_target = 70` with `replica_concurrency = 1` keeps containers at 70% utilisation, leaving room for new requests without waiting for a scale-up event.
+
+```toml
+[cerebrium.scaling]
+replica_concurrency = 1
+scaling_metric = "concurrency_utilization"
+scaling_target = 70
+```
+
+All scaling strategies trade cost for latency. Monitor cold start frequency and request latency in the dashboard to find the right balance.
