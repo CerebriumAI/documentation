@@ -78,12 +78,12 @@ When initialization is already optimised, keep warm containers available so requ
 
 Use these scaling options based on traffic pattern:
 
-| Goal | Parameter | When to use |
-| --- | --- | --- |
-| Eliminate cold starts from scaling to zero | `min_replicas` | Latency-sensitive production workloads that cannot tolerate startup delay |
-| Handle bursty traffic without waiting for scale-up | `scaling_buffer` | Traffic arrives in bursts where one request is followed by several more |
-| Keep containers warm through brief dips | `cooldown` | Steady workloads with occasional gaps before traffic returns |
-| Maintain headroom before autoscaler adds replicas | `scaling_target` | Workloads using `concurrency_utilization` that need spare capacity per replica |
+| Goal                                               | Parameter        | When to use                                                                    |
+| -------------------------------------------------- | ---------------- | ------------------------------------------------------------------------------ |
+| Eliminate cold starts from scaling to zero         | `min_replicas`   | Latency-sensitive production workloads that cannot tolerate startup delay      |
+| Handle bursty traffic without waiting for scale-up | `scaling_buffer` | Traffic arrives in bursts where one request is followed by several more        |
+| Keep containers warm through brief dips            | `cooldown`       | Steady workloads with occasional gaps before traffic returns                   |
+| Maintain headroom before autoscaler adds replicas  | `scaling_target` | Workloads using `concurrency_utilization` that need spare capacity per replica |
 
 ### Keep containers warm with `min_replicas`
 
