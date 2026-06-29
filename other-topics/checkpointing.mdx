@@ -1,11 +1,12 @@
 ---
 title: "Memory Checkpointing"
-description: "Faster cold starts with memory checkpointing"
+description: "Snapshot a Cerebrium container's GPU and CPU memory after init so future cold starts restore from the snapshot instead of reloading models."
+keywords: "checkpoint, checkpointing, snapshot, snapshotting, memory snapshot, warm pool, preloaded model, fast cold start, restore"
 ---
 
 ## Introduction
 
-Memory checkpointing takes a snapshot of a container's GPU and CPU memory and uses that to speed up the startup of all future containers. Applications that perform a large amount of work at container start time benefit the most from this process.
+Memory checkpointing — sometimes called memory snapshotting — takes a snapshot of a container's GPU and CPU memory and uses that to speed up the startup of all future containers. The snapshot acts like a preloaded copy of your model and runtime state, so new containers restore from the snapshot instead of cold-starting from scratch. Applications that perform a large amount of work at container start time benefit the most from this process.
 
 For example, Machine Learning and LLM frameworks load massive model weights and compile various CUDA kernels at container start time, taking many minutes. Loading a checkpoint that already contains the compiled CUDA kernels can skip this delay entirely.
 
