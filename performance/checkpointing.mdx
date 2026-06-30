@@ -111,7 +111,7 @@ engine.wake_up()
 
 **Ephemeral filesystem:** Any files written to disk before the checkpoint are not copied to the restored container. Only memory is checkpointed.
 
-**Provider Availability:** Checkpointing is only available on the <b>AWS provider</b>. More coming soon.
+**Provider availability:** Checkpointing is only available on the <b>AWS provider</b>. More coming soon.
 
 ## Platform-specific recommendations
 
@@ -119,4 +119,4 @@ engine.wake_up()
 
 vLLM checkpointing support is not complete but is still possible. See [vllm-project/vllm#34303](https://github.com/vllm-project/vllm/issues/34303) and related issues.
 
-The larger the size of the memory checkpoint the slower the restore is. Reduce the size of the snapshot substantially and improve startup times by dropping the KV Cache before checkpoint and recreating it after restore. vLLM has functionality that does this built in as part of [vLLM Sleep Mode](https://docs.vllm.ai/en/latest/features/sleep_mode/).
+The larger the size of the memory checkpoint, the slower the restore is. Reduce the size of the snapshot substantially and improve startup times by dropping the KV Cache before checkpoint and recreating it after restore. vLLM has functionality that does this built in as part of [vLLM Sleep Mode](https://docs.vllm.ai/en/latest/features/sleep_mode/).
