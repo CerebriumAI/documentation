@@ -26,7 +26,7 @@ checkpointing = true
 
 ### 2. Send the checkpoint trigger
 
-You have full control over when to create a checkpoint - preferably it's after the majority of your application's initialization work is complete and your desired state is reached. The state of your application at this exact moment is what will be restored for future container launches. 
+You have full control over when to create a checkpoint - preferably it's after the majority of your application's initialization work is complete and your desired state is reached. The state of your application at this exact moment is what will be restored for future container launches.
 
 Once you reach this optimal point in your startup logic, send a POST request from inside the container to instruct Cerebrium to capture the checkpoint:
 
