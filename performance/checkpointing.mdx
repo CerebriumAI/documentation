@@ -5,7 +5,7 @@ description: "Snapshot CPU and GPU memory to skip imports, model loading, and CU
 
 ## Introduction
 
-Memory checkpointing takes a snapshot of a container’s CPU memory and GPU memory, and uses it to speed up the startup of future containers. Applications that perform a large amount of work at container start time benefit the most from this process.
+Memory checkpointing takes a snapshot of a container's CPU memory and GPU memory, and uses it to speed up the startup of future containers. Applications that perform a large amount of work at container start time benefit the most from this process.
 
 This is useful for both CPU-only and GPU workloads. For CPU applications, checkpointing can preserve expensive initialization work such as imports, dependency loading, configuration setup, and in-memory state. For GPU applications, it can also preserve model weights, CUDA state, and compiled kernels.
 
@@ -13,31 +13,31 @@ For example, ML and LLM frameworks often load large model weights and compile CU
 
 Since this feature is still in beta, please report all issues to the team via our [Discord Community](https://discord.gg/ATj6USmeE2) or via [Email](mailto:support@cerebrium.ai).
 
-## How To Use
+## How to use
 
-Checkpointing is available in early beta to our customer base. Add the following to your `cerebrium.toml` in order to use it.
+Checkpointing is available in early beta to our customer base. Add the following to your `cerebrium.toml` to use it.
 
-```
+```toml
 [cerebrium.experimental]
 checkpointing = true
 ```
 
-To create a checkpoint your application has to send a trigger to our runtime after it has performed its initialization and is ready. When this trigger is received, the runtime verifies if a new checkpoint is required. To save resources, the system will not create a new checkpoint if:
+To create a checkpoint, your application sends a trigger to our runtime once it has finished initialization and is ready. When this trigger is received, the runtime verifies whether a new checkpoint is required. To save resources, the system will not create a new checkpoint if:
 
     1.	A checkpoint already exists for the current build version.
     2.	Another container instance is already undergoing the checkpointing process.
 
-If a checkpoint should occur your container will be frozen for the duration of the process. GPU memory will be copied to CPU memory and then all of the container memory will be written to storage. This saved checkpoint will then be distributed to be able to run throughout the region.
+If a checkpoint should occur, your container is frozen for the duration of the process. GPU memory is copied to CPU memory, and then all of the container memory is written to storage. This saved checkpoint is then distributed to run throughout the region.
 
-Send a POST request to http://169.254.169.253:8234/checkpoint from inside your container when the container is ready to checkpoint.
+Send a POST request to `http://169.254.169.253:8234/checkpoint` from inside your container when the container is ready to checkpoint.
 
-If successful subsequent containers will be restored from this created checkpoint. You can tell that a container was restored from a checkpoint if it has `CEREBRIUM_RESTORED: container restored from checkpoint` as the first log line in the container.
+If successful, subsequent containers are restored from this checkpoint. You can tell that a container was restored from a checkpoint if it has `CEREBRIUM_RESTORED: container restored from checkpoint` as the first log line in the container.
 
-A checkpoint is tightly coupled to a single deployment. To disable restoring from checkpoints simply remove the POST request and redeploy your application.
+A checkpoint is tightly coupled to a single deployment. To disable restoring from checkpoints, remove the POST request and redeploy your application.
 
 You can find several implementations in our [Examples repository on Github](https://github.com/CerebriumAI/examples).
 
-### vLLM Example
+### vLLM example
 
 ```python
 from vllm import AsyncLLMEngine
@@ -72,22 +72,20 @@ engine.wake_up()
 
 ## Limitations
 
-**Memory Overhead:** The container memory allocation needs to be large enough to contain the GPU memory dump in addition to your regular memory use.
+**Memory overhead:** The container memory allocation must be large enough to contain the GPU memory dump in addition to your regular memory use.
 
-**Execution Lifecycle:** When a container is restored from a checkpoint execution continues from the point where the http request is sent. If environment variables were read before this point they will remain the same as they were from the time of the checkpoint.
+**Execution lifecycle:** When a container is restored from a checkpoint, execution continues from the point where the HTTP request was sent. Any environment variables read before this point remain the same as they were at the time of the checkpoint.
 
-**Network Connections:** Any TCP connections that were made before the checkpoint will have disconnected. For example if you connected to a database before the checkpoint you will have to reestablish that connection after restore.
+**Network connections:** Any TCP connections made before the checkpoint will have disconnected. For example, if you connected to a database before the checkpoint, you must reestablish that connection after restore.
 
-**Ephemeral Filesystem:** Any files written to disk before the checkpoint will not be copied to the restored container. Only memory is checkpointed.
+**Ephemeral filesystem:** Any files written to disk before the checkpoint are not copied to the restored container. Only memory is checkpointed.
 
 **Provider Availability:** Checkpointing is only available on the <b>AWS provider</b>. More coming soon.
 
-## Platform specific recommendations
+## Platform-specific recommendations
 
 ### vLLM
 
-vLLM checkpointing support is not complete but still possible. See https://github.com/vllm-project/vllm/issues/34303 and other issues.
-
-If you are getting an EngineCoreDead exception add `async_scheduling=False` to your AsyncEngineArgs and it should succeed.
+vLLM checkpointing support is not complete but is still possible. See [vllm-project/vllm#34303](https://github.com/vllm-project/vllm/issues/34303) and related issues.
 
 The larger the size of the memory checkpoint the slower the restore is. We can reduce the size of the snapshot substantially and improve startup times by dropping the KV Cache before checkpoint and recreating it after restore. vLLM has functionality that does this built in as part of [vLLM Sleep Mode](https://docs.vllm.ai/en/latest/features/sleep_mode/).
