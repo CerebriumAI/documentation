@@ -57,8 +57,11 @@ engine = AsyncLLMEngine.from_engine_args(engine_args)
 engine.sleep(level=1)
 # Trigger checkpoint
 try:
+    import json
     req = urllib.request.Request("http://169.254.169.253:8234/checkpoint", method="POST")
-    urllib.request.urlopen(req, timeout=300)
+    with urllib.request.urlopen(req, timeout=300) as response:
+        result = response.read()
+        print(json.loads(result))
 except http.client.RemoteDisconnected:
     # TCP connections disconnect on restore and throw remote
     pass
