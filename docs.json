@@ -106,7 +106,6 @@
                   "security",
                   "other-topics/using-secrets",
                   "other-topics/request-response-logging",
-                  "other-topics/faster-cold-starts",
                   "calculating-cost"
                 ]
               }

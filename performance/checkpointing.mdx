@@ -1,6 +1,6 @@
 ---
 title: "Memory and GPU Checkpointing (Beta)"
-description: "Radically reduce container cold starts by skipping initilization work"
+description: "Radically reduce container cold starts by skipping initialization work"
 ---
 
 ## Introduction
@@ -11,7 +11,7 @@ This is useful for both CPU-only and GPU workloads. For CPU applications, checkp
 
 For example, ML and LLM frameworks often load large model weights and compile CUDA kernels at container start time, which can take many seconds or minutes. Loading from a checkpoint that already contains this initialized state can skip most of that delay.
 
-Since this feature is still in beta, please report all issues to the team via our [Discord Community](https://discord.gg/ATj6USmeE2) or via [Email](mailto:support@cerebrium.ai)
+Since this feature is still in beta, please report all issues to the team via our [Discord Community](https://discord.gg/ATj6USmeE2) or via [Email](mailto:support@cerebrium.ai).
 
 ## How To Use
 
@@ -35,7 +35,7 @@ If successful subsequent containers will be restored from this created checkpoin
 
 A checkpoint is tightly coupled to a single deployment. To disable restoring from checkpoints simply remove the POST request and redeploy your application.
 
-You can find several implementations in our [Examples repository on Github](https://github.com/CerebriumAI/examples)
+You can find several implementations in our [Examples repository on Github](https://github.com/CerebriumAI/examples).
 
 ### vLLM Example
 
@@ -80,7 +80,7 @@ engine.wake_up()
 
 **Ephemeral Filesystem:** Any files written to disk before the checkpoint will not be copied to the restored container. Only memory is checkpointed.
 
-**Provider Availablity:** Checkpointing is only available on the <b>AWS provider</b>. More coming soon.
+**Provider Availability:** Checkpointing is only available on the <b>AWS provider</b>. More coming soon.
 
 ## Platform specific recommendations
 
@@ -91,5 +91,3 @@ vLLM checkpointing support is not complete but still possible. See https://githu
 If you are getting an EngineCoreDead exception add `async_scheduling=False` to your AsyncEngineArgs and it should succeed.
 
 The larger the size of the memory checkpoint the slower the restore is. We can reduce the size of the snapshot substantially and improve startup times by dropping the KV Cache before checkpoint and recreating it after restore. vLLM has functionality that does this built in as part of [vLLM Sleep Mode](https://docs.vllm.ai/en/latest/features/sleep_mode/).
-
-You
