@@ -1,19 +1,21 @@
 ---
-title: "Memory Checkpointing"
-description: "Faster cold starts with memory checkpointing"
+title: "Memory and GPU Checkpointing (Beta)"
+description: "Radically reduce container cold starts by skipping initilization work"
 ---
 
 ## Introduction
 
-Memory checkpointing takes a snapshot of a container's GPU and CPU memory and uses that to speed up the startup of all future containers. Applications that perform a large amount of work at container start time benefit the most from this process.
+Memory checkpointing takes a snapshot of a container’s CPU memory and GPU memory, and uses it to speed up the startup of future containers. Applications that perform a large amount of work at container start time benefit the most from this process.
 
-For example, Machine Learning and LLM frameworks load massive model weights and compile various CUDA kernels at container start time, taking many minutes. Loading a checkpoint that already contains the compiled CUDA kernels can skip this delay entirely.
+This is useful for both CPU-only and GPU workloads. For CPU applications, checkpointing can preserve expensive initialization work such as imports, dependency loading, configuration setup, and in-memory state. For GPU applications, it can also preserve model weights, CUDA state, and compiled kernels.
 
-Cerebrium has native checkpointing and restore functionality built in to the platform.
+For example, ML and LLM frameworks often load large model weights and compile CUDA kernels at container start time, which can take many seconds or minutes. Loading from a checkpoint that already contains this initialized state can skip most of that delay.
+
+Since this feature is still in beta, please report all issues to the team via our [Discord Community](https://discord.gg/ATj6USmeE2) or via [Email](mailto:support@cerebrium.ai)
 
 ## How To Use
 
-Checkpointing is available on our v2 runtime environment. Add the following to your `cerebrium.toml` to upgrade.
+Checkpointing is available in early beta to our customer base. Add the following to your `cerebrium.toml` in order to use it.
 
 ```
 [cerebrium.experimental]
@@ -33,7 +35,9 @@ If successful subsequent containers will be restored from this created checkpoin
 
 A checkpoint is tightly coupled to a single deployment. To disable restoring from checkpoints simply remove the POST request and redeploy your application.
 
-### Example
+You can find several implementations in our [Examples repository on Github](https://github.com/CerebriumAI/examples)
+
+### vLLM Example
 
 ```python
 from vllm import AsyncLLMEngine
@@ -53,8 +57,12 @@ engine = AsyncLLMEngine.from_engine_args(engine_args)
 engine.sleep(level=1)
 # Trigger checkpoint
 try:
-    urllib.request.urlopen("http://169.254.169.253:8234/checkpoint", method="POST")
-except http.client.RemoteDisconnect:
+    import json
+    req = urllib.request.Request("http://169.254.169.253:8234/checkpoint", method="POST")
+    with urllib.request.urlopen(req, timeout=300) as response:
+        result = response.read()
+        print(json.loads(result))
+except http.client.RemoteDisconnected:
     # TCP connections disconnect on restore and throw remote
     pass
 
@@ -72,7 +80,7 @@ engine.wake_up()
 
 **Ephemeral Filesystem:** Any files written to disk before the checkpoint will not be copied to the restored container. Only memory is checkpointed.
 
-**Provider Availablity:** Checkpointing is only available on the AWS provider. More coming soon.
+**Provider Availablity:** Checkpointing is only available on the <b>AWS provider</b>. More coming soon.
 
 ## Platform specific recommendations
 

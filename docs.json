@@ -43,6 +43,13 @@
                 ]
               },
               {
+                "group": "Performance",
+                "pages": [
+                  "performance/faster-cold-starts",
+                  "performance/checkpointing"
+                ]
+              },
+              {
                 "group": "Scaling apps",
                 "pages": [
                   "scaling/scaling-apps",
