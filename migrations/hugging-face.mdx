@@ -1,6 +1,6 @@
 ---
 title: "Migrating from Hugging Face"
-description: "Deploy a Model from Hugging Face on Cerebrium"
+description: "Deploy a model from Hugging Face on Cerebrium"
 ---
 
 ## Introduction
@@ -22,7 +22,7 @@ Key features and performance metrics compared:
 | **Co-locating your models**       | Requires a separate repository for each inference endpoint and mode | Co-locate multiple models from various sources in a single app      |
 | **Response handling (From cold)** | Throws an error                                                     | Waits for infrastructure to become available and returns a response |
 
-## Benefits of Migrating to Cerebrium
+## Benefits of migrating to Cerebrium
 
 1. **Faster build times**: Cerebrium significantly reduces build times by up to 95%, especially for subsequent builds (an additional 56% reduction). This can greatly improve iteration speed and the cost of running experiments with complex ML apps.
 2. **Flexible cooldown period**: With a minimum cooldown period of just 1 second (compared to Hugging Face's 15 minutes), Cerebrium allows for more efficient resource utilization and cost management.
@@ -178,7 +178,7 @@ cerebrium deploy
 
 This command uses the configuration in `cerebrium.toml` to set up and deploy your model.
 
-### 3. Using the Deployed Model
+### 3. Using the deployed model
 
 Once deployed, you can use your model as follows:
 
@@ -202,7 +202,7 @@ print(response.text)
 
 Make sure to replace `[CEREBRIUM_API_KEY]` with your Inference API key, which can be found in your dashboard under API keys. This code sends a POST request to your deployed model's endpoint with a prompt, and prints the model's response.
 
-## Additional Considerations
+## Additional considerations
 
 When migrating, keep the following points in mind:
 
