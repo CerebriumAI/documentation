@@ -1,6 +1,6 @@
 ---
 title: "Inter-cluster routing"
-description: "Route to your apps privately in cluster with minimal latency"
+description: "Use inter-cluster routing to connect Cerebrium apps privately within a region for sub-millisecond latency without traversing the public internet."
 ---
 
 Inter-cluster routing enables direct, low-latency communication between Cerebrium apps within the same region. Traffic stays off the public internet, reducing latency and improving performance. Each application scales independently based on its configured scaling parameters.
@@ -18,7 +18,7 @@ Inter-cluster routing provides:
 
 When one app communicates with another within the same region, the request is routed through Cerebrium’s local proxy layer. This proxy keeps every request inside the regional cluster while enforcing authentication, observability, and scaling. All communication follows the same security standards as the public API server — every request is authenticated unless authentication is explicitly disabled. If authentication is disabled without custom security in place, other apps within the same cluster can access the endpoint.
 
-The proxy enforces configured [scaling parameters](../../scaling/scaling-apps), including concurrency and RPS-based autoscaling, so services scale predictably as traffic grows. Multiple communication protocols are supported — apps can interact over HTTP, WebSocket, or batch job execution for streaming data, chaining models, or triggering asynchronous workloads.
+The proxy enforces configured [scaling parameters](/scaling/scaling-apps), including concurrency and RPS-based autoscaling, so services scale predictably as traffic grows. Multiple communication protocols are supported — apps can interact over HTTP, WebSocket, or batch job execution for streaming data, chaining models, or triggering asynchronous workloads.
 
 Apps communicate using a consistent internal endpoint format: `http://api.aws/v4/<project_id>/<app_name>/<func_name>`
 

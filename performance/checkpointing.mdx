@@ -1,6 +1,6 @@
 ---
-title: "Memory and GPU checkpointing (Beta)"
-description: "Radically reduce container cold starts by skipping initialization work"
+title: "Memory and GPU Checkpointing (Beta)"
+description: "Snapshot CPU and GPU memory to skip imports, model loading, and CUDA kernel compilation, drastically cutting Cerebrium container cold start times."
 ---
 
 ## Introduction
@@ -35,7 +35,7 @@ If successful, subsequent containers are restored from this checkpoint. You can 
 
 A checkpoint is tightly coupled to a single deployment. To disable restoring from checkpoints, remove the POST request and redeploy your application.
 
-You can find several implementations in our [Examples repository on GitHub](https://github.com/CerebriumAI/examples).
+You can find several implementations in our [Examples repository on Github](https://github.com/CerebriumAI/examples).
 
 ### vLLM example
 
@@ -80,7 +80,7 @@ engine.wake_up()
 
 **Ephemeral filesystem:** Any files written to disk before the checkpoint are not copied to the restored container. Only memory is checkpointed.
 
-**Provider availability:** Checkpointing is only available on the **AWS provider**. More coming soon.
+**Provider Availability:** Checkpointing is only available on the <b>AWS provider</b>. More coming soon.
 
 ## Platform-specific recommendations
 
@@ -88,6 +88,4 @@ engine.wake_up()
 
 vLLM checkpointing support is not complete but is still possible. See [vllm-project/vllm#34303](https://github.com/vllm-project/vllm/issues/34303) and related issues.
 
-If you are getting an `EngineCoreDead` exception, add `async_scheduling=False` to your `AsyncEngineArgs` and it should succeed.
-
-The larger the size of the memory checkpoint, the slower the restore. You can reduce the size of the snapshot and improve startup times by dropping the KV cache before checkpoint and recreating it after restore. vLLM provides built-in functionality for this through [vLLM Sleep Mode](https://docs.vllm.ai/en/latest/features/sleep_mode/).
+The larger the size of the memory checkpoint the slower the restore is. We can reduce the size of the snapshot substantially and improve startup times by dropping the KV Cache before checkpoint and recreating it after restore. vLLM has functionality that does this built in as part of [vLLM Sleep Mode](https://docs.vllm.ai/en/latest/features/sleep_mode/).
