@@ -15,25 +15,56 @@ Since this feature is still in beta, please report all issues to the team via ou
 
 ## How to use
 
-Checkpointing is available in early beta to our customer base. Add the following to your `cerebrium.toml` to use it.
+Checkpointing is available in early beta to our customer base.
+
+### 1. Enable checkpointing in `cerebrium.toml`
 
 ```toml
 [cerebrium.experimental]
 checkpointing = true
 ```
 
-To create a checkpoint, your application sends a trigger to our runtime once it has finished initialization and is ready. When this trigger is received, the runtime verifies whether a new checkpoint is required. To save resources, the system will not create a new checkpoint if:
+### 2. Send the checkpoint trigger
 
-    1.	A checkpoint already exists for the current build version.
-    2.	Another container instance is already undergoing the checkpointing process.
+You have full control over when to create a checkpoint - preferably it's after the majority of your application's initialization work is complete and your desired state is reached. The state of your application at this exact moment is what will be restored for future container launches. 
 
-If a checkpoint should occur, your container is frozen for the duration of the process. GPU memory is copied to CPU memory, and then all of the container memory is written to storage. This saved checkpoint is then distributed to run throughout the region.
+Once you reach this optimal point in your startup logic, send a POST request from inside the container to instruct Cerebrium to capture the checkpoint:
 
-Send a POST request to `http://169.254.169.253:8234/checkpoint` from inside your container when the container is ready to checkpoint.
+```python
+import json
+import urllib.request
 
-If successful, subsequent containers are restored from this checkpoint. You can tell that a container was restored from a checkpoint if it has `CEREBRIUM_RESTORED: container restored from checkpoint` as the first log line in the container.
+# Trigger the checkpoint only after finishing all major initialization tasks.
+req = urllib.request.Request(
+    "http://169.254.169.253:8234/checkpoint",
+    method="POST",
+)
+with urllib.request.urlopen(req, timeout=300) as response:
+    print(json.loads(response.read()))
+```
 
-A checkpoint is tightly coupled to a single deployment. To disable restoring from checkpoints, remove the POST request and redeploy your application.
+The endpoint uses `169.254.169.253`, a link-local address that routes to the Cerebrium runtime sidecar inside the container. The address is reachable only from inside the container, not from external networks.
+
+Set the HTTP client timeout to at least 300 seconds. Checkpoint duration scales with the amount of memory captured - from a few seconds for small CPU workloads to several minutes for large GPU snapshots.
+
+### 3. When the runtime creates a checkpoint
+
+When the runtime receives the POST, it checks whether a new checkpoint is required. To save resources, the system skips checkpoint creation if:
+
+1. A checkpoint already exists for the current build version.
+2. Another container instance is already undergoing the checkpointing process.
+
+If a checkpoint should occur, the container is frozen for the duration of the process. GPU memory is copied to CPU memory, and then all container memory is written to storage. The saved checkpoint is then distributed throughout the region.
+
+Checkpoint size roughly equals CPU memory in use at trigger time plus GPU memory copied during the freeze. For GPU workloads, expect the snapshot to be on the order of model weights plus runtime overhead unless caches are dropped first. Allocate enough container memory to hold the GPU dump in addition to normal usage — see **Memory overhead** under Limitations.
+
+### 4. Verify restoration
+
+If checkpoint creation succeeds, subsequent containers restore from that snapshot. A restored container logs `CEREBRIUM_RESTORED: container restored from checkpoint` as its first log line.
+
+### 5. Disable checkpointing
+
+A checkpoint is tightly coupled to a single deployment. To stop restoring from checkpoints, remove the POST request and redeploy the application.
 
 You can find several implementations in our [Examples repository on Github](https://github.com/CerebriumAI/examples).
 
@@ -48,8 +79,8 @@ import urllib
 # Init vLLM engine
 engine_args = AsyncEngineArgs(
     model="Qwen/Qwen2.5-0.5B-Instruct",
-    async_scheduling=False,
-    sleep_mode=True
+    async_scheduling=False,  # Async scheduling is incompatible with checkpoint restore
+    sleep_mode=True,  # Required for engine.sleep() / wake_up() to drop KV cache before checkpoint
 )
 engine = AsyncLLMEngine.from_engine_args(engine_args)
 
@@ -88,4 +119,4 @@ engine.wake_up()
 
 vLLM checkpointing support is not complete but is still possible. See [vllm-project/vllm#34303](https://github.com/vllm-project/vllm/issues/34303) and related issues.
 
-The larger the size of the memory checkpoint the slower the restore is. We can reduce the size of the snapshot substantially and improve startup times by dropping the KV Cache before checkpoint and recreating it after restore. vLLM has functionality that does this built in as part of [vLLM Sleep Mode](https://docs.vllm.ai/en/latest/features/sleep_mode/).
+The larger the size of the memory checkpoint the slower the restore is. Reduce the size of the snapshot substantially and improve startup times by dropping the KV Cache before checkpoint and recreating it after restore. vLLM has functionality that does this built in as part of [vLLM Sleep Mode](https://docs.vllm.ai/en/latest/features/sleep_mode/).
