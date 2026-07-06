@@ -79,7 +79,7 @@ Invoke-WebRequest -Uri "https://github.com/CerebriumAI/cerebrium/releases/latest
 Expand-Archive -Path "cerebrium.zip" -DestinationPath "$env:LOCALAPPDATA\Cerebrium"
 ```
 
-The extracted `cerebrium.exe` is not on your `PATH` by default, so `cerebrium login` will fail with `CommandNotFoundException` until you add it. Add the install folder to `PATH` for the current user:
+The extracted `cerebrium.exe` is not on your `PATH` by default. Until you add it, `cerebrium login` fails with `CommandNotFoundException`. Add the install folder to `PATH` for the current user:
 
 ```powershell
 [Environment]::SetEnvironmentVariable("Path", $env:Path + ";$env:LOCALAPPDATA\Cerebrium", "User")
