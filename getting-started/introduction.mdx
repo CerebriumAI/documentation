@@ -90,6 +90,18 @@ cerebrium login
 
 This opens your browser so you can authenticate your CLI session.
 
+<Tip>
+  Every Cerebrium app is deployed under a **project**. Your project ID has the format `p-xxxxxxxx` and appears in your endpoint URLs like `https://api.aws.us-east-1.cerebrium.ai/v4/{project-id}/{app-name}/{function-name}`. Find it at the top of the [Cerebrium dashboard](https://dashboard.cerebrium.ai).
+
+  If you belong to more than one project, switch the CLI's active project with:
+
+  ```bash
+  cerebrium project set <YOUR_PROJECT_ID>
+  ```
+
+  Use the same command in CI to pin deployments to a specific project — see [CI/CD](/deployments/ci-cd).
+</Tip>
+
 ### 3. Initialize a project
 
 ```bash
