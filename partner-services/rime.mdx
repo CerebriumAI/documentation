@@ -65,7 +65,7 @@ App Dashboard: https://dashboard.cerebrium.ai/projects/p-xxxxxxxx/apps/p-xxxxxxx
 5. Send requests to the <b>HTTP</b> Rime service using the deployment URL from the output:
 
 ```
-curl --location 'https://api.aws.us-east-1.cerebrium.ai/v4/p-xxxxxxxx/rime' \
+curl --location 'https://api.cerebrium.ai/v4/p-xxxxxxxx/rime' \
 --header 'Authorization: Bearer <RIME_API_KEY>' \
 --header 'Content-Type: application/json' \
 --header 'Accept: audio/pcm' \
@@ -79,7 +79,7 @@ curl --location 'https://api.aws.us-east-1.cerebrium.ai/v4/p-xxxxxxxx/rime' \
 For <b>Websockets</b>, send the following
 
 ```
-wss://api.aws.us-east-1.cerebrium.ai/v4/p-xxxxxx/rime/ws2?audioFormat=mp3&speaker=cove&modelId=mistv2&phonemizeBetweenBrackets=true
+wss://api.cerebrium.ai/v4/p-xxxxxxxx/rime/ws2?audioFormat=mp3&speaker=cove&modelId=mistv2&phonemizeBetweenBrackets=true
 Authorization Bearer <RIME_API_KEY>
 
 #With a message like:

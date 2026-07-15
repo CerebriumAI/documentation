@@ -6,7 +6,7 @@ description: "Forward responses to a specified webhook"
 Forward function response data to an external endpoint via POST by adding the `webhookEndpoint` query parameter to any API call:
 
 ```bash
-curl -X POST https://api.aws.us-east-1.cerebrium.ai/v4/<YOUR-PROJECT-ID>/<YOUR-APP>/run?webhookEndpoint=https%3A%2F%2Fwebhook.site%2F'\
+curl -X POST https://api.cerebrium.ai/v4/p-xxxxxxxx/<YOUR-APP>/run?webhookEndpoint=https%3A%2F%2Fwebhook.site%2F'\
        -H 'Content-Type: application/json'\
        -H 'Authorization: Bearer <YOUR-JWT-TOKEN>\
        --data '{"param": "hello world"}'
