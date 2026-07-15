@@ -23,6 +23,8 @@ Store model weights on [persistent storage](/storage/managing-files) at `/persis
 
 Cerebrium caches reads from persistent storage within each region. After weights are loaded once, future cold starts can reuse the cached copy and load faster.
 
+For apps running in [multiple regions](/deployments/multi-region-deployment), each region fills its own cache independently. Store weights on the global volume at `/global-persistent-storage` to make them available in every region without a per-region copy.
+
 This is usually the best default for large models. Baking weights into the container increases image size, which means Cerebrium has to pull and restore a larger image before your application can start initialization.
 
 Only include weights in the container image when they are small enough that the image remains lightweight.
@@ -38,7 +40,7 @@ Only include weights in the container image when they are small enough that the 
 Move as much initialization work as possible out of the request path and into module scope so it runs once at container start, before the container accepts traffic.
 
 ```python
-# Runs once at container start — not on every request
+# Runs once at container start, not on every request
 model = load_model("/persistent-storage/models/my-model/")
 tokenizer = load_tokenizer("/persistent-storage/models/my-model/")
 
