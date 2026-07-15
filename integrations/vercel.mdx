@@ -42,19 +42,16 @@ See the [Mistral 7B with vLLM example](/v4/examples/mistral-vllm) for deploying 
 After deploying the app, the output includes the endpoint URL. Call it from a Vercel project:
 
 ```javascript
-fetch(
-  "https://api.aws.us-east-1.cerebrium.ai/v4/p-<YOUR PROJECT ID>/mistral-vllm/predict",
-  {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${process.env.CEREBRIUM_JWT}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      prompt: "What is the capital city of France?",
-    }),
+fetch("https://api.cerebrium.ai/v4/p-xxxxxxxx/mistral-vllm/predict", {
+  method: "POST",
+  headers: {
+    Authorization: `Bearer ${process.env.CEREBRIUM_JWT}`,
+    "Content-Type": "application/json",
   },
-)
+  body: JSON.stringify({
+    prompt: "What is the capital city of France?",
+  }),
+})
   .then((response) => response.json())
   .then((data) => console.log(data))
   .catch((error) => console.error("Error:", error));

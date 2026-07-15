@@ -76,7 +76,7 @@ Deploy by running `cerebrium deploy`. The environment is created and the model i
 Test the endpoint with the following request:
 
 ```
-curl --location 'https://api.aws.us-east-1.cerebrium.ai/v4/p-xxxxxx/7-openai-gpt-oss/v1/chat/completions' \
+curl --location 'https://api.cerebrium.ai/v4/p-xxxxxxxx/7-openai-gpt-oss/v1/chat/completions' \
 --header 'Content-Type: application/json' \
 --header 'Accept: text/event-stream' \
 --data '{"messages": [{"role": "user", "content": "hello how are you"}], "model": "Qwen/Qwen2.5-1.5B-Instruct", "stream": true}'
