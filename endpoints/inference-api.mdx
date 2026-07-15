@@ -10,13 +10,19 @@ All functions on Cerebrium are accessible via authenticated POST requests by def
 The POST request follows the structure below, where `{function}` is the name of the function to invoke. In this example, `predict()` from `main.py` is called.
 
 ```bash
-curl --location --request POST 'https://api.aws.us-east-1.cerebrium.ai/v4/p-xxxxx/{app-name}/{function}' \
+curl --location --request POST 'https://api.cerebrium.ai/v4/p-xxxxxxxx/{app-name}/{function}' \
 --header 'Authorization: Bearer <JWT_TOKEN>' \
 --header 'Content-Type: application/json' \
 --data '{
   "function_param": "data"
 }'
 ```
+
+<Note>
+  Regioned hostnames such as `https://api.aws.us-east-1.cerebrium.ai` continue
+  to work. Requests to these hostnames are proxied to the global router, which
+  can add latency. Use `https://api.cerebrium.ai` for the lowest-latency path.
+</Note>
 
 ## Response format
 

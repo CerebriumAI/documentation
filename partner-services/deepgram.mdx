@@ -309,7 +309,7 @@ wget https://dpgr.am/bueller.wav
 9. Call the Deepgram endpoint with appropriate parameters:
 
 ```curl
-curl -X POST --data-binary @bueller.wav "https://api.aws.us-east-1.cerebrium.ai/v4/p-xxxxxx/deepgram/v1/listen?model=nova-3&smart_format=true"
+curl -X POST --data-binary @bueller.wav "https://api.cerebrium.ai/v4/p-xxxxxxxx/deepgram/v1/listen?model=nova-3&smart_format=true"
 ```
 
 Parameters accepted by the Deepgram service can be found in the [speech-to-text API reference](https://developers.deepgram.com/reference/speech-to-text-api/listen-streaming).
