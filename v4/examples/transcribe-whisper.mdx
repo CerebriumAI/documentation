@@ -149,7 +149,7 @@ After deployment, make this request:
 curl --location 'https://api.cerebrium.ai/v4/p-xxxxxxxx/1-whisper-transcription/predict' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer <YOUR TOKEN HERE>' \
---data '{"file_url": "https://your-public-url.com/test.mp3"}''
+--data '{"file_url": "https://your-public-url.com/test.mp3"}'
 ```
 
 The response returns immediately with a 202 status code and a `run_id` — a unique identifier to correlate the result with the initial workload.
