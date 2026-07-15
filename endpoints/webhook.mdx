@@ -14,7 +14,7 @@ curl -X POST https://api.cerebrium.ai/v4/p-xxxxxxxx/<YOUR-APP>/run?webhookEndpoi
 
 The proxy forwards the response body as a POST request to the specified webhook — no code changes required. Ensure the webhook endpoint accepts POST requests. Webhook forwarding works with both Cortex and Custom runtimes, but only for HTTP requests (not WebSockets).
 
-## Retry Behavior
+## Retry behavior
 
 Webhook requests are sent asynchronously and do not block the function's response. Failed deliveries are retried automatically:
 
@@ -51,7 +51,7 @@ curl -X POST https://webhook.site/'\
        --data '{"smile": "wave"}'
 ```
 
-## Webhook Signature Verification
+## Webhook signature verification
 
 Verify that webhooks originate from Cerebrium using signature verification:
 

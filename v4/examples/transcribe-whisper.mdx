@@ -70,7 +70,7 @@ Pydantic handles data validation. While `audio` and `file_url` are optional para
 
 Note: Cerebrium has a 3-minute timeout for each inference request. For long audio files (2+ hours) that take several minutes to process, use a `webhook_endpoint` — a URL where Cerebrium sends a POST request with the function's results.
 
-## Setup Model and inference
+## Set up model and inference
 
 Import the required packages and load the Whisper model. The model downloads during initial deployment and is automatically cached in persistent storage for subsequent use. Loading the model outside the `predict` function ensures this code only runs on cold start (startup). For warm containers, only the `predict` function executes for inference.
 

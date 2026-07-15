@@ -28,7 +28,7 @@ See the [Partner Services page](/partner-services/deepgram) to deploy a Deepgram
   you must use their API endpoint below.
 </Note>
 
-### LLM Deployment
+### LLM deployment
 
 The LLM is an OpenAI-compatible Llama-3 endpoint using the vLLM framework. For low TTFT, a quantized version is used (RedHatAI/Meta-Llama-3.1-8B-Instruct-quantized.w8a8).
 
@@ -413,7 +413,7 @@ def start_bot(room_url: str, token: str = None):
 
 The result is a fully functioning AI bot that interacts with users through speech in ~500ms. The next section creates a user interface.
 
-## Creating Meeting Room
+## Creating a meeting room
 
 Cerebrium runs any Python code, not just AI workloads. The following two functions use the Daily REST API to create a room and temporary token, both valid for 5 minutes.
 

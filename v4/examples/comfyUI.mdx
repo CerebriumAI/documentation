@@ -12,11 +12,11 @@ ComfyUI is a popular no-code interface for building complex stable diffusion wor
 
 Production-scale deployment guidance for ComfyUI is limited. This tutorial covers deploying ComfyUI pipelines on Cerebrium as autoscaling API endpoints with pay-as-you-go compute. Find the full example code [here](https://github.com/CerebriumAI/examples/tree/master/7-image-and-video/1-comfyui).
 
-### Creating your Comfy UI workflow locally
+### Creating your ComfyUI workflow locally
 
 Create the workflow locally or using a rented GPU from [Lambda Labs](https://lambdalabs.com/). Ensure [ComfyUI is installed](https://github.com/comfyanonymous/ComfyUI#installing) in the local environment.
 
-This tutorial uses Stable Diffusion XL and ControlNet to create custom QR codes. Skip to "Export ComfyUI Workflow" if a workflow already exists.
+This tutorial uses Stable Diffusion XL and ControlNet to create custom QR codes. Skip to "Export the ComfyUI workflow" if a workflow already exists.
 
 1. Create the Cerebrium project: `cerebrium init 1-comfyui`
 2. Clone the ComfyUI GitHub project inside the project directory: `git clone https://github.com/comfyanonymous/ComfyUI`
@@ -29,7 +29,7 @@ This tutorial uses Stable Diffusion XL and ControlNet to create custom QR codes.
 
 The default ComfyUI workflow interface appears in this view. Use this locally running instance to build the image generation pipeline.
 
-### Export ComfyUI Workflow
+### Export the ComfyUI workflow
 
 The example GitHub repository contains a workflow.json file. Click the “Load” button on the right to load the workflow. It should appear populated
 
@@ -43,7 +43,7 @@ To export the workflow in API format, click the gear icon (settings) in the top-
 
 A button appears in the right hover panel labeled “Save (API format)”. Use it to save the workflow as “workflow_api.json”
 
-### ComfyUI Application
+### ComfyUI application
 
 The main code in `main.py` uses the exported ComfyUI API workflow to create an endpoint. The code:
 
@@ -256,7 +256,7 @@ def shutdown_event():
     terminate_process()
 ```
 
-### Deploy ComfyUI Application
+### Deploy the ComfyUI application
 
 Before deploying, define the deployment configuration in `cerebrium.toml`. This specifies dependencies, hardware, scaling, and any pre-run scripts:
 

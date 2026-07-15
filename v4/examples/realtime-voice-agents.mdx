@@ -8,7 +8,7 @@ This tutorial creates a real-time voice agent that responds to queries via speec
 
 The app uses [PipeCat](https://www.pipecat.ai/), a framework that handles component integration, user interruptions, and audio data processing. The example joins a meeting room with a voice agent using [Daily](https://daily.co) (PipeCat's creators) and deploys on Cerebrium for scaling.
 
-The application has 3–4 parts:
+The application has three parts:
 
 - A Pipecat agent that acts as the orchestrator
 - A Deepgram TTS/STT service (requires a Deepgram Enterprise account)
@@ -27,11 +27,11 @@ Create a Cerebrium account by signing up [here](https://dashboard.cerebrium.ai/r
 See the [Partner Services page](/partner-services/deepgram) to deploy a Deepgram service on Cerebrium.
 
 <Note>
-  You need a Deepgram Enterprise License to do deploy Deegram on Cerebrium else
-  you must use their API endpoint below.
+  You need a Deepgram Enterprise License to deploy Deepgram on Cerebrium.
+  Otherwise, use their API endpoint below.
 </Note>
 
-### LLM Deployment
+### LLM deployment
 
 The LLM is an OpenAI-compatible Llama-3 endpoint using the vLLM framework. For low TTFT, a quantized version is used (RedHatAI/Meta-Llama-3.1-8B-Instruct-quantized.w8a8).
 

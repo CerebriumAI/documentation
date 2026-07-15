@@ -5,7 +5,7 @@ description: "Run ASGI/WSGI Python apps on Cerebrium"
 
 Cerebrium's default runtime covers most app needs. For more control, use ASGI or WSGI servers through the custom runtime feature - enabling custom authentication, dynamic batching, frontend dashboards, public endpoints, and WebSocket connections.
 
-## Setting Up Custom Servers
+## Setting up custom servers
 
 A basic FastAPI server running as a custom server on Cerebrium:
 
@@ -58,6 +58,6 @@ The configuration requires three key parameters:
 
 The [FastAPI Server Example](https://github.com/CerebriumAI/examples) provides a complete implementation.
 
-## Request Headers
+## Request headers
 
 Custom web servers receive the Cerebrium run ID in the `X-Request-Id` header on every request. This corresponds to the internal `run_id` and is useful for tracking and debugging.

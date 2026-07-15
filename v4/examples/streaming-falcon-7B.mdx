@@ -52,9 +52,9 @@ class Item(BaseModel):
 
 Pydantic handles data validation. The `prompt` parameter is required; others are optional with default values. A missing `prompt` triggers an automatic error message.
 
-## Falcon Implementation
+## Falcon implementation
 
-## Model Setup
+### Model setup
 
 ```python
 from transformers import (
@@ -80,7 +80,7 @@ model = AutoModelForCausalLM.from_pretrained(
 
 The tokenizer and model instantiate outside the `predict` function, ensuring model weights load only once at startup.
 
-## Streaming Implementation
+### Streaming implementation
 
 The `stream` function handles streaming results from the endpoint:
 
