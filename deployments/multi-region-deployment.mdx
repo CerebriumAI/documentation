@@ -58,11 +58,11 @@ Pinning guarantees placement but limits the app to that region's capacity, which
 #### United States
 
 - **us-east-1** (N. Virginia)
-- **us-east1** (Crusoe)
 - **us-central1** (Kansas City)
 
 #### Europe
 
+- **eu-north-1** (Stockholm)
 - **eu-north1** (Finland)
 
 #### Available on request
@@ -72,7 +72,6 @@ Contact [support](mailto:support@cerebrium.ai) to enable access to these regions
 - **us-west-2** (Oregon)
 - **us-southcentral1-a** (Crusoe)
 - **eu-west-2** (United Kingdom)
-- **eu-north-1** (Stockholm)
 - **eu-central-1** (Frankfurt)
 - **ap-south-1** (Mumbai)
 - **ap-northeast-1** (Tokyo)
@@ -82,7 +81,7 @@ Contact [support](mailto:support@cerebrium.ai) to enable access to these regions
 
 <Info>
   `eu-north-1` (Stockholm) and `eu-north1` (Finland) are different regions. Some
-  regions run on cloud providers other than AWS: when pinning `us-east1` or
+  regions run on cloud providers other than AWS: when pinning
   `us-southcentral1-a`, set `provider = "crusoe"`; when pinning `us-central1` or
   `eu-north1`, set `provider = "nebius"`.
 </Info>
@@ -158,10 +157,9 @@ GPU availability varies across regions due to infrastructure constraints and loc
 | Region                  | Available GPUs                                                                                                                                   |
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 | us-east-1               | BLACKWELL_B300, BLACKWELL_B200, HOPPER_H200, HOPPER_H100, AMPERE_A100_80GB, AMPERE_A100_40GB, ADA_L40, ADA_L4, AMPERE_A10, TURING_T4, INF2, TRN1 |
-| us-east1                | BLACKWELL_B200, HOPPER_H200, HOPPER_H100, AMPERE_A100_80GB, AMPERE_A100_40GB                                                                     |
 | us-central1             | BLACKWELL_RTX6000, BLACKWELL_B200, HOPPER_H200                                                                                                   |
 | eu-north1               | HOPPER_H200, HOPPER_H100, ADA_L40                                                                                                                |
 | us-west-2 (on request)  | HOPPER_H200, HOPPER_H100, AMPERE_A100_80GB, AMPERE_A100_40GB, ADA_L40, ADA_L4, AMPERE_A10, INF2, TRN1                                            |
 | eu-west-2 (on request)  | HOPPER_H100, AMPERE_A10, ADA_L4, TURING_T4                                                                                                       |
-| eu-north-1 (on request) | HOPPER_H100, ADA_L40, ADA_L4, AMPERE_A10, TURING_T4, INF2, TRN1                                                                                  |
+| eu-north-1              | HOPPER_H100, ADA_L40, ADA_L4, AMPERE_A10, TURING_T4, INF2, TRN1                                                                                  |
 | ap-south-1 (on request) | ADA_L4, AMPERE_A10, TURING_T4                                                                                                                    |
