@@ -51,7 +51,7 @@ cpu = 2
 memory = 8.0
 ```
 
-Pinning guarantees placement but limits the app to that region's capacity, which increases the likelihood of request queuing when the region is busy.
+Pinning guarantees placement in that region but limits the app to that region's capacity, which increases the likelihood of request queuing when the region is busy.
 
 ### Available Regions
 
@@ -107,7 +107,7 @@ Requests enter through the global router and are directed to a region where the 
 
 ## How Requests Are Routed
 
-- Requests are served from running capacity first: a request routes to a region with a warm instance before a cold start is triggered elsewhere.
+- A request enters through the region closest to where it is made, then routes to a region with a warm instance before a cold start is triggered elsewhere.
 - Routing prefers lower-latency regions but does not guarantee the nearest region.
 - There is no session affinity. Consecutive requests can be served from different regions.
 
@@ -125,7 +125,7 @@ The output includes the region of each container.
 
 ## Storage
 
-Persistent storage is managed per region. Files written to `/persistent-storage` in one region are not guaranteed to be available in other regions, and region-local caches, such as model weights downloaded on first load, fill independently in each region an app runs in.
+Persistent storage is managed per region: an app has an independent `/persistent-storage` volume in each region it runs in, however placement is configured. Files written in one region are not guaranteed to be available in other regions, and region-local caches, such as model weights downloaded on first load, fill independently per region.
 
 Apps deployed with `region = "global"` also mount `/global-persistent-storage`, a single volume shared across every region the app runs in. Files written there are visible from all regions, and reads are cached per region. Use the global volume for data that must be available everywhere and `/persistent-storage` for region-local data. Manage files on the global volume by passing `--region global` to the file commands. See [Managing Files](/storage/managing-files#global-storage).
 
