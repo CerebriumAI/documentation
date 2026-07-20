@@ -10,7 +10,7 @@ Cerebrium offers file management through a 50GB persistent volume that's availab
   manage these files.
 </Note>
 
-## Including Files in Deployments
+## Including files in deployments
 
 The `cerebrium.toml` configuration file controls which files become part of the app:
 
@@ -30,7 +30,7 @@ exclude = [
 
 Files included in deployments must be under 2GB each, with deployments working best for files under 1GB. Larger files should use persistent storage instead.
 
-## Managing Persistent Storage
+## Managing persistent storage
 
 The CLI provides four commands for working with persistent storage.
 
@@ -93,7 +93,7 @@ cerebrium cp model.bin -r eu-north-1
    cerebrium download sub_folder/file_name.txt
    ```
 
-## Using Stored Files
+## Using stored files
 
 Access files in persistent storage at runtime:
 
@@ -128,7 +128,7 @@ if os.path.exists("/persistent-storage/models/mymodel.pt"):
   at runtime.
 </Note>
 
-## Increasing Storage Capacity
+## Increasing storage capacity
 
 The default 50GB persistent volume can be increased up to 1TB through self-service. The first 100GB is free, then $0.05 per GB per month.
 
@@ -156,7 +156,7 @@ curl -X POST "https://api.cerebrium.ai/v4/projects/{project_id}/volumes/{volume_
   [email](mailto:support@cerebrium.ai).
 </Note>
 
-### Storage Quota Errors
+### Storage quota errors
 
 If you hit your storage quota, you'll see errors like `No space left on device` when trying to download or write files. To resolve this:
 

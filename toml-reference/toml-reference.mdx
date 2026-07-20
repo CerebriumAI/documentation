@@ -11,7 +11,7 @@ The configuration is organized into the following main sections:
 - **[cerebrium.scaling]** Auto-scaling behavior and replica management
 - **[cerebrium.dependencies]** Package management for Python (pip), system (apt), and Conda dependencies
 
-## Deployment Configuration
+## Deployment configuration
 
 The `[cerebrium.deployment]` section defines core deployment settings.
 
@@ -33,7 +33,7 @@ The `[cerebrium.deployment]` section defines core deployment settings.
   they affect the base environment.
 </Info>
 
-### UV Package Manager
+### UV package manager
 
 UV is a fast Python package installer written in Rust that significantly speeds up deployment times. When enabled, UV replaces pip for installing Python dependencies.
 
@@ -53,7 +53,7 @@ UV typically installs packages 10-100x faster than pip, especially beneficial fo
 use_uv = true
 ```
 
-### Monitoring UV Usage
+### Monitoring UV usage
 
 Check your build logs for these indicators:
 
@@ -65,7 +65,7 @@ Check your build logs for these indicators:
   failures, such as legacy packages with non-standard metadata.
 </Warning>
 
-### Deploying with UV Lock Files
+### Deploying with UV lock files
 
 <Info>read only if you're using `pyproject.toml` and `uv.lock`</Info>
 
@@ -89,7 +89,7 @@ Include in your deployment:
 - Ensure requirements.txt is in your project directory
 - Deploy with UV enabled
 
-## Runtime Configuration
+## Runtime configuration
 
 The `[cerebrium.runtime.custom]` section configures custom web servers and runtime behavior.
 
@@ -106,7 +106,7 @@ The `[cerebrium.runtime.custom]` section configures custom web servers and runti
   `https://api.cerebrium.ai/v4/p-xxxxxxxx/your-app-name/your/endpoint`
 </Info>
 
-## Hardware Configuration
+## Hardware configuration
 
 The `[cerebrium.hardware]` section defines compute resources.
 
@@ -124,7 +124,7 @@ The `[cerebrium.hardware]` section defines compute resources.
   workload.
 </Warning>
 
-## Scaling Configuration
+## Scaling configuration
 
 The `[cerebrium.scaling]` section controls auto-scaling behavior.
 
@@ -165,7 +165,7 @@ For example, with `min_replicas=0` and `scaling_buffer=3`, the system will maint
 
 ## Dependencies
 
-### Pip Dependencies
+### Pip dependencies
 
 The `[cerebrium.dependencies.pip]` section lists Python package requirements.
 
@@ -176,7 +176,7 @@ numpy = "latest"       # Latest version
 pandas = ">=1.5.0"     # Minimum version
 ```
 
-### APT Dependencies
+### APT dependencies
 
 The `[cerebrium.dependencies.apt]` section specifies system packages.
 
@@ -186,7 +186,7 @@ ffmpeg = "latest"
 libopenblas-base = "latest"
 ```
 
-### Conda Dependencies
+### Conda dependencies
 
 The `[cerebrium.dependencies.conda]` section manages Conda packages.
 
@@ -196,7 +196,7 @@ cuda = ">=11.7"
 cudatoolkit = "11.7"
 ```
 
-### Dependency Files
+### Dependency files
 
 The `[cerebrium.dependencies.paths]` section allows using requirement files.
 
@@ -207,7 +207,7 @@ apt = "pkglist.txt"
 conda = "conda_pkglist.txt"
 ```
 
-## Complete Example
+## Complete example
 
 ```toml
 [cerebrium.deployment]

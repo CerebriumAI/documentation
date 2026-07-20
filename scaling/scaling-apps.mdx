@@ -5,11 +5,11 @@ description: "Learn to optimise for cost and performance by scaling out apps"
 
 Cerebrium's scaling system automatically manages computing resources to match app demand, from single requests to multiple simultaneous requests, optimizing for both performance and cost.
 
-## How Autoscaling Works
+## How autoscaling works
 
 The scaling system monitors a configurable metric - such as concurrency utilization, requests per second, CPU usage, or memory usage - and compares it against a target threshold. When the metric exceeds the target, new instances start within seconds. See [Scaling Metrics](#using-scaling-metrics) for details on each option.
 
-## Scaling Configuration
+## Scaling configuration
 
 The `cerebrium.toml` file controls scaling behavior through several key parameters:
 
@@ -21,19 +21,19 @@ cooldown = 60              # Cooldown period in seconds
 replica_concurrency = 1    # The maximum number of requests each replica of an app can accept
 ```
 
-### Minimum Instances
+### Minimum instances
 
 The `min_replicas` parameter defines how many instances remain active at all times. Setting this to 1 or higher maintains warm instances for immediate response, eliminating cold starts but increasing costs. Use this for apps requiring consistent response times or specific SLA guarantees.
 
-### Maximum Instances
+### Maximum instances
 
 The `max_replicas` parameter sets an upper limit on concurrent instances, controlling costs and protecting backend systems. When traffic increases, new instances start automatically up to this configured maximum.
 
-### Cooldown Period
+### Cooldown period
 
 The `cooldown` parameter specifies the time window (in seconds) that must pass at reduced concurrency before an instance scales down. This prevents premature scale-down during brief traffic dips that might be followed by more requests. A longer cooldown period helps handle bursty traffic patterns but increases instance running time and cost.
 
-### Replica Concurrency
+### Replica concurrency
 
 The number of requests an app instance can handle concurrently is dictated by the `replica_concurrency` parameter. This is a hard limit, and an individual replica will
 not accept more than this limit at a time. By default, once this concurrency limit is reached on an instance and there are still requests to be processed in-flight,
@@ -47,11 +47,11 @@ _3_ requests in flight with no replicas currently available, Cerebrium will scal
   controlled within the application through batching.
 </Info>
 
-## Processing Multiple Requests
+## Processing multiple requests
 
 Apps can process multiple requests simultaneously through batching and concurrency. Cerebrium supports frameworks with built-in batching and enables custom implementations through the [custom runtime](container-images/defining-container-images#custom-runtimes) feature. See the [Batching & Concurrency Guide](/scaling/batching-concurrency) for details.
 
-## Instance Management
+## Instance management
 
 Cerebrium automatically restarts failed instances, starts new instances to maintain capacity, and monitors instance health continuously.
 
@@ -86,7 +86,7 @@ Performance metrics available through the dashboard help monitor scaling behavio
 - Cold start frequency
 - Resource usage patterns
 
-## Using Scaling Metrics
+## Using scaling metrics
 
 Cerebrium supports multiple scaling metrics beyond the default `replica_concurrency`. Four scaling metrics are available:
 
@@ -108,7 +108,7 @@ scaling_metric = "concurrency_utilization"
 scaling_target = 100
 ```
 
-### Concurrency Utilization
+### Concurrency utilization
 
 `concurrency_utilization` is the default scaling metric, with a default target of _100%_.
 This metric maintains a maximum percentage of `replica_concurrency` averaged across all instances.
@@ -116,19 +116,19 @@ For example, with `replica_concurrency=1` and `scaling_target=70`, Cerebrium mai
 
 With `replica_concurrency=200` and `scaling_target=80`, Cerebrium maintains _160_ requests per instance and scales out once that target is exceeded.
 
-### Requests per Second
+### Requests per second
 
 `requests_per_second` maintains a maximum application throughput measured in requests per second, averaged over all instances. This metric is more effective than `concurrency_utilization` when application throughput has been benchmarked. It does not enforce concurrency limits, so it is not recommended for most GPU applications. For example, `scaling_target=5` maintains a 5 requests/s average across all instances.
 
-### CPU Utilization
+### CPU utilization
 
 `cpu_utilization` scales based on maximum CPU percentage utilization averaged over all instances, relative to the `cerebrium.hardware.cpu` value. For example, with `cpu=2` and `scaling_target=80`, Cerebrium maintains _80%_ CPU utilization (1.6 CPUs) per instance. This metric requires `min_replicas=1` since scaling relative to 0 CPU units is undefined.
 
-### Memory Utilization
+### Memory utilization
 
 `memory_utilization` scales based on maximum RAM percentage utilization averaged over all instances, relative to `cerebrium.hardware.memory`. This refers to RAM, **not** GPU VRAM. For example, with `memory=10` and `scaling_target=80`, Cerebrium maintains _80%_ memory utilization (8GB) per instance. This metric requires `min_replicas=1` since scaling relative to 0GB of memory is undefined.
 
-## Keeping a Scaling Buffer
+## Keeping a scaling buffer
 
 For apps with long startup times or predictable traffic, a replica buffer maintains consistent excess capacity above what the scaling metric suggests. The `scaling_buffer` option adds a fixed number of extra replicas to the autoscaler's recommendation. This is available with the following scaling metrics:
 
@@ -154,7 +154,7 @@ With `concurrency_utilization` at `100` and `replica_concurrency=1`, receiving 1
 The buffer adds a static number of replicas on top of the autoscaler's recommendation.
 After the request completes, the `cooldown` period applies and the replica count scales back to the **1 replica** baseline.
 
-## Evaluation Interval
+## Evaluation interval
 
 <Warning>Requires CLI version 2.1.5 or higher.</Warning>
 
@@ -173,7 +173,7 @@ A shorter interval makes the autoscaler more responsive to traffic spikes but ma
   interval (e.g., 60 seconds) reduces unnecessary scaling churn.
 </Info>
 
-## Load Balancing
+## Load balancing
 
 <Warning>Requires CLI version 2.1.5 or higher.</Warning>
 
@@ -186,7 +186,7 @@ load_balancing_algorithm = "min-connections"  # Explicitly set load balancing al
 
 **Default behavior**: When `load_balancing_algorithm` is not set, the system uses `first-available` for `replica_concurrency <= 3` (typical for GPU workloads) and `round-robin` for higher concurrency.
 
-### Available Algorithms
+### Available algorithms
 
 #### round-robin
 
@@ -240,7 +240,7 @@ Implements the "Power of Two Choices" algorithm: randomly samples two replicas a
 
 **Note**: Uses weight-based tracking rather than reservation-based concurrency limiting, making it suitable for unlimited concurrency scenarios.
 
-### Choosing an Algorithm
+### Choosing an algorithm
 
 | Scenario                                 | Recommended                 | Reason                                             |
 | ---------------------------------------- | --------------------------- | -------------------------------------------------- |
@@ -250,7 +250,7 @@ Implements the "Power of Two Choices" algorithm: randomly samples two replicas a
 | Uniform request times, even distribution | `round-robin`               | Predictable rotation, no hot spots over time       |
 | Latency-sensitive with variable load     | `min-connections`           | Minimizes p90/p99 by routing to least busy replica |
 
-## Compute Tier
+## Compute tier
 
 <Warning>Requires CLI version 2.1.6 or higher.</Warning>
 
@@ -261,7 +261,7 @@ The `compute_tier` parameter controls whether your replicas are scheduled on spo
 compute_tier = "protected"  # Use on-demand instances for higher availability
 ```
 
-### Available Tiers
+### Available tiers
 
 | Tier            | Description                                                                                                                               |
 | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
