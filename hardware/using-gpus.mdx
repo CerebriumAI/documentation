@@ -1,5 +1,6 @@
 ---
 title: Using GPUs
+description: Configure GPU hardware in cerebrium.toml, compare available GPU models by VRAM and plan tier, and size GPUs for your model's memory needs.
 ---
 
 GPUs accelerate computational workloads through parallel processing. Originally designed for graphics rendering, modern GPUs are essential for AI models, large-scale data processing, and other compute-intensive applications.
@@ -39,7 +40,7 @@ The platform offers GPUs ranging from cost-effective development options to high
   during application initialization.
 </Tip>
 
-## Choosing a GPU for your model
+## Choosing a GPU for Your Model
 
 Pick a GPU based on the total VRAM your workload needs at runtime, not just the on-disk size of the model files. Total VRAM has to fit the model weights plus activations, the KV cache (for LLMs), and any intermediate buffers your framework allocates.
 
@@ -63,7 +64,7 @@ If a model does not fit on a single GPU, set `gpu_count` to shard weights across
   requirements.
 </Tip>
 
-Match RAM to VRAM as a starting point so weights can be staged from CPU to GPU without swapping. See [CPU and memory](/hardware/cpu-and-memory) for details.
+Match RAM to VRAM as a starting point so your framework can stage weights from CPU to GPU without swapping. See [CPU and memory](/hardware/cpu-and-memory) for details.
 
 ## Multi-GPU Configuration
 
