@@ -27,11 +27,39 @@ This is usually the best default for large models. Baking weights into the conta
 
 Only include weights in the container image when they are small enough that the image remains lightweight.
 
+Cerebrium automatically sets `HF_HOME` to `/persistent-storage/.cache/huggingface`, so any Hugging Face download in your code is cached to persistent storage by default. See [Using Secrets](/other-topics/using-secrets) for the full list of automatic environment variables.
+
 <Note>
   Increasing CPU core count can parallelise reads from storage and improve
   pull-through times for large files. Multiple cores process different parts
   simultaneously, reducing overall transfer time.
 </Note>
+
+#### Download only the files you need
+
+Many Hugging Face repositories ship multiple precisions (fp32, fp16, bf16), example assets, and framework-specific formats. Downloading the whole repository wastes persistent storage and slows the first cold start. Use `snapshot_download` with `allow_patterns` or `ignore_patterns` to fetch only what you need for inference:
+
+```python
+from huggingface_hub import snapshot_download
+
+# Only pull the safetensors weights, tokenizer, and config
+snapshot_download(
+    repo_id="meta-llama/Llama-3.1-8B-Instruct",
+    local_dir="/persistent-storage/models/llama-3.1-8b",
+    allow_patterns=["*.safetensors", "*.json", "tokenizer*"],
+)
+
+# Or skip large files you do not need
+snapshot_download(
+    repo_id="black-forest-labs/FLUX.1-schnell",
+    local_dir="/persistent-storage/models/flux-schnell",
+    ignore_patterns=["*.bin", "*fp32*", "*.onnx", "*.msgpack"],
+)
+```
+
+Cerebrium does not choose which files to download — that is entirely controlled by your code. Check the model card to confirm which files are required for the inference framework you use (for example, a diffusion pipeline typically needs the UNet, VAE, and text encoders, while a GGUF quantization may still require a companion tokenizer and config).
+
+Run the download once from your local machine with `cerebrium run download.py` or gate it behind an `if not os.path.exists(...)` check in `main.py` so it does not repeat on every cold start.
 
 ### Run initialization at module scope
 
