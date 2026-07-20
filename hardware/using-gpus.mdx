@@ -1,5 +1,6 @@
 ---
 title: Using GPUs
+description: Configure GPU type, quantity, and preference-ordered fallback lists for Cerebrium apps
 ---
 
 GPUs accelerate computational workloads through parallel processing. Originally designed for graphics rendering, modern GPUs are essential for AI models, large-scale data processing, and other compute-intensive applications.
@@ -51,5 +52,25 @@ cpu = 8
 memory = 128.0
 ```
 
-GPU availability varies by region and provider. Narrowing the provider and region constraints increases the likelihood of request queuing.
+## GPU Preference Lists
+
+The `compute` parameter also accepts a list of acceptable GPU types in preference order. The platform allocates the most preferred type with available capacity and falls back to the next entry when needed:
+
+```toml
+[cerebrium.hardware]
+compute = ["HOPPER_H100", "HOPPER_H200", "AMPERE_A100_80GB"]
+gpu_count = 1
+cpu = 8
+memory = 128.0
+```
+
+- Up to 5 entries, ordered from most to least preferred
+- All entries must belong to the same hardware family. NVIDIA GPU types cannot be mixed with CPU or AWS accelerators (INF2, TRN1)
+- `cerebrium run` uses only the first entry
+
+Accepting more GPU types widens the pool of capacity an app can run on and reduces the likelihood of request queuing.
+
+## Availability
+
+GPU availability varies by region and provider. Narrowing the provider and region constraints increases the likelihood of request queuing. See [GPU availability by region](/deployments/multi-region-deployment#gpu-availability-by-region).
 For guaranteed burst capacity, contact the [enterprise plan](mailto:sales@cerebrium.ai) team.
