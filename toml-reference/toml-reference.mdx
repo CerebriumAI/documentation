@@ -110,19 +110,26 @@ The `[cerebrium.runtime.custom]` section configures custom web servers and runti
 
 The `[cerebrium.hardware]` section defines compute resources.
 
-| Option    | Type    | Default     | Description                          |
-| --------- | ------- | ----------- | ------------------------------------ |
-| cpu       | float   | required    | Number of CPU cores                  |
-| memory    | float   | required    | Memory allocation in GB              |
-| compute   | string  | "CPU"       | Compute type (CPU, AMPERE_A10, etc.) |
-| gpu_count | integer | 0           | Number of GPUs                       |
-| provider  | string  | "aws"       | Cloud provider                       |
-| region    | string  | "us-east-1" | Deployment region                    |
+| Option    | Type               | Default           | Description                                                                        |
+| --------- | ------------------ | ----------------- | ---------------------------------------------------------------------------------- |
+| cpu       | float              | required          | Number of CPU cores                                                                |
+| memory    | float              | required          | Memory allocation in GB                                                            |
+| compute   | string or string[] | "CPU"             | Compute type, or a list of acceptable compute types in preference order            |
+| gpu_count | integer            | 0                 | Number of GPUs                                                                     |
+| provider  | string             | platform-selected | Cloud provider. Omit to let the platform choose                                    |
+| region    | string             | platform-selected | "global" to run in any region with available capacity, or a specific region to pin |
 
 <Warning>
   Memory refers to RAM, not GPU VRAM. Ensure sufficient memory for your
   workload.
 </Warning>
+
+<Info>
+  `compute` accepts a single type or a preference-ordered list, e.g. `compute =
+  ["HOPPER_H100", "AMPERE_A100_80GB"]`. See [GPU preference
+  lists](/hardware/using-gpus#gpu-preference-lists). Placement is covered in
+  [Multi-Region Deployment](/deployments/multi-region-deployment).
+</Info>
 
 ## Scaling Configuration
 
@@ -233,8 +240,7 @@ cpu = 4
 memory = 16.0
 compute = "AMPERE_A10"
 gpu_count = 1
-provider = "aws"
-region = "us-east-1"
+region = "global"
 
 [cerebrium.scaling]
 min_replicas = 0
