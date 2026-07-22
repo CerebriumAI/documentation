@@ -5,6 +5,8 @@ description: How to calculate the cost of your deployment on Cerebrium
 
 Deployment cost is based on the hardware selected and the execution time. <b>Every time code runs or a machine is specified to stay running, compute is billed</b>. GPU, CPU, and Memory usage are charged per second; persistent storage is charged per GB per month. View compute pricing on the [pricing page](https://www.cerebrium.ai/pricing).
 
+Listed rates apply to the default `interruptible` compute tier. Apps configured with the `protected` tier are billed at 2x these rates across GPU, CPU, and memory. See [Compute Tier](/scaling/scaling-apps#compute-tier).
+
 Deploying a model incurs two billable processes:
 
 1. **Build process** — sets up the app environment: a Python environment with the specified parameters, required apt packages, Conda and Python packages, and any model files.
