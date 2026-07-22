@@ -256,19 +256,33 @@ Implements the "Power of Two Choices" algorithm: randomly samples two replicas a
 
 <Warning>Requires CLI version 2.1.6 or higher.</Warning>
 
-The `compute_tier` parameter controls whether your replicas are scheduled on spot (interruptible) or on-demand (protected) instances. This directly affects cost and availability.
+The `compute_tier` parameter sets the interruption guarantee for an app's instances: whether they run only on capacity that cannot be reclaimed (protected) or on any available capacity, including preemptible instances (interruptible). This directly affects cost and availability.
 
 ```toml
 [cerebrium.scaling]
-compute_tier = "protected"  # Use on-demand instances for higher availability
+compute_tier = "protected"  # No interruptions, billed at 2x the interruptible rate
 ```
 
 ### Available Tiers
 
-| Tier            | Description                                                                                                                               |
-| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `interruptible` | **(Default)** Scheduled on preemptible instances. Lower cost, but may be interrupted by the cloud provider during periods of high demand. |
-| `protected`     | Scheduled on instances with higher availability with no interruptions, at increased cost.                                                 |
+| Tier            | Description                                                                                                                                                                 | Price                     |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| `interruptible` | **(Default)** Runs on any available capacity, preferring preemptible instances. Lower cost, but may be interrupted by the cloud provider or relocated during consolidation. | Base rate                 |
+| `protected`     | Runs only on capacity that cannot be reclaimed. No interruptions, excluded from capacity consolidation.                                                                     | 2x the interruptible rate |
+
+### Pricing
+
+Protected compute is billed at **2x the interruptible rate**. The multiplier applies to all compute on the instance: GPU, CPU, and memory. Persistent storage is priced independently of the compute tier. The rates on the [pricing page](https://www.cerebrium.ai/pricing) are interruptible rates, and the cost estimate shown on the dashboard reflects the configured tier.
+
+The tier is fixed when an instance starts. Changing `compute_tier` applies to instances started after the next deployment; instances already running keep the tier, and the rate, they started with.
+
+Interruptible instances run on preemptible capacity when it is available but can be scheduled on on-demand capacity during shortages. They are billed at the interruptible rate regardless of the underlying capacity.
+
+### Interruptions and Consolidation
+
+Interruptible instances can be interrupted in two ways: the cloud provider can reclaim preemptible capacity during periods of high demand, and the platform periodically consolidates workloads onto fewer nodes to reduce cost, which can relocate interruptible instances regardless of the capacity they run on. In both cases instances are drained gracefully within `response_grace_period`; see [Graceful Termination](/scaling/graceful-termination).
+
+Protected instances are excluded from capacity consolidation and never run on preemptible capacity, so they are not interrupted in either case.
 
 **Choosing a tier:**
 
