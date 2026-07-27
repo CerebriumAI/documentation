@@ -147,6 +147,38 @@ Use the global volume for data that must be available everywhere, such as model 
   cannot be resized.
 </Note>
 
+### Accessing Both Volumes at Runtime
+
+Apps deployed with `region = "global"` have both volumes mounted at the same time, at separate paths:
+
+- `/persistent-storage` — the region-local volume for the region the container is running in.
+- `/global-persistent-storage` — the shared global volume.
+
+They are separate mount points, not a unified bucket. Code can read from and write to both paths concurrently:
+
+```python
+# Region-local cache
+with open("/persistent-storage/cache/last_run.json", "w") as f:
+    json.dump(state, f)
+
+# Model weights shared across all regions
+model = torch.load("/global-persistent-storage/models/mymodel.pt")
+```
+
+### Transferring Files Between Regional and Global Volumes
+
+There is no CLI command to copy files directly between a regional volume and the global volume, or between two regional volumes. To move a file, download it locally and re-upload it to the destination:
+
+```bash
+# Download from the regional volume (uses the default region, or pass --region)
+cerebrium download model.bin
+
+# Re-upload to the global volume
+cerebrium cp model.bin --region global
+```
+
+The same pattern moves files between two regions by passing `--region <source>` to `download` and `--region <destination>` to `cp`. From inside a running global app, code can also read from one mount and write to the other directly, since both `/persistent-storage` and `/global-persistent-storage` are available at runtime.
+
 ## Increasing Storage Capacity
 
 Persistent volumes can be resized up to 1TB through self-service. Storage costs are listed on the [pricing page](https://www.cerebrium.ai/pricing).
