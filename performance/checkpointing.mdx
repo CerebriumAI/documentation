@@ -18,7 +18,11 @@ This is useful for both CPU-only and GPU workloads. For CPU applications, checkp
 
 For example, ML and LLM frameworks often load large model weights and compile CUDA kernels at container start time, which can take many seconds or minutes. Loading from a checkpoint that already contains this initialized state can skip most of that delay.
 
+Since this feature is still in beta, please report all issues to the team via our [Discord Community](https://discord.gg/ATj6USmeE2) or via [Email](mailto:support@cerebrium.ai).
+
 ## How to use
+
+Checkpointing is available in early beta to our customer base.
 
 ### 1. Enable checkpointing in `cerebrium.toml`
 
