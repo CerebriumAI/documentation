@@ -3,6 +3,13 @@ title: "Memory and GPU Checkpointing (Beta)"
 description: "Snapshot CPU and GPU memory to skip imports, model loading, and CUDA kernel compilation, drastically cutting Cerebrium container cold start times."
 ---
 
+<Warning>
+  Checkpointing is in early beta. Some workloads may fail to checkpoint or
+  restore, and behavior may change as the feature matures. Report issues via the
+  [Discord Community](https://discord.gg/ATj6USmeE2) or
+  [email](mailto:support@cerebrium.ai).
+</Warning>
+
 ## Introduction
 
 Memory checkpointing takes a snapshot of a container's CPU memory and GPU memory, and uses it to speed up the startup of future containers. Applications that perform a large amount of work at container start time benefit the most from this process.
