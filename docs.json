@@ -242,6 +242,9 @@
   "search": {
     "prompt": "Search Cerebrium docs..."
   },
+  "contextual": {
+    "options": ["copy", "view", "chatgpt", "claude"]
+  },
   "logo": {
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg",
@@ -882,6 +885,78 @@
     {
       "source": "/websockets",
       "destination": "/endpoints/websockets"
+    },
+    {
+      "source": "/fine-tuning/auto-deploying",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/api-reference/apps/create-app-1",
+      "destination": "/api-reference/apps/create-app"
+    },
+    {
+      "source": "/available-hardware",
+      "destination": "/hardware/using-gpus"
+    },
+    {
+      "source": "/api-reference/builds/check-build-service-status",
+      "destination": "/api-reference/builds/health-check"
+    },
+    {
+      "source": "/available-gpus",
+      "destination": "/hardware/using-gpus"
+    },
+    {
+      "source": "/deployments/scaling",
+      "destination": "/scaling/scaling-apps"
+    },
+    {
+      "source": "/endpoints/custom-web-servers",
+      "destination": "/container-images/custom-web-servers"
+    },
+    {
+      "source": "/environments/available-hardware",
+      "destination": "/hardware/using-gpus"
+    },
+    {
+      "source": "/deployments/persistent-storage",
+      "destination": "/storage/managing-files"
+    },
+    {
+      "source": "/environments/using-gpus",
+      "destination": "/hardware/using-gpus"
+    },
+    {
+      "source": "/faster-cold-starts",
+      "destination": "/performance/faster-cold-starts"
+    },
+    {
+      "source": "/getting-started/pricing",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/hardware/available-gpus",
+      "destination": "/hardware/using-gpus"
+    },
+    {
+      "source": "/hardware/gpu",
+      "destination": "/hardware/using-gpus"
+    },
+    {
+      "source": "/hardware/regions",
+      "destination": "/deployments/multi-region-deployment"
+    },
+    {
+      "source": "/logging/arize",
+      "destination": "/other-topics/request-response-logging"
+    },
+    {
+      "source": "/security-and-privacy/soc2-compliance",
+      "destination": "/security"
+    },
+    {
+      "source": "/storage/persistent-storage",
+      "destination": "/storage/managing-files"
     }
   ],
   "integrations": {
