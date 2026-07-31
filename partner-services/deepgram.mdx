@@ -18,6 +18,13 @@ Consult the Deepgram representative on how to achieve parity with the Deepgram A
   Deepgram Partner Service is available from CLI version 1.39.0 and greater
 </Note>
 
+<Note>
+  Deployments currently run Deepgram self-hosted release `260728`. Model files and
+  `engine.toml`/`api.toml` settings should match that release — check with your
+  Deepgram Account Representative if you are unsure whether your model files are
+  current.
+</Note>
+
 <Info>
   The Deepgram Partner Service is in beta. It's available to all users and ready
   for production workloads, but expect occasional rough edges while the
@@ -132,15 +139,14 @@ streaming_ner = false # or true
 ### streams supported by a single GPU. Please contact your Deepgram Account
 ### representative for more details.
 step = 0.2
-
-
-### Engine will automatically enable half precision operations if your GPU supports
-### them. You can explicitly enable or disable this behavior with the state parameter
-### which supports enabled, disabled, and auto (the default).
-[half_precision]
-    state = "auto"
-# state = "disabled" # or "enabled" or "auto"
 ```
+
+<Note>
+  The Engine sets half precision automatically based on GPU support, so
+  `engine.toml` needs no `[half_precision]` section. Deepgram dropped that setting
+  in self-hosted release `260305`; if your `engine.toml` still carries it, remove
+  it when you next update the file.
+</Note>
 
 5. Create a file named <b>api.toml</b> with the following content and upload to your persistent storage under the app name directory (e.g., `{appName}/api.toml`). These are
    the default settings. Adjust as needed.
