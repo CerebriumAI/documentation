@@ -284,6 +284,12 @@ Interruptible instances can be interrupted in two ways: the cloud provider can r
 
 Protected instances are excluded from capacity consolidation and never run on preemptible capacity, so they are not interrupted in either case.
 
+### Node Maintenance and Updates
+
+The `compute_tier` setting governs preemption and consolidation only. It does not opt an instance out of node lifecycle events such as OS patches, kernel upgrades, or platform rollouts. Both interruptible and protected instances can be migrated to a new node when the underlying node is cycled for maintenance, and in every case the instance receives SIGTERM and is drained within `response_grace_period` before SIGKILL. See [Graceful Termination](/scaling/graceful-termination) for the shutdown sequence and, for custom runtimes, how to handle SIGTERM so in-flight requests complete instead of returning 502s.
+
+To minimize disruption during a migration, run with `min_replicas >= 2` so at least one replica remains available while another is drained, and set `response_grace_period` to cover your worst-case request duration.
+
 **Choosing a tier:**
 
 - Use `interruptible` (default) for batch workloads, development, or cost-sensitive applications that can tolerate occasional interruptions.
