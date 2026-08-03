@@ -1,6 +1,6 @@
 ---
-title: "Scaling Apps"
-description: "Learn to optimise for cost and performance by scaling out apps"
+title: "Autoscaling apps on Cerebrium"
+description: "Configure replicas, scaling metrics, load balancing, and compute tiers to scale Cerebrium apps for cost, latency, and availability."
 ---
 
 Cerebrium's scaling system automatically manages computing resources to match app demand, from single requests to multiple simultaneous requests, optimizing for both performance and cost.
@@ -286,9 +286,11 @@ Protected instances are excluded from capacity consolidation and never run on pr
 
 ### Node Maintenance and Updates
 
-The `compute_tier` setting governs preemption and consolidation only. It does not opt an instance out of node lifecycle events such as OS patches, kernel upgrades, or platform rollouts. Both interruptible and protected instances can be migrated to a new node when the underlying node is cycled for maintenance, and in every case the instance receives SIGTERM and is drained within `response_grace_period` before SIGKILL. See [Graceful Termination](/scaling/graceful-termination) for the shutdown sequence and, for custom runtimes, how to handle SIGTERM so in-flight requests complete instead of returning 502s.
+The `compute_tier` setting governs preemption and consolidation only. It does not opt an instance out of node lifecycle events such as OS patches, kernel upgrades, or platform rollouts. Both interruptible and protected instances can be migrated to a new node when the underlying node is cycled for maintenance. In every case the instance receives SIGTERM and is drained within `response_grace_period` before SIGKILL.
 
-To minimize disruption during a migration, run with `min_replicas >= 2` so at least one replica remains available while another is drained, and set `response_grace_period` to cover your worst-case request duration.
+See [Graceful Termination](/scaling/graceful-termination) for the shutdown sequence. Custom runtimes must handle SIGTERM themselves so in-flight requests complete instead of returning 502s.
+
+To minimize disruption during a migration, run with `min_replicas >= 2` so at least one replica remains available while another is drained. Set `response_grace_period` to cover your worst-case request duration.
 
 **Choosing a tier:**
 
