@@ -243,7 +243,21 @@
     "prompt": "Search Cerebrium docs..."
   },
   "contextual": {
-    "options": ["copy", "view", "chatgpt", "claude"]
+    "options": [
+      "copy",
+      "view",
+      "assistant",
+      "mcp",
+      "add-mcp",
+      "cursor",
+      "vscode",
+      "chatgpt",
+      "claude",
+      "perplexity"
+    ]
+  },
+  "markdown": {
+    "instructions": "Cerebrium's documentation MCP server is available at https://cerebrium.ai/docs/mcp for searching and querying these docs directly. Install the Cerebrium agent skill with `npx skills add https://cerebrium.ai/docs`. Append .md to any docs page URL to fetch that page as plain Markdown. API keys and authentication tokens are created in the Cerebrium dashboard at https://dashboard.cerebrium.ai."
   },
   "logo": {
     "light": "/logo/light.svg",
