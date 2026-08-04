@@ -6,10 +6,10 @@ description: "Forward responses to a specified webhook"
 Forward function response data to an external endpoint via POST by adding the `webhookEndpoint` query parameter to any API call:
 
 ```bash
-curl -X POST https://api.cerebrium.ai/v4/p-xxxxxxxx/<YOUR-APP>/run?webhookEndpoint=https%3A%2F%2Fwebhook.site%2F'\
-       -H 'Content-Type: application/json'\
-       -H 'Authorization: Bearer <YOUR-JWT-TOKEN>\
-       --data '{"param": "hello world"}'
+curl -X POST 'https://api.cerebrium.ai/v4/p-xxxxxxxx/<YOUR-APP>/run?webhookEndpoint=https%3A%2F%2Fwebhook.site%2F' \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer <YOUR-JWT-TOKEN>' \
+  --data '{"param": "hello world"}'
 ```
 
 The proxy forwards the response body as a POST request to the specified webhook — no code changes required. Ensure the webhook endpoint accepts POST requests. Webhook forwarding works with both Cortex and Custom runtimes, but only for HTTP requests (not WebSockets).
@@ -46,9 +46,9 @@ For example, if the function returns `{"smile": "wave"}`, the proxy sends a POST
 </Note>
 
 ```bash
-curl -X POST https://webhook.site/'\
-       -H 'Content-Type: application/json'\
-       --data '{"smile": "wave"}'
+curl -X POST 'https://webhook.site/' \
+  -H 'Content-Type: application/json' \
+  --data '{"smile": "wave"}'
 ```
 
 ## Webhook Signature Verification

@@ -18,7 +18,7 @@ GPUs excel at parallel processing, so concurrent request handling utilizes GPU r
 
 ## Understanding Batching
 
-Batching determines how concurrent requests are grouped and executed within an instance. Concurrency controls the number of simultaneous requests; batching controls how those requests are processed together. The default concurrency is 1 request per container.
+Batching determines how concurrent requests are grouped and executed within an instance. Concurrency controls the number of simultaneous requests; batching controls how those requests are processed together. The default concurrency is 1 request per container for GPU apps and 100 for CPU-only apps.
 
 Cerebrium supports two approaches to request batching.
 

@@ -22,11 +22,11 @@ def run(upper_range: int):
 Deploy this snippet and call the endpoint. SSE events appear progressively, one per second:
 
 ```bash
-curl -X POST https://api.cerebrium.ai/v4/p-xxxxxxxx/2-streaming-endpoint/run \
-       -H 'Content-Type: application/json'\
-       -H 'Accept: text/event-stream\
-       -H 'Authorization: Bearer <YOUR-JWT-TOKEN>\
-       --data '{"upper_range": 3}'
+curl -X POST 'https://api.cerebrium.ai/v4/p-xxxxxxxx/2-streaming-endpoint/run' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: text/event-stream' \
+  -H 'Authorization: Bearer <YOUR-JWT-TOKEN>' \
+  --data '{"upper_range": 3}'
 ```
 
 This should output:

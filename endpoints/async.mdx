@@ -8,10 +8,10 @@ Some apps require asynchronous "fire-and-forget" execution. In this model, Cereb
 Enable async execution by adding the `async=true` query parameter to the request:
 
 ```bash
-curl -X POST https://api.cerebrium.ai/v4/p-xxxxxxxx/<YOUR-APP>/run?async=true'\
-       -H 'Content-Type: application/json'\
-       -H 'Authorization: Bearer <YOUR-JWT-TOKEN>\
-       --data '{"param": "hello world"}'
+curl -X POST 'https://api.cerebrium.ai/v4/p-xxxxxxxx/<YOUR-APP>/run?async=true' \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer <YOUR-JWT-TOKEN>' \
+  --data '{"param": "hello world"}'
 ```
 
 This _immediately_ returns a `202 Accepted` response containing only a `run_id`:
@@ -38,10 +38,10 @@ Returning a response while the application is still processing causes Cerebrium 
 Because async calls do not return a response to the caller, the function must export any relevant data itself. Combine async execution with a `webhookEndpoint` to have Cerebrium automatically forward the function's response body:
 
 ```bash
-curl -X POST <https://api.cerebrium.ai/v4/>p-xxxxxxxx/<YOUR-APP>/run?async=true&webhookEndpoint=https%3A%2F%2Fwebhook.site%2F'\
- -H 'Content-Type: application/json'\
- -H 'Authorization: Bearer <YOUR-JWT-TOKEN>\
- --data '{"param": "hello world"}'
+curl -X POST 'https://api.cerebrium.ai/v4/p-xxxxxxxx/<YOUR-APP>/run?async=true&webhookEndpoint=https%3A%2F%2Fwebhook.site%2F' \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer <YOUR-JWT-TOKEN>' \
+  --data '{"param": "hello world"}'
 ```
 
 This is a proxy-level feature — no code changes are required to use webhook forwarding. In the dashboard, the function is marked **async** but still shows the status of the internal synchronous call (e.g. if the call failed, the async request state is `failure`).
