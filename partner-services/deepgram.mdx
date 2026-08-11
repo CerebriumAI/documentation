@@ -61,11 +61,12 @@ cerebrium cp nova-3-general.en.streaming.123456.dg deepgram-models/nova-3-genera
    ```
 
 <Warning>
-  Leave the Engine's `[server]` port set to **8055**. Cerebrium watches this port
-  to tell when the Engine has finished loading your models and the app is ready to
-  serve traffic. If you change it, requests are sent before the Engine can answer
-  them and fail with `503 Please try again later` while the app starts up. The
-  `driver_pool` URL in `api.toml` (step 5) must point at the same port.
+  Leave the Engine's `[server]` port set to **8055**. Cerebrium watches this
+  port to tell when the Engine has finished loading your models and the app is
+  ready to serve traffic. If you change it, requests are sent before the Engine
+  can answer them and fail with `503 Please try again later` while the app
+  starts up. The `driver_pool` URL in `api.toml` (step 5) must point at the same
+  port.
 </Warning>
 
 ```bash
