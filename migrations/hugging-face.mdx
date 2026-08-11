@@ -206,13 +206,13 @@ Make sure to replace `[CEREBRIUM_API_KEY]` with your Inference API key, which ca
 
 When migrating, keep the following points in mind:
 
-1. **API structure**: The Cerebrium implementation uses a different API structure compared to Huggingface
+1. **API structure**: The Cerebrium implementation uses a different API structure compared to Hugging Face
 2. **Authentication**: Ensure you have set up the `HF_AUTH_TOKEN` secret in Cerebrium for authenticating with Hugging Face
 3. **Model permissions**: The example uses the Llama 3.1 8B Instruct model. Ensure you have the necessary permissions to use this model
 4. **Hardware optimization**: The `cerebrium.toml` file specifies the hardware requirements. Adjust these based on your specific model and performance needs
 5. **Dependency management**: Regularly review and update the dependencies listed in `cerebrium.toml` to ensure you're using the latest compatible versions
 6. **Scaling configuration**: The example sets up auto-scaling with 0 to 5 replicas and a 30-second cooldown. Monitor your usage patterns and adjust these parameters as needed
-7. **Cold starts**: While Cerebrium handles cold starts more gracefully than Huggingface, be aware that the first request after a period of inactivity may still take longer to process
+7. **Cold starts**: While Cerebrium handles cold starts more gracefully than Hugging Face, be aware that the first request after a period of inactivity may still take longer to process
 8. **Monitoring and logging**: Familiarize yourself with Cerebrium's monitoring and logging capabilities to track your model's performance and usage
 9. **Cost management**: Although Cerebrium's pay-per-use model can be more cost-effective, set up proper monitoring and alerts to avoid unexpected costs
 10. **Testing**: Thoroughly test your migrated models to ensure they perform as expected on the new platform
