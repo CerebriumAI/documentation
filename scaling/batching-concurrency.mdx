@@ -3,7 +3,7 @@ title: "Batching and Concurrency"
 description: "Improve throughput and cost performance with batching and concurrency"
 ---
 
-## Understanding Concurrency
+## Understanding concurrency
 
 Each instance can process multiple requests simultaneously. The `replica_concurrency` setting in `cerebrium.toml` determines how many requests each instance handles in parallel:
 
@@ -16,13 +16,13 @@ Requests arriving at an instance below its concurrency limit begin processing im
 
 GPUs excel at parallel processing, so concurrent request handling utilizes GPU resources more efficiently than sequential processing.
 
-## Understanding Batching
+## Understanding batching
 
 Batching determines how concurrent requests are grouped and executed within an instance. Concurrency controls the number of simultaneous requests; batching controls how those requests are processed together. The default concurrency is 1 request per container.
 
 Cerebrium supports two approaches to request batching.
 
-### Framework-native Batching
+### Framework-native batching
 
 Many frameworks handle batched processing natively. vLLM, for example, automatically batches model inference requests:
 
@@ -50,7 +50,7 @@ When multiple requests arrive, vLLM combines them into optimal batch sizes and p
   for more information.
 </Tip>
 
-### Custom Batching
+### Custom batching
 
 Implement custom batching through Cerebrium's [custom runtime feature](/container-images/defining-container-images#custom-runtimes) for precise control over request processing and custom batching strategies.
 

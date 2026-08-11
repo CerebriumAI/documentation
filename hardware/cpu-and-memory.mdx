@@ -6,9 +6,9 @@ title: CPU and Memory
 
 CPU and memory resources are allocated per container and billed based on actual usage. Configure each app with specific CPU and memory requirements to optimize performance and cost.
 
-## Resource Configuration
+## Resource configuration
 
-### CPU Configuration
+### CPU configuration
 
 CPU resources are specified as vCPU units (float) in the `cerebrium.toml` file:
 
@@ -19,7 +19,7 @@ cpu = 4    # Number of vCPU cores
 
 Start with 4 CPU cores for most applications. Add cores based on monitoring, performance, and resource requirements. CPU usage is throttled when exceeding the specified limit. Fractional CPUs are also supported (e.g., `0.5`).
 
-### Memory Configuration
+### Memory configuration
 
 Memory is specified in gigabytes as a floating-point number:
 
@@ -35,7 +35,7 @@ Allocate system memory equal to the GPU's VRAM capacity as a baseline. This acco
   and doesn’t require the overprovisioning of an entire instance.
 </Info>
 
-## Resource Limits
+## Resource limits
 
 Resource limits depend on the selected hardware configuration:
 
@@ -54,10 +54,10 @@ Resource limits depend on the selected hardware configuration:
 | BLACKWELL_B300    | 24            | 512             |
 | TRN1              | 128           | 512             |
 
-## Memory Optimization
+## Memory optimization
 
 The Transformers library provides memory optimization through the `low_cpu_mem_usage` flag, which reduces memory footprint at the cost of longer initialization times. Implement lazy loading for large datasets to further reduce memory usage. Monitor memory patterns through platform metrics to identify optimization opportunities. Use memory-efficient model loading techniques for large-scale deployments.
 
-## Resource Monitoring
+## Resource monitoring
 
 The platform monitors CPU utilization and throttling events to identify performance bottlenecks. Memory usage and OOM events are tracked to prevent application failures.
