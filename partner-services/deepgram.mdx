@@ -60,6 +60,13 @@ cerebrium cp nova-3-general.en.streaming.123456.dg deepgram-models/nova-3-genera
    cerebrium cp engine.toml deepgram/engine.toml
    ```
 
+<Warning>
+  Keep the Engine's `[server]` port set to **8055**, and the `driver_pool` URL
+  in `api.toml` pointing at it. Cerebrium uses this port to tell when the Engine
+  is ready, so requests that arrive during startup are queued instead of failing
+  with `503 Please try again later`.
+</Warning>
+
 ```bash
 
 ### Keep in mind that all paths are in-container paths and do not need to exist
@@ -84,7 +91,8 @@ server_url = ["https://license.deepgram.com"]
 ### The IP address to listen on. Since this is likely running in a Docker
 ### container, you will probably want to listen on all interfaces.
 host = "0.0.0.0"
-### The port to listen on
+### The port to listen on. On Cerebrium, keep 8055 so requests are queued while
+### the Engine starts up.
 port = 8055
 
 
@@ -260,6 +268,8 @@ speak_streaming = true # or false
 ###
 ### Docker Compose and Podman Compose create a dedicated network that allows inter-container communication by app name.
 ### See [Networking in Compose](https://docs.docker.com/compose/networking/) for details.
+###
+### On Cerebrium, keep port 8055 here so it matches `[server]` in engine.toml.
 url = "https://0.0.0.0:8055/v2"
 ### Factor to increase the timeout by for each additional retry (for
 ### exponential backoff).
