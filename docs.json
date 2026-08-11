@@ -971,6 +971,26 @@
     {
       "source": "/storage/persistent-storage",
       "destination": "/storage/managing-files"
+    },
+    {
+      "source": "/v4/examples/aiVoiceAgents",
+      "destination": "/v4/examples/realtime-voice-agents"
+    },
+    {
+      "source": "/v4/examples/langchain",
+      "destination": "/v4/examples/langchain-langsmith"
+    },
+    {
+      "source": "/v4/examples/mistral-vllm",
+      "destination": "/v4/examples/openai-compatible-endpoint-vllm"
+    },
+    {
+      "source": "/v4/examples/streaming-falcon-7B",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/other-topics/fitting-large-models-on-small-gpus",
+      "destination": "/getting-started/introduction"
     }
   ],
   "integrations": {
