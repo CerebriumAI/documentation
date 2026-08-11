@@ -1,6 +1,6 @@
 ---
-title: "Scaling Apps"
-description: "Learn to optimise for cost and performance by scaling out apps"
+title: "Autoscaling apps on Cerebrium"
+description: "Configure replicas, scaling metrics, load balancing, and compute tiers to scale Cerebrium apps for cost, latency, and availability."
 ---
 
 Cerebrium's scaling system automatically manages computing resources to match app demand, from single requests to multiple simultaneous requests, optimizing for both performance and cost.
@@ -283,6 +283,14 @@ Interruptible instances run on preemptible capacity when it is available but can
 Interruptible instances can be interrupted in two ways: the cloud provider can reclaim preemptible capacity during periods of high demand, and the platform periodically consolidates workloads onto fewer nodes to reduce cost, which can relocate interruptible instances regardless of the capacity they run on. In both cases instances are drained gracefully within `response_grace_period`; see [Graceful Termination](/scaling/graceful-termination).
 
 Protected instances are excluded from capacity consolidation and never run on preemptible capacity, so they are not interrupted in either case.
+
+### Node Maintenance and Updates
+
+The `compute_tier` setting governs preemption and consolidation only. It does not opt an instance out of node lifecycle events such as OS patches, kernel upgrades, or platform rollouts. Both interruptible and protected instances can be migrated to a new node when the underlying node is cycled for maintenance. In every case the instance receives SIGTERM and is drained within `response_grace_period` before SIGKILL.
+
+See [Graceful Termination](/scaling/graceful-termination) for the shutdown sequence. Custom runtimes must handle SIGTERM themselves so in-flight requests complete instead of returning 502s.
+
+To minimize disruption during a migration, run with `min_replicas >= 2` so at least one replica remains available while another is drained. Set `response_grace_period` to cover your worst-case request duration.
 
 **Choosing a tier:**
 
