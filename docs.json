@@ -246,6 +246,7 @@
     "options": [
       "copy",
       "view",
+      "download-spec",
       "assistant",
       "mcp",
       "add-mcp",
