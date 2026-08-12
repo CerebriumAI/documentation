@@ -87,8 +87,8 @@ def verify_webhook_signature(request_id, timestamp, body, signature, secret):
 ```
 
 <Note>
-  The body should include everything returned from cerebrium (run_id, function
-  response, timestamp etc) not just your function response
+  The body should include everything returned from Cerebrium (run_id, function
+  response, timestamp, etc.), not just your function response.
 </Note>
 
 A matching signature confirms the webhook originated from Cerebrium and has not been tampered with.
