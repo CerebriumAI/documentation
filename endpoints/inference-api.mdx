@@ -3,7 +3,7 @@ title: "REST API"
 description: "Make authenticated HTTP requests to your Cerebrium endpoints"
 ---
 
-All functions on Cerebrium are accessible via authenticated POST requests by default, unless marked private by prefixing the function name with an underscore (e.g. `_private_function()`). Authenticate using the JWT token from the **API Keys** section of the dashboard.
+All functions on Cerebrium are accessible via POST requests, unless marked private by prefixing the function name with an underscore (e.g. `_private_function()`). Authenticate using the JWT token from the **API Keys** section of the dashboard. Endpoints require this token only when `cerebrium.toml` sets [`disable_auth = false`](/toml-reference/toml-reference) — authentication is disabled by default.
 
 ## Request format
 
