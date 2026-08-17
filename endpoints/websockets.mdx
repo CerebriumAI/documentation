@@ -1,5 +1,6 @@
 ---
 title: "WebSocket Endpoints"
+description: "Configure WebSocket endpoints on Cerebrium with a custom runtime, control session duration via response_grace_period, and handle SIGTERM."
 ---
 
 WebSocket endpoints stream responses to the client, enabling real-time, bidirectional communication.
@@ -28,6 +29,17 @@ Fields:
 - Custom Runtime Required: WebSocket endpoints require a custom runtime to control how the app runs inside the container.
 
 - WebSocket URL: Requests must use a `wss://` URL. The client must support secure WebSocket connections.
+
+## Session Duration
+
+A WebSocket connection is treated as a single long-running request and is bounded by `response_grace_period` in `cerebrium.toml`. The default is 900 seconds (15 minutes). When the grace period elapses, Cerebrium terminates the connection with a GatewayTimeout error. Raise the value to match the longest session your app needs to support:
+
+```toml
+[cerebrium.scaling]
+response_grace_period = 3600  # 1 hour, in seconds
+```
+
+The same value governs how long an instance drains in-flight WebSocket sessions during a shutdown or migration. Custom runtimes must handle `SIGTERM` to close open sockets gracefully before the grace period expires; see [Graceful Termination](/scaling/graceful-termination).
 
 ## Making a request
 
