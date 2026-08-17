@@ -95,6 +95,33 @@ compute = ["HOPPER_H100", "HOPPER_H200", "AMPERE_A100_80GB"]
 
 The set of eligible regions is the intersection of both constraints: any region with several acceptable GPU types is the widest pool; one region with a single GPU type is the narrowest.
 
+### How Region, Provider, and Compute Interact
+
+Each field constrains placement independently. Pinning any of them shrinks the pool; omitting a field lets the platform choose.
+
+- `region = "global"` widens the region pool but does not change `compute` or `provider`. A pinned GPU type or provider is still enforced.
+- A single `compute` value pins the GPU type. A `compute` list lets the platform pick the first available type from the list in order.
+- Pinning `provider` restricts placement to regions on that provider. To let the platform pick the provider, omit `provider` entirely.
+
+For example, this configuration runs only on `nebius` regions that have `HOPPER_H100` available, and will not fall back to AWS:
+
+```toml
+[cerebrium.hardware]
+region = "global"
+compute = "HOPPER_H100"
+provider = "nebius"
+```
+
+To allow fallback across GPU types and providers, use a `compute` list and omit `provider`:
+
+```toml
+[cerebrium.hardware]
+region = "global"
+compute = ["HOPPER_H100", "HOPPER_H200", "AMPERE_A100_80GB"]
+```
+
+Changes to these fields take effect on the next `cerebrium deploy` and update the existing app; you do not need to delete and recreate it.
+
 ## Endpoints
 
 Apps keep a single endpoint no matter how many regions they run in:
