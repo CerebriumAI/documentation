@@ -3,8 +3,8 @@ name: Cerebrium
 description: Use when deploying serverless AI/ML workloads, building real-time inference APIs, configuring auto-scaling for GPU or CPU apps, managing containerized Python applications, or optimizing cold-start performance for production inference endpoints.
 license: MIT
 metadata:
-    mintlify-proj: cerebrium
-    version: "1.0"
+  mintlify-proj: cerebrium
+  version: "1.0"
 ---
 
 # Cerebrium Skill
@@ -16,6 +16,7 @@ Cerebrium is a serverless GPU/CPU platform for deploying real-time AI workloads 
 ## When to Use
 
 Reach for Cerebrium when:
+
 - Deploying inference APIs for LLMs, embeddings, or vision models
 - Building real-time voice, video, or streaming applications
 - Needing automatic scaling from zero to thousands of concurrent requests
@@ -29,23 +30,23 @@ Reach for Cerebrium when:
 
 ### CLI Commands
 
-| Command | Purpose |
-|---------|---------|
-| `cerebrium login` | Authenticate CLI session |
-| `cerebrium init <name>` | Create new project with `cerebrium.toml` and `main.py` |
-| `cerebrium run main.py::function --arg value` | Execute function in cloud (testing/iteration) |
-| `cerebrium deploy` | Build and deploy app as persistent endpoint |
-| `cerebrium deploy -y` | Deploy without confirmation |
+| Command                                       | Purpose                                                |
+| --------------------------------------------- | ------------------------------------------------------ |
+| `cerebrium login`                             | Authenticate CLI session                               |
+| `cerebrium init <name>`                       | Create new project with `cerebrium.toml` and `main.py` |
+| `cerebrium run main.py::function --arg value` | Execute function in cloud (testing/iteration)          |
+| `cerebrium deploy`                            | Build and deploy app as persistent endpoint            |
+| `cerebrium deploy -y`                         | Deploy without confirmation                            |
 
 ### Core Configuration Sections
 
-| Section | Purpose | Key Fields |
-|---------|---------|-----------|
-| `[cerebrium.deployment]` | App metadata, Python version, dependencies | `name`, `python_version`, `disable_auth`, `use_uv` |
-| `[cerebrium.hardware]` | CPU, memory, GPU specs | `cpu`, `memory`, `compute`, `gpu_count`, `region` |
-| `[cerebrium.scaling]` | Auto-scaling behavior | `min_replicas`, `max_replicas`, `replica_concurrency`, `scaling_metric`, `scaling_target` |
-| `[cerebrium.runtime.custom]` | Custom web server (FastAPI, etc.) | `entrypoint`, `port`, `healthcheck_endpoint` |
-| `[cerebrium.dependencies.pip]` | Python packages | `torch = "latest"`, `transformers = "==4.30.0"` |
+| Section                        | Purpose                                    | Key Fields                                                                                |
+| ------------------------------ | ------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| `[cerebrium.deployment]`       | App metadata, Python version, dependencies | `name`, `python_version`, `disable_auth`, `use_uv`                                        |
+| `[cerebrium.hardware]`         | CPU, memory, GPU specs                     | `cpu`, `memory`, `compute`, `gpu_count`, `region`                                         |
+| `[cerebrium.scaling]`          | Auto-scaling behavior                      | `min_replicas`, `max_replicas`, `replica_concurrency`, `scaling_metric`, `scaling_target` |
+| `[cerebrium.runtime.custom]`   | Custom web server (FastAPI, etc.)          | `entrypoint`, `port`, `healthcheck_endpoint`                                              |
+| `[cerebrium.dependencies.pip]` | Python packages                            | `torch = "latest"`, `transformers = "==4.30.0"`                                           |
 
 ### Endpoint URL Format
 
@@ -70,38 +71,38 @@ https://api.cerebrium.ai/v4/p-{PROJECT_ID}/{APP_NAME}/{FUNCTION_NAME}
 
 ### When to Use Cortex vs Custom Runtime
 
-| Scenario | Use | Reason |
-|----------|-----|--------|
-| Simple function-to-endpoint | Cortex (default) | Automatic REST API, minimal config |
-| FastAPI/Flask app | Custom runtime | Full control over routing, auth, middleware |
-| WebSocket or streaming | Custom runtime | Cortex doesn't support bidirectional comms |
-| Gradio/Streamlit dashboard | Custom runtime | Requires ASGI server |
-| LLM with vLLM/TensorRT | Custom runtime | Self-contained server, no Python wrapper |
+| Scenario                    | Use              | Reason                                      |
+| --------------------------- | ---------------- | ------------------------------------------- |
+| Simple function-to-endpoint | Cortex (default) | Automatic REST API, minimal config          |
+| FastAPI/Flask app           | Custom runtime   | Full control over routing, auth, middleware |
+| WebSocket or streaming      | Custom runtime   | Cortex doesn't support bidirectional comms  |
+| Gradio/Streamlit dashboard  | Custom runtime   | Requires ASGI server                        |
+| LLM with vLLM/TensorRT      | Custom runtime   | Self-contained server, no Python wrapper    |
 
 ### Scaling Metric Selection
 
-| Metric | Best For | Example |
-|--------|----------|---------|
-| `concurrency_utilization` (default) | GPU inference, variable request times | `replica_concurrency=1`, `scaling_target=100` |
-| `requests_per_second` | Benchmarked throughput targets | `scaling_target=5` maintains 5 req/s |
-| `cpu_utilization` | CPU-bound workloads | `cpu=2`, `scaling_target=80` maintains 1.6 CPUs |
-| `memory_utilization` | Memory-constrained apps | `memory=10`, `scaling_target=80` maintains 8GB |
+| Metric                              | Best For                              | Example                                         |
+| ----------------------------------- | ------------------------------------- | ----------------------------------------------- |
+| `concurrency_utilization` (default) | GPU inference, variable request times | `replica_concurrency=1`, `scaling_target=100`   |
+| `requests_per_second`               | Benchmarked throughput targets        | `scaling_target=5` maintains 5 req/s            |
+| `cpu_utilization`                   | CPU-bound workloads                   | `cpu=2`, `scaling_target=80` maintains 1.6 CPUs |
+| `memory_utilization`                | Memory-constrained apps               | `memory=10`, `scaling_target=80` maintains 8GB  |
 
 ### Compute Tier Trade-off
 
-| Tier | Cost | Interruption Risk | Use Case |
-|------|------|-------------------|----------|
-| `interruptible` (default) | Base rate | May be interrupted/relocated | Dev, batch, cost-sensitive |
-| `protected` | 2x base rate | No interruptions | Production, long-running requests, SLA-critical |
+| Tier                      | Cost         | Interruption Risk            | Use Case                                        |
+| ------------------------- | ------------ | ---------------------------- | ----------------------------------------------- |
+| `interruptible` (default) | Base rate    | May be interrupted/relocated | Dev, batch, cost-sensitive                      |
+| `protected`               | 2x base rate | No interruptions             | Production, long-running requests, SLA-critical |
 
 ### Load Balancing Algorithm
 
-| Algorithm | Best For | Tradeoff |
-|-----------|----------|----------|
-| `first-available` (default for `replica_concurrency <= 3`) | GPU inference | Maximizes warm replica utilization, uneven distribution |
-| `round-robin` | Uniform request times | Even distribution over time, consistent p50 |
-| `min-connections` | Variable request times (LLMs) | Best p90/p99 tail latency, higher selection overhead |
-| `random-choice-2` | High-throughput, many replicas | O(1) selection, near-optimal distribution |
+| Algorithm                                                  | Best For                       | Tradeoff                                                |
+| ---------------------------------------------------------- | ------------------------------ | ------------------------------------------------------- |
+| `first-available` (default for `replica_concurrency <= 3`) | GPU inference                  | Maximizes warm replica utilization, uneven distribution |
+| `round-robin`                                              | Uniform request times          | Even distribution over time, consistent p50             |
+| `min-connections`                                          | Variable request times (LLMs)  | Best p90/p99 tail latency, higher selection overhead    |
+| `random-choice-2`                                          | High-throughput, many replicas | O(1) selection, near-optimal distribution               |
 
 ## Workflow
 
@@ -113,6 +114,7 @@ cd my-app
 ```
 
 Edit `cerebrium.toml`:
+
 - Set `name`, `python_version`, hardware (`cpu`, `memory`, `compute`)
 - Add dependencies under `[cerebrium.dependencies.pip]`
 - Configure scaling: `min_replicas`, `max_replicas`, `replica_concurrency`
@@ -154,6 +156,7 @@ cerebrium deploy
 ```
 
 The CLI:
+
 - Uploads code and dependencies
 - Builds container image
 - Creates persistent endpoint
@@ -215,6 +218,7 @@ Before deploying to production:
 **Example apps**: https://github.com/CerebriumAI/examples — runnable end-to-end projects covering LLMs, voice agents, image and video, batching, and embeddings. Adapt an example before writing an app from scratch.
 
 **Critical docs**:
+
 1. [TOML Reference](https://cerebrium.ai/docs/toml-reference/toml-reference) — all configuration options
 2. [Scaling Apps](https://cerebrium.ai/docs/scaling/scaling-apps) — auto-scaling, replicas, metrics
 3. [Defining Container Images](https://cerebrium.ai/docs/container-images/defining-container-images) — dependencies, custom runtimes, base images
