@@ -41,8 +41,8 @@ This file carries the workflow and the rules. Load the reference that matches th
 2. **`cerebrium run` is not local.** It packages the working directory, uploads it, and executes
    in the cloud on the hardware in `cerebrium.toml`. There is no local emulator.
 3. **A `cerebrium.toml` key you leave out is reset to its default on deploy**, not left alone,
-   and a misspelled key is ignored in silence. Keep every value that matters in the file, spelled
-   as in [references/config.md](references/config.md).
+   and a misspelled key does nothing in the CLI while still reaching the backend. Keep every
+   value that matters in the file, spelled as in [references/config.md](references/config.md).
 4. **Never invent config keys or GPU identifiers.** Both are validated server-side and a wrong
    value fails the deploy. The accepted sets are in the references.
 5. **Adapt an example before writing from scratch.** `https://github.com/CerebriumAI/examples`
