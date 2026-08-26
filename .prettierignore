@@ -4,3 +4,7 @@ available-hardware.mdx
 # A checker there fails that repo's CI on any drift, and Prettier re-wraps this file
 # if allowed to touch it. Edit the skill upstream, never here.
 /skill.md
+
+# Vendored from skills/cerebrium/references/config.md in CerebriumAI/cerebrium-skills so the
+# relative references/config.md link inside skill.md resolves. Edit upstream, never here.
+/references/config.md
