@@ -62,7 +62,7 @@ readycheck_endpoint = "/ready"
 dockerfile_path = "./Dockerfile"
 ```
 
-The configuration requires three key parameters:
+The configuration requires four key parameters:
 
 - `port`: The port the server listens on.
 - `healthcheck_endpoint`: The endpoint used to confirm instance health. If unspecified, defaults to a TCP ping on the configured port. If the health check registers a non-200 response, it will be considered _unhealthy_, and be restarted should it not recover timely.
