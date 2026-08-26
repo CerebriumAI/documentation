@@ -1,1 +1,6 @@
 available-hardware.mdx
+
+# Vendored byte-for-byte from skills/cerebrium/SKILL.md in CerebriumAI/cerebrium-skills.
+# A checker there fails that repo's CI on any drift, and Prettier re-wraps this file
+# if allowed to touch it. Edit the skill upstream, never here.
+/skill.md

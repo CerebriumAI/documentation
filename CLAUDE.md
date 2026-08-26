@@ -30,6 +30,12 @@
 - title: Clear, descriptive page title
 - description: Concise summary for SEO/navigation
 
+## Vendored skill.md
+
+- Root `skill.md` is vendored byte-for-byte from `skills/cerebrium/SKILL.md` in CerebriumAI/cerebrium-skills
+- A checker in that repository fails when the two copies drift, so edit the skill upstream, never here
+- The Voice and tone and Writing standards rules below do not apply to `skill.md`'s body. Never rewrite, reword, reflow, or re-wrap it in this repository
+
 ## Voice and tone
 
 - Direct, matter-of-fact tone — write reference material, not a tutorial blog post
