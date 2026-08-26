@@ -1,6 +1,6 @@
 ---
 title: "Outbound Agent with LiveKit"
-description: Build an outbound AI voice agent with LiveKit and Twilio SIP trunking on Cerebrium that makes calls and warm transfers callers to human agents
+description: Build an outbound AI voice agent with LiveKit and Twilio SIP trunking on Cerebrium that makes calls and warm transfers callers to human agents.
 ---
 
 Voice agents are transforming business operations by introducing efficiencies and personalization for each customer interaction. While most use cases focus on agents receiving calls, this tutorial covers outbound voice AI agents and the use cases they unlock.
@@ -64,14 +64,14 @@ Setting up an outbound calling agent requires a SIP trunk in Twilio. A SIP trunk
 1. **Log in to your Twilio Console**:
    Go to [Twilio Console](https://console.twilio.com/) and log in with your credentials. If you don’t already have an account, create one.
 2. **Add Phone Numbers**:
-   Under the “Develop” tab is the "Phone numbers" section. Navigate to “Active numbers” and purchase a number if you don’t already have one. Toll free numbers won't work for our use case, so ensure that a "Local" number exists.
+   Under the “Develop” tab is the "Phone numbers" section. Navigate to “Active numbers” and purchase a number if you don’t already have one. Toll-free numbers won't work for our use case, so ensure that a "Local" number exists.
 3. **Install the Twilio CLI and authenticate your CLI:**
    ```
    brew tap twilio/brew && brew install twilio
    twilio login
    ```
 4. **Create a SIP trunk:**
-   The domain name for your SIP trunk must end in [pstn.twilio.com](http://pstn.twilio.com/). For example to create a trunk named My test trunk with the
+   The domain name for your SIP trunk must end in [pstn.twilio.com](http://pstn.twilio.com/). For example, to create a trunk named My test trunk with the
    domain name [my-test-trunk.pstn.twilio.com](http://my-test-trunk.pstn.twilio.com/), run the following command:
    ```
    twilio api trunking v1 trunks create \
@@ -180,7 +180,7 @@ Create a file called `main.py` for the agent code. The directory structure shoul
 - requirements.txt
 - outbound-trunk.json
 
-Add the following code to your main.py
+Add the following code to your main.py:
 
 ```
 from fastapi import FastAPI
@@ -339,7 +339,7 @@ if __name__ == '__main__':
 
 To test locally, run `python main.py` in one terminal. This keeps the agents running as an open process:
 
-![LiveKit processes ](/images/examples/livekit-agent/livekit-processes.png)
+![LiveKit processes](/images/examples/livekit-agent/livekit-processes.png)
 
 Once the job processes initialize, open a separate terminal and run `python test.py`. This initiates a call to the provided phone number. Note: calls are limited to the region the number is purchased from.
 
