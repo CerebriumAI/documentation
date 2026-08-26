@@ -28,7 +28,7 @@ This creates a folder with two files:
 
 These files are populated later in the tutorial.
 
-### Livekit Setup
+### LiveKit Setup
 
 [LiveKit](https://livekit.io/kitt) is a platform for building real-time audio and video applications.
 
@@ -64,7 +64,7 @@ Setting up an outbound calling agent requires a SIP trunk in Twilio. A SIP trunk
 1. **Log in to your Twilio Console**:
    Go to [Twilio Console](https://console.twilio.com/) and log in with your credentials. If you don’t already have an account, create one.
 2. **Add Phone Numbers**:
-   Under the “Develop” tab is the "Phone numbers" section. Navigate to “Active numbers” and purchase a number if you don’t already have one. Toll free numbers won't work for our use case, so ensure that a "Local" number exists.
+   Under the “Develop” tab is the "Phone numbers" section. Navigate to “Active numbers” and purchase a number if you don’t already have one. Toll free numbers won't work for this use case, so ensure that a "Local" number exists.
 3. **Install the Twilio CLI and authenticate your CLI:**
    ```
    brew tap twilio/brew && brew install twilio
@@ -117,9 +117,9 @@ The output returns the trunk ID, which is required in a later step.
 
 The following services power the outbound AI agent:
 
-- [Deepgram](https://www.deepgram.com/) for our Speech-to-Text service
-- [OpenAI](https://openai.com/) for our LLM
-- [Cartesia](https://www.cartesia.com/) for our Text-to-Speech service
+- [Deepgram](https://www.deepgram.com/) for the Speech-to-Text service
+- [OpenAI](https://openai.com/) for the LLM
+- [Cartesia](https://www.cartesia.com/) for the Text-to-Speech service
 
 Each service offers a generous free tier:
 
@@ -144,7 +144,7 @@ left sidebar and create a new API key.
 
 ![Cartesia Dashboard](/images/examples/livekit-agent/cartesia-dashboard.png)
 
-Finally, let us then create a **.env** file that contains our environment variables from all the steps above.
+Finally, create a **.env** file that contains the environment variables from all the steps above.
 
 ```
 LIVEKIT_API_KEY=""
