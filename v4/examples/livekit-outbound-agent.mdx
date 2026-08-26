@@ -7,11 +7,11 @@ Voice agents are transforming business operations by introducing efficiencies an
 
 Outbound agents handle tasks like appointment scheduling, lead qualification, and customer follow-ups while maintaining a human-like, conversational tone. They replace manual efforts with intelligent automation, improving customer engagement in sales, healthcare, hospitality, and collections.
 
-This tutorial sets up an outbound calling agent that does a warm transfer — handing off the call to a real person using LiveKit. A fitting example: a support center where an agent collects data before connecting to a real person.
+This tutorial sets up an outbound calling agent that does a warm transfer: handing off the call to a real person using LiveKit. A fitting example: a support center where an agent collects data before connecting to a real person.
 
-The final code implementation and complete example can be found in our examples Github repository [here](https://github.com/CerebriumAI/examples/tree/master/6-voice/7-outbound-livekit-agent).
+The final code implementation and complete example can be found in our examples GitHub repository [here](https://github.com/CerebriumAI/examples/tree/master/6-voice/7-outbound-livekit-agent).
 
-### Cerebrium setup
+### Cerebrium Setup
 
 Install the Cerebrium CLI and create a project:
 
@@ -82,7 +82,7 @@ Setting up an outbound calling agent requires a SIP trunk in Twilio. A SIP trunk
 
    To secure the SIP trunk, create a credential list in the Twilio console dashboard. Navigate to “Voice”, then “Manage”, then “Credential lists”.
 
-   Click the plus icon and add a friendly name, username, and password. Save these credentials — they are required in a later step.
+   Click the plus icon and add a friendly name, username, and password. Save these credentials. They are required in a later step.
 
 ![Twilio Dashboard](/images/examples/livekit-agent/twilio-credentials.png)
 
@@ -113,7 +113,7 @@ Run the following in your CLI: `lk sip outbound create outbound-trunk.json`
 
 The output returns the trunk ID, which is required in a later step.
 
-### Services setup
+### Services Setup
 
 The following services power the outbound AI agent:
 
@@ -423,9 +423,9 @@ Run the following command:
 cerebrium deploy
 ```
 
-This installs all necessary packages and deploys the application. LiveKit workers run in the cloud — test by running the `test.py` script locally and checking logs on the Cerebrium dashboard.
+This installs all necessary packages and deploys the application. LiveKit workers run in the cloud. Test by running the `test.py` script locally and checking logs on the Cerebrium dashboard.
 
-### Further Improvements:
+### Further Improvements
 
 To reduce latency, Cerebrium partners with Deepgram and Rime to run STT and TTS models locally alongside the LiveKit worker, reducing latency by ~400ms.
 

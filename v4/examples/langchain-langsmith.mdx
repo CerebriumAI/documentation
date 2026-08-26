@@ -9,7 +9,7 @@ You can find the final version of the code [here](https://github.com/CerebriumAI
 
 ### Concepts
 
-This app requires calendar interaction based on user instructions — an ideal use case for an agent with function (tool) calling capabilities. LangChain provides extensive agent support, and its companion tool LangSmith makes monitoring integration straightforward.
+This app requires calendar interaction based on user instructions: an ideal use case for an agent with function (tool) calling capabilities. LangChain provides extensive agent support, and its companion tool LangSmith makes monitoring integration straightforward.
 
 A tool refers to any framework, utility, or system with defined functionality for specific use cases, such as searching Google or retrieving credit card transactions.
 
@@ -47,7 +47,7 @@ agent_executor.invoke({"input": "what's 3 plus 5 raised to the 2.743. also what'
 
 ### Setup Cal.com
 
-[Cal.com](https://cal.com) provides the calendar management foundation. Create an account [here](https://app.cal.com/signup) if needed. Cal serves as the source of truth — updates to time zones or working hours automatically reflect in the assistant's responses.
+[Cal.com](https://cal.com) provides the calendar management foundation. Create an account [here](https://app.cal.com/signup) if needed. Cal serves as the source of truth. Updates to time zones or working hours automatically reflect in the assistant's responses.
 
 After creating your account:
 
@@ -127,7 +127,7 @@ The API key is now confirmed working and pulling calendar information. The API c
 - **/availability**: Get your availability
 - **/bookings**: Book a slot
 
-### Cerebrium setup
+### Cerebrium Setup
 
 Set up Cerebrium:
 
@@ -281,7 +281,7 @@ The agent executor consists of:
   - Defines the agent’s role, goals, and situational behavior. More precise instructions yield better results.
   - Chat History stores previous messages for conversation context.
   - Input receives new input from the end user.
-- The GPT-3.5 model serves as the LLM. Swap to Anthropic or any other provider by replacing this one line — LangChain makes this seamless.
+- The GPT-3.5 model serves as the LLM. Swap to Anthropic or any other provider by replacing this one line. LangChain makes this seamless.
 - Finally, these components combine with the tools to create an agent executor.
 
 ### Setup Chatbot
@@ -334,7 +334,7 @@ if __name__ == "__main__":
 
 This code:
 
-- Defines a Pydantic object specifying the expected API parameters — user prompt and session ID.
+- Defines a Pydantic object specifying the expected API parameters: user prompt and session ID.
 - The predict function (Cerebrium’s API entry point) passes the prompt and session ID to the agent and returns results.
   ‍
 

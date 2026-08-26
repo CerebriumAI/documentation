@@ -38,7 +38,7 @@ Test the WebSocket endpoint using websocat, a command-line WebSocket client:
 websocat wss://api.cerebrium.ai/v4/p-xxxxxxxx/<your-app-name>/<your-websocket-function-name>
 ```
 
-## Implementing the WebSocket Endpoint
+## Implementing the WebSocket endpoint
 
 Example WebSocket endpoint using FastAPI:
 
@@ -55,7 +55,7 @@ async def websocket_endpoint(websocket: WebSocket):
     await websocket.close()
 ```
 
-## Additional Info
+## Additional info
 
 Client-side Implementation: Handle the WebSocket connection properly on the client, including error handling and reconnection logic.
 

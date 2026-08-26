@@ -15,7 +15,7 @@ You can view the final implementation [here](https://github.com/CerebriumAI/exam
 
 NVIDIA TensorRT is a software development kit for high-performance deep learning inference. It compiles model weights into optimized engines that run more efficiently on specific GPU hardware through CUDA-level optimizations, custom kernels, and optional quantization.
 
-TensorRT requires you to specify optimization parameters upfront - GPU architecture, batch size, precision (FP8, INT8, etc.), and input/output shapes. This specialization allows TensorRT to generate highly optimized inference engines that maximize GPU utilization, reduce latency, and lower inference costs compared to serving raw model weights.
+TensorRT requires you to specify optimization parameters upfront: GPU architecture, batch size, precision (FP8, INT8, etc.), and input/output shapes. This specialization allows TensorRT to generate highly optimized inference engines that maximize GPU utilization, reduce latency, and lower inference costs compared to serving raw model weights.
 
 ### Why Triton?
 
@@ -57,7 +57,7 @@ To download the model, [request access](https://huggingface.co/meta-llama/Llama-
 
 ## Implementation
 
-All files should be placed in the same project directory.
+Place all files in the same project directory.
 
 ### Triton Model Configuration
 

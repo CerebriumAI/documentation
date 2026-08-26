@@ -18,7 +18,7 @@ This is useful for both CPU-only and GPU workloads. For CPU applications, checkp
 
 For example, ML and LLM frameworks often load large model weights and compile CUDA kernels at container start time, which can take many seconds or minutes. Loading from a checkpoint that already contains this initialized state can skip most of that delay.
 
-Since this feature is still in beta, please report all issues to the team via our [Discord Community](https://discord.gg/ATj6USmeE2) or via [Email](mailto:support@cerebrium.ai).
+Since this feature is still in beta, please report all issues to the team via our [Discord Community](https://discord.gg/ATj6USmeE2) or via [email](mailto:support@cerebrium.ai).
 
 ## How to use
 
@@ -33,7 +33,7 @@ checkpointing = true
 
 ### 2. Send the checkpoint trigger
 
-You have full control over when to create a checkpoint - preferably it's after the majority of your application's initialization work is complete and your desired state is reached. The state of your application at this exact moment is what will be restored for future container launches.
+You have full control over when to create a checkpoint. Trigger it after your application completes the majority of its initialization work and reaches your desired state. Cerebrium restores the state of your application at this exact moment for future container launches.
 
 Once you reach this optimal point in your startup logic, send a POST request from inside the container to instruct Cerebrium to capture the checkpoint:
 
@@ -52,18 +52,18 @@ with urllib.request.urlopen(req, timeout=300) as response:
 
 The endpoint uses `169.254.169.253`, a link-local address that routes to the Cerebrium runtime sidecar inside the container. The address is reachable only from inside the container, not from external networks.
 
-Set the HTTP client timeout to at least 300 seconds. Checkpoint duration scales with the amount of memory captured - from a few seconds for small CPU workloads to several minutes for large GPU snapshots.
+Set the HTTP client timeout to at least 300 seconds. Checkpoint duration scales with the amount of memory captured. It ranges from a few seconds for small CPU workloads to several minutes for large GPU snapshots.
 
 ### 3. When the runtime creates a checkpoint
 
-When the runtime receives the POST, it checks whether a new checkpoint is required. To save resources, the system skips checkpoint creation if:
+When the runtime receives the POST, it checks whether a new checkpoint is required. To save resources, the runtime skips checkpoint creation if:
 
 1. A checkpoint already exists for the current build version.
 2. Another container instance is already undergoing the checkpointing process.
 
-If a checkpoint should occur, the container is frozen for the duration of the process. GPU memory is copied to CPU memory, and then all container memory is written to storage. The saved checkpoint is then distributed throughout the region.
+If a checkpoint should occur, the runtime freezes the container for the duration of the process. It copies GPU memory to CPU memory, then writes all container memory to storage. Cerebrium then distributes the saved checkpoint throughout the region.
 
-Checkpoint size roughly equals CPU memory in use at trigger time plus GPU memory copied during the freeze. For GPU workloads, expect the snapshot to be on the order of model weights plus runtime overhead unless caches are dropped first. Allocate enough container memory to hold the GPU dump in addition to normal usage — see **Memory overhead** under Limitations.
+Checkpoint size roughly equals CPU memory in use at trigger time plus GPU memory copied during the freeze. For GPU workloads, expect the snapshot to be on the order of model weights plus runtime overhead unless caches are dropped first. Allocate enough container memory to hold the GPU dump in addition to normal usage. See **Memory overhead** under Limitations.
 
 ### 4. Verify restoration
 
@@ -73,7 +73,7 @@ If checkpoint creation succeeds, subsequent containers restore from that snapsho
 
 A checkpoint is tightly coupled to a single deployment. To stop restoring from checkpoints, remove the POST request and redeploy the application.
 
-You can find several implementations in our [Examples repository on Github](https://github.com/CerebriumAI/examples).
+You can find several implementations in our [Examples repository on GitHub](https://github.com/CerebriumAI/examples).
 
 ### vLLM example
 
@@ -124,4 +124,4 @@ engine.wake_up()
 
 vLLM checkpointing support is not complete but is still possible. See [vllm-project/vllm#34303](https://github.com/vllm-project/vllm/issues/34303) and related issues.
 
-The larger the size of the memory checkpoint, the slower the restore is. Reduce the size of the snapshot substantially and improve startup times by dropping the KV Cache before checkpoint and recreating it after restore. vLLM has functionality that does this built in as part of [vLLM Sleep Mode](https://docs.vllm.ai/en/latest/features/sleep_mode/).
+The larger the size of the memory checkpoint, the slower the restore is. Reduce the size of the snapshot substantially and improve startup times by dropping the KV cache before checkpoint and recreating it after restore. vLLM has functionality that does this built in as part of [vLLM Sleep Mode](https://docs.vllm.ai/en/latest/features/sleep_mode/).

@@ -32,8 +32,8 @@ memory = 16.0    # Memory in GB
 Allocate system memory equal to the GPU's VRAM capacity as a baseline. This accounts for initial model loading and compilation before GPU transfer. Applications terminate with an Out of Memory (OOM) error if they exceed the specified memory limit.
 
 <Info>
-  Memory and CPU are billed based on usage, which reduces costs for end-users
-  and doesn’t require the overprovisioning of an entire instance.
+  Memory and CPU are billed based on usage, which reduces your costs and doesn’t
+  require the overprovisioning of an entire instance.
 </Info>
 
 ## Resource Limits
@@ -60,4 +60,4 @@ The Transformers library provides memory optimization through the `low_cpu_mem_u
 
 ## Resource Monitoring
 
-The platform monitors CPU utilization and throttling events to identify performance bottlenecks. Memory usage and OOM events are tracked to prevent application failures.
+The platform monitors CPU utilization and throttling events to identify performance bottlenecks. The platform tracks memory usage and OOM events to prevent application failures.

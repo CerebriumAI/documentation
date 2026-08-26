@@ -3,7 +3,7 @@ title: "Serving GPT-OSS with vLLM"
 description: Serve OpenAI GPT-OSS open weight models with vLLM on Cerebrium, covering MoE architecture, MXFP4 quantization and H100 GPU deployment setup.
 ---
 
-GPT recently released GPT-OSS ([gpt-oss-20b](https://huggingface.co/openai/gpt-oss-20b) and [gpt-oss-120b](https://huggingface.co/openai/gpt-oss-120b)), two state-of-the-art open-weight language models that deliver strong real-world performance at low cost. Available under the flexible Apache 2.0 license, these models outperform similarly sized open models on reasoning tasks, demonstrate strong tool use capabilities, and are optimized for efficient deployment on consumer hardware.
+GPT recently released GPT-OSS ([gpt-oss-20b](https://huggingface.co/openai/gpt-oss-20b) and [gpt-oss-120b](https://huggingface.co/openai/gpt-oss-120b)), two state-of-the-art open-weight language models that deliver strong real-world performance at low cost. Available under the flexible Apache 2.0 license, these models outperform similarly sized open models on reasoning tasks and demonstrate strong tool use capabilities. They are also optimized for efficient deployment on consumer hardware.
 
 ## What Makes GPT-OSS Special?
 
@@ -70,7 +70,7 @@ Key configuration details:
 
 ### Deploy & Test
 
-Deploy by running `cerebrium deploy`. The environment is created and the model is downloaded.
+Deploy by running `cerebrium deploy`. Cerebrium creates the environment and downloads the model.
 
 Test the endpoint with the following request:
 

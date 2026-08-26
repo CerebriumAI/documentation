@@ -5,7 +5,7 @@ description: Handle SIGTERM signals in custom runtimes on Cerebrium to finish in
 
 ## Graceful Termination
 
-Cerebrium runs in a shared, multi-tenant environment. The platform continuously adjusts capacity — spinning down nodes and launching new ones to scale, optimize compute usage, and roll out updates. Workloads are migrated to new nodes during this process. Applications also have metric-based autoscaling criteria that dictate when instances scale, remain active, or shift during deployments. Implement graceful termination to prevent requests from ending prematurely when instances are marked for termination.
+Cerebrium runs in a shared, multi-tenant environment. The platform continuously adjusts capacity: spinning down nodes and launching new ones to scale, optimize compute usage, and roll out updates. The platform migrates workloads to new nodes during this process. Applications also have metric-based autoscaling criteria that dictate when instances scale, remain active, or shift during deployments. Implement graceful termination to prevent requests from ending prematurely when instances are marked for termination.
 
 ## Understanding Instance Termination
 
