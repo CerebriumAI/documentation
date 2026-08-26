@@ -1,6 +1,6 @@
 ---
 title: "Langchain and Langsmith"
-description: "Deploy an executive assistant using Langsmith and Langchain"
+description: Build an executive assistant agent with LangChain tool calling, monitor it in LangSmith and deploy it on Cerebrium to manage Cal.com bookings.
 ---
 
 This tutorial builds Cal-vin, an executive assistant that manages calendar appointments (via Cal.com) with employees, customers, partners, and friends. It uses the LangChain SDK for agent creation and the LangSmith platform for monitoring scheduling activities and identifying failure points, deployed on Cerebrium for seamless scaling.
@@ -354,7 +354,7 @@ Set up LangSmith monitoring:
 2. Create a free LangSmith account [here](https://smith.langchain.com/)
 3. Generate API key (click gear icon in bottom left)
 
-Set the following environment variables at the top of main.py. Add the API key to Cerebrium secrets
+Set the following environment variables at the top of main.py. Add the API key to Cerebrium secrets.
 
 ```python
 import os
@@ -379,7 +379,7 @@ After a successful test run, data populates in LangSmith:
 
 The Runs tab shows all runs (invocations/API requests).
 
-In 1 above, the function name appears, with input set to the Cerebrium RunID (set to “test”. The input and total latency of the run are also visible.
+In 1 above, the function name appears, with input set to the Cerebrium RunID (set to “test”). The input and total latency of the run are also visible.
 
 LangSmith supports various data automations:
 

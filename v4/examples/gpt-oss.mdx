@@ -1,9 +1,9 @@
 ---
 title: "Serving GPT-OSS with vLLM"
-description: "Deploy OpenAI's Latest Open Source Model"
+description: Serve OpenAI GPT-OSS open weight models with vLLM on Cerebrium, covering MoE architecture, MXFP4 quantization and H100 GPU deployment setup.
 ---
 
-GPT recently released GPT-OSS ([gpt-oss-20b](https://huggingface.co/openai/gpt-oss-20b) and [gpt-oss-120b](https://huggingface.co/openai/gpt-oss-120b)) two state-of-the-art open-weight language models that deliver strong real-world performance at low cost. Available under the flexible Apache 2.0 license, these models outperform similarly sized open models on reasoning tasks, demonstrate strong tool use capabilities, and are optimized for efficient deployment on consumer hardware.
+GPT recently released GPT-OSS ([gpt-oss-20b](https://huggingface.co/openai/gpt-oss-20b) and [gpt-oss-120b](https://huggingface.co/openai/gpt-oss-120b)), two state-of-the-art open-weight language models that deliver strong real-world performance at low cost. Available under the flexible Apache 2.0 license, these models outperform similarly sized open models on reasoning tasks, demonstrate strong tool use capabilities, and are optimized for efficient deployment on consumer hardware.
 
 ## What Makes GPT-OSS Special?
 
@@ -53,7 +53,6 @@ max_replicas = 5
 cooldown = 30
 replica_concurrency = 32
 scaling_metric = "concurrency_utilization"
-scaling
 
 [cerebrium.runtime.custom]
 port = 8000

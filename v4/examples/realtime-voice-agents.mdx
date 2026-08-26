@@ -1,7 +1,7 @@
 ---
 title: "Real-time Voice Agent"
 sidebarTitle: "500ms Low-latency Voice Agent"
-description: "Deploy a real-time AI voice agent"
+description: Build a low latency voice AI agent with PipeCat, Deepgram and a self hosted vLLM Llama endpoint on Cerebrium that responds in about 500ms
 ---
 
 This tutorial creates a real-time voice agent that responds to queries via speech in ~500ms. The implementation supports swapping in any Large Language Model (LLM) or Text-to-Speech (TTS) model, making it ideal for voice-based use cases like customer support bots and receptionists.
@@ -464,7 +464,7 @@ The endpoints are used in the frontend interface below.
 
 A public fork of the PipeCat frontend demonstrates this application. Clone the repo [here](https://github.com/CerebriumAI/web-client-ui).
 
-Follow the instructions in the README.md and then populate the following variables in your .env.development.local
+Follow the instructions in the README.md and then populate the following variables in your .env.development.local.
 
 ```
 VITE_SERVER_URL=https://api.cerebrium.ai/v4/p-xxxxxxxx/<APP_NAME> #This is the base url of your pipecat-agent. Do not include the function names

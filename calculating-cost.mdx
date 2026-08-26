@@ -1,6 +1,6 @@
 ---
 title: Calculating compute cost
-description: How to calculate the cost of your deployment on Cerebrium
+description: Understand how Cerebrium bills GPU, CPU, and memory per second, what counts toward build and runtime charges, and estimate monthly deployment costs.
 ---
 
 Deployment cost is based on the hardware selected and the execution time. <b>Every time code runs or a machine is specified to stay running, compute is billed</b>. GPU, CPU, and Memory usage are charged per second; persistent storage is charged per GB per month. View compute pricing on the [pricing page](https://www.cerebrium.ai/pricing).
@@ -21,7 +21,7 @@ Deploying a model incurs two billable processes:
   on cold start (e.g., loading a model into GPU RAM, importing packages). This
   time is billed.
 - <u>Function runtime</u>: Code inside the request function, executed on every
-  request
+  request.
 
 **Example cost calculation**
 
