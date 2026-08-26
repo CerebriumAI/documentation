@@ -12,11 +12,11 @@ curl -X POST 'https://api.cerebrium.ai/v4/p-xxxxxxxx/<YOUR-APP>/run?webhookEndpo
   --data '{"param": "hello world"}'
 ```
 
-The proxy forwards the response body as a POST request to the specified webhook — no code changes required. Ensure the webhook endpoint accepts POST requests. Webhook forwarding works with both Cortex and Custom runtimes, but only for HTTP requests (not WebSockets).
+The proxy forwards the response body as a POST request to the specified webhook. No code changes are required. Ensure the webhook endpoint accepts POST requests. Webhook forwarding works with both Cortex and Custom runtimes, but only for HTTP requests (not WebSockets).
 
 ## Retry Behavior
 
-Webhook requests are sent asynchronously and do not block the function's response. Failed deliveries are retried automatically:
+Webhook requests are sent asynchronously and do not block the function's response. Cerebrium retries failed deliveries automatically:
 
 - **Maximum attempts**: 3 attempts total
 - **Delay between retries**: Up to 5 seconds between attempts
@@ -33,7 +33,7 @@ If all attempts fail, the error is logged but will not affect your function's re
 
 <Warning>
   **The webhook endpoint should be idempotent.** A webhook may be retried even
-  if it was already processed — for example, if the Cerebrium backend does not
+  if it was already processed. For example, the Cerebrium backend may not
   receive the success response due to network issues. Design the endpoint to
   handle duplicate deliveries gracefully.
 </Warning>

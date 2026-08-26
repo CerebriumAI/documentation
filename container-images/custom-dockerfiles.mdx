@@ -48,7 +48,7 @@ CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8192
 
 Dockerfiles for Cerebrium have three requirements:
 
-1. Expose a port with the `EXPOSE` command - this port is referenced in `cerebrium.toml`
+1. Expose a port with the `EXPOSE` command. This port is referenced in `cerebrium.toml`
 2. Include a `CMD` command to specify the container's startup process (typically the server)
 3. Set the working directory with `WORKDIR` to ensure correct file paths (defaults to root if not specified)
 
@@ -87,7 +87,7 @@ entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8192"]
 
 ## Building Generic Dockerized Apps
 
-Cerebrium supports non-Python apps as long as a Dockerfile is provided. The following example shows a Rust-based API server using the Axum framework:
+Cerebrium supports non-Python apps as long as you provide a Dockerfile. The following example shows a Rust-based API server using the Axum framework:
 
 ```rust
 use axum::{

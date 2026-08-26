@@ -3,11 +3,11 @@ title: "REST API"
 description: Call your Cerebrium apps over the REST API with POST requests and JWT authentication, and understand response formats and HTTP status codes.
 ---
 
-All functions on Cerebrium are accessible via POST requests, unless marked private by prefixing the function name with an underscore (e.g. `_private_function()`). Authenticate using the JWT token from the **API Keys** section of the dashboard. Endpoints require this token only when `cerebrium.toml` sets [`disable_auth = false`](/toml-reference/toml-reference) — authentication is disabled by default.
+All functions on Cerebrium are accessible via POST requests, unless marked private by prefixing the function name with an underscore (e.g. `_private_function()`). Authenticate using the JWT token from the **API Keys** section of the dashboard. Endpoints require this token only when `cerebrium.toml` sets [`disable_auth = false`](/toml-reference/toml-reference). Authentication is disabled by default.
 
 ## Request format
 
-The POST request follows the structure below, where `{function}` is the name of the function to invoke. In this example, `predict()` from `main.py` is called.
+The POST request follows the structure below, where `{function}` is the name of the function to invoke. This example calls `predict()` from `main.py`.
 
 ```bash
 curl --location --request POST 'https://api.cerebrium.ai/v4/p-xxxxxxxx/{app-name}/{function}' \

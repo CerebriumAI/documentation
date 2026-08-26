@@ -10,7 +10,7 @@ Once configured, API calls use the custom domain while keeping the same path str
 
 - Support for apex domains (`example.com`) and subdomains (`api.example.com`)
 - Automatic SSL certificate provisioning and renewal
-- Project-level domains - one domain serves all apps in a project
+- Project-level domains: one domain serves all apps in a project
 - Multiple domains can point to the same project
 - Professional branding with custom domains instead of `*.cerebrium.ai` URLs
 
@@ -32,7 +32,7 @@ Once configured, API calls use the custom domain while keeping the same path str
 
 ### Step 2: Configure DNS Records
 
-After creating the domain, DNS configuration instructions will be displayed. Create a CNAME record at the DNS provider using the DNS record Cerebrium generates.
+After you create the domain, the dashboard displays DNS configuration instructions. Create a CNAME record at the DNS provider using the DNS record Cerebrium generates.
 
 <Note>
   DNS record details can also be found later by clicking "DNS Record" in the
@@ -78,7 +78,7 @@ After creating the domain, DNS configuration instructions will be displayed. Cre
 2. Cerebrium will automatically attempt to validate DNS records every 30 minutes for up to 2 days
 3. To trigger an immediate validation attempt, click "Validation Status" -> "Validate Domain" (this works even after the 2-day window has elapsed)
 4. If validation fails, the dialog will show the last known error
-5. Once validated, SSL certificates will be automatically provisioned
+5. Once validated, Cerebrium automatically provisions SSL certificates
 
 ### Step 4: Start Using the Custom Domain
 
@@ -110,7 +110,7 @@ Cerebrium attempts to validate domains once every 30 minutes for up to 2 days. I
 
 - **Pending**: Domain is waiting for DNS validation
 - **Validated**: Domain is successfully validated and ready to use
-- **Failed**: DNS validation failed - click "Validation Status" to see the specific error
+- **Failed**: DNS validation failed. Click "Validation Status" to see the specific error
 
 ### Validation Errors
 
@@ -124,7 +124,7 @@ If a domain shows "Failed" status, the DNS record has been misconfigured. Common
 - **Cloudflare**: Disable proxy (set to "DNS only" - gray cloud icon)
 - **Route53**: Use simple routing policy, not weighted or latency-based
 - **Namecheap**: Use "@" for apex domains, not "www" or blank
-- **GoDaddy**: CNAME records cannot be used with apex domains - consider using a subdomain or an ALIAS record
+- **GoDaddy**: CNAME records cannot be used with apex domains. Consider using a subdomain or an ALIAS record
 
 ### Common DNS Mistakes
 
