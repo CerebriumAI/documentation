@@ -8,9 +8,9 @@ Cerebrium's partnership with [Deepgram](https://www.deepgram.com/) enables simpl
 <Note>
 Using Deepgram services requires an Enterprise Deepgram account and API key for self-hosted models. Contact Deepgram support to access this feature.
 
-Obtain links to the Deepgram model files referenced below (file extension `.dg`) from the Deepgram Account Representative.
+Obtain links to the Deepgram model files referenced below (file extension `.dg`) from your Deepgram Account Representative.
 
-Consult the Deepgram representative on how to achieve parity with the Deepgram API.
+Consult your Deepgram representative on how to achieve parity with the Deepgram API.
 
 </Note>
 
@@ -316,7 +316,7 @@ replica_concurrency = 150
 
 7. Run `cerebrium deploy`. After deployment, an endpoint for the Deepgram services appears in the terminal output. The URL is also available on the app's overview page in the dashboard.
 
-8. Download an example audio file for use with the deepgram service:
+8. Download an example audio file for use with the Deepgram service:
 
 ```bash
 wget https://dpgr.am/bueller.wav
@@ -344,7 +344,7 @@ To use Deepgram services:
 2. Create an API key in the Deepgram dashboard
 3. Add the API key to Cerebrium:
 
-- Navigate to **Secrets** tab in the Cerebrium dashboard
+- Navigate to the **Secrets** tab in the Cerebrium dashboard
 - Add the Deepgram API key as an app-specific or project-wide secret named `DEEPGRAM_API_KEY`
 - This secret automatically becomes available as an environment variable in the deployment
 

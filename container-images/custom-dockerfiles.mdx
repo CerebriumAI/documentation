@@ -65,8 +65,8 @@ dockerfile_path = "./Dockerfile"
 The configuration requires four key parameters:
 
 - `port`: The port the server listens on.
-- `healthcheck_endpoint`: The endpoint used to confirm instance health. If unspecified, defaults to a TCP ping on the configured port. If the health check registers a non-200 response, it will be considered _unhealthy_, and be restarted should it not recover timely.
-- `readycheck_endpoint`: The endpoint used to confirm if the instance is ready to receive. If unspecified, defaults to a TCP ping on the configured port. If the ready check registers a non-200 response, it will not be a viable target for request routing.
+- `healthcheck_endpoint`: The endpoint used to confirm instance health. If unspecified, defaults to a TCP ping on the configured port. If the health check registers a non-200 response, Cerebrium considers the instance _unhealthy_ and restarts it if it does not recover in time.
+- `readycheck_endpoint`: The endpoint used to confirm if the instance is ready to receive. If unspecified, defaults to a TCP ping on the configured port. If the ready check registers a non-200 response, Cerebrium does not route requests to the instance.
 - `dockerfile_path`: The relative path to the Dockerfile used to build the app.
 
 If the Dockerfile omits a `CMD` clause, specify the `entrypoint` parameter in `cerebrium.toml`:

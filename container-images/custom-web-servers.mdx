@@ -46,8 +46,8 @@ The configuration requires four key parameters:
 
 - `entrypoint`: The command that starts your server
 - `port`: The port your server listens on
-- `healthcheck_endpoint`: The endpoint used to confirm instance health. If unspecified, defaults to a TCP ping on the configured port. If the health check registers a non-200 response, it will be considered _unhealthy_, and be restarted should it not recover timely.
-- `readycheck_endpoint`: The endpoint used to confirm if the instance is ready to receive. If unspecified, defaults to a TCP ping on the configured port. If the ready check registers a non-200 response, it will not be a viable target for request routing.
+- `healthcheck_endpoint`: The endpoint used to confirm instance health. If unspecified, defaults to a TCP ping on the configured port. If the health check registers a non-200 response, Cerebrium considers the instance _unhealthy_ and restarts it if it does not recover in time.
+- `readycheck_endpoint`: The endpoint used to confirm if the instance is ready to receive. If unspecified, defaults to a TCP ping on the configured port. If the ready check registers a non-200 response, Cerebrium does not route requests to the instance.
 
 <Info>
   For ASGI applications like FastAPI, include the appropriate server package
