@@ -125,14 +125,14 @@ Each service offers a generous free tier:
 
 - **Deepgram**
 
-You can signup for a Deepgram account [here](https://www.notion.so/Livekit-Outbound-agent-13ebfd664fb180c5b02bf9c71f72b23d?pvs=21). Straight from the dashboard, you can create a API key.
-Store this value for later
+You can signup for a Deepgram account [here](https://www.notion.so/Livekit-Outbound-agent-13ebfd664fb180c5b02bf9c71f72b23d?pvs=21). Straight from the dashboard, you can create an API key.
+Store this value for later.
 
 ![Deepgram Dashboard](/images/examples/livekit-agent/deepgram-dashboard.png)
 
 - **OpenAI**
 
-You can signup for a OpenAI account [here](https://platform.openai.com/signup). You can then click “Dashboard” top right and then “API keys” in the left sidebar.
+You can signup for an OpenAI account [here](https://platform.openai.com/signup). You can then click “Dashboard” top right and then “API keys” in the left sidebar.
 Create an API key and store this value to use later.
 
 ![OpenAI Dashboard](/images/examples/livekit-agent/openai-dashboard.png)
@@ -226,7 +226,7 @@ async def entrypoint(ctx: JobContext):
             temperature=0.5,
         ),
         tts=cartesia.TTS(),
-        # intial ChatContext with system prompt
+        # initial ChatContext with system prompt
         chat_ctx=initial_ctx,
         # whether the agent can be interrupted
         allow_interruptions=True,
