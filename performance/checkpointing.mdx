@@ -135,9 +135,9 @@ The most common checkpoint failure is vLLM's default `fork` start method. Set `V
 
 The larger the size of the memory checkpoint, the slower the restore is. Reduce the size of the snapshot substantially and improve startup times by dropping the KV cache before checkpoint and recreating it after restore. vLLM has functionality that does this built in as part of [vLLM Sleep Mode](https://docs.vllm.ai/en/latest/features/sleep_mode/).
 
-<!-- The headings below are linked to by anchor from the checkpoint agent's
+{/* The headings below are linked to by anchor from the checkpoint agent's
 error messages (internal/agent/checkpoint_error.go). Renaming one breaks the
-link customers are told to follow. -->
+link customers are told to follow. */}
 
 ## When a checkpoint fails
 
@@ -152,9 +152,9 @@ The log line matters because most apps fire the request and never read the respo
 
 ## vLLM uses fork by default
 
-vLLM on Linux starts worker processes with `fork`. That is the default — you did not have to change anything to hit this. Forked workers inherit the parent's CUDA context, so CUDA is still live in a child process when we snapshot, and the checkpoint fails.
+vLLM on Linux starts worker processes with `fork`. That is the default. You did not have to change anything to hit this. Forked workers inherit the parent's CUDA context, so CUDA is still live in a child process when we snapshot, and the checkpoint fails.
 
-Set the start method to `spawn` **before** vLLM is imported:
+Set the start method to `spawn` **before** importing vLLM:
 
 ```python
 import os
@@ -166,7 +166,7 @@ from vllm import AsyncLLMEngine
 
 If vLLM is imported at module load, before your own code runs, set the same value as an [app secret](/other-topics/using-secrets) named `VLLM_WORKER_MULTIPROC_METHOD` with value `spawn`, then redeploy.
 
-This is the most common checkpoint failure. Other GPU servers that use Python `multiprocessing` with `fork` have the same incompatibility — switch them to `spawn` as well.
+This is the most common checkpoint failure. Other GPU servers that use Python `multiprocessing` with `fork` have the same incompatibility. Switch them to `spawn` as well.
 
 Redeploy after the change, wait for the new container to finish warming up, and call the checkpoint endpoint again.
 
@@ -182,10 +182,10 @@ A checkpoint cannot be taken while a process outside the snapshot still holds an
 
 CUDA Unified Memory (UVM, `cudaMallocManaged`) cannot be checkpointed. Unified allocations are managed by the driver across host and device, and the checkpointer has no way to capture that state, so it refuses the snapshot.
 
-Use ordinary device allocations instead — `cudaMalloc`, or PyTorch tensors moved to CUDA with `.to("cuda")`. If a dependency enables unified memory on your behalf, disable that option; if it cannot be disabled, the app cannot be checkpointed today.
+Use ordinary device allocations instead: `cudaMalloc`, or PyTorch tensors moved to CUDA with `.to("cuda")`. If a dependency enables unified memory on your behalf, disable that option; if it cannot be disabled, the app cannot be checkpointed today.
 
 ## Unknown cause
 
 The failure is not one of the causes above. The message says `checkpoint failed: unknown cause` rather than inventing a reason or returning a bare error.
 
-Some apps are not compatible yet, and some failure modes still need classifying. Email [support@cerebrium.ai](mailto:support@cerebrium.ai) with your app id and the time of the failed checkpoint so we can match it against the node logs and, where we can, turn it into a named cause on this page.
+Some apps are not compatible yet, and some failure modes still need classifying. Email [support@cerebrium.ai](mailto:support@cerebrium.ai) with your app ID and the time of the failed checkpoint. That lets us match it against the node logs and, where we can, turn it into a named cause on this page.
