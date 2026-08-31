@@ -115,3 +115,7 @@ def deserialize_saved_model(model_path, model_id, plaid=True):
 ```
 
 Note that your model does not need to be a Transformers or even a Hugging Face model. If you have a Diffusers, scikit-learn, or custom PyTorch model, you can still use Tensorizer to load your model from storage into GPU memory in a single step. The only requirement for deserialization speedup is that you can initialize an empty model. The deserializer object will then restore the weights into the empty model.
+
+<Note>
+  [Checkpointing](/cerebrium/other-topics/checkpointing) (experimental) snapshots a warmed-up container, including GPU memory, so the next cold start restores that snapshot instead of loading the model again. It does not work for every app — vLLM's default `fork` start method is the usual incompatibility.
+</Note>

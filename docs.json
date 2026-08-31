@@ -102,6 +102,7 @@
                   "cerebrium/other-topics/using-secrets",
                   "cerebrium/other-topics/request-response-logging",
                   "cerebrium/other-topics/faster-cold-starts",
+                  "cerebrium/other-topics/checkpointing",
                   "calculating-cost"
                 ]
               }
