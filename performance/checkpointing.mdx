@@ -135,9 +135,9 @@ The most common checkpoint failure is vLLM's default `fork` start method. Set `V
 
 The larger the size of the memory checkpoint, the slower the restore is. Reduce the size of the snapshot substantially and improve startup times by dropping the KV cache before checkpoint and recreating it after restore. vLLM has functionality that does this built in as part of [vLLM Sleep Mode](https://docs.vllm.ai/en/latest/features/sleep_mode/).
 
-{/* The headings below are linked to by anchor from the checkpoint agent's
+{/_ The headings below are linked to by anchor from the checkpoint agent's
 error messages (internal/agent/checkpoint_error.go). Renaming one breaks the
-link customers are told to follow. */}
+link customers are told to follow. _/}
 
 ## When a checkpoint fails
 
