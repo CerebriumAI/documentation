@@ -78,6 +78,13 @@ You can find several implementations in our [Examples repository on GitHub](http
 ### vLLM example
 
 ```python
+import os
+
+# vLLM on Linux forks workers by default. Forked workers inherit the
+# parent's CUDA context and the checkpoint will fail. Set this before
+# importing vLLM. See "vLLM uses fork by default" below.
+os.environ["VLLM_WORKER_MULTIPROC_METHOD"] = "spawn"
+
 from vllm import AsyncLLMEngine
 from vllm.engine.arg_utils import AsyncEngineArgs
 import http
@@ -124,4 +131,61 @@ engine.wake_up()
 
 vLLM checkpointing support is not complete but is still possible. See [vllm-project/vllm#34303](https://github.com/vllm-project/vllm/issues/34303) and related issues.
 
+The most common checkpoint failure is vLLM's default `fork` start method. Set `VLLM_WORKER_MULTIPROC_METHOD=spawn` before importing vLLM. See [vLLM uses fork by default](#vllm-uses-fork-by-default).
+
 The larger the size of the memory checkpoint, the slower the restore is. Reduce the size of the snapshot substantially and improve startup times by dropping the KV cache before checkpoint and recreating it after restore. vLLM has functionality that does this built in as part of [vLLM Sleep Mode](https://docs.vllm.ai/en/latest/features/sleep_mode/).
+
+<!-- The headings below are linked to by anchor from the checkpoint agent's
+error messages (internal/agent/checkpoint_error.go). Renaming one breaks the
+link customers are told to follow. -->
+
+## When a checkpoint fails
+
+A failed checkpoint reports a specific reason and a link to the matching section below. If we cannot classify the failure, the message says so rather than returning an empty or misleading error.
+
+You will see the same reason in two places:
+
+- The response body, as `{"status": "error", "message": "..."}` with HTTP 500.
+- Your container logs, on a line beginning `CEREBRIUM_CHECKPOINT_FAILED`.
+
+The log line matters because most apps fire the request and never read the response. Search your logs for `CEREBRIUM_CHECKPOINT` to see the start, success, and failure markers.
+
+## vLLM uses fork by default
+
+vLLM on Linux starts worker processes with `fork`. That is the default — you did not have to change anything to hit this. Forked workers inherit the parent's CUDA context, so CUDA is still live in a child process when we snapshot, and the checkpoint fails.
+
+Set the start method to `spawn` **before** vLLM is imported:
+
+```python
+import os
+
+os.environ["VLLM_WORKER_MULTIPROC_METHOD"] = "spawn"
+
+from vllm import AsyncLLMEngine
+```
+
+If vLLM is imported at module load, before your own code runs, set the same value as an [app secret](/other-topics/using-secrets) named `VLLM_WORKER_MULTIPROC_METHOD` with value `spawn`, then redeploy.
+
+This is the most common checkpoint failure. Other GPU servers that use Python `multiprocessing` with `fork` have the same incompatibility — switch them to `spawn` as well.
+
+Redeploy after the change, wait for the new container to finish warming up, and call the checkpoint endpoint again.
+
+## Open GPU file descriptors
+
+A checkpoint cannot be taken while a process outside the snapshot still holds an NVIDIA device file open. That usually means a child inherited the GPU after `fork`, or a worker was left holding the device (for example a PyTorch `DataLoader` with `num_workers > 0` that touched CUDA).
+
+- Prefer `spawn` over `fork` for any process that uses the GPU, as in the [vLLM section](#vllm-uses-fork-by-default).
+- Do not initialize CUDA in the parent and then fork.
+- Shut down GPU worker processes you no longer need before checkpointing.
+
+## CUDA Unified Memory
+
+CUDA Unified Memory (UVM, `cudaMallocManaged`) cannot be checkpointed. Unified allocations are managed by the driver across host and device, and the checkpointer has no way to capture that state, so it refuses the snapshot.
+
+Use ordinary device allocations instead — `cudaMalloc`, or PyTorch tensors moved to CUDA with `.to("cuda")`. If a dependency enables unified memory on your behalf, disable that option; if it cannot be disabled, the app cannot be checkpointed today.
+
+## Unknown cause
+
+The failure is not one of the causes above. The message says `checkpoint failed: unknown cause` rather than inventing a reason or returning a bare error.
+
+Some apps are not compatible yet, and some failure modes still need classifying. Email [support@cerebrium.ai](mailto:support@cerebrium.ai) with your app id and the time of the failed checkpoint so we can match it against the node logs and, where we can, turn it into a named cause on this page.
