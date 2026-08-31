@@ -1,0 +1,87 @@
+---
+title: Using GPUs
+description: Choose from NVIDIA GPUs like H100, A100, and L40s on Cerebrium, set GPU type and count in cerebrium.toml, and check plan availability for each type.
+---
+
+GPUs accelerate computational workloads through parallel processing. Originally designed for graphics rendering, modern GPUs are essential for AI models, large-scale data processing, and other compute-intensive applications.
+
+Cerebrium provides GPU access through configuration in the `cerebrium.toml` file, without requiring infrastructure management.
+
+## Specifying GPUs
+
+Configure GPUs in the `[cerebrium.hardware]` section of `cerebrium.toml`, specifying the type (`compute` parameter) and quantity (`gpu_count`). Additional deployment and scaling considerations are covered in the sections below.
+
+## Available GPUs
+
+The platform offers GPUs ranging from cost-effective development options to high-end enterprise hardware, alongside CPU-only compute and AWS accelerators.
+
+| Compute         | Identifier        | VRAM (GB) | Max GPUs | Plan required |
+| --------------- | ----------------- | --------- | -------- | ------------- |
+| NVIDIA B200     | BLACKWELL_B200    | 180       | 8        | Standard+     |
+| NVIDIA H200     | HOPPER_H200       | 141       | 8        | Standard+     |
+| NVIDIA H100     | HOPPER_H100       | 80        | 8        | Standard+     |
+| RTX PRO 6000    | BLACKWELL_RTX6000 | 96        | 8        | Standard+     |
+| NVIDIA A100     | AMPERE_A100_80GB  | 80        | 8        | Standard+     |
+| NVIDIA A100     | AMPERE_A100_40GB  | 40        | 8        | Standard+     |
+| NVIDIA L40s     | ADA_L40           | 48        | 8        | Hobby+        |
+| NVIDIA L4       | ADA_L4            | 24        | 8        | Hobby+        |
+| NVIDIA A10      | AMPERE_A10        | 24        | 8        | Hobby+        |
+| NVIDIA T4       | TURING_T4         | 16        | 8        | Hobby+        |
+| AWS Inferentia2 | INF2              | 32        | 8        | Hobby+        |
+| AWS Trainium    | TRN1              | 32        | 8        | Enterprise    |
+| CPU only        | CPU               | -         | -        | Hobby+        |
+
+<Info>
+  The identifier is used in the `cerebrium.toml` file. It consists of the GPU
+  model generation and model name to avoid ambiguity.
+</Info>
+
+### Plan Availability
+
+Compute types are gated by plan:
+
+- **Hobby** (6 types): CPU, TURING_T4, AMPERE_A10, ADA_L4, ADA_L40, INF2
+- **Standard** (12 types): everything in Hobby, plus AMPERE_A100_40GB, AMPERE_A100_80GB, HOPPER_H100, HOPPER_H200, BLACKWELL_B200, BLACKWELL_RTX6000
+- **Enterprise** (all 13 types): everything in Standard, plus TRN1
+
+Deploying with a compute type outside the project's plan is rejected at deploy time. [Upgrade the plan](https://dashboard.cerebrium.ai) or contact [sales@cerebrium.ai](mailto:sales@cerebrium.ai) for per-project exceptions.
+
+<Tip>
+  GPU selection is also possible using the `--compute` and `--gpu-count` flags
+  during application initialization.
+</Tip>
+
+## Multi-GPU Configuration
+
+Configure multiple GPUs in the `cerebrium.toml` file:
+
+```toml
+[cerebrium.hardware]
+compute = "AMPERE_A100_80GB"
+gpu_count = 4        # Number of GPUs needed
+cpu = 8
+memory = 128.0
+```
+
+## GPU Preference Lists
+
+The `compute` parameter also accepts a list of acceptable GPU types in preference order. The platform allocates the most preferred type with available capacity and falls back to the next entry when needed:
+
+```toml
+[cerebrium.hardware]
+compute = ["HOPPER_H100", "HOPPER_H200", "AMPERE_A100_80GB"]
+gpu_count = 1
+cpu = 8
+memory = 128.0
+```
+
+- Up to 5 entries, ordered from most to least preferred
+- All entries must belong to the same hardware family. NVIDIA GPU types cannot be mixed with CPU or AWS accelerators (INF2, TRN1)
+- `cerebrium run` uses only the first entry
+
+Accepting more GPU types widens the pool of capacity an app can run on and reduces the likelihood of request queuing.
+
+## Availability
+
+GPU availability varies by region and provider. Narrowing the provider and region constraints increases the likelihood of request queuing. See [GPU availability by region](/deployments/multi-region-deployment#gpu-availability-by-region).
+For guaranteed burst capacity, contact the [enterprise plan](mailto:sales@cerebrium.ai) team.

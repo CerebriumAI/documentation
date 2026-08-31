@@ -1,0 +1,162 @@
+---
+title: Multi-Region Deployment
+description: Run a Cerebrium app globally across multiple regions for more GPU capacity and lower latency, or pin it to one region for data residency needs.
+---
+
+Deploy an app once and run it in multiple regions. The `region` parameter in `cerebrium.toml` controls placement: run globally on whatever capacity is available (recommended), or pin the app to a specific region. The parameter is optional; when omitted, the platform chooses placement automatically based on the app's hardware requirements.
+
+<Warning>
+  Multi-region deployment is currently in **beta**. We will make rapid updates
+  and improvements over the next few months to bring full functionality to life.
+  Please reach out on our [Discord](https://discord.gg/ATj6USmeE2) about
+  features/functionality you would like to see.
+</Warning>
+
+## Why Use Multi-Region Deployment
+
+- **More capacity, less queueing**: An app that can run anywhere draws on the GPU capacity of every region. Constraining placement shrinks the pool of available hardware.
+- **High availability**: Traffic shifts away from degraded or busy regions automatically.
+- **Reduced latency**: Requests are routed to healthy capacity, preferring lower-latency regions.
+- **Data residency**: Pin an app to a region to keep sensitive data within a specific geographic region and comply with regulations like GDPR and CCPA.
+- **No duplicate apps**: One app, one endpoint, and one configuration instead of a separate deployment per region.
+
+## Run Globally
+
+Set `region = "global"` to let the platform place the app in any region with available capacity that matches its hardware requirements:
+
+```toml
+[cerebrium.hardware]
+region = "global"
+compute = "AMPERE_A10"
+cpu = 2
+memory = 8.0
+```
+
+When Cerebrium brings new capacity online, global apps can run there without a configuration change or redeploy.
+
+<Note>
+  Geography-based placement is coming soon. This constrains an app to a
+  geographic area such as the US or the EU to meet data-residency requirements.
+</Note>
+
+## Pin a Region
+
+Set `region` to a specific region to run the app only there:
+
+```toml
+[cerebrium.hardware]
+region = "us-east-1"
+compute = "AMPERE_A10"
+cpu = 2
+memory = 8.0
+```
+
+Pinning guarantees placement in that region but limits the app to that region's capacity, which increases the likelihood of request queuing when the region is busy.
+
+### Available Regions
+
+#### United States
+
+- **us-east-1** (N. Virginia)
+- **us-central1** (Kansas City)
+
+#### Europe
+
+- **eu-north-1** (Stockholm)
+- **eu-north1** (Finland)
+
+#### Available on request
+
+Contact [support](mailto:support@cerebrium.ai) to enable access to these regions:
+
+- **us-west-2** (Oregon)
+- **eu-west-2** (United Kingdom)
+- **eu-central-1** (Frankfurt)
+- **ap-south-1** (Mumbai)
+- **ap-northeast-1** (Tokyo)
+- **sa-east-1** (São Paulo)
+- **ca-central-1** (Montreal)
+- **me-central-1** (Dubai)
+
+<Info>
+  Some regions run on cloud providers other than AWS: when pinning `us-central1`
+  or `eu-north1`, set `provider = "nebius"`.
+</Info>
+
+## Hardware Preferences
+
+Placement respects both the region and the hardware requirements of an app. Specify acceptable GPU types in preference order with a `compute` list (see [GPU preference lists](/hardware/using-gpus#gpu-preference-lists)):
+
+```toml
+[cerebrium.hardware]
+region = "global"
+compute = ["HOPPER_H100", "HOPPER_H200", "AMPERE_A100_80GB"]
+```
+
+The set of eligible regions is the intersection of both constraints: any region with several acceptable GPU types is the widest pool; one region with a single GPU type is the narrowest.
+
+## Endpoints
+
+Apps keep a single endpoint no matter how many regions they run in:
+
+```text
+https://api.cerebrium.ai/v4/p-xxxxxxxx/{app-name}/{function-name}
+```
+
+Requests enter through the global router and are directed to a region where the app is running. Regioned hostnames continue to work but add a proxy hop. See [REST API](/endpoints/inference-api).
+
+## How Requests Are Routed
+
+- A request enters through the region closest to where it is made, then routes to a region with a warm instance before a cold start is triggered elsewhere.
+- Routing prefers lower-latency regions but does not guarantee the nearest region.
+- There is no session affinity. Consecutive requests can be served from different regions.
+
+## Scaling Across Regions
+
+`min_replicas`, `max_replicas`, and `scaling_buffer` apply to the app as a whole, not per region. The platform distributes instances across eligible regions based on traffic and available capacity.
+
+View where containers are running:
+
+```bash
+cerebrium containers list my-app
+```
+
+The output includes the region of each container.
+
+## Storage
+
+Persistent storage is managed per region: an app has an independent `/persistent-storage` volume in each region it runs in, however placement is configured. Files written in one region are not guaranteed to be available in other regions. Region-local caches, such as model weights downloaded on first load, fill independently per region.
+
+Apps deployed with `region = "global"` also mount `/global-persistent-storage`, a single volume shared across every region the app runs in. Files written there are visible from all regions, and reads are cached per region. Use the global volume for data that must be available everywhere and `/persistent-storage` for region-local data. Manage files on the global volume by passing `--region global` to the file commands. See [Managing Files](/storage/managing-files#global-storage).
+
+Target a region with the file commands using `--region` (or its short form `-r`). This works for all file commands: `cp`, `ls`, `rm`, and `download`.
+
+```bash
+cerebrium ls --region eu-north-1
+cerebrium cp model.bin -r eu-north-1
+```
+
+Set a default region for CLI commands:
+
+```bash
+cerebrium region set us-east-1
+```
+
+<Info>
+  `--region` applies only to the command it's attached to. The default set by
+  `cerebrium region set` is not modified.
+</Info>
+
+## GPU Availability by Region
+
+GPU availability varies across regions due to infrastructure constraints and local demand. CPU workloads run in every region.
+
+| Region                  | Available GPUs                                                                                                                   |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| us-east-1               | BLACKWELL_B200, HOPPER_H200, HOPPER_H100, AMPERE_A100_80GB, AMPERE_A100_40GB, ADA_L40, ADA_L4, AMPERE_A10, TURING_T4, INF2, TRN1 |
+| us-central1             | BLACKWELL_RTX6000, BLACKWELL_B200, HOPPER_H200                                                                                   |
+| eu-north1 (Finland)     | HOPPER_H200, HOPPER_H100, ADA_L40                                                                                                |
+| us-west-2 (on request)  | HOPPER_H200, HOPPER_H100, AMPERE_A100_80GB, AMPERE_A100_40GB, ADA_L40, ADA_L4, AMPERE_A10, INF2, TRN1                            |
+| eu-west-2 (on request)  | HOPPER_H100, AMPERE_A10, ADA_L4, TURING_T4                                                                                       |
+| eu-north-1 (Stockholm)  | HOPPER_H100, ADA_L40, ADA_L4, AMPERE_A10, TURING_T4, INF2, TRN1                                                                  |
+| ap-south-1 (on request) | ADA_L4, AMPERE_A10, TURING_T4                                                                                                    |

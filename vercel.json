@@ -1,0 +1,85 @@
+{
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/docs",
+      "permanent": true
+    },
+    {
+      "source": "/docs/cerebrium",
+      "destination": "/docs",
+      "permanent": true
+    },
+    {
+      "source": "/docs/cerebrium/:path(.*)",
+      "destination": "/docs/:path",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/_mintlify/:path*",
+      "destination": "https://cerebrium.mintlify.site/_mintlify/:path*"
+    },
+    {
+      "source": "/api/request",
+      "destination": "https://cerebrium.mintlify.site/_mintlify/api/request"
+    },
+    {
+      "source": "/cerebrium",
+      "destination": "https://cerebrium.mintlify.site/docs"
+    },
+    {
+      "source": "/cerebrium/:path*",
+      "destination": "https://cerebrium.mintlify.site/docs/:path*"
+    },
+    {
+      "source": "/docs",
+      "destination": "https://cerebrium.mintlify.site/docs"
+    },
+    {
+      "source": "/docs/llms.txt",
+      "destination": "https://cerebrium.mintlify.site/docs/llms.txt"
+    },
+    {
+      "source": "/docs/llms-full.txt",
+      "destination": "https://cerebrium.mintlify.site/docs/llms-full.txt"
+    },
+    {
+      "source": "/docs/sitemap.xml",
+      "destination": "https://cerebrium.mintlify.site/docs/sitemap.xml"
+    },
+    {
+      "source": "/docs/robots.txt",
+      "destination": "https://cerebrium.mintlify.site/docs/robots.txt"
+    },
+    {
+      "source": "/docs/mcp",
+      "destination": "https://cerebrium.mintlify.site/docs/mcp"
+    },
+    {
+      "source": "/.well-known/mcp.json",
+      "destination": "https://cerebrium.mintlify.site/docs/.well-known/mcp.json"
+    },
+    {
+      "source": "/.well-known/skills/:path*",
+      "destination": "https://cerebrium.mintlify.site/docs/.well-known/skills/:path*"
+    },
+    {
+      "source": "/.well-known/agent-skills/:path*",
+      "destination": "https://cerebrium.mintlify.site/docs/.well-known/agent-skills/:path*"
+    },
+    {
+      "source": "/.well-known/agent-card.json",
+      "destination": "https://cerebrium.mintlify.site/docs/.well-known/agent-card.json"
+    },
+    {
+      "source": "/docs/:path*",
+      "destination": "https://cerebrium.mintlify.site/docs/:path*"
+    },
+    {
+      "source": "/mintlify-assets/:path+",
+      "destination": "https://cerebrium.mintlify.site/mintlify-assets/:path+"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+---
+title: "REST API"
+description: Call your Cerebrium apps over the REST API with POST requests and JWT authentication, and understand response formats and HTTP status codes.
+---
+
+All functions on Cerebrium are accessible via POST requests, unless marked private by prefixing the function name with an underscore (e.g. `_private_function()`). Authenticate using the JWT token from the **API Keys** section of the dashboard. Endpoints require this token only when `cerebrium.toml` sets [`disable_auth = false`](/toml-reference/toml-reference). Authentication is disabled by default.
+
+## Request format
+
+The POST request follows the structure below, where `{function}` is the name of the function to invoke. This example calls `predict()` from `main.py`.
+
+```bash
+curl --location --request POST 'https://api.cerebrium.ai/v4/p-xxxxxxxx/{app-name}/{function}' \
+--header 'Authorization: Bearer <JWT_TOKEN>' \
+--header 'Content-Type: application/json' \
+--data '{
+  "function_param": "data"
+}'
+```
+
+<Note>
+  Regioned hostnames such as `https://api.aws.us-east-1.cerebrium.ai` continue
+  to work. Requests to these hostnames are proxied to the global router, which
+  can add latency. Use `https://api.cerebrium.ai` for the lowest-latency path.
+</Note>
+
+## Response format
+
+Responses follow this format:
+
+```json
+{
+  "run_id": "52eda406-b81b-43f5-8deb-fcf80dfsb74b",
+  "run_time_ms": 326.34,
+  "result": { "some": "data" }
+}
+```
+
+## Status codes
+
+- `200` → the function completed successfully
+- `401` / `403` → authentication or authorization failed
+- `404` → the app or function path could not be found
+- `5xx` → either your app raised an exception or the platform could not complete the request
+
+To return a custom status code such as `422` or `404`, include a `status_code` field in the JSON response from `main.py`.
+
+<Note>
+  When debugging a failed request, check the HTTP status code and the app logs
+  in the Cerebrium dashboard. Inspecting the request payload, logs, and `run_id`
+  together speeds up diagnosis.
+</Note>

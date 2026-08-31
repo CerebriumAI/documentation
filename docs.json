@@ -3,7 +3,7 @@
   "theme": "mint",
   "css": "/custom.css",
   "name": "Cerebrium",
-  "description": "Cerebrium developer documentation to help you build, deploy, and scale AI applications on serverless compute. Learn about serverless GPUs and CPUs, long-running jobs, fine-tuning, hosting LLMs and voice agents, observability, cold starts, and multi-region deployments.",
+  "description": "Cerebrium developer documentation for real-time and production AI workloads. Learn how to deploy low-latency inference APIs, voice agents, multi-region apps, serverless GPUs and CPUs, and workloads that need strong cold-start and scaling performance.",
   "colors": {
     "primary": "#EB3A6F",
     "light": "#F393B0",
@@ -23,86 +23,89 @@
             "groups": [
               {
                 "group": "Getting Started",
-                "pages": ["cerebrium/getting-started/introduction"]
+                "pages": ["getting-started/introduction"]
               },
               {
                 "group": "Container Images",
                 "pages": [
-                  "cerebrium/container-images/defining-container-images",
-                  "cerebrium/container-images/custom-web-servers",
-                  "cerebrium/container-images/custom-dockerfiles",
-                  "cerebrium/container-images/private-docker-registry"
+                  "container-images/defining-container-images",
+                  "container-images/custom-web-servers",
+                  "container-images/custom-dockerfiles",
+                  "container-images/private-docker-registry"
                 ]
               },
               {
                 "group": "GPUs and Compute Resources",
                 "pages": [
-                  "cerebrium/hardware/using-gpus",
-                  "cerebrium/hardware/using-cuda",
-                  "cerebrium/hardware/cpu-and-memory"
+                  "hardware/using-gpus",
+                  "hardware/using-cuda",
+                  "hardware/cpu-and-memory"
+                ]
+              },
+              {
+                "group": "Performance",
+                "pages": [
+                  "performance/faster-cold-starts",
+                  "performance/checkpointing"
                 ]
               },
               {
                 "group": "Scaling apps",
                 "pages": [
-                  "cerebrium/scaling/scaling-apps",
-                  "cerebrium/scaling/graceful-termination",
-                  "cerebrium/scaling/batching-concurrency"
+                  "scaling/scaling-apps",
+                  "scaling/graceful-termination",
+                  "scaling/batching-concurrency"
                 ]
               },
               {
                 "group": "Deployments",
                 "pages": [
-                  "cerebrium/deployments/ci-cd",
-                  "cerebrium/deployments/gradual-roll-out",
-                  "cerebrium/deployments/multi-region-deployment"
+                  "deployments/ci-cd",
+                  "deployments/gradual-roll-out",
+                  "deployments/multi-region-deployment"
                 ]
               },
               {
                 "group": "Endpoints",
                 "pages": [
-                  "cerebrium/endpoints/openai-compatible-endpoints",
-                  "cerebrium/endpoints/inference-api",
-                  "cerebrium/endpoints/streaming",
-                  "cerebrium/endpoints/websockets",
-                  "cerebrium/endpoints/webhook",
-                  "cerebrium/endpoints/async"
+                  "endpoints/inference-api",
+                  "endpoints/streaming",
+                  "endpoints/websockets",
+                  "endpoints/webhook",
+                  "endpoints/async",
+                  "endpoints/openai-compatible-endpoints"
                 ]
               },
               {
                 "group": "Networking",
                 "pages": [
-                  "cerebrium/networking/custom-domains",
-                  "cerebrium/networking/inter-cluster-routing"
+                  "networking/custom-domains",
+                  "networking/inter-cluster-routing"
                 ]
               },
               {
                 "group": "Storage",
-                "pages": ["cerebrium/storage/managing-files"]
+                "pages": ["storage/managing-files"]
               },
               {
                 "group": "Partner Services",
+                "tag": "Beta",
                 "pages": [
-                  "cerebrium/partner-services/index",
-                  "cerebrium/partner-services/deepgram",
-                  "cerebrium/partner-services/rime"
+                  "partner-services/index",
+                  "partner-services/deepgram",
+                  "partner-services/rime"
                 ]
               },
               {
                 "group": "Integrations",
-                "pages": [
-                  "cerebrium/integrations/metrics-export",
-                  "cerebrium/integrations/vercel"
-                ]
+                "pages": ["integrations/metrics-export"]
               },
               {
                 "group": "Other concepts",
                 "pages": [
                   "security",
-                  "cerebrium/other-topics/using-secrets",
-                  "cerebrium/other-topics/request-response-logging",
-                  "cerebrium/other-topics/faster-cold-starts",
-                  "cerebrium/other-topics/checkpointing",
+                  "other-topics/using-secrets",
+                  "other-topics/request-response-logging",
                   "calculating-cost"
                 ]
               }
@@ -230,7 +233,7 @@
   "seo": {
     "indexing": "navigable",
     "metatags": {
-      "description": "Cerebrium developer documentation to help you build, deploy, and scale AI applications on serverless compute. Learn about serverless GPUs and CPUs, long-running jobs, fine-tuning, hosting LLMs and voice agents, observability, cold starts, and multi-region deployments.",
+      "description": "Cerebrium developer documentation for real-time and production AI workloads. Learn how to deploy low-latency inference APIs, voice agents, multi-region apps, serverless GPUs and CPUs, and workloads that need strong cold-start and scaling performance.",
       "keywords": "Cerebrium, serverless GPUs, AI infrastructure, hosting Large Language Models, AI voice agents, Real-time AI",
       "language": "en",
       "copyright": "Copyright 2025"
@@ -238,6 +241,24 @@
   },
   "search": {
     "prompt": "Search Cerebrium docs..."
+  },
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "download-spec",
+      "assistant",
+      "mcp",
+      "add-mcp",
+      "cursor",
+      "vscode",
+      "chatgpt",
+      "claude",
+      "perplexity"
+    ]
+  },
+  "markdown": {
+    "instructions": "Cerebrium's documentation MCP server is available at https://cerebrium.ai/docs/mcp for searching and querying these docs directly. Install the Cerebrium agent skill with `npx skills add https://cerebrium.ai/docs`. Append .md to any docs page URL to fetch that page as plain Markdown. API keys and authentication tokens are created in the Cerebrium dashboard at https://dashboard.cerebrium.ai."
   },
   "logo": {
     "light": "/logo/light.svg",
@@ -271,12 +292,711 @@
       "github": "https://www.linkedin.com/company/cerebrium"
     }
   },
+  "redirects": [
+    {
+      "source": "/cerebrium/:slug*",
+      "destination": "/:slug*"
+    },
+    {
+      "source": "/docs/cerebrium/:slug*",
+      "destination": "/:slug*"
+    },
+    {
+      "source": "/api-reference/subscriptions/remove-project-payment-method",
+      "destination": "/api-reference/subscriptions/remove-payment-method"
+    },
+    {
+      "source": "/v3/examples/logo-controlnet",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/api-reference/apps/list-app-containers",
+      "destination": "/api-reference/containers/list-containers"
+    },
+    {
+      "source": "/quickstarts/custom",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/v3/examples/tensorRT",
+      "destination": "/v4/examples/deploy-an-llm-with-tensorrtllm-tritonserver"
+    },
+    {
+      "source": "/conduit/advanced-functionality/model-ensembles",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/cortex/examples/segment_anything",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/getting-started/installation",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/quickstarts/pytorch",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/api-reference/subscriptions/get-project-payment-url",
+      "destination": "/api-reference/subscriptions/get-payment-url"
+    },
+    {
+      "source": "/cortex/advanced-functionality/using-secrets",
+      "destination": "/other-topics/using-secrets"
+    },
+    {
+      "source": "/deployments/async-functions",
+      "destination": "/endpoints/async"
+    },
+    {
+      "source": "/prebuilt-models/language-models/GPT-Neo",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/quickstarts/spacy",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/advanced-functionality/persistent-storage",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/api-reference/builds/rebuild-build",
+      "destination": "/api-reference/builds/rebuild"
+    },
+    {
+      "source": "/conduit/examples/xgboost",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/development/serve",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/environments/warm-models",
+      "destination": "/container-images/defining-container-images"
+    },
+    {
+      "source": "/faqs-and-help/fast-deployments-dos-and-donts",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/other-topics/faster-cold-starts",
+      "destination": "/performance/faster-cold-starts"
+    },
+    {
+      "source": "/prebuilt-models/image-models/custom-dreambooth",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/prebuilt-models/image-models/img2text",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/prebuilt-models/other-models/salesforce-codegen",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/quickstarts/huggingface/onnx-conversion",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/v3/examples/streaming-falcon-7B",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/v4/examples/langchain_langsmith",
+      "destination": "/v4/examples/langchain-langsmith"
+    },
+    {
+      "source": "/api-reference/apps/list-app-containers-1",
+      "destination": "/api-reference/containers/list-containers"
+    },
+    {
+      "source": "/api-reference/list-all-tokens-for-a-service-account",
+      "destination": "/api-reference/service-accounts/list-service-accounts"
+    },
+    {
+      "source": "/conduit/advanced-functionality/test-locally",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/conduit/advanced-functionality/using-files",
+      "destination": "/storage/managing-files"
+    },
+    {
+      "source": "/conduit/examples/huggingface/transformers",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/cortex/advanced-functionality/long-running-tasks",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/cortex/build-status",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/fine-tuning/language-models/introduction",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/fine-tuning/language-models/training",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/prebuilt-models/image-models/stable-diffusion-2",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/prebuilt-models/introduction",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/quickstarts/huggingface/transformers",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/quickstarts/scikit",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/v3/examples/comfyUI",
+      "destination": "/v4/examples/comfyUI"
+    },
+    {
+      "source": "/advanced-functionality/model-ensembles",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/advanced-functionality/persistent-memory",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/api-reference/apps/stop-app-container",
+      "destination": "/api-reference/containers/stop-container"
+    },
+    {
+      "source": "/api-reference/subscriptions/get-project-subscription",
+      "destination": "/api-reference/subscriptions/get-subscription"
+    },
+    {
+      "source": "/conduit/advanced-functionality/persistent-memory",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/conduit/advanced-functionality/processing-functions",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/conduit/advanced-functionality/using-secrets",
+      "destination": "/other-topics/using-secrets"
+    },
+    {
+      "source": "/conduit/advanced-functionality/using-webhook-endpoints",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/conduit/examples/pytorch",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/conduit/examples/spacy",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/cortex/advanced-functionality/async-functions",
+      "destination": "/endpoints/async"
+    },
+    {
+      "source": "/cortex/examples/langchain",
+      "destination": "/v4/examples/langchain-langsmith"
+    },
+    {
+      "source": "/cortex/model-status",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/endpoints/rest-api",
+      "destination": "/endpoints/inference-api"
+    },
+    {
+      "source": "/examples/langchain",
+      "destination": "/v4/examples/langchain-langsmith"
+    },
+    {
+      "source": "/fine-tuning/diffusion-models/dataset",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/fine-tuning/diffusion-models/introduction",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/fine-tuning/diffusion-models/training",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/fine-tuning/language-models/config",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/fine-tuning/language-models/model-specific-docs/training-falcon",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/fine-tuning/language-models/model-specific-docs/training-llama2",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/installation",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/introduction",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/prebuilt-models/image-models/controlnet",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/prebuilt-models/image-models/segment-anything",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/prebuilt-models/language-models/roberta",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/prebuilt-models/language-models/tortoise",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/quickstarts/xgboost",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/roadmap",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/test-and-deploy",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/v3/examples/mistral-vllm",
+      "destination": "/v4/examples/openai-compatible-endpoint-vllm"
+    },
+    {
+      "source": "/v4/examples/tensorRT",
+      "destination": "/v4/examples/deploy-an-llm-with-tensorrtllm-tritonserver"
+    },
+    {
+      "source": "/advanced-functionality/using-files",
+      "destination": "/storage/managing-files"
+    },
+    {
+      "source": "/api-reference/apps/create-app-if-it-does-not-exist",
+      "destination": "/api-reference/apps/create-app"
+    },
+    {
+      "source": "/api-reference/apps/get-app-metrics",
+      "destination": "/api-reference/apps/get-app-resource-metrics"
+    },
+    {
+      "source": "/api-reference/apps/get-app-resource-metrics-cpu-memory-gpu",
+      "destination": "/api-reference/apps/get-app-resource-metrics"
+    },
+    {
+      "source": "/api-reference/create-a-new-service-account",
+      "destination": "/api-reference/service-accounts/create-service-account"
+    },
+    {
+      "source": "/api-reference/create-api-key",
+      "destination": "/api-reference/api-keys/create-api-key"
+    },
+    {
+      "source": "/api-reference/list-api-keys",
+      "destination": "/api-reference/api-keys/list-api-keys"
+    },
+    {
+      "source": "/api-reference/projects/list-containers",
+      "destination": "/api-reference/containers/list-containers"
+    },
+    {
+      "source": "/api-reference/subscriptions/get-project-payment-methods",
+      "destination": "/api-reference/subscriptions/remove-payment-method"
+    },
+    {
+      "source": "/api-reference/update-service-account-grants",
+      "destination": "/api-reference/service-accounts/update-service-account"
+    },
+    {
+      "source": "/api-reference/users/list-project-users",
+      "destination": "/api-reference/projects/list-projects"
+    },
+    {
+      "source": "/conduit/advanced-functionality/saving-files",
+      "destination": "/storage/managing-files"
+    },
+    {
+      "source": "/conduit/examples/huggingface/onnx-conversion",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/conduit/examples/onnx",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/conduit/examples/tensorflow",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/conduit/introduction",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/conduit/model-status",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/cortex/advanced-functionality/config-files",
+      "destination": "/toml-reference/toml-reference"
+    },
+    {
+      "source": "/cortex/advanced-functionality/init-cortex-project",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/environments/custom-images",
+      "destination": "/container-images/defining-container-images"
+    },
+    {
+      "source": "/environments/initial-setup",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/environments/using-secrets",
+      "destination": "/other-topics/using-secrets"
+    },
+    {
+      "source": "/examples",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/examples/logo-controlnet",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/fine-tuning/language-models/dataset",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/misc/faster-model-loading",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/prebuilt-models/image-models/stable-diffusion-upscaler",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/prebuilt-models/language-models/falcon",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/prebuilt-models/language-models/flanT5",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/prebuilt-models/language-models/mt0",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/pricing",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/quickstarts/onnx",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/quickstarts/tensorflow",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/v3/examples/transcribe-whisper",
+      "destination": "/v4/examples/transcribe-whisper"
+    },
+    {
+      "source": "/advanced-functionality",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/advanced-functionality/processing-functions",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/api-reference/authentication/authorization-token",
+      "destination": "/api-reference/apps/list-apps"
+    },
+    {
+      "source": "/api-reference/projects/modify-project-onboarding",
+      "destination": "/api-reference/projects/modify-project"
+    },
+    {
+      "source": "/api-reference/subscriptions/change-project-plan",
+      "destination": "/api-reference/subscriptions/change-plan"
+    },
+    {
+      "source": "/api-reference/subscriptions/get-project-invoices",
+      "destination": "/api-reference/projects/get-project-cost"
+    },
+    {
+      "source": "/available-hardware/regions",
+      "destination": "/deployments/multi-region-deployment"
+    },
+    {
+      "source": "/conduit/examples/scikit",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/configuration/toml-reference",
+      "destination": "/toml-reference/toml-reference"
+    },
+    {
+      "source": "/container-images/custom-python-web-servers",
+      "destination": "/container-images/custom-web-servers"
+    },
+    {
+      "source": "/container-images/using-private-docker-registries",
+      "destination": "/container-images/private-docker-registry"
+    },
+    {
+      "source": "/cortex/advanced-functionality/persistent-storage",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/cortex/examples/stable_diffusion",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/deployments/gpu-deployments",
+      "destination": "/hardware/using-gpus"
+    },
+    {
+      "source": "/deployments/long-running-tasks",
+      "destination": "/endpoints/async"
+    },
+    {
+      "source": "/environments/config-files",
+      "destination": "/toml-reference/toml-reference"
+    },
+    {
+      "source": "/environments/legacy-yaml-config",
+      "destination": "/toml-reference/toml-reference"
+    },
+    {
+      "source": "/environments/model-scaling",
+      "destination": "/scaling/scaling-apps"
+    },
+    {
+      "source": "/environments/multi-gpu-inferencing",
+      "destination": "/hardware/using-gpus"
+    },
+    {
+      "source": "/examples/mistral-vllm",
+      "destination": "/v4/examples/openai-compatible-endpoint-vllm"
+    },
+    {
+      "source": "/examples/segment_anything",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/examples/stable_diffusion",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/examples/streaming-falcon-7B",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/examples/transcribe-whisper",
+      "destination": "/v4/examples/transcribe-whisper"
+    },
+    {
+      "source": "/faqs-and-help/fitting-large-models-on-small-gpus",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/fine-tuning/diffusion-models/config",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/fine-tuning/language-models/custom-templates",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/introduction/overview",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/other-concepts/security-and-data-privacy",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/other-topics/fast-deployments-dos-and-donts",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/other-topics/faster-model-loading",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/prebuilt-models",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/prebuilt-models/deployment",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/prebuilt-models/image-models/esrgan-upscaler",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/prebuilt-models/image-models/img2img-stable-diffusion",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/prebuilt-models/language-models/llamav2",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/prebuilt-models/language-models/pygmalion",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/prebuilt-models/language-models/whisper",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/scaling/batching-and-concurrency",
+      "destination": "/scaling/batching-concurrency"
+    },
+    {
+      "source": "/scaling/container-images/defining-container-images",
+      "destination": "/container-images/defining-container-images"
+    },
+    {
+      "source": "/v3/examples/langchain",
+      "destination": "/v4/examples/langchain-langsmith"
+    },
+    {
+      "source": "/v3/examples/sdxl",
+      "destination": "/v4/examples/sdxl"
+    },
+    {
+      "source": "/websockets",
+      "destination": "/endpoints/websockets"
+    },
+    {
+      "source": "/fine-tuning/auto-deploying",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/api-reference/apps/create-app-1",
+      "destination": "/api-reference/apps/create-app"
+    },
+    {
+      "source": "/available-hardware",
+      "destination": "/hardware/using-gpus"
+    },
+    {
+      "source": "/api-reference/builds/check-build-service-status",
+      "destination": "/api-reference/builds/health-check"
+    },
+    {
+      "source": "/available-gpus",
+      "destination": "/hardware/using-gpus"
+    },
+    {
+      "source": "/deployments/scaling",
+      "destination": "/scaling/scaling-apps"
+    },
+    {
+      "source": "/endpoints/custom-web-servers",
+      "destination": "/container-images/custom-web-servers"
+    },
+    {
+      "source": "/environments/available-hardware",
+      "destination": "/hardware/using-gpus"
+    },
+    {
+      "source": "/deployments/persistent-storage",
+      "destination": "/storage/managing-files"
+    },
+    {
+      "source": "/environments/using-gpus",
+      "destination": "/hardware/using-gpus"
+    },
+    {
+      "source": "/faster-cold-starts",
+      "destination": "/performance/faster-cold-starts"
+    },
+    {
+      "source": "/getting-started/pricing",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/hardware/available-gpus",
+      "destination": "/hardware/using-gpus"
+    },
+    {
+      "source": "/hardware/gpu",
+      "destination": "/hardware/using-gpus"
+    },
+    {
+      "source": "/hardware/regions",
+      "destination": "/deployments/multi-region-deployment"
+    },
+    {
+      "source": "/logging/arize",
+      "destination": "/other-topics/request-response-logging"
+    },
+    {
+      "source": "/security-and-privacy/soc2-compliance",
+      "destination": "/security"
+    },
+    {
+      "source": "/storage/persistent-storage",
+      "destination": "/storage/managing-files"
+    },
+    {
+      "source": "/v4/examples/aiVoiceAgents",
+      "destination": "/v4/examples/realtime-voice-agents"
+    },
+    {
+      "source": "/v4/examples/langchain",
+      "destination": "/v4/examples/langchain-langsmith"
+    },
+    {
+      "source": "/v4/examples/mistral-vllm",
+      "destination": "/v4/examples/openai-compatible-endpoint-vllm"
+    },
+    {
+      "source": "/v4/examples/streaming-falcon-7B",
+      "destination": "/v4/examples/featured"
+    },
+    {
+      "source": "/other-topics/fitting-large-models-on-small-gpus",
+      "destination": "/getting-started/introduction"
+    }
+  ],
   "integrations": {
     "ga4": {
       "measurementId": "G-7SBXER6DHL"
-    },
-    "gtm": {
-      "tagId": "GTM-M3Z656N"
     },
     "hotjar": {
       "hjid": "3423876",
