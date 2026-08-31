@@ -1,5 +1,6 @@
 ---
 title: Using CUDA
+description: Enable CUDA on Cerebrium using GPU ready Python packages or NVIDIA base images, and choose runtime over devel images to keep cold starts fast.
 ---
 
 ## Overview
@@ -37,7 +38,7 @@ docker_base_image_url = "nvidia/cuda:12.1.1-runtime-ubuntu22.04"
 
 ## Cold-Start Optimization
 
-Image size and complexity directly impact cold-start performance — the time needed to initialize an app from an inactive state. Cerebrium uses a content-addressable file system that selectively pulls only required files, but larger images still affect startup times.
+Image size and complexity directly impact cold-start performance: the time needed to initialize an app from an inactive state. Cerebrium uses a content-addressable file system that selectively pulls only required files, but larger images still affect startup times.
 
 ### Image Size Considerations
 

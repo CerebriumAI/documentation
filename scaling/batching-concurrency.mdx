@@ -1,6 +1,6 @@
 ---
 title: "Batching and Concurrency"
-description: "Improve throughput and cost performance with batching and concurrency"
+description: Tune replica_concurrency and use framework native or custom batching with vLLM or LitServe to boost GPU throughput and cut costs on Cerebrium.
 ---
 
 ## Understanding Concurrency
@@ -74,6 +74,6 @@ fastapi = "latest"
   for more information.
 </Tip>
 
-Custom batching provides full control over request grouping and processing — particularly useful for frameworks without native batching support. The [Container Images Guide](/container-images/defining-container-images#custom-runtimes) provides detailed implementation instructions.
+Custom batching provides full control over request grouping and processing. This is particularly useful for frameworks without native batching support. The [Container Images Guide](/container-images/defining-container-images#custom-runtimes) provides detailed implementation instructions.
 
 Concurrency enables parallel request handling; batching optimizes how those requests are processed. Together, they improve resource utilization and throughput.

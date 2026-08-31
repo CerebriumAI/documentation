@@ -1,15 +1,15 @@
 ---
 title: Multi-Region Deployment
-description: Deploy an app once and run it across multiple regions, or pin it to a specific region for data residency
+description: Run a Cerebrium app globally across multiple regions for more GPU capacity and lower latency, or pin it to one region for data residency needs.
 ---
 
 Deploy an app once and run it in multiple regions. The `region` parameter in `cerebrium.toml` controls placement: run globally on whatever capacity is available (recommended), or pin the app to a specific region. The parameter is optional; when omitted, the platform chooses placement automatically based on the app's hardware requirements.
 
 <Warning>
-  Multi-region deployment is currently in **beta**. Rapid updates and
-  improvements will be made over the next few months to bring full functionality
-  to life. Please reach out on our [Discord](https://discord.gg/ATj6USmeE2)
-  about features/functionality you would like to see.
+  Multi-region deployment is currently in **beta**. We will make rapid updates
+  and improvements over the next few months to bring full functionality to life.
+  Please reach out on our [Discord](https://discord.gg/ATj6USmeE2) about
+  features/functionality you would like to see.
 </Warning>
 
 ## Why Use Multi-Region Deployment
@@ -125,7 +125,7 @@ The output includes the region of each container.
 
 ## Storage
 
-Persistent storage is managed per region: an app has an independent `/persistent-storage` volume in each region it runs in, however placement is configured. Files written in one region are not guaranteed to be available in other regions, and region-local caches, such as model weights downloaded on first load, fill independently per region.
+Persistent storage is managed per region: an app has an independent `/persistent-storage` volume in each region it runs in, however placement is configured. Files written in one region are not guaranteed to be available in other regions. Region-local caches, such as model weights downloaded on first load, fill independently per region.
 
 Apps deployed with `region = "global"` also mount `/global-persistent-storage`, a single volume shared across every region the app runs in. Files written there are visible from all regions, and reads are cached per region. Use the global volume for data that must be available everywhere and `/persistent-storage` for region-local data. Manage files on the global volume by passing `--region global` to the file commands. See [Managing Files](/storage/managing-files#global-storage).
 

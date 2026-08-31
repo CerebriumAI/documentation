@@ -1,13 +1,13 @@
 ---
 title: "Deploy a Vision Language Model with SGLang"
-description: "Build an intelligent ad analysis system that evaluates advertisements across multiple dimensions"
+description: Deploy a vision language model with SGLang on Cerebrium and build an ad analysis system that scores advertisements across multiple criteria.
 ---
 
 This tutorial deploys a Vision Language Model (VLM) using SGLang on Cerebrium. A VLM combines a large language model (LLM) with a vision encoder, enabling it to understand and process both images and text.
 
-The example builds an intelligent ad analysis system that evaluates advertisements across multiple dimensions, scoring how the advertisement relates to the business in question and how it performs on the given criteria.
+The example builds an intelligent ad analysis system that evaluates advertisements across multiple dimensions. It scores how the advertisement relates to the business in question and how it performs on the given criteria.
 
-SGLang (Structured Generation Language) differs from other inference frameworks such as vLLM and TensorRT by focusing on structured generation and complex multi-step LLM workflows. SGLang is being used in production by teams at xAI and Deepseek to power their core language model capabilities making it a trusted choice.
+SGLang (Structured Generation Language) differs from other inference frameworks such as vLLM and TensorRT by focusing on structured generation and complex multi-step LLM workflows. Teams at xAI and Deepseek use SGLang in production to power their core language model capabilities, making it a trusted choice.
 
 ### SGLang Architecture
 
@@ -29,7 +29,7 @@ Here are some frontend primitives for creating multi-step workflows:
 
 ![SGLang Architecture](/images/sglang-arch.png)
 
-Here is a summary of key advantages over traditional inference engines
+Here is a summary of key advantages over traditional inference engines:
 
 | Feature                 | Traditional Engines (vLLM, TGI)                  | SGLang                                                                     |
 | ----------------------- | ------------------------------------------------ | -------------------------------------------------------------------------- |
@@ -40,7 +40,7 @@ Here is a summary of key advantages over traditional inference engines
 | **Performance**         | Standard inference optimization                  | PyTorch-native with `torch.compile()`, quantization, sparse inference      |
 
 For more details, see this [article](https://huggingface.co/blog/paresh2806/sglang-efficient-llm-workflows).
-You can see the final code sample [here](https://github.com/CerebriumAI/examples/tree/master/5-large-language-models/7-vision-language-sglang)
+You can see the final code sample [here](https://github.com/CerebriumAI/examples/tree/master/5-large-language-models/7-vision-language-sglang).
 
 ## Tutorial
 
@@ -109,7 +109,7 @@ entrypoint = ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 ### Step 3: Implement the Ad Analysis Logic
 
-Cerebrium does not enforce any special class design or application architecture — write Python code as if running locally. The code below sets up the SGLang Runtime Engine (Backend) with FastAPI and loads the model on container startup. The first request incurs a model load, but subsequent requests execute instantaneously.
+Cerebrium does not enforce any special class design or application architecture. Write Python code as if running locally. The code below sets up the SGLang Runtime Engine (Backend) with FastAPI and loads the model on container startup. The first request incurs a model load, but subsequent requests execute instantaneously.
 
 In your `main.py` file:
 
@@ -239,7 +239,7 @@ Once deployed, test with a sample request:
 curl -X POST "https://api.cerebrium.ai/v4/p-xxxxxxxx/7-vision-language-sglang/analyze" \
   -H "Content-Type: application/json" \
   -d '{
-    "company_description": "Nike is a global leader in athletic footwear, apparel, and sports equipment known for its innovative designs and the iconic “swoosh” logo. The brand embodies performance, style, and inspiration, empowering athletes worldwide to Just Do It."",
+    "company_description": "Nike is a global leader in athletic footwear, apparel, and sports equipment known for its innovative designs and the iconic “swoosh” logo. The brand embodies performance, style, and inspiration, empowering athletes worldwide to Just Do It.",
     "image_base64": "<BASE64_ENCODED_IMAGE>",
     "dimensions": ["Effectiveness","Clarity", "Appeal","Credibility"]
   }'
@@ -263,7 +263,3 @@ curl -X POST "https://api.cerebrium.ai/v4/p-xxxxxxxx/7-vision-language-sglang/an
 This example demonstrates how to leverage SGLang's structured generation capabilities to build an ad analysis system, using features like `fork()` for parallel processing and SGLang's built-in output control.
 
 You can find the complete code for this tutorial in our [examples repository](https://github.com/CerebriumAI/examples/tree/master/5-large-language-models/7-vision-language-sglang).
-
-```
-
-```

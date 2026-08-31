@@ -1,6 +1,6 @@
 ---
 title: "Hyperparameter Sweep training Llama 3.2 with WandB"
-description: "Run a hyperparameter sweep on Llama 3.2 with WandB"
+description: Fine tune Llama 3.2 with Weights and Biases hyperparameter sweeps, running training experiments in parallel across Cerebrium serverless GPUs
 ---
 
 Hyperparameter sweeps systematically test parameter combinations to find the best-performing model for the least compute or training time.
@@ -57,7 +57,7 @@ pip install wandb
 wandb login
 ```
 
-A link prints in the terminal — click it and copy the API key back into the terminal.
+A link prints in the terminal. Click it and copy the API key back into the terminal.
 
 Add the W&B API key to Cerebrium secrets. In the [Cerebrium Dashboard](https://dashboard.cerebrium.ai/), navigate to the “secrets” tab in the left sidebar. Add the following:
 
@@ -289,7 +289,7 @@ def train_model(params: Dict):
 You can read a deeper explanation of the training script [here](https://www.datacamp.com/tutorial/fine-tuning-llama-3-2) but here's a high-level explanation of the code in bullet points:
 
 - This code sets up a fine-tuning pipeline for a Large Language Model (specifically Llama 3.2) using several modern training techniques:
-- Takes a dictionary of parameters for flexible training configurations — the hyperparameter sweep.
+- Takes a dictionary of parameters for flexible training configurations: the hyperparameter sweep.
 - Loads a customer support dataset from Hugging Face and formats it into chat template format
 - Implements QLoRA (Quantized Low-Rank Adaptation) for efficient fine-tuning.
 - Uses Weights & Biases (Wandb) for experiment tracking, logging results to the Wandb dashboard.
@@ -307,7 +307,7 @@ This command:
 2. Deploys the training script as an endpoint
 3. Returns a POST URL (save this for later)
 
-Cerebrium requires no special decorators or syntax — wrap the training code in a function. The endpoint automatically scales based on request volume, making it ideal for hyperparameter sweeps.
+Cerebrium requires no special decorators or syntax. Wrap the training code in a function. The endpoint automatically scales based on request volume, making it ideal for hyperparameter sweeps.
 
 ### Hyperparameter Sweep
 

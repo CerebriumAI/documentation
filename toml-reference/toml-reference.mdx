@@ -1,6 +1,6 @@
 ---
 title: TOML Reference
-description: Complete reference for all parameters available in Cerebrium's default `cerebrium.toml` configuration file.
+description: Reference for every cerebrium.toml parameter covering deployment, hardware, scaling, dependencies, and custom runtime settings on Cerebrium.
 ---
 
 The configuration is organized into the following main sections:
@@ -63,8 +63,8 @@ use_uv = true
 
 Check your build logs for these indicators:
 
-- **UV_PIP_INSTALL_STARTED** - UV is successfully being used
-- **PIP_INSTALL_STARTED** - Standard pip installation (when `use_uv` is `false`)
+- **UV_PIP_INSTALL_STARTED**: UV is successfully being used
+- **PIP_INSTALL_STARTED**: Standard pip installation (when `use_uv` is `false`)
 
 <Warning>
   While UV is compatible with most packages, some edge cases may cause build

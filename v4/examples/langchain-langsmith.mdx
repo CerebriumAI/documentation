@@ -1,15 +1,15 @@
 ---
-title: "Langchain and Langsmith"
-description: "Deploy an executive assistant using Langsmith and Langchain"
+title: "Build a LangChain agent with LangSmith monitoring"
+description: Build an executive assistant agent with LangChain tool calling, monitor it in LangSmith and deploy it on Cerebrium to manage Cal.com bookings.
 ---
 
-This tutorial builds Cal-vin, an executive assistant that manages calendar appointments (via Cal.com) with employees, customers, partners, and friends. It uses the LangChain SDK for agent creation and the LangSmith platform for monitoring scheduling activities and identifying failure points, deployed on Cerebrium for seamless scaling.
+This tutorial builds Cal-vin, an executive assistant that manages calendar appointments (via Cal.com) with employees, customers, partners, and friends. It uses the LangChain SDK for agent creation and the LangSmith platform for monitoring scheduling activities and identifying failure points. The app deploys on Cerebrium for seamless scaling.
 
-You can find the final version of the code [here](https://github.com/CerebriumAI/examples/tree/master/4-integrations/2-tool-calling-langsmith)
+You can find the final version of the code [here](https://github.com/CerebriumAI/examples/tree/master/4-integrations/2-tool-calling-langsmith).
 
 ### Concepts
 
-This app requires calendar interaction based on user instructions — an ideal use case for an agent with function (tool) calling capabilities. LangChain provides extensive agent support, and its companion tool LangSmith makes monitoring integration straightforward.
+This app requires calendar interaction based on user instructions: an ideal use case for an agent with function (tool) calling capabilities. LangChain provides extensive agent support, and its companion tool LangSmith makes monitoring integration straightforward.
 
 A tool refers to any framework, utility, or system with defined functionality for specific use cases, such as searching Google or retrieving credit card transactions.
 
@@ -45,9 +45,9 @@ agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
 agent_executor.invoke({"input": "what's 3 plus 5 raised to the 2.743. also what's 17.24 - 918.1241", })
 ```
 
-### Setup Cal.com
+### Cal.com Setup
 
-[Cal.com](https://cal.com) provides the calendar management foundation. Create an account [here](https://app.cal.com/signup) if needed. Cal serves as the source of truth — updates to time zones or working hours automatically reflect in the assistant's responses.
+[Cal.com](https://cal.com) provides the calendar management foundation. Create an account [here](https://app.cal.com/signup) if needed. Cal serves as the source of truth. Updates to time zones or working hours automatically reflect in the assistant's responses.
 
 After creating your account:
 
@@ -127,7 +127,7 @@ The API key is now confirmed working and pulling calendar information. The API c
 - **/availability**: Get your availability
 - **/bookings**: Book a slot
 
-### Cerebrium setup
+### Cerebrium Setup
 
 Set up Cerebrium:
 
@@ -281,12 +281,12 @@ The agent executor consists of:
   - Defines the agent’s role, goals, and situational behavior. More precise instructions yield better results.
   - Chat History stores previous messages for conversation context.
   - Input receives new input from the end user.
-- The GPT-3.5 model serves as the LLM. Swap to Anthropic or any other provider by replacing this one line — LangChain makes this seamless.
+- The GPT-3.5 model serves as the LLM. Swap to Anthropic or any other provider by replacing this one line. LangChain makes this seamless.
 - Finally, these components combine with the tools to create an agent executor.
 
-### Setup Chatbot
+### Chatbot Setup
 
-The above code only handles a single question. A multi-turn conversation is needed to find a mutually suitable time. LangChain’s RunnableWithMessageHistory() adds tool calling capabilities and message memory.
+The above code only handles a single question. Finding a mutually suitable time requires a multi-turn conversation. LangChain’s RunnableWithMessageHistory() adds tool calling capabilities and message memory.
 
 It stores previous replies in the chat_history variable (from the prompt template) and ties them to a session identifier, so the API remembers information per user/session:
 
@@ -334,7 +334,7 @@ if __name__ == "__main__":
 
 This code:
 
-- Defines a Pydantic object specifying the expected API parameters — user prompt and session ID.
+- Defines a Pydantic object specifying the expected API parameters: user prompt and session ID.
 - The predict function (Cerebrium’s API entry point) passes the prompt and session ID to the agent and returns results.
   ‍
 
@@ -344,7 +344,7 @@ Install pip dependencies locally: `pip install pydantic langchain pytz openai la
 
 Continuing the conversation eventually results in a booked slot.
 
-### Integrate Langsmith
+### Integrate LangSmith
 
 Production monitoring is crucial for agent applications with nondeterministic workflows. LangSmith, a LangChain tool for logging, debugging, and monitoring, tracks performance and surfaces edge cases. Learn more [here](https://docs.smith.langchain.com/monitoring).
 
@@ -354,7 +354,7 @@ Set up LangSmith monitoring:
 2. Create a free LangSmith account [here](https://smith.langchain.com/)
 3. Generate API key (click gear icon in bottom left)
 
-Set the following environment variables at the top of main.py. Add the API key to Cerebrium secrets
+Set the following environment variables at the top of main.py. Add the API key to Cerebrium secrets.
 
 ```python
 import os
@@ -379,7 +379,7 @@ After a successful test run, data populates in LangSmith:
 
 The Runs tab shows all runs (invocations/API requests).
 
-In 1 above, the function name appears, with input set to the Cerebrium RunID (set to “test”. The input and total latency of the run are also visible.
+In 1 above, the function name appears, with input set to the Cerebrium RunID (set to “test”). The input and total latency of the run are also visible.
 
 LangSmith supports various data automations:
 
@@ -436,7 +436,7 @@ You can find the final version of the code [here](https://github.com/CerebriumAI
 Consider implementing:
 
 1. Response streaming for seamless user experience
-2. Email integration for context-aware scheduling when Claire is tagged
+2. Email integration for context-aware scheduling when Cal-vin is tagged
 3. Voice capabilities for phone-based scheduling
 
 ### Conclusion

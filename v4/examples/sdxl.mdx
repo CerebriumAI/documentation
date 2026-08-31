@@ -1,6 +1,6 @@
 ---
 title: "Generate Images using SDXL"
-description: "Generate high quality images using SDXL with refiner"
+description: Deploy the Stability AI SDXL refiner model on Cerebrium serverless GPUs to generate high quality images from prompts with a Diffusers pipeline
 ---
 
 <Note>
@@ -83,7 +83,7 @@ class Item(BaseModel):
 
 The code uses Pydantic for data validation. The `prompt` and `url` parameters are required; all others are optional. Missing required parameters trigger an automatic error message.
 
-## Instantiate model
+## Instantiate Model
 
 The SDXL model loads outside the `predict` function since it only needs to load once at startup. The model downloads during initial deployment and is automatically cached in persistent storage for subsequent use.
 

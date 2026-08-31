@@ -1,12 +1,13 @@
 ---
 title: "Streaming Endpoints"
+description: Stream live model output from a Cerebrium endpoint over server-sent events by yielding results from a Python generator or iterator function.
 ---
 
 Streaming sends live output from a model over a server-sent event (SSE) stream.
 It works with any Python object that implements the iterator or generator protocol.
 
 The generator/iterator must `yield` data, which is sent downstream via the `text/event-stream` Content-Type.
-Data can be sent in JSON format and decoded on the client side.
+You can send data in JSON format and decode it on the client side.
 
 A minimal example:
 

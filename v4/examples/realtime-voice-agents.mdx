@@ -1,7 +1,7 @@
 ---
 title: "Real-time Voice Agent"
 sidebarTitle: "500ms Low-latency Voice Agent"
-description: "Deploy a real-time AI voice agent"
+description: Build a low latency voice AI agent with PipeCat, Deepgram and a self hosted vLLM Llama endpoint on Cerebrium that responds in about 500ms
 ---
 
 This tutorial creates a real-time voice agent that responds to queries via speech in ~500ms. The implementation supports swapping in any Large Language Model (LLM) or Text-to-Speech (TTS) model, making it ideal for voice-based use cases like customer support bots and receptionists.
@@ -14,7 +14,7 @@ The application has 3–4 parts:
 - A Deepgram TTS/STT service (requires a Deepgram Enterprise account)
 - A self-hosted LLM using the vLLM framework
 
-Low latency is achieved because each service is hosted within Cerebrium — communication across containers is less than 10ms with no network latency overhead.
+Low latency is achieved because each service is hosted within Cerebrium. Communication across containers is less than 10ms with no network latency overhead.
 
 ![Realtime Voice Agents](/images/examples/self-hosted-pipecat.png)
 
@@ -22,13 +22,13 @@ You can find the final version of the code [here](https://github.com/CerebriumAI
 
 Create a Cerebrium account by signing up [here](https://dashboard.cerebrium.ai/register) and follow the [installation docs](https://docs.cerebrium.ai/getting-started/installation).
 
-### Deepgram deployment
+### Deepgram Deployment
 
 See the [Partner Services page](/partner-services/deepgram) to deploy a Deepgram service on Cerebrium.
 
 <Note>
-  You need a Deepgram Enterprise License to deploy Deepgram on Cerebrium else
-  you must use their API endpoint below.
+  You need a Deepgram Enterprise License to deploy Deepgram on Cerebrium.
+  Otherwise, use their API endpoint below.
 </Note>
 
 ### LLM Deployment
@@ -60,7 +60,7 @@ vllm = "latest"
 pydantic = "latest"
 ```
 
-Add the following code to `main.py` — this uses the vLLM framework and makes it OpenAI compatible:
+Add the following code to `main.py`. This uses the vLLM framework and makes it OpenAI compatible:
 
 ```
 import os
@@ -162,7 +162,7 @@ Run `cerebrium deploy` to make it live. The deployment URL appears in the dashbo
 
 Adjust the GPU hardware and `replica_concurrency` in `cerebrium.toml` to control how many concurrent calls the LLM handles.
 
-### Pipecat setup
+### Pipecat Setup
 
 Run the following command to create the pipecat-agent: `cerebrium init pipecat-agent`. The [Pipecat framework](https://docs.pipecat.ai/getting-started/overview) orchestrates the services to create a voice agent.
 
@@ -460,11 +460,11 @@ Deploy to Cerebrium by running `cerebrium deploy`.
 
 The endpoints are used in the frontend interface below.
 
-## Connect frontend
+## Connect Frontend
 
 A public fork of the PipeCat frontend demonstrates this application. Clone the repo [here](https://github.com/CerebriumAI/web-client-ui).
 
-Follow the instructions in the README.md and then populate the following variables in your .env.development.local
+Follow the instructions in the README.md and then populate the following variables in your .env.development.local.
 
 ```
 VITE_SERVER_URL=https://api.cerebrium.ai/v4/p-xxxxxxxx/<APP_NAME> #This is the base url of your pipecat-agent. Do not include the function names

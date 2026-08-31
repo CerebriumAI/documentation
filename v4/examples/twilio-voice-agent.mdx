@@ -1,6 +1,6 @@
 ---
 title: "Twilio Voice Agent with PipeCat"
-description: "Integrate a real-time AI voice agent with Twilio"
+description: Connect a real time AI voice agent to phone calls using Twilio, PipeCat and FastAPI WebSockets on Cerebrium for support bots and receptionists
 ---
 
 This tutorial creates a real-time voice agent that responds to phone calls via Twilio. The implementation supports any LLM or Text-to-Speech (TTS) model, making it ideal for voice applications like customer support bots and receptionists.
@@ -9,7 +9,7 @@ The example uses [PipeCat](https://www.pipecat.ai/) to handle component integrat
 
 You can find the final version of the code [here](https://github.com/CerebriumAI/examples/tree/master/6-voice/4-twilio-voice-agent)
 
-### Cerebrium setup
+### Cerebrium Setup
 
 Set up Cerebrium:
 
@@ -107,7 +107,7 @@ healthcheck_endpoint = "/health"
 
 You can read more about running custom web servers [here](/container-images/custom-web-servers).
 
-### Twilio setup
+### Twilio Setup
 
 Twilio provides cloud communications APIs for messaging, voice, video, and authentication. Other providers work as well. Sign up for a free account [here](https://www.twilio.com/try-twilio).
 
@@ -246,7 +246,7 @@ A successful deployment looks like this:
 
 ![Cerebrium Deployment](/images/examples/twilio-agent/twilio-deployment.png)
 
-Test by calling the Twilio number — the agent responds automatically.
+Test by calling the Twilio number. The agent responds automatically.
 
 ### Scaling Pipecat
 

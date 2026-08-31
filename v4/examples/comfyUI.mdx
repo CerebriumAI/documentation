@@ -1,6 +1,6 @@
 ---
-title: "ComfyUI application at Scale"
-description: "Deploy a ComfyUI application"
+title: "ComfyUI Application at Scale"
+description: Turn ComfyUI stable diffusion workflows into autoscaling API endpoints on Cerebrium, from exporting the workflow JSON to serving generated images.
 ---
 
 ### Introduction
@@ -12,7 +12,7 @@ ComfyUI is a popular no-code interface for building complex stable diffusion wor
 
 Production-scale deployment guidance for ComfyUI is limited. This tutorial covers deploying ComfyUI pipelines on Cerebrium as autoscaling API endpoints with pay-as-you-go compute. Find the full example code [here](https://github.com/CerebriumAI/examples/tree/master/7-image-and-video/1-comfyui).
 
-### Creating your Comfy UI workflow locally
+### Creating Your ComfyUI Workflow Locally
 
 Create the workflow locally or using a rented GPU from [Lambda Labs](https://lambdalabs.com/). Ensure [ComfyUI is installed](https://github.com/comfyanonymous/ComfyUI#installing) in the local environment.
 
@@ -31,17 +31,17 @@ The default ComfyUI workflow interface appears in this view. Use this locally ru
 
 ### Export ComfyUI Workflow
 
-The example GitHub repository contains a workflow.json file. Click the “Load” button on the right to load the workflow. It should appear populated
+The example GitHub repository contains a workflow.json file. Click the “Load” button on the right to load the workflow. It should appear populated.
 
 ![ComfyUI Workflow](/images/examples/comfyui1.png)
 
-Don’t worry about the pre-filled values and prompts — they get overridden at inference time.
+Don’t worry about the pre-filled values and prompts. They get overridden at inference time.
 
 To export the workflow in API format, click the gear icon (settings) in the top-right hovering panel. Ensure that “Enable dev mode” is selected, then close the popup.
 
 ![Save ComfyUI API format](/images/examples/comfyui2.png)
 
-A button appears in the right hover panel labeled “Save (API format)”. Use it to save the workflow as “workflow_api.json”
+A button appears in the right hover panel labeled “Save (API format)”. Use it to save the workflow as “workflow_api.json”.
 
 ### ComfyUI Application
 
@@ -61,7 +61,7 @@ Alter the workflow_api.json file to include placeholders for user values at infe
 - Replace line 58, the input text of node 7 with: "\{\{negative_prompt\}\}"
 - Replace line 108, the image of node 11 with: "\{\{controlnet_image\}\}"
 
-### FastAPI app
+### FastAPI App
 
 In addition to the `main.py` file below (which runs the FastAPI server and initializes ComfyUI on application start), a separate `helpers.py` file contains utility functions for working with ComfyUI. Find the helper code [here](https://github.com/CerebriumAI/examples/blob/master/7-image-and-video/1-comfyui/helpers.py). Create a file named `helpers.py` and copy the code into it.
 

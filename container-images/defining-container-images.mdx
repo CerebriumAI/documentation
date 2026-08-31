@@ -1,10 +1,11 @@
 ---
 title: Defining Container Images
+description: Define your Cerebrium container image in cerebrium.toml, from Python, pip, apt, and conda dependencies to custom Docker base images and build commands.
 ---
 
 ## Introduction
 
-Cerebrium abstracts infrastructure management into configuration, so teams focus on app code. A single TOML file manages environment setup, deployments, and scaling — tasks that typically require dedicated teams.
+Cerebrium abstracts infrastructure management into configuration, so teams focus on app code. A single TOML file manages environment setup, deployments, and scaling: tasks that typically require dedicated teams.
 
 Unlike traditional Docker or Kubernetes setups with multiple configuration files and orchestration rules, Cerebrium uses a single `cerebrium.toml` file. The system handles container lifecycle, networking, and scaling automatically based on this configuration.
 
@@ -17,11 +18,11 @@ Python decorators scatter infrastructure settings throughout code files, making 
 Run `cerebrium init` to create a `cerebrium.toml` file in the project root. Edit it to match the app's requirements.
 
 <Info>
-  It is possible to initialize an existing project by adding a `cerebrium.toml`
-  file to the root of your codebase, defining your entrypoint (`main.py` if
-  using the default runtime, or adding an entrypoint to the .toml file if using
-  a custom runtime) and including the necessary files in the `deployment`
-  section of your `cerebrium.toml` file.
+  You can initialize an existing project by adding a `cerebrium.toml` file to
+  the root of your codebase. Define your entrypoint (`main.py` if using the
+  default runtime, or add an entrypoint to the .toml file if using a custom
+  runtime) and include the necessary files in the `deployment` section of your
+  `cerebrium.toml` file.
 </Info>
 
 ## Hardware Configuration
@@ -38,7 +39,7 @@ gpu_count = 1          # Number of GPUs
 
 For detailed hardware specifications see the [toml reference](/toml-reference/toml-reference#hardware-configuration).
 
-## Dependency management
+## Dependency Management
 
 ### Selecting a Python Version
 
@@ -85,7 +86,7 @@ Cerebrium caches pip packages at the node level - including wheel files and comp
 
 ### Adding APT Packages
 
-System-level packages (image-processing libraries, audio codecs, etc.) are declared under `[cerebrium.dependencies.apt]`:
+Declare system-level packages (image-processing libraries, audio codecs, etc.) under `[cerebrium.dependencies.apt]`:
 
 ```toml
 [cerebrium.dependencies.apt]
@@ -157,7 +158,7 @@ shell_commands = [
 ]
 ```
 
-Use shell commands for tasks that require the fully configured environment — such as compiling code that depends on installed libraries or downloading resources.
+Use shell commands for tasks that require the fully configured environment, such as compiling code that depends on installed libraries or downloading resources.
 
 ## Custom Docker Base Images
 
@@ -270,14 +271,14 @@ vllm = "latest"
 
 ### Important Notes
 
-- Code is mounted in `/cortex` - adjust paths accordingly.
+- Code is mounted in `/cortex`. Adjust paths accordingly.
 - The port in your entrypoint must match the `port` parameter.
 - Install any required server packages (uvicorn, gunicorn, etc.) via pip dependencies.
 - All endpoints will be available at `https://api.cerebrium.ai/v4/p-xxxxxxxx/{app-name}/your/endpoint`.
 
-Deploy with `cerebrium deploy -y` - the system automatically detects custom runtime configuration.
+Deploy with `cerebrium deploy -y`. The system automatically detects custom runtime configuration.
 
-## Deployment process
+## Deployment Process
 
 ![Deployment process](/images/deployment-process.png)
 

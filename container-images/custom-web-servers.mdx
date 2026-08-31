@@ -1,9 +1,9 @@
 ---
 title: "Custom Python Web Servers"
-description: "Run ASGI/WSGI Python apps on Cerebrium"
+description: Run FastAPI and other ASGI or WSGI Python web servers on Cerebrium with a custom runtime by setting the entrypoint, port, and health check endpoints.
 ---
 
-Cerebrium's default runtime covers most app needs. For more control, use ASGI or WSGI servers through the custom runtime feature - enabling custom authentication, dynamic batching, frontend dashboards, public endpoints, and WebSocket connections.
+Cerebrium's default runtime covers most app needs. For more control, use ASGI or WSGI servers through the custom runtime feature. This enables custom authentication, dynamic batching, frontend dashboards, public endpoints, and WebSocket connections.
 
 ## Setting Up Custom Servers
 
@@ -42,12 +42,12 @@ loguru = "latest"
 fastapi = "latest"
 ```
 
-The configuration requires three key parameters:
+The configuration requires four key parameters:
 
 - `entrypoint`: The command that starts your server
 - `port`: The port your server listens on
-- `healthcheck_endpoint`: The endpoint used to confirm instance health. If unspecified, defaults to a TCP ping on the configured port. If the health check registers a non-200 response, it will be considered _unhealthy_, and be restarted should it not recover timely.
-- `readycheck_endpoint`: The endpoint used to confirm if the instance is ready to receive. If unspecified, defaults to a TCP ping on the configured port. If the ready check registers a non-200 response, it will not be a viable target for request routing.
+- `healthcheck_endpoint`: The endpoint used to confirm instance health. If unspecified, defaults to a TCP ping on the configured port. If the health check registers a non-200 response, Cerebrium considers the instance _unhealthy_ and restarts it if it does not recover in time.
+- `readycheck_endpoint`: The endpoint used to confirm if the instance is ready to receive. If unspecified, defaults to a TCP ping on the configured port. If the ready check registers a non-200 response, Cerebrium does not route requests to the instance.
 
 <Info>
   For ASGI applications like FastAPI, include the appropriate server package
