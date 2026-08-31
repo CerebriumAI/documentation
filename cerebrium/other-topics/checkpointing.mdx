@@ -3,9 +3,9 @@ title: Checkpointing
 description: Why a checkpoint can fail and how to fix the known incompatibilities
 ---
 
-{/* The headings on this page are linked to by anchor from the checkpoint agent's
+{/_ The headings on this page are linked to by anchor from the checkpoint agent's
 error messages (internal/agent/checkpoint_error.go). Renaming one breaks the link
-customers are told to follow. */}
+customers are told to follow. _/}
 
 Checkpointing snapshots a warmed-up container — including CPU memory, GPU memory, and CUDA state — so the next cold start restores that snapshot instead of loading the model again.
 
