@@ -7,11 +7,11 @@ All functions on Cerebrium are accessible via POST requests, unless marked priva
 
 ## Managing API keys
 
-Create and manage keys in the **API Keys** section of the dashboard, or with the [Create API Key](/api-reference/api-keys/create-api-key) endpoint. The secret value is returned once, at creation time.
+Create and manage keys in the **API Keys** section of the dashboard, or with the [Create API Key](/api-reference/api-keys/create-api-key) endpoint. Cerebrium returns the secret value once, at creation time.
 
 - **Expiration**: Set an optional expiration date (`YYYY-MM-DD`) when creating a key. A key without an expiration date never expires.
 - **Rotation**: Cerebrium does not rotate keys automatically. To rotate a key, create a new key, update your clients to use it, then delete the old key.
-- **Deletion**: Deleting a key is permanent. Requests using the deleted key start failing within a few seconds, and the key cannot be recovered. Only project owners can delete keys. Keys that belong to a service account are removed by deleting the service account.
+- **Deletion**: Deleting a key is permanent. Requests using the deleted key start failing within a few seconds, and you cannot recover the key. Only project owners can delete keys. To remove a key that belongs to a service account, delete the service account.
 
 ## Request format
 
