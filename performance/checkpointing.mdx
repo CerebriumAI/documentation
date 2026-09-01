@@ -89,7 +89,19 @@ The same figures are on `GET /checkpoint/status` and `GET /checkpoint/wait`:
 
 `status` is this container's own save (`none` until it checkpoints). `restored` is whether it came up from a snapshot. They are separate because a restored container is frozen mid-`POST /checkpoint` and resumes on `GET /checkpoint/wait` — the POST body never arrives. `duration_ms` is gVisor restore time, not the time spent downloading the snapshot.
 
-After a successful save, `GET /checkpoint/status` includes `size_bytes` next to `"status": "checkpointed"`.
+After a successful save, the same endpoints report the size of the snapshot this container wrote under `checkpoint`:
+
+```json
+{
+  "status": "checkpointed",
+  "restored": false,
+  "checkpoint": {
+    "size_bytes": 1288490188
+  }
+}
+```
+
+`checkpoint.size_bytes` is the snapshot this container saved; `restore.size_bytes` is the one it started from. A container does one or the other, so in practice only one block is present.
 
 ### 5. Disable checkpointing
 
