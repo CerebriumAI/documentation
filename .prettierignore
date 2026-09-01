@@ -8,3 +8,8 @@ available-hardware.mdx
 # Vendored from skills/cerebrium/references/config.md in CerebriumAI/cerebrium-skills so the
 # relative references/config.md link inside skill.md resolves. Edit upstream, never here.
 /references/config.md
+
+# Prettier rewrites the JSX comment {/* ... */} in this file to {/_ ... _/}, which MDX
+# cannot parse, and HTML comments <!-- --> are not valid MDX either. Keep Prettier off
+# this file so the heading-anchor comment survives.
+/performance/checkpointing.mdx
