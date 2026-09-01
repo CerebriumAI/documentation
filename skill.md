@@ -1,5 +1,5 @@
 ---
-name: Cerebrium
+name: cerebrium
 description: >-
   Use for any Cerebrium task: deploying Python code to serverless GPU or CPU, writing or fixing
   cerebrium.toml, choosing hardware and regions, calling deployed endpoints (REST, streaming,
