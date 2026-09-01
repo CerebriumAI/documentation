@@ -992,6 +992,18 @@
     {
       "source": "/other-topics/fitting-large-models-on-small-gpus",
       "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/changelog",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/getting-started/collaborating",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/integrations/vercel",
+      "destination": "/getting-started/introduction"
     }
   ],
   "integrations": {
