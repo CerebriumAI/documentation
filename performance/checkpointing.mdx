@@ -67,13 +67,13 @@ Checkpoint size roughly equals CPU memory in use at trigger time plus GPU memory
 
 ### 4. Verify restoration
 
-If checkpoint creation succeeds, subsequent containers restore from that snapshot. A restored container logs a line beginning `CEREBRIUM_RESTORED` as its first log line, naming the snapshot size and how long the restore took:
+If checkpoint creation succeeds, subsequent containers restore from that snapshot. A restored container logs a line beginning `CEREBRIUM_RESTORED` as its first log line:
 
 ```text
-CEREBRIUM_RESTORED: container my-app restored from checkpoint (1228.8 MiB in 2.1s)
+CEREBRIUM_RESTORED: container my-app restored from checkpoint
 ```
 
-`GET /checkpoint/status` and `GET /checkpoint/wait` report the same restore in exact units:
+Treat that marker as the signal that a restore happened, and nothing more — the rest of the line varies by region. For the snapshot size and restore time, read `GET /checkpoint/status` or `GET /checkpoint/wait`, which report the same restore in exact units everywhere:
 
 ```json
 {
@@ -89,7 +89,9 @@ CEREBRIUM_RESTORED: container my-app restored from checkpoint (1228.8 MiB in 2.1
 
 `status` is this container's own save (`none` until it checkpoints). `restored` is whether it came up from a snapshot. They are separate because a restored container is frozen mid-`POST /checkpoint` and resumes on `GET /checkpoint/wait` — the POST body never arrives.
 
-`duration_ms` runs from the snapshot being ready to this container's first call to either endpoint, so it covers the restore plus however long the process took to reach that call. It excludes the time spent downloading the snapshot. Expect it to read slightly higher than the figure in the `CEREBRIUM_RESTORED` log line, which times the restore alone.
+`duration_ms` runs from the snapshot being ready to this container's first call to either endpoint, so it covers the restore plus however long the process took to reach that call. It excludes the time spent downloading the snapshot.
+
+Call one of these endpoints on every start, not just when you expect a restore. The `POST /checkpoint` above is where a restored container was frozen, so on resume it returns no body and your client sees a dropped connection. Following it with `GET /checkpoint/wait` is what tells the container it was restored, and it is also the call that makes the restore show up in the dashboard.
 
 After a successful save, the same endpoints report the size of the snapshot this container wrote under `checkpoint`:
 
