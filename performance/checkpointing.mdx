@@ -67,13 +67,13 @@ Checkpoint size roughly equals CPU memory in use at trigger time plus GPU memory
 
 ### 4. Verify restoration
 
-If checkpoint creation succeeds, subsequent containers restore from that snapshot. A restored container logs a line beginning `CEREBRIUM_RESTORED`, including the snapshot size and how long restore took:
+If checkpoint creation succeeds, subsequent containers restore from that snapshot. A restored container logs a line beginning `CEREBRIUM_RESTORED` as its first log line, naming the snapshot size and how long the restore took:
 
 ```text
-CEREBRIUM_RESTORED: restored from checkpoint: 1.2 GiB in 3.2s (1288490188 bytes, 3200 ms)
+CEREBRIUM_RESTORED: container my-app restored from checkpoint (1228.8 MiB in 2.1s)
 ```
 
-The same figures are on `GET /checkpoint/status` and `GET /checkpoint/wait`:
+`GET /checkpoint/status` and `GET /checkpoint/wait` report the same restore in exact units:
 
 ```json
 {
@@ -87,7 +87,9 @@ The same figures are on `GET /checkpoint/status` and `GET /checkpoint/wait`:
 }
 ```
 
-`status` is this container's own save (`none` until it checkpoints). `restored` is whether it came up from a snapshot. They are separate because a restored container is frozen mid-`POST /checkpoint` and resumes on `GET /checkpoint/wait` — the POST body never arrives. `duration_ms` is gVisor restore time, not the time spent downloading the snapshot.
+`status` is this container's own save (`none` until it checkpoints). `restored` is whether it came up from a snapshot. They are separate because a restored container is frozen mid-`POST /checkpoint` and resumes on `GET /checkpoint/wait` — the POST body never arrives.
+
+`duration_ms` runs from the snapshot being ready to this container's first call to either endpoint, so it covers the restore plus however long the process took to reach that call. It excludes the time spent downloading the snapshot. Expect it to read slightly higher than the figure in the `CEREBRIUM_RESTORED` log line, which times the restore alone.
 
 After a successful save, the same endpoints report the size of the snapshot this container wrote under `checkpoint`:
 
