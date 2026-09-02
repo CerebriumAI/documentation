@@ -87,9 +87,9 @@ CEREBRIUM_RESTORED: container my-app restored from checkpoint (1228.8 MiB in 2.1
 }
 ```
 
-`status` is this container's own save (`none` until it checkpoints). `restored` is whether it came up from a snapshot. They are separate because a restored container is frozen mid-`POST /checkpoint` and resumes on `GET /checkpoint/wait` — the POST body never arrives.
+`status` is this container's own save (`none` until it checkpoints). `restored` is whether it came up from a snapshot. They are separate because a restored container is frozen mid-`POST /checkpoint` and resumes on `GET /checkpoint/wait`. The POST body never arrives.
 
-`duration_ms` runs from the snapshot being ready to this container's first call to either endpoint, so it covers the restore plus however long the process took to reach that call. It excludes the time spent downloading the snapshot. Expect it to read slightly higher than the figure in the `CEREBRIUM_RESTORED` log line, which times the restore alone.
+`duration_ms` runs from the snapshot being ready to this container's first call to either endpoint. It covers the restore plus however long the process took to reach that call. It excludes the time spent downloading the snapshot. Expect it to read slightly higher than the figure in the `CEREBRIUM_RESTORED` log line, which times the restore alone.
 
 After a successful save, the same endpoints report the size of the snapshot this container wrote under `checkpoint`:
 
@@ -171,9 +171,9 @@ The most common checkpoint failure is vLLM's default `fork` start method. Set `V
 
 The larger the size of the memory checkpoint, the slower the restore is. Reduce the size of the snapshot substantially and improve startup times by dropping the KV cache before checkpoint and recreating it after restore. vLLM has functionality that does this built in as part of [vLLM Sleep Mode](https://docs.vllm.ai/en/latest/features/sleep_mode/).
 
-{/_ The headings below are linked to by anchor from the checkpoint agent's
+{/* The headings below are linked to by anchor from the checkpoint agent's
 error messages (internal/agent/checkpoint_error.go). Renaming one breaks the
-link customers are told to follow. _/}
+link customers are told to follow. */}
 
 ## When a checkpoint fails
 
