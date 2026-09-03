@@ -5,6 +5,14 @@ description: Call your Cerebrium apps over the REST API with POST requests and J
 
 All functions on Cerebrium are accessible via POST requests, unless marked private by prefixing the function name with an underscore (e.g. `_private_function()`). Authenticate using the JWT token from the **API Keys** section of the dashboard. Endpoints require this token only when `cerebrium.toml` sets [`disable_auth = false`](/toml-reference/toml-reference). Authentication is disabled by default.
 
+## Managing API keys
+
+Create and manage keys in the **API Keys** section of the dashboard, or with the [Create API Key](/api-reference/api-keys/create-api-key) endpoint. Cerebrium returns the secret value once, at creation time.
+
+- **Expiration**: Set an optional expiration date (`YYYY-MM-DD`) when creating a key. A key without an expiration date never expires.
+- **Rotation**: Cerebrium does not rotate keys automatically. To rotate a key, create a new key, update your clients to use it, then delete the old key.
+- **Deletion**: Deleting a key is permanent. Requests using the deleted key start failing within a few seconds, and you cannot recover the key. Only project owners can delete keys. To remove a key that belongs to a service account, delete the service account.
+
 ## Request format
 
 The POST request follows the structure below, where `{function}` is the name of the function to invoke. This example calls `predict()` from `main.py`.
