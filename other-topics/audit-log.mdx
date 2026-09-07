@@ -17,17 +17,21 @@ The audit log is included on the Standard and Enterprise plans. Retention sets h
 | Standard   | 7 days       |
 | Enterprise | 30 days      |
 
-<Note>
-  Actions are recorded on every plan, including Hobby. Retention governs how far
-  back the log can be read, not what is captured — upgrading a plan reveals
-  history that was already recorded rather than starting an empty log.
-</Note>
-
 ## Viewing the Log
 
-Open a project in the [dashboard](https://dashboard.cerebrium.ai/login) and select **Audit Log**. Filter by date range, action, or outcome. Select a row to expand the full detail of the entry.
+Open a project in the [dashboard](https://dashboard.cerebrium.ai/login) and select **Audit Log**. Select a row to expand the full detail of the entry.
 
 Only project owners can read the audit log. It lists credential and membership activity across the whole project, so members and service accounts are denied.
+
+## Filtering
+
+Filter by date range, action, or outcome to answer a specific question:
+
+- **Who removed someone from the project last week** — action `project.member_remove`, over that week
+- **What was refused** — outcome `failure`, which lists the attempts that were denied
+- **Whether a secret was read before an incident** — action `secrets.read`, over the hours before it
+
+Filtering by actor is available over the API rather than in the dashboard.
 
 ## Recorded Actions
 
