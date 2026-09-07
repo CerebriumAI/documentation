@@ -11,11 +11,11 @@ Inference requests are not audited. App invocations are traffic rather than conf
 
 The audit log is included on the Standard and Enterprise plans. Retention sets how far back the log is readable:
 
-| Plan       | Retention   |
-| ---------- | ----------- |
+| Plan       | Retention    |
+| ---------- | ------------ |
 | Hobby      | Not included |
-| Standard   | 7 days      |
-| Enterprise | 30 days     |
+| Standard   | 7 days       |
+| Enterprise | 30 days      |
 
 <Note>
   Actions are recorded on every plan, including Hobby. Retention governs how far
@@ -31,30 +31,30 @@ Only project owners can read the audit log. It lists credential and membership a
 
 ## Recorded Actions
 
-| Action | Records |
-| ------ | ------- |
-| `app.create` | An app was created |
-| `app.update` | An app's configuration was changed |
-| `app.delete` | An app was deleted |
-| `build.download` | An app's source was downloaded from a build |
-| `build.cancel` | A build was cancelled |
-| `container.stop` | A running container was stopped |
-| `run.cancel` | An async run was cancelled |
-| `secrets.read` | Secret values were retrieved, at project or app level |
-| `secrets.update` | Secrets were changed, at project or app level |
-| `apikey.create` | An API key was created |
-| `apikey.read` | API keys were listed, which returns their values |
-| `apikey.delete` | An API key was deleted |
-| `serviceaccount.create` | A service account was created |
-| `serviceaccount.update` | A service account was changed |
-| `serviceaccount.delete` | A service account was deleted |
-| `serviceaccount.keys_list` | A service account's tokens were listed |
-| `project.member_invite` | A user was invited to the project |
-| `project.member_remove` | A user was removed from the project |
-| `volume.file_download` | A file was downloaded from a volume |
-| `volume.file_delete` | A file was deleted from a volume |
-| `volume.resize` | A volume was resized |
-| `project.delete` | The project was deleted |
+| Action                     | Records                                               |
+| -------------------------- | ----------------------------------------------------- |
+| `app.create`               | An app was created                                    |
+| `app.update`               | An app's configuration was changed                    |
+| `app.delete`               | An app was deleted                                    |
+| `build.download`           | An app's source was downloaded from a build           |
+| `build.cancel`             | A build was cancelled                                 |
+| `container.stop`           | A running container was stopped                       |
+| `run.cancel`               | An async run was cancelled                            |
+| `secrets.read`             | Secret values were retrieved, at project or app level |
+| `secrets.update`           | Secrets were changed, at project or app level         |
+| `apikey.create`            | An API key was created                                |
+| `apikey.read`              | API keys were listed, which returns their values      |
+| `apikey.delete`            | An API key was deleted                                |
+| `serviceaccount.create`    | A service account was created                         |
+| `serviceaccount.update`    | A service account was changed                         |
+| `serviceaccount.delete`    | A service account was deleted                         |
+| `serviceaccount.keys_list` | A service account's tokens were listed                |
+| `project.member_invite`    | A user was invited to the project                     |
+| `project.member_remove`    | A user was removed from the project                   |
+| `volume.file_download`     | A file was downloaded from a volume                   |
+| `volume.file_delete`       | A file was deleted from a volume                      |
+| `volume.resize`            | A volume was resized                                  |
+| `project.delete`           | The project was deleted                               |
 
 Reads are recorded where the read itself is sensitive. `secrets.read`, `apikey.read`, and `build.download` return secret values, key values, and source code respectively, so each earns an entry.
 
@@ -84,15 +84,15 @@ curl -X GET "https://rest.cerebrium.ai/v2/projects/{project_id}/audit-log?limit=
 
 Supported query parameters:
 
-| Parameter | Description |
-| --------- | ----------- |
-| `from` | Start of the window, RFC3339. Clamped to the plan's retention window |
-| `to` | End of the window, RFC3339. Defaults to now |
-| `action` | Return only this action, for example `secrets.read` |
-| `actor` | Return only actions taken by this actor ID |
-| `outcome` | Return only `success` or `failure` |
-| `limit` | Page size, 1–200. Defaults to 50 |
-| `nextToken` | Page token from the previous response |
+| Parameter   | Description                                                          |
+| ----------- | -------------------------------------------------------------------- |
+| `from`      | Start of the window, RFC3339. Clamped to the plan's retention window |
+| `to`        | End of the window, RFC3339. Defaults to now                          |
+| `action`    | Return only this action, for example `secrets.read`                  |
+| `actor`     | Return only actions taken by this actor ID                           |
+| `outcome`   | Return only `success` or `failure`                                   |
+| `limit`     | Page size, 1–200. Defaults to 50                                     |
+| `nextToken` | Page token from the previous response                                |
 
 Entries are returned newest first. When `hasMore` is true, pass the response's `nextPageToken` as `nextToken` to fetch the next page. There is no total count — the log reports what it returned and whether more remains.
 
