@@ -41,14 +41,14 @@ The `[cerebrium.deployment]` section defines core deployment settings.
 
 ### Increasing the Initialization Timeout
 
-If your app loads large models or does heavy setup at startup, the build can fail with an initialization timeout. Raise `deployment_initialization_timeout` up to the 830 second maximum:
+If your app loads large models or does heavy setup at startup, the build can fail with an initialization timeout. Raise `deployment_initialization_timeout` up to the 830-second maximum:
 
 ```toml
 [cerebrium.deployment]
 deployment_initialization_timeout = 830
 ```
 
-This timeout only applies to app initialization during build. Request timeouts during inference are controlled by `response_grace_period` in the [scaling configuration](#scaling-configuration).
+This timeout only applies to app initialization during build. The `response_grace_period` option in the [scaling configuration](#scaling-configuration) controls request timeouts during inference.
 
 ### UV Package Manager
 
