@@ -1,0 +1,103 @@
+---
+title: "Audit Log"
+description: Review who changed what in a Cerebrium project — app, secret, credential, member, and volume actions, with retention and API access by plan.
+---
+
+The audit log records control-plane actions taken against a project: who took the action, what it acted on, when, and whether it succeeded. Use it to answer who deleted an app, who read a secret, and who invited a member.
+
+Inference requests are not audited. App invocations are traffic rather than configuration changes, and appear in [app logs](/other-topics/request-response-logging) instead.
+
+## Availability
+
+The audit log is included on the Standard and Enterprise plans. Retention sets how far back the log is readable:
+
+| Plan       | Retention   |
+| ---------- | ----------- |
+| Hobby      | Not included |
+| Standard   | 7 days      |
+| Enterprise | 30 days     |
+
+<Note>
+  Actions are recorded on every plan, including Hobby. Retention governs how far
+  back the log can be read, not what is captured — upgrading a plan reveals
+  history that was already recorded rather than starting an empty log.
+</Note>
+
+## Viewing the Log
+
+Open a project in the [dashboard](https://dashboard.cerebrium.ai/login) and select **Audit Log**. Filter by date range, action, or outcome. Select a row to expand the full detail of the entry.
+
+Only project owners can read the audit log. It lists credential and membership activity across the whole project, so members and service accounts are denied.
+
+## Recorded Actions
+
+| Action | Records |
+| ------ | ------- |
+| `app.create` | An app was created |
+| `app.update` | An app's configuration was changed |
+| `app.delete` | An app was deleted |
+| `build.download` | An app's source was downloaded from a build |
+| `build.cancel` | A build was cancelled |
+| `container.stop` | A running container was stopped |
+| `run.cancel` | An async run was cancelled |
+| `secrets.read` | Secret values were retrieved, at project or app level |
+| `secrets.update` | Secrets were changed, at project or app level |
+| `apikey.create` | An API key was created |
+| `apikey.read` | API keys were listed, which returns their values |
+| `apikey.delete` | An API key was deleted |
+| `serviceaccount.create` | A service account was created |
+| `serviceaccount.update` | A service account was changed |
+| `serviceaccount.delete` | A service account was deleted |
+| `serviceaccount.keys_list` | A service account's tokens were listed |
+| `project.member_invite` | A user was invited to the project |
+| `project.member_remove` | A user was removed from the project |
+| `volume.file_download` | A file was downloaded from a volume |
+| `volume.file_delete` | A file was deleted from a volume |
+| `volume.resize` | A volume was resized |
+| `project.delete` | The project was deleted |
+
+Reads are recorded where the read itself is sensitive. `secrets.read`, `apikey.read`, and `build.download` return secret values, key values, and source code respectively, so each earns an entry.
+
+## Entry Contents
+
+Each entry records:
+
+- **Time** — when the action was taken
+- **Action** — the action name from the table above
+- **Actor** — the user or service account that took the action, with the email address, IP address, and user agent of the request
+- **Target** — what was acted on, as a type and ID, such as `app:my-app`
+- **Outcome** — `success` or `failure`, with the HTTP status code
+- **Details** — action-specific fields, such as the invited email address and role on `project.member_invite`, or the file path and region on `volume.file_delete`
+
+Failed attempts are recorded alongside successful ones. An action denied for lack of permission is itself audit material, so a `failure` entry with a `403` status is expected rather than an error.
+
+Actors are stored as IDs and resolved to names when the log is read, so an entry stays attributable after a rename. An actor whose account has since been deleted shows as `Deleted user`.
+
+## Reading the Log Through the API
+
+The log is also available over the REST API, authenticated as a project owner:
+
+```bash
+curl -X GET "https://rest.cerebrium.ai/v2/projects/{project_id}/audit-log?limit=50" \
+  -H "Authorization: Bearer <JWT>"
+```
+
+Supported query parameters:
+
+| Parameter | Description |
+| --------- | ----------- |
+| `from` | Start of the window, RFC3339. Clamped to the plan's retention window |
+| `to` | End of the window, RFC3339. Defaults to now |
+| `action` | Return only this action, for example `secrets.read` |
+| `actor` | Return only actions taken by this actor ID |
+| `outcome` | Return only `success` or `failure` |
+| `limit` | Page size, 1–200. Defaults to 50 |
+| `nextToken` | Page token from the previous response |
+
+Entries are returned newest first. When `hasMore` is true, pass the response's `nextPageToken` as `nextToken` to fetch the next page. There is no total count — the log reports what it returned and whether more remains.
+
+<Note>
+  A `from` earlier than the plan's retention window is clamped to that window
+  rather than rejected. A window that falls entirely outside it returns an empty
+  page.
+</Note>
