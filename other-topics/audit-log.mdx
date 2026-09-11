@@ -75,8 +75,6 @@ Each entry records:
 
 Failed attempts are recorded alongside successful ones. An action denied for lack of permission is itself audit material, so a `failure` entry with a `403` status is expected rather than an error.
 
-An entry stays attributable after a user is renamed. An actor whose account has since been deleted shows as `Deleted user`.
-
 ## Reading the Log Through the API
 
 The log is also available over the REST API, authenticated as a project owner:
