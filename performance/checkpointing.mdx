@@ -163,7 +163,7 @@ engine.wake_up()
 
 **Graphics APIs:** Vulkan, OpenGL, and EGL are not supported at all. The runtime does not enable the NVIDIA `graphics` driver capability, so an app that requires it either fails to start or fails at driver initialization.
 
-**Video encode and decode:** NVENC, NVDEC, and NVJPG run, but an app holding a video engine session cannot be checkpointed. See [Video encode and decode](#video-encode-and-decode).
+**Video encode and decode:** The GPU video engines run, but an app holding a video engine session cannot be checkpointed. See [Video encode and decode](#video-encode-and-decode).
 
 ## Platform-specific recommendations
 
@@ -226,11 +226,11 @@ Use ordinary device allocations instead — `cudaMalloc`, or PyTorch tensors mov
 
 ## Video encode and decode
 
-The GPU video engines cannot be checkpointed. This covers NVENC (encode), NVDEC (decode), and NVJPG. The GPU checkpointer only captures CUDA compute state, so a live encoder or decoder session has no way to be saved and the snapshot is refused.
+The GPU video engines cannot be checkpointed. This covers NVENC (encode), NVDEC (decode), NVJPG (JPEG), and the optical flow engine. The GPU checkpointer only captures CUDA compute state, so a live video engine session has no way to be saved and the snapshot is refused.
 
 This applies even to a single-process app. The video session alone is enough — no `fork` and no worker processes are involved, so switching to `spawn` does not help.
 
-Release the video session before triggering the checkpoint, and reopen it afterwards. If the app must hold an encoder or decoder open for its whole lifetime, it cannot be checkpointed today.
+Release the video session before triggering the checkpoint, and reopen it afterwards. If the app must hold a video engine open for its whole lifetime, it cannot be checkpointed today.
 
 ## Internal checkpoint error
 
