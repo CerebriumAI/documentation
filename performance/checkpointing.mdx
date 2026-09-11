@@ -220,6 +220,18 @@ CUDA Unified Memory (UVM, `cudaMallocManaged`) cannot be checkpointed. Unified a
 
 Use ordinary device allocations instead: `cudaMalloc`, or PyTorch tensors moved to CUDA with `.to("cuda")`. If a dependency enables unified memory on your behalf, disable that option; if it cannot be disabled, the app cannot be checkpointed today.
 
+## Internal checkpoint error
+
+The checkpoint failed inside the checkpointing runtime, not in your app. No change to your code prevents this one.
+
+Email [support@cerebrium.ai](mailto:support@cerebrium.ai) with your app id and the time of the failed checkpoint. The underlying error is recorded on the node and can be matched against that timestamp.
+
+## Checkpoint interrupted
+
+The checkpoint stopped before it finished, usually because the container was replaced or the node drained while the snapshot was being written.
+
+Trigger the checkpoint again once the app is warm. If every attempt ends the same way, email [support@cerebrium.ai](mailto:support@cerebrium.ai) with your app id.
+
 ## Unknown cause
 
 The failure is not one of the causes above. The message says `checkpoint failed: unknown cause` rather than inventing a reason or returning a bare error.
