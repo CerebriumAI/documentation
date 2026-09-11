@@ -1,6 +1,6 @@
 ---
 title: "Audit Log"
-description: Review who changed what in a Cerebrium project — app, secret, credential, member, and volume actions, with retention and API access by plan.
+description: "Review who changed what in a Cerebrium project: app, secret, credential, member, and volume actions, with retention and API access by plan."
 ---
 
 The audit log records actions taken against a project: who took the action, what it acted on, when, and whether it succeeded. Use it to answer who deleted an app, who read a secret, and who invited a member.
@@ -61,7 +61,7 @@ Each entry records:
 - **Outcome** — `success` or `failure`, with the HTTP status code
 - **Details** — action-specific fields, such as the invited email address and role on `project.member_invite`, or the file path and region on `volume.file_delete`
 
-Failed attempts are recorded alongside successful ones.
+The audit log records failed attempts alongside successful ones.
 
 ## Reading the Log Through the API
 
@@ -84,4 +84,4 @@ Supported query parameters:
 | `limit`     | Page size, 1–200. Defaults to 50                                     |
 | `nextToken` | Page token from the previous response                                |
 
-Entries are returned newest first. When `hasMore` is true, pass the response's `nextPageToken` as `nextToken` to fetch the next page.
+The API returns entries newest first. When `hasMore` is true, pass the response's `nextPageToken` as `nextToken` to fetch the next page.
