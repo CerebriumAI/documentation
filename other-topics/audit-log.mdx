@@ -3,9 +3,9 @@ title: "Audit Log"
 description: Review who changed what in a Cerebrium project — app, secret, credential, member, and volume actions, with retention and API access by plan.
 ---
 
-The audit log records control-plane actions taken against a project: who took the action, what it acted on, when, and whether it succeeded. Use it to answer who deleted an app, who read a secret, and who invited a member.
+The audit log records actions taken against a project: who took the action, what it acted on, when, and whether it succeeded. Use it to answer who deleted an app, who read a secret, and who invited a member.
 
-Inference requests are not audited. App invocations are traffic rather than configuration changes, and appear in [app logs](/other-topics/request-response-logging) instead.
+Inference requests are not audited. They appear in [app logs](/other-topics/request-response-logging) instead.
 
 ## Availability
 
@@ -21,15 +21,7 @@ The audit log is included on the Standard and Enterprise plans. Retention sets h
 
 Open a project in the [dashboard](https://dashboard.cerebrium.ai/login) and select **Audit Log**. Select a row to expand the full detail of the entry.
 
-Only project owners can read the audit log.
-
-## Filtering
-
-Filter by date range, action, or outcome to answer a specific question:
-
-- **Who removed someone from the project last week** — action `project.member_remove`, over that week
-- **What was refused** — outcome `failure`, which lists the attempts that were denied
-- **Whether a secret was read before an incident** — action `secrets.read`, over the hours before it
+Filter by date range, action, or outcome. Only project owners can read the audit log.
 
 ## Recorded Actions
 
@@ -58,8 +50,6 @@ Filter by date range, action, or outcome to answer a specific question:
 | `volume.resize`            | A volume was resized                                  |
 | `project.delete`           | The project was deleted                               |
 
-Reads are recorded where the read itself is sensitive, which is why `secrets.read`, `apikey.read`, and `build.download` each have an entry.
-
 ## Entry Contents
 
 Each entry records:
@@ -71,7 +61,7 @@ Each entry records:
 - **Outcome** — `success` or `failure`, with the HTTP status code
 - **Details** — action-specific fields, such as the invited email address and role on `project.member_invite`, or the file path and region on `volume.file_delete`
 
-Failed attempts are recorded alongside successful ones. An action denied for lack of permission is itself audit material, so a `failure` entry with a `403` status is expected rather than an error.
+Failed attempts are recorded alongside successful ones.
 
 ## Reading the Log Through the API
 
@@ -94,10 +84,4 @@ Supported query parameters:
 | `limit`     | Page size, 1–200. Defaults to 50                                     |
 | `nextToken` | Page token from the previous response                                |
 
-Entries are returned newest first. When `hasMore` is true, pass the response's `nextPageToken` as `nextToken` to fetch the next page. There is no total count — the log reports what it returned and whether more remains.
-
-<Note>
-  A `from` earlier than the plan's retention window is clamped to that window
-  rather than rejected. A window that falls entirely outside it returns an empty
-  page.
-</Note>
+Entries are returned newest first. When `hasMore` is true, pass the response's `nextPageToken` as `nextToken` to fetch the next page.
