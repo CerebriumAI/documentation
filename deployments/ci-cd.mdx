@@ -9,8 +9,8 @@ This guide sets up a CI/CD pipeline using GitHub Actions and Cerebrium's Service
 
 <Note>
   {" "}
-  Maintaining **separate development and production apps** in separate projects
-  is recommended, so that you can safely test changes before going live.
+  Maintain **separate development and production apps** in separate projects, so
+  that you can safely test changes before going live.
 </Note>
 
 ### 1. Authenticating to Cerebrium
@@ -18,7 +18,7 @@ This guide sets up a CI/CD pipeline using GitHub Actions and Cerebrium's Service
 The GitHub Action workflow uses a **Service Account key** to authenticate to Cerebrium. Service Account keys are credentials tied to a specific service, not an individual.
 
 1. Go to the [Cerebrium Dashboard](https://dashboard.cerebrium.ai/) and open the **API Keys** page.
-2. Click **Create Service Account**, name it `"GitHub Actions CI/CD"`, choose an expiry date, and click **Create**.
+2. Click **Create Service Account**, name it `"GitHub Actions CI/CD"`, select an expiry date, and click **Create**.
 3. **Copy the key** generated for the new service account.
 
 ![Cerebrium API Keys dashboard](/images/api-keys-sa.png)
