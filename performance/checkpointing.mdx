@@ -161,6 +161,10 @@ engine.wake_up()
 
 **Ephemeral filesystem:** Any files written to disk before the checkpoint are not copied to the restored container. Only memory is checkpointed.
 
+**Vulkan:** Graphics APIs that need the NVIDIA `graphics` driver capability cannot be checkpointed. See [Vulkan](#vulkan).
+
+**Video encode and decode:** NVENC, NVDEC, and the NVIDIA `video` driver capability cannot be checkpointed. See [Video encode and decode](#video-encode-and-decode).
+
 ## Platform-specific recommendations
 
 ### vLLM
@@ -219,6 +223,18 @@ A checkpoint cannot be taken while a process outside the snapshot still holds an
 CUDA Unified Memory (UVM, `cudaMallocManaged`) cannot be checkpointed. Unified allocations are managed by the driver across host and device, and the checkpointer has no way to capture that state, so it refuses the snapshot.
 
 Use ordinary device allocations instead — `cudaMalloc`, or PyTorch tensors moved to CUDA with `.to("cuda")`. If a dependency enables unified memory on your behalf, disable that option; if it cannot be disabled, the app cannot be checkpointed today.
+
+## Vulkan
+
+Vulkan, OpenGL, and EGL cannot be checkpointed. Those APIs need the NVIDIA `graphics` driver capability, and the GPU checkpointer only covers CUDA compute state.
+
+Do not initialize a graphics API in an app that you intend to checkpoint. If a dependency requires Vulkan, the app cannot be checkpointed today.
+
+## Video encode and decode
+
+NVIDIA video encode and decode (NVENC, NVDEC, and the `video` driver capability) cannot be checkpointed.
+
+Use a CUDA-only pipeline for apps that need checkpointing. If a dependency requires NVENC or NVDEC, the app cannot be checkpointed today.
 
 ## Internal checkpoint error
 
