@@ -161,7 +161,9 @@ engine.wake_up()
 
 **Ephemeral filesystem:** Any files written to disk before the checkpoint are not copied to the restored container. Only memory is checkpointed.
 
-**Graphics and video APIs:** Vulkan, OpenGL, EGL, NVENC, and NVDEC are not supported, checkpointed or otherwise. The runtime enables only the NVIDIA `compute` and `utility` driver capabilities, so an app that requires the `graphics` or `video` capability either fails to start or fails at driver initialization. Use a CUDA-only pipeline.
+**Graphics APIs:** Vulkan, OpenGL, and EGL are not supported at all. The runtime does not enable the NVIDIA `graphics` driver capability, so an app that requires it either fails to start or fails at driver initialization.
+
+**Video encode and decode:** NVENC, NVDEC, and NVJPG run, but an app holding a video engine session cannot be checkpointed. See [Video encode and decode](#video-encode-and-decode).
 
 ## Platform-specific recommendations
 
@@ -221,6 +223,14 @@ A checkpoint cannot be taken while a process outside the snapshot still holds an
 CUDA Unified Memory (UVM, `cudaMallocManaged`) cannot be checkpointed. Unified allocations are managed by the driver across host and device, and the checkpointer has no way to capture that state, so it refuses the snapshot.
 
 Use ordinary device allocations instead — `cudaMalloc`, or PyTorch tensors moved to CUDA with `.to("cuda")`. If a dependency enables unified memory on your behalf, disable that option; if it cannot be disabled, the app cannot be checkpointed today.
+
+## Video encode and decode
+
+The GPU video engines cannot be checkpointed. This covers NVENC (encode), NVDEC (decode), and NVJPG. The GPU checkpointer only captures CUDA compute state, so a live encoder or decoder session has no way to be saved and the snapshot is refused.
+
+This applies even to a single-process app. The video session alone is enough — no `fork` and no worker processes are involved, so switching to `spawn` does not help.
+
+Release the video session before triggering the checkpoint, and reopen it afterwards. If the app must hold an encoder or decoder open for its whole lifetime, it cannot be checkpointed today.
 
 ## Internal checkpoint error
 
