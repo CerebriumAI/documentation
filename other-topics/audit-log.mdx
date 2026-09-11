@@ -47,7 +47,7 @@ Filtering by actor is available over the API rather than in the dashboard.
 | `secrets.read`             | Secret values were retrieved, at project or app level |
 | `secrets.update`           | Secrets were changed, at project or app level         |
 | `apikey.create`            | An API key was created                                |
-| `apikey.read`              | API keys were listed, which returns their values      |
+| `apikey.read`              | API keys were listed                                  |
 | `apikey.delete`            | An API key was deleted                                |
 | `serviceaccount.create`    | A service account was created                         |
 | `serviceaccount.update`    | A service account was changed                         |
@@ -60,7 +60,7 @@ Filtering by actor is available over the API rather than in the dashboard.
 | `volume.resize`            | A volume was resized                                  |
 | `project.delete`           | The project was deleted                               |
 
-Reads are recorded where the read itself is sensitive. `secrets.read`, `apikey.read`, and `build.download` return secret values, key values, and source code respectively, so each earns an entry.
+Reads are recorded where the read itself is sensitive, which is why `secrets.read`, `apikey.read`, and `build.download` each have an entry.
 
 ## Entry Contents
 
