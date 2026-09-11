@@ -171,9 +171,9 @@ The most common checkpoint failure is vLLM's default `fork` start method. Set `V
 
 The larger the size of the memory checkpoint, the slower the restore is. Reduce the size of the snapshot substantially and improve startup times by dropping the KV cache before checkpoint and recreating it after restore. vLLM has functionality that does this built in as part of [vLLM Sleep Mode](https://docs.vllm.ai/en/latest/features/sleep_mode/).
 
-{/_ The headings below are linked to by anchor from the checkpoint agent's
+{/* The headings below are linked to by anchor from the checkpoint agent's
 error messages (internal/agent/checkpoint_error.go). Renaming one breaks the
-link customers are told to follow. _/}
+link customers are told to follow. */}
 
 ## When a checkpoint fails
 
@@ -224,13 +224,13 @@ Use ordinary device allocations instead: `cudaMalloc`, or PyTorch tensors moved 
 
 The checkpoint failed inside the checkpointing runtime, not in your app. No change to your code prevents this one.
 
-Email [support@cerebrium.ai](mailto:support@cerebrium.ai) with your app id and the time of the failed checkpoint. The underlying error is recorded on the node and can be matched against that timestamp.
+Email [support@cerebrium.ai](mailto:support@cerebrium.ai) with your app ID and the time of the failed checkpoint. Cerebrium records the underlying error on the node and matches it against that timestamp.
 
 ## Checkpoint interrupted
 
-The checkpoint stopped before it finished, usually because the container was replaced or the node drained while the snapshot was being written.
+The checkpoint stopped before it finished, usually because the container was replaced or the node drained while the runtime was writing the snapshot.
 
-Trigger the checkpoint again once the app is warm. If every attempt ends the same way, email [support@cerebrium.ai](mailto:support@cerebrium.ai) with your app id.
+Trigger the checkpoint again once the app is warm. If every attempt ends the same way, email [support@cerebrium.ai](mailto:support@cerebrium.ai) with your app ID.
 
 ## Unknown cause
 
