@@ -5,6 +5,15 @@ description: Disable request and response logging in the Cortex runtime using se
 
 By default, the Cortex runtime logs all requests and responses. These logs appear in the app dashboard and are useful for debugging and monitoring. Disable them when privacy, security, or performance requires it.
 
+## Viewing Logs
+
+View logs in either of two places:
+
+- **App dashboard**: open your app in the [Cerebrium dashboard](https://dashboard.cerebrium.ai/) and select the **Logs** tab for the live stream, filtering, and search.
+- **Get App Logs API**: fetch logs programmatically at `GET /v2/projects/{project_id}/apps/{app_id}/logs`. See [Get App Logs](/api-reference/apps/get-app-logs).
+
+The Cerebrium CLI does not have a `cerebrium logs` subcommand. Use the dashboard or the API endpoint above.
+
 ## Controlling Logs
 
 Two settings control logging behavior in the Cortex runtime:
