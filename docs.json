@@ -106,6 +106,7 @@
                   "security",
                   "other-topics/using-secrets",
                   "other-topics/request-response-logging",
+                  "other-topics/audit-log",
                   "calculating-cost"
                 ]
               }
