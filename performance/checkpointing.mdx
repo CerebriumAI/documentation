@@ -169,7 +169,7 @@ A checkpoint is bound to the host machine environment it was captured on, which 
 
 An app can run across more than one compute pool in a region. A container that starts in a pool holding no matching checkpoint cold starts instead, then saves its own checkpoint when your app sends the trigger. Containers that later start in that pool restore from it, so each pool pays the cold start once.
 
-Nothing is logged when a restore is skipped for this reason. The absence of the `CEREBRIUM_RESTORED` marker, or `"restored": false` from `GET /checkpoint/status`, is the only signal. An unexpected cold start after a successful checkpoint is normally this.
+The runtime logs nothing when it skips a restore for this reason. The absence of the `CEREBRIUM_RESTORED` marker, or `"restored": false` from `GET /checkpoint/status`, is the only signal. An unexpected cold start after a successful checkpoint is normally this.
 
 ## Platform-specific recommendations
 
@@ -181,9 +181,9 @@ The most common checkpoint failure is vLLM's default `fork` start method. Set `V
 
 The larger the size of the memory checkpoint, the slower the restore is. Reduce the size of the snapshot substantially and improve startup times by dropping the KV cache before checkpoint and recreating it after restore. vLLM has functionality that does this built in as part of [vLLM Sleep Mode](https://docs.vllm.ai/en/latest/features/sleep_mode/).
 
-{/_ The headings below are linked to by anchor from the checkpoint agent's
+{/* The headings below are linked to by anchor from the checkpoint agent's
 error messages (internal/agent/checkpoint_error.go). Renaming one breaks the
-link customers are told to follow. _/}
+link customers are told to follow. */}
 
 ## When a checkpoint fails
 
