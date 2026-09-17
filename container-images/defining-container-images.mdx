@@ -52,7 +52,7 @@ python_version = 3.11
 
 The Python version affects the entire dependency chain. For instance, some packages may not support newer Python versions immediately after release.
 
-To use a later Python version, please use a [Dockerfile](/container-images/custom-dockerfiles).
+To use a later Python version, use a [Dockerfile](/container-images/custom-dockerfiles).
 
 <Warning>
   Changes to the Python version trigger a full rebuild since they affect both
@@ -176,11 +176,11 @@ docker_base_image_url = "debian:bookworm-slim" # Default minimal image
 ```
 
 <Tip>
-  Starting with a minimal Debian or Ubuntu base image is recommended, as CUDA
-  images include many pre-installed components that increase container size.
-  While the relationship isn't strictly linear, larger container sizes generally
-  lead to longer cold-starts and build times. Begin with a lean base image and
-  add only essential components as needed.
+  Start with a minimal Debian or Ubuntu base image, as CUDA images include many
+  pre-installed components that increase container size. While the relationship
+  isn't strictly linear, larger container sizes generally lead to longer
+  cold-starts and build times. Begin with a lean base image and add only
+  essential components as needed.
 </Tip>
 
 #### Public Docker Hub Images with Namespaces
@@ -209,7 +209,7 @@ docker_base_image_url = "bob/infinity:latest"
 <Warning>
   Use `docker login -u username` instead of just `docker login`. The latter may
   use Docker's web-based OAuth flow which creates tokens that are incompatible
-  with our build system.
+  with Cerebrium's build system.
 </Warning>
 
 #### Public AWS ECR Images
@@ -244,8 +244,8 @@ Key parameters:
 
 - `entrypoint`: Command to start the app (string or string list)
 - `port`: Port the app listens on
-- `healthcheck_endpoint`: The endpoint used to confirm instance health. If unspecified, defaults to a TCP ping on the configured port. If the health check registers a non-200 response, it will be considered _unhealthy_, and be restarted should it not recover timely.
-- `readycheck_endpoint`: The endpoint used to confirm if the instance is ready to receive. If unspecified, defaults to a TCP ping on the configured port. If the ready check registers a non-200 response, it will not be a viable target for request routing.
+- `healthcheck_endpoint`: The endpoint used to confirm instance health. If unspecified, defaults to a TCP ping on the configured port. If the health check registers a non-200 response, Cerebrium considers the instance _unhealthy_ and restarts it if it does not recover in time.
+- `readycheck_endpoint`: The endpoint used to confirm if the instance is ready to receive. If unspecified, defaults to a TCP ping on the configured port. If the ready check registers a non-200 response, Cerebrium does not route requests to the instance.
 
 <Info>
   Check out [this
