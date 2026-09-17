@@ -8,7 +8,7 @@ description: Turn ComfyUI stable diffusion workflows into autoscaling API endpoi
 ComfyUI is a popular no-code interface for building complex stable diffusion workflows. Its modular setup and intuitive flowchart interface have produced an extensive collection of community workflows. Several websites offer shared workflows:
 
 - https://comfyworkflows.com/
-- https://openart.ai/workflows/home‍
+- https://openart.ai/workflows/home
 
 Production-scale deployment guidance for ComfyUI is limited. This tutorial covers deploying ComfyUI pipelines on Cerebrium as autoscaling API endpoints with pay-as-you-go compute. Find the full example code [here](https://github.com/CerebriumAI/examples/tree/master/7-image-and-video/1-comfyui).
 
@@ -23,9 +23,8 @@ This tutorial uses Stable Diffusion XL and ControlNet to create custom QR codes.
 3. Download the following models and install them in the appropriate folders within the ComfyUI folder:
    - SDXL base in models/checkpoints.
    - ControlNet in models/ControlNet.
-4. Run ComfyUI locally from inside the cloned ComfyUI folder: python main.py --force-fp16 on MacOS.
-5. A server should be loaded locally at http://127.0.0.1:8188/‍
-   ‍
+4. Run ComfyUI locally from inside the cloned ComfyUI folder: python main.py --force-fp16 on macOS.
+5. A server should be loaded locally at http://127.0.0.1:8188/
 
 The default ComfyUI workflow interface appears in this view. Use this locally running instance to build the image generation pipeline.
 

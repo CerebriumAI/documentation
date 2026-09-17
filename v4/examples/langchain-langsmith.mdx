@@ -212,7 +212,6 @@ The code above:
 1. Uses `@tool` decorator to identify functions as LangChain tools
 2. Includes docstrings explaining functionality and required inputs
 3. Uses `find_available_slots` helper function to format Cal.com API responses into readable time slots
-   ‍
 
 The book_slot tool follows a similar pattern. It books a slot based on the selected time/day. Get the eventTypeId from the dashboard by selecting an event and grabbing the ID from the URL.
 
@@ -336,7 +335,6 @@ This code:
 
 - Defines a Pydantic object specifying the expected API parameters: user prompt and session ID.
 - The predict function (Cerebrium’s API entry point) passes the prompt and session ID to the agent and returns results.
-  ‍
 
 Install pip dependencies locally: `pip install pydantic langchain pytz openai langchain_openai langchain-community`, then run `python main.py`. Replace secrets with actual values when running locally. Output looks similar to:
 
