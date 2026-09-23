@@ -175,6 +175,39 @@ curl -X PATCH "https://rest.cerebrium.ai/v2/projects/{project_id}/volumes/defaul
   [email](mailto:support@cerebrium.ai).
 </Note>
 
+## Using External Cloud Storage
+
+Cerebrium does not mount external cloud storage buckets (S3, GCS, Azure Blob) as a filesystem. To read from or write to your own bucket, use the provider's SDK inside your app code and authenticate with credentials stored as [secrets](/other-topics/using-secrets).
+
+1. Add the SDK to your `cerebrium.toml`:
+
+   ```toml
+   [cerebrium.dependencies.pip]
+   boto3 = "latest"
+   ```
+
+2. Store your credentials as project or app secrets (for example `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`). Secrets are exposed as environment variables at runtime.
+
+3. Access the bucket from your handler:
+
+   ```python
+   import os
+   import boto3
+
+   s3 = boto3.client(
+       "s3",
+       aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
+       aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
+       region_name=os.environ.get("AWS_REGION", "us-east-1"),
+   )
+
+   def predict(key: str):
+       s3.download_file("my-bucket", key, f"/persistent-storage/{key}")
+       return {"path": f"/persistent-storage/{key}"}
+   ```
+
+For large model weights or datasets, download once into `/persistent-storage` so subsequent container starts read from the local volume instead of the bucket. The same pattern applies to Google Cloud Storage (`google-cloud-storage`) and Azure Blob Storage (`azure-storage-blob`).
+
 ### Storage Quota Errors
 
 If you hit your storage quota, you'll see errors like `No space left on device` when trying to download or write files. To resolve this:
