@@ -34,10 +34,22 @@ memory = 8.0
 
 When Cerebrium brings new capacity online, global apps can run there without a configuration change or redeploy.
 
-<Note>
-  Geography-based placement is coming soon. This constrains an app to a
-  geographic area such as the US or the EU to meet data-residency requirements.
-</Note>
+## Run in a Geography
+
+Set `region = "us"` or `region = "eu"` to run the app in any region within that geography:
+
+```toml
+[cerebrium.hardware]
+region = "eu"
+compute = "HOPPER_H100"
+cpu = 4
+memory = 32.0
+```
+
+- `"us"`: US regions, such as us-east-1 and us-central1
+- `"eu"`: EU regions, such as eu-north-1 and eu-north1
+
+This keeps the app within the geography while drawing on the capacity of all of its regions, so queuing is less likely than when pinning a single region.
 
 ## Pin a Region
 
