@@ -993,6 +993,10 @@
     {
       "source": "/other-topics/fitting-large-models-on-small-gpus",
       "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/api-reference/apps/get-dashboard-metrics",
+      "destination": "/api-reference/apps/get-an-apps-request-and-cost-breakdown-over-time"
     }
   ],
   "integrations": {
