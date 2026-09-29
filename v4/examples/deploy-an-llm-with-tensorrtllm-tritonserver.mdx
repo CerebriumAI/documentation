@@ -116,7 +116,7 @@ output [
 
 This configuration tells Triton:
 
-- Use Python backend (runs our model.py)
+- Use Python backend (runs model.py)
 - Automatically batch up to 128 requests together for efficient GPU utilization
 - Use dynamic batching with a 100 microsecond queue delay to maximize batch sizes
 - Accept text input with optional sampling parameters
@@ -381,7 +381,7 @@ EXPOSE 8000 8001 8002
 CMD ["tritonserver", "--model-repository=/app/model_repository", "--http-port=8000", "--grpc-port=8001", "--metrics-port=8002"]
 ```
 
-The Dockerfile uses Nvidia's official Triton container with TensorRT-LLM pre-installed, creates the model repository structure that Triton expects, and copies our application files to the correct locations.
+The Dockerfile uses Nvidia's official Triton container with TensorRT-LLM pre-installed, creates the model repository structure that Triton expects, and copies the application files to the correct locations.
 
 ### Deployment Configuration
 
@@ -418,7 +418,7 @@ dockerfile_path = "./Dockerfile"
 
 Key configuration details:
 
-- `replica_concurrency = 128`: Each replica can handle up to 128 concurrent requests, matching our Triton batch size
+- `replica_concurrency = 128`: Each replica can handle up to 128 concurrent requests, matching the Triton batch size
 - `max_replicas = 5`: Scale up to 5 replicas for peak load
 
 ## Deploy
@@ -524,6 +524,6 @@ These results demonstrate that TensorRT + Triton is not just faster, but also mo
 
 ## Get Started
 
-The complete implementation, including all configuration files and deployment scripts, is available in our [GitHub repository](https://github.com/CerebriumAI/examples/tree/master/5-large-language-models/8-faster-inference-with-triton-tensorrt).
+The complete implementation, including all configuration files and deployment scripts, is available in the [GitHub repository](https://github.com/CerebriumAI/examples/tree/master/5-large-language-models/8-faster-inference-with-triton-tensorrt).
 
 Clone the repository and follow this tutorial to deploy Llama 3.2 3B (or adapt it for other models) with TensorRT-LLM and Triton Inference Server.

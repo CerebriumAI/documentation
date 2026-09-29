@@ -6,15 +6,15 @@ description: Run a Cerebrium app globally across multiple regions for more GPU c
 Deploy an app once and run it in multiple regions. The `region` parameter in `cerebrium.toml` controls placement: run globally on whatever capacity is available (recommended), or pin the app to a specific region. The parameter is optional; when omitted, the platform chooses placement automatically based on the app's hardware requirements.
 
 <Warning>
-  Multi-region deployment is currently in **beta**. We will make rapid updates
-  and improvements over the next few months to bring full functionality to life.
-  Please reach out on our [Discord](https://discord.gg/ATj6USmeE2) about
+  Multi-region deployment is currently in **beta**. Cerebrium will make rapid
+  updates and improvements over the next few months to bring full functionality
+  to life. Reach out on [Discord](https://discord.gg/ATj6USmeE2) about
   features/functionality you would like to see.
 </Warning>
 
 ## Why Use Multi-Region Deployment
 
-- **More capacity, less queueing**: An app that can run anywhere draws on the GPU capacity of every region. Constraining placement shrinks the pool of available hardware.
+- **More capacity, less queuing**: An app that can run anywhere draws on the GPU capacity of every region. Constraining placement shrinks the pool of available hardware.
 - **High availability**: Traffic shifts away from degraded or busy regions automatically.
 - **Reduced latency**: Requests are routed to healthy capacity, preferring lower-latency regions.
 - **Data residency**: Pin an app to a region to keep sensitive data within a specific geographic region and comply with regulations like GDPR and CCPA.
