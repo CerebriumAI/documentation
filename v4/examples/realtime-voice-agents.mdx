@@ -1,7 +1,7 @@
 ---
 title: "Real-time Voice Agent"
 sidebarTitle: "500ms Low-latency Voice Agent"
-description: Build a low latency voice AI agent with PipeCat, Deepgram and a self hosted vLLM Llama endpoint on Cerebrium that responds in about 500ms
+description: Build a low latency voice AI agent with PipeCat, Deepgram and a self-hosted vLLM Llama endpoint on Cerebrium that responds in about 500ms.
 ---
 
 This tutorial creates a real-time voice agent that responds to queries via speech in ~500ms. The implementation supports swapping in any Large Language Model (LLM) or Text-to-Speech (TTS) model, making it ideal for voice-based use cases like customer support bots and receptionists.
@@ -18,7 +18,7 @@ Low latency is achieved because each service is hosted within Cerebrium. Communi
 
 ![Realtime Voice Agents](/images/examples/self-hosted-pipecat.png)
 
-You can find the final version of the code [here](https://github.com/CerebriumAI/examples/tree/master/6-voice/2-realtime-voice-agent)
+You can find the final version of the code [here](https://github.com/CerebriumAI/examples/tree/master/6-voice/2-realtime-voice-agent).
 
 Create a Cerebrium account by signing up [here](https://dashboard.cerebrium.ai/register) and follow the [installation docs](https://docs.cerebrium.ai/getting-started/installation).
 
@@ -423,7 +423,7 @@ def create_token(room_name: str):
 
 Summary of the code above:
 
-- WebRTC functionality from Daily creates the room (swappable for Twilio/Telenyx). Two functions handle room creation and authentication: `create_room()` and `create_token()`.
+- WebRTC functionality from Daily creates the room (swappable for Twilio/Telnyx). Two functions handle room creation and authentication: `create_room()` and `create_token()`.
 - The Deepgram and LLM services use a local URL to connect within the Cerebrium cluster. Edit the project key in the URL as needed.
 - TTS uses the Cartesia service to demonstrate Pipecat's versatility, but the Deepgram TTS service works as well.
 

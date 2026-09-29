@@ -48,9 +48,9 @@ CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8192
 
 Dockerfiles for Cerebrium have three requirements:
 
-1. Expose a port with the `EXPOSE` command. This port is referenced in `cerebrium.toml`
-2. Include a `CMD` command to specify the container's startup process (typically the server)
-3. Set the working directory with `WORKDIR` to ensure correct file paths (defaults to root if not specified)
+1. Expose a port with the `EXPOSE` command. This port is referenced in `cerebrium.toml`.
+2. Include a `CMD` command to specify the container's startup process (typically the server).
+3. Set the working directory with `WORKDIR` to ensure correct file paths (defaults to root if not specified).
 
 Update cerebrium.toml to include a custom runtime section with the `dockerfile_path` parameter:
 
