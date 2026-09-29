@@ -34,9 +34,9 @@ memory = 8.0
 
 When Cerebrium brings new capacity online, global apps can run there without a configuration change or redeploy.
 
-## Run in a Geography
+## Run in a Geographical Zone
 
-Set `region = "us"` or `region = "eu"` to run the app in any region within that geography:
+Set `region = "us"` or `region = "eu"` to run the app in any region within that geographical zone:
 
 ```toml
 [cerebrium.hardware]
@@ -49,7 +49,7 @@ memory = 32.0
 - `"us"`: US regions, such as us-east-1 and us-central1
 - `"eu"`: EU regions, such as eu-north-1 and eu-north1
 
-This keeps the app within the geography while drawing on the capacity of all of its regions, so queuing is less likely than when pinning a single region.
+This keeps the app within the geographical zone while drawing on the capacity of all of its regions, so queuing is less likely than when pinning a single region.
 
 ## Pin a Region
 
