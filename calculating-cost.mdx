@@ -46,6 +46,8 @@ memory_cost = 0.00000222  # per second per GB
 num_of_cpu_cores = 2
 gb_of_RAM = 20
 build_seconds = 120  # 2 minutes
+gb_of_persistent_storage = 0  # GB stored in persistent storage
+persistent_storage_cost = 0  # per GB per month, from the pricing page
 
 # cost calculation
 compute_rate = GPU_cost + (CPU_cost * num_of_cpu_cores) + (memory_cost * gb_of_RAM)
@@ -66,3 +68,18 @@ print(f"Build Compute cost: ${total_build_compute_cost :.2f}/month",
       f"\nStorage cost: ${storage_cost :.2f}/month",
       f"\nTotal cost: ${total_cost :.2f}/month")
 ```
+
+**Hourly and monthly cost of a running replica**
+
+To estimate the cost of keeping a replica running, multiply the per-second compute rate by the number of seconds it runs. This applies when you set `min_replicas` to 1 or higher, or while traffic keeps a replica active. See [Minimum Instances](/scaling/scaling-apps#minimum-instances).
+
+Using the hardware above (A10, 2 CPU cores, 20 GB memory):
+
+```python
+compute_rate = 0.000306 + (0.00000655 * 2) + (0.00000222 * 20)  # $0.0003635 per second
+
+hourly_cost = compute_rate * 3600  # about $1.31 per hour
+monthly_cost = hourly_cost * 720  # about $942 for 30 days running continuously
+```
+
+With `min_replicas = 0` (the default), replicas scale to zero when idle, so you pay only for the seconds they run. Multiply these figures by 2 for the `protected` tier.
