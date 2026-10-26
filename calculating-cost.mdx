@@ -23,6 +23,15 @@ Deploying a model incurs two billable processes:
 - <u>Function runtime</u>: Code inside the request function, executed on every
   request.
 
+**Idle instances**
+
+A running instance is billed for GPU, CPU, and memory even when it isn't serving requests. This includes an instance that holds a loaded model in GPU memory while it waits for traffic. Two scaling settings control how long instances stay running while idle:
+
+- `min_replicas`: Instances kept running at all times. Each one is billed continuously, whether or not requests arrive.
+- `cooldown`: Seconds an instance stays running at reduced concurrency before Cerebrium scales it down. The default is 10 seconds. This idle time is billed because the instance is still running.
+
+The `cooldown` value isn't a minimum charge per request. Billing is per second. If another request arrives during the cooldown window, the same instance serves it without a new cold start. Set `min_replicas = 0` and a short `cooldown` to reduce idle cost, at the expense of more cold starts. See [Scaling apps](/scaling/scaling-apps).
+
 **Example cost calculation**
 
 A model deployment requires:
