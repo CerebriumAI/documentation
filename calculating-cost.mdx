@@ -3,7 +3,7 @@ title: Calculating compute cost
 description: Understand how Cerebrium bills GPU, CPU, and memory per second, what counts toward build and runtime charges, and estimate monthly deployment costs.
 ---
 
-Deployment cost is based on the hardware selected and the execution time. <b>Every time code runs or you configure a machine to stay running, compute is billed</b>. GPU, CPU, and Memory usage are charged per second; builds are charged per minute; persistent storage is charged per GB per month. View compute pricing on the [pricing page](https://www.cerebrium.ai/pricing).
+Deployment cost is based on the hardware selected and the execution time. <b>Every time code runs or you configure a machine to stay running, compute is billed</b>. GPU, CPU, and Memory usage are charged per second; builds are charged per second at a flat rate; persistent storage is charged per GB per month. View compute pricing on the [pricing page](https://www.cerebrium.ai/pricing).
 
 Listed rates apply to the default `interruptible` compute tier. Apps configured with the `protected` tier are billed at 2x these rates across GPU, CPU, and memory. See [Compute Tier](/scaling/scaling-apps#compute-tier).
 
@@ -11,7 +11,7 @@ Deploying a model incurs two billable processes:
 
 1. **Build process** — sets up the app environment: a Python environment with the specified parameters, required apt packages, Conda and Python packages, and any model files.
    A build is only charged when the environment needs rebuilding, i.e., a `build` or `deploy` command runs with changed requirements, parameters, or code. Each build step is cached, so subsequent builds cost substantially less than the first.
-   Builds are billed at a flat $0.08 per build minute, regardless of the hardware selected for the app. The GPU, CPU, and Memory rates apply to app runtime only.
+   Builds are billed per second at a flat $0.0013333 per second ($0.08 per minute), regardless of the hardware selected for the app. The GPU, CPU, and Memory rates apply to app runtime only.
 
 2. **App runtime** — the time code runs from start to finish on each request. Three cost components apply:
 
@@ -46,13 +46,13 @@ CPU_cost = 0.00000655  # per second per core
 memory_cost = 0.00000222  # per second per GB
 num_of_cpu_cores = 2
 gb_of_RAM = 20
-build_minutes = 2
-build_cost_per_minute = 0.08  # flat rate, independent of hardware
+build_seconds = 120  # 2 minutes
+build_cost = 0.0013333  # per second, flat rate independent of hardware
 
 # cost calculation
 compute_rate = GPU_cost + (CPU_cost * num_of_cpu_cores) + (memory_cost * gb_of_RAM)
 
-build_cost = build_minutes * build_cost_per_minute
+total_build_cost = build_seconds * build_cost
 total_initialization_time = average_initialization_time * cold_starts_per_month
 total_inference_time = average_inference_time * number_of_inferences
 
@@ -60,9 +60,9 @@ initialization_compute_cost = total_initialization_time * compute_rate
 inference_compute_cost = total_inference_time * compute_rate
 storage_cost = gb_of_persistent_storage * persistent_storage_cost
 
-total_cost = inference_compute_cost + storage_cost + build_cost + initialization_compute_cost
+total_cost = inference_compute_cost + storage_cost + total_build_cost + initialization_compute_cost
 
-print(f"Build cost: ${build_cost :.2f}/month",
+print(f"Build cost: ${total_build_cost :.2f}/month",
       f"Initialization Compute cost: ${initialization_compute_cost :.2f}/month",
       f"Inference Compute cost: ${inference_compute_cost :.2f}/month",
       f"\nStorage cost: ${storage_cost :.2f}/month",
