@@ -15,15 +15,15 @@ build_cost_per_minute = ${buildCostPerMinute} # flat rate, independent of hardwa
 
 # cost calculation
 
-compute*rate = GPU_cost + (CPU_cost * num*of_cpu_cores) + (memory_cost * gb_of_RAM)
+compute_rate = GPU_cost + (CPU_cost * num_of_cpu_cores) + (memory_cost * gb_of_RAM)
 
-total*build_cost = build_seconds * build*cost_per_minute / 60
+total_build_cost = build_seconds * build_cost_per_minute / 60
 total_initialization_time = average_initialization_time * cold_starts_per_month
-total_inference_time = average_inference_time \* number_of_inferences
+total_inference_time = average_inference_time * number_of_inferences
 
-initialization*compute_cost = total_initialization_time * compute*rate
+initialization_compute_cost = total_initialization_time * compute_rate
 inference_compute_cost = total_inference_time * compute_rate
-storage_cost = gb_of_persistent_storage \* persistent_storage_cost
+storage_cost = gb_of_persistent_storage * persistent_storage_cost
 
 total_cost = inference_compute_cost + storage_cost + total_build_cost + initialization_compute_cost
 
