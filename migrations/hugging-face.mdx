@@ -50,7 +50,7 @@ pip install cerebrium --upgrade
 
 #### 1.2 Update your requirements file
 
-Scaffold your application by running `cerebrium init [PROJECT_NAME]`. During the initialization, a `cerebrium.toml` is created. This file configures the deployment, hardware, scaling, and dependencies for your Cerebrium project. Update your `cerebrium.toml` file to reflect the following:
+Scaffold your application by running `cerebrium init [PROJECT_NAME]`. The initialization creates a `cerebrium.toml`. This file configures the deployment, hardware, scaling, and dependencies for your Cerebrium project. Update your `cerebrium.toml` file to reflect the following:
 
 ```toml
 [cerebrium.deployment]
@@ -200,7 +200,7 @@ response = requests.request("POST", url, headers=headers, data=payload)
 print(response.text)
 ```
 
-Make sure to replace `[CEREBRIUM_API_KEY]` with your Inference API key, which can be found in your dashboard under API keys. This code sends a POST request to your deployed model's endpoint with a prompt, and prints the model's response.
+Replace `[CEREBRIUM_API_KEY]` with your Inference API key, found in your dashboard under API keys. This code sends a POST request to your deployed model's endpoint with a prompt, and prints the model's response.
 
 ## Additional considerations
 

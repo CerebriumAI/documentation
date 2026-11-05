@@ -24,7 +24,7 @@ def exponentiate(x: float, y: float) -> float:
     return x**y
 ```
 
-`AIMessage.tool_calls`: An attribute on AIMessage that provides easy access to model-initiated tool calls, specifying invocations in the bind_tools format:
+`AIMessage.tool_calls`: An attribute on AIMessage that provides easy access to model-initiated tool calls, specifying invocations in the `bind_tools` format:
 
 ```python
 # -> AIMessage(
@@ -214,7 +214,7 @@ The code above:
 3. Uses `find_available_slots` helper function to format Cal.com API responses into readable time slots
    ‍
 
-The book_slot tool follows a similar pattern. It books a slot based on the selected time/day. Get the eventTypeId from the dashboard by selecting an event and grabbing the ID from the URL.
+The `book_slot` tool follows a similar pattern. It books a slot based on the selected time/day. Get the `eventTypeId` from the dashboard by selecting an event and grabbing the ID from the URL.
 
 ```python
 @tool
@@ -286,9 +286,9 @@ The agent executor consists of:
 
 ### Chatbot Setup
 
-The above code only handles a single question. Finding a mutually suitable time requires a multi-turn conversation. LangChain’s RunnableWithMessageHistory() adds tool calling capabilities and message memory.
+The above code only handles a single question. Finding a mutually suitable time requires a multi-turn conversation. LangChain’s `RunnableWithMessageHistory()` adds tool calling capabilities and message memory.
 
-It stores previous replies in the chat_history variable (from the prompt template) and ties them to a session identifier, so the API remembers information per user/session:
+It stores previous replies in the `chat_history` variable (from the prompt template) and ties them to a session identifier, so the API remembers information per user/session:
 
 ```python
 from langchain.memory import ChatMessageHistory
@@ -335,7 +335,7 @@ if __name__ == "__main__":
 This code:
 
 - Defines a Pydantic object specifying the expected API parameters: user prompt and session ID.
-- The predict function (Cerebrium’s API entry point) passes the prompt and session ID to the agent and returns results.
+- The `predict` function (Cerebrium’s API entry point) passes the prompt and session ID to the agent and returns results.
   ‍
 
 Install pip dependencies locally: `pip install pydantic langchain pytz openai langchain_openai langchain-community`, then run `python main.py`. Replace secrets with actual values when running locally. Output looks similar to:

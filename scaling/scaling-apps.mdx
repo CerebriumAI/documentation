@@ -37,9 +37,9 @@ The `cooldown` parameter specifies the time window (in seconds) that must pass a
 
 ### Replica Concurrency
 
-The number of requests an app instance can handle concurrently is dictated by the `replica_concurrency` parameter. This is a hard limit, and an individual replica will
+The `replica_concurrency` parameter dictates the number of requests an app instance can handle concurrently. This is a hard limit, and an individual replica will
 not accept more than this limit at a time. By default, once this concurrency limit is reached on an instance and there are still requests to be processed in-flight,
-the system will scale out by the number of new instances required to fulfil the in-flight requests. For example, if `replica_concurrency=1` and there are
+the system will scale out. It starts the number of new instances required to fulfil the in-flight requests. For example, if `replica_concurrency=1` and there are
 _3_ requests in flight with no replicas currently available, Cerebrium will scale out 3 instances of the application to meet that demand.
 
 <Info>
@@ -68,14 +68,14 @@ response_grace_period = 1200  # Maximum request lifespan ensuring graceful exit
 ```
 
 The `response_grace_period` parameter stipulates how long in seconds a request would need at most to finish, and provides time for instances to complete active requests during normal operation and shutdown.
-During normal replica operation, this acts as a request timeout value. During replica shutdown, the Cerebrium system sends a SIGTERM signal to the replica,
-waits for the specified grace period, issues a SIGKILL command if the instance has not stopped, and kills any active requests with a GatewayTimeout error.
+During normal replica operation, this acts as a request timeout value. During replica shutdown, the Cerebrium system sends a SIGTERM signal to the replica and
+waits for the specified grace period. If the instance has not stopped, the system issues a SIGKILL command and kills any active requests with a GatewayTimeout error.
 
 <Note>
   When using the Cortex runtime (default), SIGTERM signals are automatically
-  handled to allow graceful termination of requests. For custom runtimes, you'll
-  need to implement SIGTERM handling yourself to ensure requests complete
-  gracefully before termination. See our [Graceful Termination
+  handled to allow graceful termination of requests. For custom runtimes,
+  implement SIGTERM handling yourself to ensure requests complete gracefully
+  before termination. See the [Graceful Termination
   guide](/scaling/graceful-termination) for detailed implementation examples,
   including FastAPI patterns for tracking and completing in-flight requests
   during shutdown.
