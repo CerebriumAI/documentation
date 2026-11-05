@@ -11,7 +11,7 @@ Deploying a model incurs two billable processes:
 
 1. **Build process** — sets up the app environment: a Python environment with the specified parameters, required apt packages, Conda and Python packages, and any model files.
    A build is only charged when the environment needs rebuilding, i.e., a `build` or `deploy` command runs with changed requirements, parameters, or code. Each build step is cached, so subsequent builds cost substantially less than the first.
-   Builds are billed per second at a flat $0.0013333 per second ($0.08 per minute), regardless of the hardware selected for the app. The GPU, CPU, and Memory rates apply to app runtime only.
+   Builds are metered per second at a flat $0.08 per minute, regardless of the hardware selected for the app. The GPU, CPU, and Memory rates apply to app runtime only.
 
 2. **App runtime** — the time code runs from start to finish on each request. Three cost components apply:
 
@@ -47,12 +47,12 @@ memory_cost = 0.00000222  # per second per GB
 num_of_cpu_cores = 2
 gb_of_RAM = 20
 build_seconds = 120  # 2 minutes
-build_cost = 0.0013333  # per second, flat rate independent of hardware
+build_cost_per_minute = 0.08  # flat rate, independent of hardware
 
 # cost calculation
 compute_rate = GPU_cost + (CPU_cost * num_of_cpu_cores) + (memory_cost * gb_of_RAM)
 
-total_build_cost = build_seconds * build_cost
+total_build_cost = build_seconds * build_cost_per_minute / 60
 total_initialization_time = average_initialization_time * cold_starts_per_month
 total_inference_time = average_inference_time * number_of_inferences
 
