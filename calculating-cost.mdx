@@ -11,7 +11,7 @@ Deploying a model incurs two billable processes:
 
 1. **Build process** — sets up the app environment: a Python environment with the specified parameters, required apt packages, Conda and Python packages, and any model files.
    A build is only charged when the environment needs rebuilding, i.e., a `build` or `deploy` command runs with changed requirements, parameters, or code. Each build step is cached, so subsequent builds cost substantially less than the first.
-   On the Hobby plan, builds are billed at a flat $0.08 per build minute, regardless of the hardware selected for the app. Standard and Enterprise plans are not charged for builds. The GPU, CPU, and Memory rates apply to app runtime only.
+   Builds are billed at a flat $0.08 per build minute, regardless of the hardware selected for the app. The GPU, CPU, and Memory rates apply to app runtime only.
 
 2. **App runtime** — the time code runs from start to finish on each request. Three cost components apply:
 
@@ -47,7 +47,7 @@ memory_cost = 0.00000222  # per second per GB
 num_of_cpu_cores = 2
 gb_of_RAM = 20
 build_minutes = 2
-build_cost_per_minute = 0.08  # Hobby plan flat rate, independent of hardware
+build_cost_per_minute = 0.08  # flat rate, independent of hardware
 
 # cost calculation
 compute_rate = GPU_cost + (CPU_cost * num_of_cpu_cores) + (memory_cost * gb_of_RAM)
