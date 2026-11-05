@@ -41,8 +41,8 @@ cerebrium init wandb-sweep
 
 This creates a folder with two files:
 
-- **main.py** - The entrypoint file where application code lives.
-- **cerebrium.toml** - A configuration file for build and environment settings.
+- **main.py** - The entrypoint file where application code lives.
+- **cerebrium.toml** - A configuration file for build and environment settings.
 
 The rest of this tutorial continues in this folder.
 
@@ -50,7 +50,7 @@ The rest of this tutorial continues in this folder.
 
 **Weights & Biases (Wandb)** tracks, visualizes, and manages machine learning experiments in real-time. It logs hyperparameters, metrics, and results for comparing models and optimizing performance.
 
-1. [Sign up](https://wandb.ai/site) for a free account and then log in to your wandb account by running the following in your CLI.
+1. [Sign up](https://wandb.ai/site) for a free account and then log in to your wandb account by running the following in your CLI.
 
 ```
 pip install wandb
@@ -286,11 +286,11 @@ def train_model(params: Dict):
     return {"status": "success", "model_path": new_model}
 ```
 
-You can read a deeper explanation of the training script [here](https://www.datacamp.com/tutorial/fine-tuning-llama-3-2) but here's a high-level explanation of the code in bullet points:
+You can read a deeper explanation of the training script [here](https://www.datacamp.com/tutorial/fine-tuning-llama-3-2) but here's a high-level explanation of the code in bullet points:
 
-- This code sets up a fine-tuning pipeline for a Large Language Model (specifically Llama 3.2) using several modern training techniques:
+- This code sets up a fine-tuning pipeline for a Large Language Model (specifically Llama 3.2) using several modern training techniques:
 - Takes a dictionary of parameters for flexible training configurations: the hyperparameter sweep.
-- Loads a customer support dataset from Hugging Face and formats it into chat template format
+- Loads a customer support dataset from Hugging Face and formats it into chat template format.
 - Implements QLoRA (Quantized Low-Rank Adaptation) for efficient fine-tuning.
 - Uses Weights & Biases (Wandb) for experiment tracking, logging results to the Wandb dashboard.
 - Saves the final model to a Cerebrium volume and returns a “success” message.
@@ -410,7 +410,7 @@ if __name__ == "__main__":
     main()
 ```
 
-This code implements a hyperparameter sweep using Wandb sweeps to train a Llama 3.2 model for customer support. Here's what it does:
+This code implements a hyperparameter sweep using Wandb sweeps to train a Llama 3.2 model for customer support. Here's what it does:
 
 - Create a .env file and add the Inference API key from the Cerebrium Dashboard.
 
@@ -419,19 +419,19 @@ CEREBRIUM_API_KEY=eyJ....
 ```
 
 - Update the Cerebrium endpoint with the correct project ID and function name. The URL is appended with “?async=true”. This makes it a fire-and-forget request that can run up to 12 hours. Read more [here](https://docs.cerebrium.ai/endpoints/async).
-- The Bayesian optimization sweep configuration searches through these hyperparameters:
-  - Learning rate (log uniform distribution between ~4.54e-5 and ~9.12e-4)
-  - Batch size (1, 2, or 4)
-  - Gradient accumulation steps (2, 4, or 8)
-  - LoRA parameters (r, alpha, and dropout)
+- The Bayesian optimization sweep configuration searches through these hyperparameters:
+  - Learning rate (log uniform distribution between ~4.54e-5 and ~9.12e-4)
+  - Batch size (1, 2, or 4)
+  - Gradient accumulation steps (2, 4, or 8)
+  - LoRA parameters (r, alpha, and dropout)
   - Maximum sequence length (512 or 1024)
-- The sweep is created in the "Llama-3.2-Customer-Support" W&B project
-- For each sweep iteration:
-  - Initializes a new W&B run
-  - Combines the sweep's hyperparameters with fixed parameters (like model name and dataset)
-  - Sends the parameters to a Cerebrium endpoint for training that happens asynchronously.
-  - Logs the results back to W&B
-- Runs 10 experiments (10 concurrent GPUs is the limit on Cerebrium’s Hobby plan)
+- The sweep is created in the "Llama-3.2-Customer-Support" W&B project.
+- For each sweep iteration:
+  - Initializes a new W&B run.
+  - Combines the sweep's hyperparameters with fixed parameters (like model name and dataset).
+  - Sends the parameters to a Cerebrium endpoint for training that happens asynchronously.
+  - Logs the results back to W&B.
+- Runs 10 experiments (10 concurrent GPUs is the limit on Cerebrium’s Hobby plan).
 
 Run the script:
 
