@@ -6,7 +6,7 @@ description: Understand how Cerebrium bills GPU, CPU, and memory per second, wha
 import { pricing } from "/snippets/pricing.mdx";
 import { CostExample } from "/snippets/cost-example.mdx";
 
-Deployment cost is based on the hardware selected and the execution time. <b>Every time code runs or you configure a machine to stay running, compute is billed</b>. GPU, CPU, and Memory usage are charged per second; builds are charged per second at a flat rate; persistent storage is charged per GB per month. View compute pricing on the [pricing page](https://www.cerebrium.ai/pricing).
+Deployment cost is based on the hardware selected and the execution time. **Every time code runs or you configure a machine to stay running, compute is billed**. GPU, CPU, and Memory usage are charged per second; builds are charged per second at a flat rate; persistent storage is charged per GB per month. View compute pricing on the [pricing page](https://www.cerebrium.ai/pricing).
 
 Listed rates apply to the default `interruptible` compute tier. Apps configured with the `protected` tier are billed at 2x these rates across GPU, CPU, and memory. See [Compute Tier](/scaling/scaling-apps#compute-tier).
 
@@ -20,7 +20,7 @@ Deploying a model incurs two billable processes:
 
 - <u>Cold-start</u>: The time to spin up server(s), load the environment,
   connect storage, etc. Cerebrium continuously optimizes cold-start latency.
-  <b>Cold-start time is not billed.</b>
+  **Cold-start time is not billed.**
 - <u>Model initialization</u>: Code outside the request function that only runs
   on cold start (e.g., loading a model into GPU RAM, importing packages). This
   time is billed.
