@@ -5,31 +5,32 @@ cold_starts_per_month = 300  # 10 a day for 30 days
 average_inference_time = 2  # seconds
 number_of_inferences = 100000  # number of inferences per month
 
-GPU_cost = ${gpuCost}  # per second
-CPU_cost = ${cpuCost}  # per second per core
-memory_cost = ${memoryCost}  # per second per GB
+GPU_cost = ${gpuCost} # per second
+CPU_cost = ${cpuCost} # per second per core
+memory_cost = ${memoryCost} # per second per GB
 num_of_cpu_cores = 2
 gb_of_RAM = 20
-build_seconds = 120  # 2 minutes
-build_cost_per_minute = ${buildCostPerMinute}  # flat rate, independent of hardware
+build_seconds = 120 # 2 minutes
+build_cost_per_minute = ${buildCostPerMinute} # flat rate, independent of hardware
 
 # cost calculation
-compute_rate = GPU_cost + (CPU_cost * num_of_cpu_cores) + (memory_cost * gb_of_RAM)
 
-total_build_cost = build_seconds * build_cost_per_minute / 60
-total_initialization_time = average_initialization_time * cold_starts_per_month
-total_inference_time = average_inference_time * number_of_inferences
+compute_rate = GPU_cost + (CPU_cost _ num_of_cpu_cores) + (memory_cost _ gb_of_RAM)
 
-initialization_compute_cost = total_initialization_time * compute_rate
-inference_compute_cost = total_inference_time * compute_rate
-storage_cost = gb_of_persistent_storage * persistent_storage_cost
+total_build_cost = build_seconds _ build_cost_per_minute / 60
+total_initialization_time = average_initialization_time _ cold_starts_per_month
+total_inference_time = average_inference_time \* number_of_inferences
+
+initialization_compute_cost = total_initialization_time _ compute_rate
+inference_compute_cost = total_inference_time _ compute_rate
+storage_cost = gb_of_persistent_storage \* persistent_storage_cost
 
 total_cost = inference_compute_cost + storage_cost + total_build_cost + initialization_compute_cost
 
 print(f"Build cost: \${total_build_cost :.2f}/month",
-      f"Initialization Compute cost: \${initialization_compute_cost :.2f}/month",
-      f"Inference Compute cost: \${inference_compute_cost :.2f}/month",
-      f"\\nStorage cost: \${storage_cost :.2f}/month",
-      f"\\nTotal cost: \${total_cost :.2f}/month")
+f"Initialization Compute cost: \${initialization_compute_cost :.2f}/month",
+f"Inference Compute cost: \${inference_compute_cost :.2f}/month",
+f"\\nStorage cost: \${storage_cost :.2f}/month",
+f"\\nTotal cost: \${total_cost :.2f}/month")
 `}</CodeBlock>
 );
